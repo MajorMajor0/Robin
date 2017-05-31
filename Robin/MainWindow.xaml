@@ -1,0 +1,1013 @@
+﻿<!--This file is part of Robin.
+
+Robin is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published
+version 3 of the License, or (at your option) any later version.
+
+Robin is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Robin.  If not, see http://www.gnu.org/licenses/.-->
+    
+    <Window x:Name="Main_Window" x:Class="Robin.MainWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:system="clr-namespace:System;assembly=mscorlib"
+		xmlns:local="clr-namespace:Robin"
+
+		Title="Robin"
+		Height="900"
+		Width="1600"          
+        
+        Background="{StaticResource BackDrop_Brush}"
+		BorderBrush="{StaticResource BackDrop_Brush}"
+		Loaded="Main_Window_Loaded"
+        Icon="{StaticResource RobinIcon}"
+        Closing="Main_Window_Closing">
+    <Window.Resources>
+
+        <Style x:Key="IncludedTextBlockStyle1" TargetType="TextBlock" BasedOn="{StaticResource Normal}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Included}" Value="False">
+                    <Setter Property="Opacity" Value="0.2" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!--<Style x:Key="SelectorButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Height" Value="24" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource Highlight_color}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>-->
+        <Style x:Key="SelectorButtonStyle" TargetType="ToggleButton" >
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Height" Value="24" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="3,0,3,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border Name="border" 
+                            BorderBrush="Transparent" 
+                            Background="Transparent">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource Highlight_Brush}" />
+                            </Trigger>
+                            <Trigger Property="ToggleButton.IsChecked" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource Selected_Brush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SelectorButtonTextStyle" TargetType="TextBlock" BasedOn="{StaticResource Heading1}">
+            <!--<Setter Property="Height" Value="20"/>-->
+            <Setter Property="Text" Value="{Binding Name}" />
+
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+
+        <ControlTemplate x:Key="SearchBoxTemplate" TargetType="{x:Type TextBoxBase}">
+            <Border x:Name="Bd"
+					Background="{TemplateBinding Background}" 
+					BorderBrush="Black"
+					BorderThickness="{TemplateBinding BorderThickness}"
+					CornerRadius="5">
+                <ScrollViewer x:Name="PART_ContentHost"/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" TargetName="Bd"/>
+                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                </Trigger>
+                <Trigger Property="Width" Value="Auto">
+                    <Setter Property="MinWidth" Value="100"/>
+                </Trigger>
+
+                <Trigger Property="Height" Value="Auto">
+                    <Setter Property="MinHeight" Value="20"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" />
+
+        <local:IntToVisibilityConverter x:Key="intToVisibilityConverter" />
+
+        <local:DateToVisibilityConverter x:Key="dateToVisibilityConverter"/>
+
+        <local:ImageConverter x:Key="ImageConverter" />
+
+        <local:PreferredMultiValueConverter x:Key="PreferredMultiValueConverter" />
+
+    </Window.Resources>
+
+    <Window.CommandBindings>
+        <CommandBinding Command="local:CustomCommands.GetAllArt" CanExecute="GetAllArt_CanExecute" Executed="GetAllArt_Executed" />
+        <CommandBinding Command="local:CustomCommands.GetAllData" CanExecute="GetAllData_CanExecute" Executed="GetAllData_Executed" />
+
+
+        <CommandBinding Command="local:CustomCommands.Play" CanExecute="Play_CanExecute" Executed="Play_Executed" />
+        <CommandBinding Command="local:CustomCommands.MarkAsCrap" CanExecute="MarkAsCrap_CanExecute" Executed="MarkAsCrap_Executed" />
+        <CommandBinding Command="local:CustomCommands.MarkNotCrap" CanExecute="MarkNotCrap_CanExecute" Executed="MarkNotCrap_Executed" />
+        <CommandBinding Command="local:CustomCommands.MarkAsBeaten" CanExecute="MarkAsBeaten_CanExecute" Executed="MarkAsBeaten_Executed" />
+        <CommandBinding Command="local:CustomCommands.MarkNotBeaten" CanExecute="MarkNotBeaten_CanExecute" Executed="MarkNotBeaten_Executed" />
+        <CommandBinding Command="local:CustomCommands.MarkAsGame" CanExecute="MarkAsGame_CanExecute" Executed="MarkAsGame_Executed" />
+        <CommandBinding Command="local:CustomCommands.MarkNotGame" CanExecute="MarkNotGame_CanExecute" Executed="MarkNotGame_Executed" />
+
+        <CommandBinding Command="local:CustomCommands.MarkAsPreferred" CanExecute="MarkAsPreferred_CanExecute" Executed="MarkAsPreferred_Executed" />
+        <CommandBinding Command="local:CustomCommands.MarkNotPreferred" CanExecute="MarkNotPreferred_CanExecute" Executed="MarkNotPreferred_Executed" />
+        <CommandBinding Command="local:CustomCommands.MarkEmulatorPreferred" CanExecute="MarkEmulatorPreferred_CanExecute" Executed="MarkEmulatorPreferred_Executed" />
+        <CommandBinding Command="local:CustomCommands.GetSelectedArt" CanExecute="GetSelectedArt_CanExecute" Executed="GetSelectedArt_Executed" />
+        <CommandBinding Command="local:CustomCommands.AddCollection" CanExecute="AddCollection_CanExecute" Executed="AddCollection_Executed" />
+        <CommandBinding Command="local:CustomCommands.RemoveCollection" CanExecute="RemoveCollection_CanExecute" Executed="RemoveCollection_Executed" />
+        <CommandBinding Command="local:CustomCommands.RemoveFromCollection" CanExecute="RemoveFromCollection_CanExecute" Executed="RemoveFromCollection_Executed" />
+    </Window.CommandBindings>
+
+    <Grid x:Name="WindowGrid">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="350" MinWidth="250" />
+            <ColumnDefinition Width="2*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" MinHeight="50" />
+        </Grid.RowDefinitions>
+
+        <DockPanel x:Name ="MenuDocPanel" Grid.ColumnSpan="2">
+            <Menu IsMainMenu="True" DockPanel.Dock="Top" Grid.ColumnSpan="2">
+                <MenuItem Header="File">
+                    <MenuItem Header="New" />
+                    <MenuItem Header="Open" />
+                    <MenuItem Header="Save Database" Click="SaveDatabase_Click"/>
+                    <Separator />
+                    <MenuItem Header="Exit" />
+                </MenuItem>
+
+                <MenuItem Header="Games">
+                    <MenuItem Header="Find/add games" />
+                    <MenuItem Header="Edit game data" />
+
+                </MenuItem>
+
+                <MenuItem Header="Art">
+                    <MenuItem Header="Get art for all releases" Click="Database_Click"/>
+                    <MenuItem Header="Create thumbnails" Click="CreateThumbNail_Click"/>
+
+                </MenuItem>
+
+                <MenuItem Header="Database">
+                    <MenuItem Header="Database Window" Click="Database_Click"/>
+                    <MenuItem Header="Convert Lynx Files" Click="ConvertLynx_Click"/>
+
+                </MenuItem>
+                <MenuItem Header="View" />
+            </Menu>
+        </DockPanel>
+
+        <Grid  x:Name="LeftGrid" Grid.Row="1" Grid.RowSpan="2" VerticalAlignment="Stretch" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*" />
+
+            </Grid.RowDefinitions>
+
+            <Border x:Name="FilterBorder"
+                Grid.Row="0"
+					
+                    Padding="10"
+					Style="{StaticResource CellStyle}"
+                    DataContext="{Binding ElementName=MainList, Path=DataContext}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBox x:Name="FilterBox"
+							 Template="{StaticResource SearchBoxTemplate}"                       
+							 MinWidth="200"
+							 MaxWidth="350"
+							 Height="30"                          
+							 HorizontalAlignment="Left"
+							 VerticalContentAlignment="Center"
+                             Grid.Row="1"
+							 
+							 Padding="50,0,0,0"
+						 
+							 Foreground="{StaticResource Heading1_Brush}"
+							 FontFamily="{StaticResource NormalFontFamily}"
+							 FontSize="20"
+							 
+							 Text="{Binding Path=TextFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged }">
+
+                        <TextBox.Background>
+                            <LinearGradientBrush EndPoint="0.5,0" StartPoint="0.5,1">
+                                <GradientStop Color="#4B4B4B" Offset="0"/>
+                                <GradientStop Color="#C8C8C8" Offset="1"/>
+                            </LinearGradientBrush>
+                        </TextBox.Background>
+
+                    </TextBox>
+                    <Image x:Name="SearchIcon"
+						Source="{StaticResource SearchIcon}"
+						HorizontalAlignment="Left"
+						VerticalAlignment="Center"
+						Margin="5,0,0,0"
+						Width="25"
+                           Grid.Row="1"
+						RenderOptions.BitmapScalingMode="Fant" />
+                    <Button x:Name="BonusButton" HorizontalAlignment="Right" Width ="50" Content="BONUS!" Click="BonusButton_Click" Grid.Row="1" Height="30"/>
+                    <DockPanel HorizontalAlignment="Left" VerticalAlignment="Top" LastChildFill="False" Height="30" >
+                        <ToggleButton x:Name="ReleasesButton" Click="ReleasesButton_Click" Style="{StaticResource SelectorButtonStyle}">
+                            <TextBlock Text="Releases" Style="{StaticResource SelectorButtonTextStyle}" />
+                        </ToggleButton>
+                        <ToggleButton x:Name="GamesButton" Click="GamesButton_Click" Style="{StaticResource SelectorButtonStyle}">
+                            <TextBlock Text="Games" Style="{StaticResource SelectorButtonTextStyle}"/>
+                        </ToggleButton>
+                        <ToggleButton x:Name="PlatformsButton" Click="PlatformsButton_Click" Style="{StaticResource SelectorButtonStyle}">
+                            <TextBlock Text="Platforms" Style="{StaticResource SelectorButtonTextStyle}"/>
+                        </ToggleButton>
+                        <ToggleButton x:Name="EmulatorsButton" Click="EmulatorsButton_Click" Style="{StaticResource SelectorButtonStyle}">
+                            <TextBlock Text="Emulators" Style="{StaticResource SelectorButtonTextStyle}"/>
+                        </ToggleButton>
+                    </DockPanel>
+                    <StackPanel x:Name="FiltersStackPanel"
+                                Orientation="Vertical"
+                               Grid.Row="2"
+                               Background="Transparent" >
+
+                        <ListView  x:Name="StringFilterList"
+							   DockPanel.Dock="Top"
+							   ItemsSource="{Binding ElementName=MainList, Path=DataContext.StringFilters}"
+							   Background="Transparent"
+							   BorderBrush="Transparent"
+                                   Grid.RowSpan="2">
+
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical" MaxWidth="{Binding ActualWidth, ElementName=StringFilterList}"/>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="0,3,0,0">
+                                        <TextBlock Text="{Binding Name}" Style="{StaticResource Heading1}"/>
+                                        <!--<TextBox x:Name="InsideFilterTextBox" Text="{Binding InsideFilterText, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"/>-->
+                                        <ComboBox ItemsSource="{Binding DistinctValues}" SelectedItem="{Binding Value}" Foreground="{StaticResource Normal_Brush}" FontFamily="{StaticResource NormalFontFamily}" FontSize="{StaticResource NormalFontSize}" Background="Transparent" Width="150" >
+                                            <ComboBox.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <VirtualizingStackPanel Orientation="Vertical" VirtualizingPanel.IsVirtualizing="True"/>
+                                                </ItemsPanelTemplate>
+                                            </ComboBox.ItemsPanel>
+
+                                            <ComboBox.Resources>
+                                                <SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}" Color="Black"/>
+                                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="{StaticResource Selected_Color}" />
+                                            </ComboBox.Resources>
+                                        </ComboBox>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+
+                        <ListView  x:Name="BoolFilterList"
+							   DockPanel.Dock="Top"
+							   ItemsSource="{Binding ElementName=MainList, Path=DataContext.BoolFilters }"
+							   Background="Transparent"
+							   BorderBrush="Transparent"
+							   IsTextSearchEnabled="True"
+							   TextSearch.TextPath="Name" Margin="0,10,0,0">
+
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"/>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                        <TextBlock Text="{Binding Name}" Style="{StaticResource Heading1}" Width="100"/>
+                                        <ToggleButton IsThreeState="True" IsChecked="{Binding Value}" Width="80">
+                                            <ToggleButton.Style>
+                                                <Style TargetType="ToggleButton">
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsChecked" Value="True">
+                                                            <Setter Property="Content" Value="True"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsChecked" Value="False">
+                                                            <Setter Property="Content" Value="False"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsChecked" Value="{x:Null}">
+                                                            <Setter Property="Content" Value="Both"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </ToggleButton.Style>
+                                        </ToggleButton>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0" Visibility="{Binding ElementName=MainList, Path=DataContext.SelectedDBs, TargetNullValue=Hidden}" DataContext="{Binding ElementName=MainList, Path=DataContext}">
+                            <TextBlock Text="Showing: " Style="{StaticResource Normal}"/>
+                            <TextBlock x:Name="CountBlock" Text="{Binding FilteredCollection.Count, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Normal}" />
+                            <TextBlock Text="/" Style="{StaticResource Normal}"/>
+                            <TextBlock Text="{Binding SourceCollection.Count, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Normal}" />
+                            <!--<TextBlock Text="Has art: " Style="{StaticResource Normal}" Margin="20,0,0,0"/>
+                            <TextBlock Text="{Binding HasArtCount, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Normal}" />-->
+                        </StackPanel>
+
+                    </StackPanel>
+                </Grid>
+            </Border>
+            <Border x:Name="CollectionBorder"
+					Grid.Row="1"
+                    VerticalAlignment="Stretch"
+					Style="{StaticResource CellStyle}">
+                <StackPanel x:Name ="CollectionStackPanel" Orientation="Vertical">
+                    <TextBlock Text="Collections" Style="{StaticResource Heading0}"/>
+                    <ListView  x:Name="CollectionList"   
+							   ItemsSource="{Binding CollectionList}"
+							   Background="Transparent"
+							   BorderBrush="Transparent"
+                               SelectedItem="{Binding ElementName=Main_Window, Path=DataContext.SelectedCollection, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel x:Name="CollectionStackPanel" Orientation="Vertical" MouseUp="CollectionStackPanel_MouseUp" Drop="CollectionStackPanel_Drop" AllowDrop="True">
+                                    <StackPanel.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Command="local:CustomCommands.RemoveCollection"
+                                  Visibility="{Binding Path=IsEnabled,
+                            	  RelativeSource={RelativeSource Self},
+                                  Mode=OneWay,
+								  Converter={StaticResource booleanToVisibilityConverter}}"/>
+                                        </ContextMenu>
+                                    </StackPanel.ContextMenu>
+                                </StackPanel>
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <TextBox x:Name="CollectionTextBlock" MouseUp="CollectionStackPanel_MouseUp" Text="{Binding Title, Mode=TwoWay}" SpellCheck.IsEnabled="True" Style="{StaticResource NormalBox}"/>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                    <StackPanel.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Command="local:CustomCommands.AddCollection"/>
+                        </ContextMenu>
+                    </StackPanel.ContextMenu>
+
+                </StackPanel>
+
+            </Border>
+
+            <Border x:Name="CurrentItemBorder"
+					Grid.Row="2"
+                    VerticalAlignment="Stretch"
+					Style="{StaticResource CellStyle}">
+
+                <DockPanel x:Name="CurrentItemPanel" Visibility="{Binding ElementName=Main_Window, Path=DataContext.SelectedDBs.Count, Converter={StaticResource intToVisibilityConverter}}" >
+                    <TextBlock x:Name="CurrentItemTextBlock" DataContext="{Binding SelectedDB}" Text="{Binding Title}" Style="{StaticResource Heading0}" DockPanel.Dock="Top"/>
+                    <ScrollViewer x:Name="CurrentItemScrollViewer"
+                                  ScrollViewer.CanContentScroll="True"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                  ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                                  VerticalAlignment="Stretch"
+                                  HorizontalAlignment="Stretch"
+                                  DockPanel.Dock="Top"
+                                  Content="{Binding SelectedDB}">
+                        <ContentControl.Resources>
+
+                            <DataTemplate DataType="{x:Type local:Game}">
+                                <DockPanel>
+
+                                    <StackPanel x:Name="ID_Stackpanel" Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                                        <TextBlock Text="ID: " Style="{StaticResource Heading1}" />
+                                        <TextBlock Text="{Binding ID}" Style="{StaticResource Normal}" />
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="Platform_Stackpanel" Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                                        <TextBlock Text="Platform: " Style="{StaticResource Heading1}"/>
+                                        <TextBlock Text="{Binding Platform}" Style="{StaticResource Normal}" />
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="Date_Stackpanel" Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                                        <TextBlock Text="Date: " Style="{StaticResource Heading1}" />
+                                        <TextBlock Text="{Binding Date,  StringFormat=yyyy}" Style="{StaticResource Normal}" />
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="Region_Stackpanel" Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                                        <TextBlock Text="Regions: " Style="{StaticResource Heading1}" />
+                                        <TextBlock Text="{Binding Regions}" Style="{StaticResource Normal}" />
+                                    </StackPanel>
+
+                                    <!--<StackPanel x:Name="Included_Stackpanel" Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                                        <TextBlock Text="Included: " Style="{StaticResource Heading1}" />
+                                        <TextBlock Text="{Binding Included}" Style="{StaticResource Normal}" />
+                                    </StackPanel>-->
+
+                                    <StackPanel x:Name="Genre_Stackpanel" Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                                        <TextBlock Text="Genre: " Style="{StaticResource Heading1}" />
+                                        <TextBlock Text="{Binding Genres}" Style="{StaticResource Normal}" />
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="Players_Stackpanel" Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                                        <TextBlock Text="Players: " Style="{StaticResource Heading1}" />
+                                        <TextBlock Text="{Binding Players}" Style="{StaticResource Normal}" />
+                                    </StackPanel>
+                                    <StackPanel x:Name="Beaten_Stackpanel" Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                                        <TextBlock Text="Beaten: " Style="{StaticResource Heading1}" />
+                                        <TextBlock Text="{Binding IsBeaten}" Style="{StaticResource Normal}" />
+                                    </StackPanel>
+                                    <StackPanel x:Name="Crap_Stackpanel" Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                                        <TextBlock Text="Crap: " Style="{StaticResource Heading1}" />
+                                        <TextBlock Text="{Binding IsCrap}" Style="{StaticResource Normal}" />
+                                    </StackPanel>
+                                    <StackPanel x:Name="IsGame_Stackpanel" Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                                        <TextBlock Text="Is game: " Style="{StaticResource Heading1}" />
+                                        <TextBlock Text="{Binding IsGame}" Style="{StaticResource Normal}" />
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="Overview_Stackpanel" Orientation="Vertical" DockPanel.Dock="Top" Margin="10,0,0,0">
+                                        <TextBlock Text="Overview: " Style="{StaticResource Heading1}" />
+
+                                        <TextBlock Text="{Binding Overview}" Style="{StaticResource Normal}" FontSize="14" DockPanel.Dock="Top" Margin="10,0,0,0"/>
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="Releases_StackPanel" Orientation="Vertical" DockPanel.Dock="Top" Margin="0,10,0,0"  Panel.ZIndex="1">
+                                        <TextBlock Text="Releases" Style="{StaticResource Heading1}" Margin="10,0,0,0"/>
+                                        <ListBox x:Name="GameReleaseListBox" 
+                                                 Background="Transparent"
+                                                 BorderBrush="Transparent"
+                                                 ItemsSource="{Binding Releases}"
+                                                 ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                                                 Panel.ZIndex="1">
+                                            <ListBox.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Command="local:CustomCommands.MarkAsPreferred"
+                                                          Visibility="{Binding Path=IsEnabled,
+                                                    RelativeSource={RelativeSource Self},
+                                                    Mode=OneWay,
+                                                    Converter={StaticResource booleanToVisibilityConverter}}"/>
+                                                    <MenuItem Command="local:CustomCommands.MarkNotPreferred"
+                                                          Visibility="{Binding Path=IsEnabled,
+                                                    RelativeSource={RelativeSource Self},
+                                                    Mode=OneWay,
+                                        Converter={StaticResource booleanToVisibilityConverter}}"/>
+                                                </ContextMenu>
+                                            </ListBox.ContextMenu>
+
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal" Panel.ZIndex="1">
+                                                        <Canvas Width="17"  Panel.ZIndex="1">
+                                                            <Ellipse Fill ="White" Height ="6" Width="6" Canvas.Right="4" Canvas.Top="7" Panel.ZIndex="1"
+                                                             Visibility="{Binding Path=Preferred, Mode=OneWay, Converter={StaticResource booleanToVisibilityConverter}}"/>
+                                                        </Canvas>
+                                                        <TextBlock Text="{Binding TitleAndRegion}" Style="{StaticResource IncludedTextBlockStyle1}"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+                                        </ListBox>
+                                    </StackPanel>
+                                </DockPanel>
+                            </DataTemplate>
+
+                            <DataTemplate DataType="{x:Type local:Platform}">
+                                <DockPanel>
+
+                                    <StackPanel x:Name="Media_Stackpanel" Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                                        <TextBlock Text="Media: " Style="{StaticResource Heading1}" />
+                                        <TextBlock Text="{Binding Media}" Style="{StaticResource Normal}" />
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="Controllers_Stackpanel" Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                                        <TextBlock Text="Controllers: " Style="{StaticResource Heading1}" />
+                                        <TextBlock Text="{Binding Controllers}" Style="{StaticResource Normal}" />
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="Overview_Stackpanel" Orientation="Vertical" DockPanel.Dock="Top" Margin="10,0,0,0">
+                                        <TextBlock Text="Overview: " Style="{StaticResource Heading1}" />
+                                        <TextBlock Text="{Binding Overview}"
+                                                   Style="{StaticResource Normal}"
+                                                   FontSize="14"
+                                                   Margin="10,0,0,0"/>
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="Releases_Stackpanel" Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                                        <TextBlock Text="Releases: " Style="{StaticResource Heading1}" />
+                                        <TextBlock Text="{Binding Releases.Count}"
+                                                   Style="{StaticResource Normal}"
+                                                   FontSize="14"
+                                                   Margin="10,0,0,0"/>
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="ReleasesIncluded_Stackpanel" Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                                        <TextBlock Text="Playable: " Style="{StaticResource Heading1}" />
+                                        <TextBlock Text="{Binding ReleasesIncluded}"
+                                                   Style="{StaticResource Normal}"
+                                                   FontSize="14"
+                                                   Margin="10,0,0,0"/>
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="ReleasesWithArt_Stackpanel" Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                                        <TextBlock Text="With art: " Style="{StaticResource Heading1}" />
+                                        <TextBlock Text="{Binding ReleasesWithArt}"
+                                                   Style="{StaticResource Normal}"
+                                                   FontSize="14"
+                                                   Margin="10,0,0,0"/>
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="Matched_Stackpanel" Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                                        <TextBlock Text="Matched: " Style="{StaticResource Heading1}" />
+                                        <TextBlock Text="{Binding MatchedToSomething}"
+                                                   Style="{StaticResource Normal}"
+                                                   FontSize="14"
+                                                   Margin="10,0,0,0"/>
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="Emulators_StackPanel" Orientation="Vertical" DockPanel.Dock="Top" Margin="0,10,0,0" >
+                                        <TextBlock Text="Emulators" Style="{StaticResource Heading1}" Margin="10,0,0,0"/>
+                                        <ListBox x:Name="PlatformEmulatorListBox" 
+                                                 Background="Transparent"
+                                                 BorderBrush="Transparent"
+                                                 ItemsSource="{Binding Emulators}"
+                                                 ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal" >
+                                                        <Canvas Width="17" >
+                                                            <Ellipse Fill ="White" Height ="6" Width="6" Canvas.Right="4" Canvas.Top="7">
+                                                                <Ellipse.Visibility>
+                                                                    <MultiBinding Converter="{StaticResource PreferredMultiValueConverter}">
+                                                                        <Binding Path="ID" />
+                                                                        <Binding ElementName="CurrentItemScrollViewer" Path="Content.PreferredEmulator_ID" />
+                                                                    </MultiBinding>
+                                                                </Ellipse.Visibility>
+                                                            </Ellipse>
+                                                        </Canvas>
+                                                        <TextBlock Text="{Binding Title}" Style="{StaticResource IncludedTextBlockStyle1}">
+                                                            <TextBlock.ContextMenu>
+                                                                <ContextMenu>
+                                                                    <MenuItem Command="local:CustomCommands.MarkEmulatorPreferred"
+                                                                          Visibility="{Binding Path=IsEnabled,
+                                                                    RelativeSource={RelativeSource Self},
+                                                                    Mode=OneWay,
+                                                                    Converter={StaticResource booleanToVisibilityConverter}}"/>
+                                                                </ContextMenu>
+                                                            </TextBlock.ContextMenu>
+                                                        </TextBlock>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+                                        </ListBox>
+
+                                    </StackPanel>
+
+                                </DockPanel>
+
+                            </DataTemplate>
+
+                            <DataTemplate DataType="{x:Type local:Release}">
+
+                                <DockPanel>
+                                    <StackPanel x:Name="Version_Stackpanel" Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                                        <TextBlock Text="Version: "
+										   Style="{StaticResource Heading1}"
+										   DockPanel.Dock="Top"/>
+                                        <TextBlock Text="{Binding Version}"
+										   Style="{StaticResource Normal}"
+										   DockPanel.Dock="Top"/>
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="Region_Stackpanel" Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                                        <TextBlock Text="Region: " Style="{StaticResource Heading1}"/>
+                                        <TextBlock Text="{Binding Region.Title}" 
+											   Style="{StaticResource Normal}"
+											   DockPanel.Dock="Top"/>
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="CRC32_Stackpanel" Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                                        <TextBlock Text="CRC32: "
+										   Style="{StaticResource Heading1}"
+										   DockPanel.Dock="Top"/>
+                                        <TextBlock Text="{Binding CRC32}"
+										   Style="{StaticResource Normal}"
+										   DockPanel.Dock="Top"/>
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="SHA1_Stackpanel" Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                                        <TextBlock Text="SHA1: "
+										   Style="{StaticResource Heading1}"
+										   DockPanel.Dock="Top"/>
+                                        <TextBlock Text="{Binding SHA1}"
+										   Style="{StaticResource Normal}"
+										   DockPanel.Dock="Top"/>
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="ID_Stackpanel" Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                                        <TextBlock Text="ID: "
+										   Style="{StaticResource Heading1}"
+										   DockPanel.Dock="Top"/>
+                                        <TextBlock Text="{Binding ID}"
+										   Style="{StaticResource Normal}"
+										   DockPanel.Dock="Top"/>
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="GDBID_Stackpanel" Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                                        <TextBlock Text="GDB ID: "
+										   Style="{StaticResource Heading1}"
+										   DockPanel.Dock="Top"/>
+                                        <TextBlock Text="{Binding ID_GamesDB}"
+										   Style="{StaticResource Normal}"
+										   DockPanel.Dock="Top"/>
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="File_Stackpanel" Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                                        <TextBlock Text="File: "
+										   Style="{StaticResource Heading1}"
+										   DockPanel.Dock="Top"/>
+                                        <TextBlock Text="{Binding File}"
+										   Style="{StaticResource Normal}"
+										   DockPanel.Dock="Top"/>
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="Platform_Stackpanel" Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                                        <TextBlock Text="Platform: "
+										   Style="{StaticResource Heading1}"
+										   DockPanel.Dock="Top"/>
+                                        <TextBlock Text="{Binding Platform.Title}"
+										   Style="{StaticResource Normal}"
+										   DockPanel.Dock="Top"/>
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="Overview_Stackpanel" Orientation="Vertical" DockPanel.Dock="Top" Margin="10,0,0,0">
+                                        <TextBlock Text="Overview: " Style="{StaticResource Heading1}" />
+
+                                        <TextBlock Text="{Binding Overview}" Style="{StaticResource Normal}" FontSize="14" DockPanel.Dock="Top" Margin="10,0,0,0"/>
+                                    </StackPanel>
+
+                                </DockPanel>
+
+                            </DataTemplate>
+
+                            <DataTemplate DataType="{x:Type local:Emulator}">
+                                <DockPanel>
+                                    <!--<TextBlock Text="{Binding Title}" Style="{StaticResource Heading0}" DockPanel.Dock="Top"/>-->
+
+                                    <StackPanel x:Name="Website_Stackpanel" Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                                        <TextBlock Text="Website: " Style="{StaticResource Heading1}" />
+                                        <TextBlock Text="{Binding Website}" Style="{StaticResource Normal}" />
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="Included_Stackpanel" Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                                        <TextBlock Text="Included: " Style="{StaticResource Heading1}" />
+                                        <TextBlock Text="{Binding Included}" Style="{StaticResource Normal}" />
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="Platforms_StackPanel" Orientation="Vertical" DockPanel.Dock="Top" Margin="0,10,0,0" >
+                                        <TextBlock Text="Platforms" Style="{StaticResource Heading1}" Margin="10,0,0,0"/>
+                                        <ListBox x:Name="EmulatorPlatformListBox" 
+											 Background="Transparent"
+											 BorderBrush="Transparent"
+											 ItemsSource="{Binding Platforms1}"
+                                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal" >
+                                                        <Canvas Width="17" >
+                                                            <Ellipse Fill ="White" Height ="6" Width="6" Canvas.Right="4" Canvas.Top="7">
+                                                                <Ellipse.Visibility>
+                                                                    <MultiBinding Converter="{StaticResource PreferredMultiValueConverter}">
+                                                                        <Binding Path="PreferredEmulator_ID" />
+                                                                        <Binding ElementName="CurrentItemScrollViewer" Path="Content.ID" />
+                                                                    </MultiBinding>
+                                                                </Ellipse.Visibility>
+                                                            </Ellipse>
+                                                        </Canvas>
+                                                        <TextBlock Text="{Binding Title}" Style="{StaticResource IncludedTextBlockStyle1}">
+                                                            <TextBlock.ContextMenu>
+                                                                <ContextMenu>
+                                                                    <MenuItem Command="local:CustomCommands.MarkEmulatorPreferred"
+                                                                          Visibility="{Binding Path=IsEnabled,
+                                                                    RelativeSource={RelativeSource Self},
+                                                                    Mode=OneWay,
+                                                                    Converter={StaticResource booleanToVisibilityConverter}}"/>
+                                                                </ContextMenu>
+                                                            </TextBlock.ContextMenu>
+                                                        </TextBlock>
+
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+                                        </ListBox>
+                                    </StackPanel>
+                                </DockPanel>
+                            </DataTemplate>
+                        </ContentControl.Resources>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+
+            <GridSplitter Grid.Row="1" VerticalAlignment="Top" Style="{StaticResource HorizontalGridSplitterStyle1}" />
+            <GridSplitter Grid.Row="2" VerticalAlignment="Top" Style="{StaticResource HorizontalGridSplitterStyle1}" />
+
+        </Grid>
+
+        <Border x:Name="MainBorder" 
+				Grid.Column="1"
+				Grid.Row="1"
+				Style="{StaticResource CellStyle}">
+
+            <local:BindableSelectionListView x:Name="MainList"
+											 ScrollViewer.HorizontalScrollBarVisibility="Disabled"									 
+											 ItemsSource="{Binding Path = FilteredCollection, UpdateSourceTrigger=PropertyChanged}"
+											 IsTextSearchEnabled="True"
+											 TextSearch.TextPath="Title"											
+											 Background="Transparent"
+											 BorderBrush="Transparent"								 
+											 PreviewMouseWheel="MainList_MouseWheel"
+											 Loaded="MainList_Loaded"
+											 MouseLeftButtonDown="MainList_MouseLeftButtonDown"
+                                             SelectedItem="{Binding ElementName=Main_Window, Path=DataContext.SelectedDB, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+											 BoundSelectedItems="{Binding ElementName=Main_Window, Path=DataContext.SelectedDBs, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" >
+
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Command="local:CustomCommands.GetAllArt"
+                                  Visibility="{Binding Path=IsEnabled,
+                            	  RelativeSource={RelativeSource Self},
+                                  Mode=OneWay,
+								  Converter={StaticResource booleanToVisibilityConverter}}"/>
+
+                        <MenuItem Command="local:CustomCommands.GetAllData"
+                                  Visibility="{Binding Path=IsEnabled,
+                            	  RelativeSource={RelativeSource Self},
+                                  Mode=OneWay,
+								  Converter={StaticResource booleanToVisibilityConverter}}"/>
+                    </ContextMenu>
+                </ListView.ContextMenu>
+
+                <ListView.Resources>
+                    <ContextMenu x:Key="HammerContextMenu">
+                        <MenuItem Command="local:CustomCommands.Play" 
+                                              Visibility="{Binding Path=IsEnabled,
+                                        RelativeSource={RelativeSource Self},
+                                        Mode=OneWay,
+                                        Converter={StaticResource booleanToVisibilityConverter}}"/>
+                        <MenuItem Command="local:CustomCommands.MarkAsCrap"
+                                              Visibility="{Binding Path=IsEnabled,
+                                        RelativeSource={RelativeSource Self},
+                                        Mode=OneWay,
+                                        Converter={StaticResource booleanToVisibilityConverter}}"/>
+                        <MenuItem Command="local:CustomCommands.MarkNotCrap"
+                                              Visibility="{Binding Path=IsEnabled,
+                                        RelativeSource={RelativeSource Self},
+                                        Mode=OneWay,
+                                        Converter={StaticResource booleanToVisibilityConverter}}"/>
+                        <MenuItem Command="local:CustomCommands.MarkAsBeaten"
+                                              Visibility="{Binding Path=IsEnabled,
+                                        RelativeSource={RelativeSource Self},
+                                        Mode=OneWay,
+                                        Converter={StaticResource booleanToVisibilityConverter}}"/>
+                        <MenuItem Command="local:CustomCommands.MarkNotBeaten"
+                                              Visibility="{Binding Path=IsEnabled,
+                                        RelativeSource={RelativeSource Self},
+                                        Mode=OneWay,
+                                        Converter={StaticResource booleanToVisibilityConverter}}"/>
+                        <MenuItem Command="local:CustomCommands.MarkAsGame"
+                                              Visibility="{Binding Path=IsEnabled,
+                                        RelativeSource={RelativeSource Self},
+                                        Mode=OneWay,
+                                        Converter={StaticResource booleanToVisibilityConverter}}"/>
+                        <MenuItem Command="local:CustomCommands.MarkNotGame"
+                                              Visibility="{Binding Path=IsEnabled,
+                                        RelativeSource={RelativeSource Self},
+                                        Mode=OneWay,
+                                        Converter={StaticResource booleanToVisibilityConverter}}"/>
+
+                        <MenuItem Command="local:CustomCommands.MarkAsPreferred"
+                                              Visibility="{Binding Path=IsEnabled,
+                                        RelativeSource={RelativeSource Self},
+                                        Mode=OneWay,
+                                        Converter={StaticResource booleanToVisibilityConverter}}"/>
+                        <MenuItem Command="local:CustomCommands.MarkNotPreferred"
+                                              Visibility="{Binding Path=IsEnabled,
+                                        RelativeSource={RelativeSource Self},
+                                        Mode=OneWay,
+                                        Converter={StaticResource booleanToVisibilityConverter}}"/>
+
+                        <MenuItem Command="local:CustomCommands.GetSelectedArt" 
+                                              Visibility="{Binding Path=IsEnabled,
+                                        RelativeSource={RelativeSource Self},
+                                        Mode=OneWay,
+                                        Converter={StaticResource booleanToVisibilityConverter}}"/>
+
+                        <MenuItem Command="local:CustomCommands.GetAllArt" 
+                                              Visibility="{Binding Path=IsEnabled,
+                                        RelativeSource={RelativeSource Self},
+                                        Mode=OneWay,
+                                        Converter={StaticResource booleanToVisibilityConverter}}"/>
+
+                        <MenuItem Command="local:CustomCommands.RemoveFromCollection" 
+                                              Visibility="{Binding Path=IsEnabled,
+                                        RelativeSource={RelativeSource Self},
+                                        Mode=OneWay,
+                                        Converter={StaticResource booleanToVisibilityConverter}}"/>
+                    </ContextMenu>
+
+                    <Style x:Key="TextBlockStyle1" TargetType="TextBlock" BasedOn="{StaticResource Heading1}">
+                        <Setter Property="HorizontalAlignment" Value="Stretch" />
+                        <Setter Property="DockPanel.Dock" Value="Bottom" />
+                        <Setter Property="TextAlignment" Value="Center" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding DataContext.IsBeaten, RelativeSource={RelativeSource AncestorType=StackPanel}}" Value="True">
+                                <Setter Property="Foreground" Value="Cyan" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+
+                    <Style x:Key="ImageStyle1" TargetType="Image">
+                        <Setter Property="MaxHeight" Value="285" />
+                        <Setter Property="MaxWidth" Value="285" />
+                        <Setter Property="DockPanel.Dock" Value="Top"/>
+                        <Setter Property="RenderOptions.BitmapScalingMode" Value="Linear"/>
+                        <Setter Property="Effect">
+                            <Setter.Value>
+                                <DropShadowEffect Color="Black" Direction="-50" ShadowDepth="15"/>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding DataContext.Included, RelativeSource={RelativeSource AncestorType=StackPanel}}" Value="False">
+                                <Setter Property="Opacity" Value=".2" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+
+                    <Style x:Key="ImageBorderStyle1" TargetType="Border">
+                        <Setter Property="BorderBrush" Value="Black" />
+                        <Setter Property="BorderThickness" Value="1" />
+                        <Setter Property="HorizontalAlignment" Value="Center" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="DockPanel.Dock" Value="Top" />
+                        <Setter Property="Margin" Value="20" />
+                    </Style>
+
+                    <Style x:Key="ImageBorderStyle2" TargetType="Border">
+                        <Setter Property="BorderThickness" Value="0" />
+                        <Setter Property="HorizontalAlignment" Value="Center" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="DockPanel.Dock" Value="Top" />
+                        <Setter Property="Margin" Value="20" />
+                    </Style>
+
+                    <DataTemplate DataType="{x:Type local:Game}" >
+                        <StackPanel x:Name="GameStackPanel" HorizontalAlignment="Center" VerticalAlignment="Top" Orientation="Vertical">
+                            <Border x:Name="GameImageBorder" Style="{StaticResource ImageBorderStyle1}">
+                                <Image Source="{Binding MainDisplay,
+								   Converter={StaticResource ImageConverter},
+								   FallbackValue={StaticResource ArtNotFoundImage},
+								   TargetNullValue={StaticResource ArtNotFoundImage}}"
+								   Style="{StaticResource ImageStyle1}" />
+                            </Border>
+
+                            <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Top" >
+                                <TextBlock Style="{StaticResource TextBlockStyle1}" Text="{Binding Title}"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <TextBlock Style="{StaticResource TextBlockStyle1}" Text ="{Binding Platform}"/>
+                                    <TextBlock Style="{StaticResource TextBlockStyle1}">
+                                        <TextBlock.Text>
+                                            <Binding Path="Date" StringFormat=", yyyy"/>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <StackPanel.InputBindings>
+                                <MouseBinding Gesture="LeftDoubleClick" Command="local:CustomCommands.Play"/>
+                            </StackPanel.InputBindings>
+                        </StackPanel>
+                    </DataTemplate>
+
+                    <DataTemplate DataType="{x:Type local:Platform}">
+                        <StackPanel x:Name="PlatformStackPanel" AllowDrop="True" Drop="MainListPlatform_Drop">
+                            <Border Style="{StaticResource ImageBorderStyle2}">
+                                <Image Source="{Binding ConsoleFile, Mode=OneWay,
+								   Converter={StaticResource ImageConverter},
+								   FallbackValue={StaticResource ArtNotFoundImage},
+								   TargetNullValue={StaticResource ArtNotFoundImage}}"
+								   Style="{StaticResource ImageStyle1}">
+                                </Image>
+                            </Border>
+
+                            <TextBlock Text="{Binding Title}" Style="{StaticResource TextBlockStyle1}" Margin="0,0,0,20"/>
+
+                        </StackPanel>
+
+                    </DataTemplate>
+
+                    <DataTemplate DataType="{x:Type local:Release}" >
+                        <StackPanel x:Name="ReleaseStackPanel" HorizontalAlignment="Center" VerticalAlignment="Top">
+                            <Border x:Name="ReleaseImageBorder" Style="{StaticResource ImageBorderStyle1}">
+                                <Image Source="{Binding BoxFrontFile,
+								   Converter={StaticResource ImageConverter},
+								   FallbackValue={StaticResource ArtNotFoundImage},
+								   TargetNullValue={StaticResource ArtNotFoundImage}}"
+								   Style="{StaticResource ImageStyle1}" />
+                            </Border>
+
+                            <TextBlock Style="{StaticResource TextBlockStyle1}"  Margin="0,0,0,20" MaxWidth="{Binding ElementName=ReleaseImageBorder, Path=ActualWidth}">
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}{0} - {1}">
+                                        <Binding Path="Title"/>
+                                        <Binding Path="Platform.Title"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+
+                            </TextBlock>
+
+                        </StackPanel>
+                    </DataTemplate>
+
+                    <DataTemplate DataType="{x:Type local:Emulator}" >
+                        <StackPanel x:Name="ReleaseStackPanel" HorizontalAlignment="Center" VerticalAlignment="Top">
+                            <Image Source="{Binding ImageFile,
+								   Converter={StaticResource ImageConverter},
+								   FallbackValue={StaticResource ArtNotFoundImage},
+								   TargetNullValue={StaticResource ArtNotFoundImage}}"
+								   Style="{StaticResource ImageStyle1}" />
+
+                            <TextBlock Style="{StaticResource TextBlockStyle1}" Margin="0,20,0,20" >
+                                <TextBlock.Text>
+                                    <Binding Path="Title"/>
+                                </TextBlock.Text>
+
+                            </TextBlock>
+
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.Resources>
+
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{StaticResource Highlight_Brush}" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListView.ItemContainerStyle>
+
+                <ListView.LayoutTransform>
+                    <ScaleTransform x:Name ="ListViewScale"/>
+                </ListView.LayoutTransform>
+
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <local:VirtualizingWrapPanel VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.ScrollUnit="Pixel" CanHorizontallyScroll="False" ContextMenu="{StaticResource HammerContextMenu}" MouseMove="MainListWrapPanel_MouseMove"/>
+                        
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+
+
+                <ListView.InputBindings>
+                    <KeyBinding Key="Delete" Command="local:CustomCommands.RemoveFromCollection"/>
+                </ListView.InputBindings>
+            </local:BindableSelectionListView>
+        </Border>
+
+        <Border x:Name="ReporterBorder" Grid.Row="2" Grid.Column = "1" Style="{StaticResource CellStyle}" Height="50">
+            <TextBlock x:Name="StatusBlock" VerticalAlignment="Bottom" TextWrapping="Wrap" Text="{Binding Path=(local:Reporter.NewsFeed)}" Style="{StaticResource Normal}" />
+        </Border>
+
+        <GridSplitter Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left"
+					  Style="{StaticResource VerticalGridSplitterStyle1}" />
+        <GridSplitter Grid.Column="1"  Grid.Row="2" VerticalAlignment="Top" Style="{StaticResource HorizontalGridSplitterStyle1}"/>
+
+    </Grid>
+</Window>

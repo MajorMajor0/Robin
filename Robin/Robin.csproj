@@ -1,0 +1,408 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{44603014-394A-461F-9001-276A9F91C8AF}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Robin</RootNamespace>
+    <AssemblyName>Robin</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>E:\Robin_debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>E:\Robin_debug\</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Robin.App</StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Classes\AutoFilter.cs" />
+    <Compile Include="Classes\Constants.cs" />
+    <Compile Include="Classes\Handy.cs" />
+    <Compile Include="Classes\ResizeImage.cs" />
+    <Compile Include="Collection.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\BindableSelectionListView.cs" />
+    <Compile Include="Databases\GoodTools.cs" />
+    <Compile Include="Databases\Launchbox.cs" />
+    <Compile Include="Databases\Validate.cs" />
+    <Compile Include="Databases\Datomatic.cs" />
+    <Compile Include="Databases\DBTimer.cs" />
+    <Compile Include="Databases\GamesDB.cs" />
+    <Compile Include="Databases\GiantBomb.cs" />
+    <Compile Include="Classes\SNES.cs" />
+    <Compile Include="Classes\Reporter.cs" />
+    <Compile Include="Controls\BindableSelectionListBox.cs" />
+    <Compile Include="Databases\MAME.cs" />
+    <Compile Include="Databases\OpenVGDB.cs" />
+    <Compile Include="DataEntities.Extensions\Collection.Extensions.cs" />
+    <Compile Include="DataEntities.Extensions\Emulator.Extensions.cs" />
+    <Compile Include="DataEntities.Extensions\GDBRelease.Extensions.cs" />
+    <Compile Include="DataEntities.Extensions\GBRelease.Extensions.cs" />
+    <Compile Include="DataEntities.Extensions\Game.Extensions.cs" />
+    <Compile Include="DataEntities.Extensions\Match.Extensions.cs" />
+    <Compile Include="DataEntities.Extensions\OVGRelease.Extensions.cs" />
+    <Compile Include="DataEntities.Extensions\Platform.Extensions.cs" />
+    <Compile Include="DataEntities.Extensions\Release.Extensions.cs" />
+    <Compile Include="DataEntities.Extensions\RobinDataEntities.Extensions.cs" />
+    <Compile Include="DataEntities.Extensions\Rom.Extensions.cs" />
+    <Compile Include="DataEntities.Extensions\VGDBRELEAS.Extensions.cs" />
+    <Compile Include="Emulator.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Game.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GBGame.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GBPlatform.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GBRelease.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GDBPlatform.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GDBRelease.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GoodRom.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Language.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="LBGame.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataEntities.Extensions\LBGame.Extensions.cs" />
+    <Compile Include="LBImage.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="LBPlatform.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MainWindowViewModel.cs" />
+    <Compile Include="Match.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="OpenVGDBModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>OpenVGDBModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="OpenVGDBModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>OpenVGDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="OpenVGDBModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>OpenVGDBModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="DatabaseWindowViewModel.cs" />
+    <Compile Include="Controls\VirtualizingWrapPanel.cs" />
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="Classes\Compare.cs" />
+    <Compile Include="Controls\Converters.cs" />
+    <Compile Include="Classes\Extensions.cs" />
+    <Compile Include="Classes\FileLocation.cs" />
+    <Compile Include="Classes\DB.cs" />
+    <Compile Include="DatabaseWindow.xaml.cs">
+      <DependentUpon>DatabaseWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Classes\LevenshteinDistance.cs" />
+    <Compile Include="Classes\DateTimeRoutines.cs" />
+    <Compile Include="OVGRelease.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Platform.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Region.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Release.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RobinDataModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RobinDataModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RobinDataModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RobinDataModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RobinDataModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Rom.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Settings.cs" />
+    <Compile Include="VGDBPLATFORM.cs">
+      <DependentUpon>OpenVGDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="VGDBREGION.cs">
+      <DependentUpon>OpenVGDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="VGDBRELEAS.cs">
+      <DependentUpon>OpenVGDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="VGDBROM.cs">
+      <DependentUpon>OpenVGDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataEntities.Extensions\VGDBROM.Extensions.cs" />
+    <Page Include="DatabaseWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EntityDeploy Include="OpenVGDBModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>OpenVGDBModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="Images\SNES-CART" />
+    <None Include="OpenVGDBModel.edmx.diagram">
+      <DependentUpon>OpenVGDBModel.edmx</DependentUpon>
+    </None>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+    <EntityDeploy Include="RobinDataModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>RobinDataModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="RobinDataModel.edmx.diagram">
+      <DependentUpon>RobinDataModel.edmx</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\art_not_found.png" />
+    <Resource Include="Images\art_not_found_nes.png" />
+    <Resource Include="Images\bee_ace.png" />
+    <Resource Include="Images\bullet_blue.png" />
+    <Resource Include="Images\bullet_green.png" />
+    <Resource Include="Images\bullet_red.png" />
+    <Resource Include="Images\OldPogue.jpg" />
+    <Resource Include="Images\snow.gif" />
+    <Resource Include="Images\white_noise_big.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.0.0\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.0.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.SQLite, Version=1.0.103.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Core.1.0.103\lib\net46\System.Data.SQLite.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data.SQLite.EF6, Version=1.0.103.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.EF6.1.0.103\lib\net46\System.Data.SQLite.EF6.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data.SQLite.Linq, Version=1.0.103.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Linq.1.0.103\lib\net46\System.Data.SQLite.Linq.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Windows" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="RobinDataModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>RobinDataModel.edmx</DependentUpon>
+      <LastGenOutput>RobinDataModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="RobinDataModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>RobinDataModel.edmx</DependentUpon>
+      <LastGenOutput>RobinDataModel.cs</LastGenOutput>
+    </Content>
+    <Resource Include="Images\Robin.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\Search.jpg" />
+    <Resource Include="Images\SearchIcon.jpg" />
+    <Resource Include="Images\SearchIcon.png" />
+    <Resource Include="Images\SNES-CART.jpg" />
+    <Resource Include="Images\SNES-CART.png" />
+    <Resource Include="Images\Snow.png" />
+    <Resource Include="Images\Snow1.png" />
+    <Resource Include="Images\Snow2.png" />
+    <Resource Include="Images\TestPattern.gif" />
+    <Resource Include="Images\TestPattern.png" />
+    <Content Include="OpenVGDBModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>OpenVGDBModel.edmx</DependentUpon>
+      <LastGenOutput>OpenVGDBModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="OpenVGDBModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>OpenVGDBModel.edmx</DependentUpon>
+      <LastGenOutput>OpenVGDBModel.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <Import Project="..\packages\System.Data.SQLite.Core.1.0.103\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.103\build\net46\System.Data.SQLite.Core.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\System.Data.SQLite.Core.1.0.103\build\net46\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Data.SQLite.Core.1.0.103\build\net46\System.Data.SQLite.Core.targets'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

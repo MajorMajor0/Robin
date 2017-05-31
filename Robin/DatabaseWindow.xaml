@@ -1,0 +1,380 @@
+﻿<!--This file is part of Robin.
+
+Robin is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published
+version 3 of the License, or (at your option) any later version.
+
+Robin is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Robin.  If not, see http://www.gnu.org/licenses/.-->  
+    
+    <Window x:Class="Robin.DatabaseWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:local="clr-namespace:Robin"
+		Title="Databases"
+		Height="700"
+		Width="1200"
+		Background="{StaticResource BackDrop_Brush}"
+		BorderBrush="{StaticResource BackDrop_Brush}"
+        Icon="{StaticResource RobinIcon}">
+    <Window.Resources>
+        <local:IntToVisibilityConverter x:Key="intToVisibilityConverter" />
+        <Style TargetType="DataGridColumnHeader" x:Key="MyHeaderStyle">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="Blue"/>
+        </Style>
+
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="270" />
+            <ColumnDefinition Width="2*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="110 "/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="160
+						   "/>
+        </Grid.RowDefinitions>
+        <Border x:Name="CommparisonResultsBorder" Style="{StaticResource CellStyle}">
+            <StackPanel Background="Transparent">
+                <TextBlock Text="Comparison Results" Style="{StaticResource Heading0}"/>
+
+                <ListBox  x:Name="ComparisonResultsList" Background="Transparent"
+									 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+									 ItemsSource="{Binding Path=ComparisonResults}"
+									 IsTextSearchEnabled="True"
+									 TextSearch.TextPath="Title"
+									 MouseUp="ComparisonResultsList_MouseUp"
+									 SelectedItem="{Binding SelectedComparisonResult, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Style="{StaticResource Heading2}" Text="{Binding Title}"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
+
+        </Border>
+
+        <Border x:Name="PlatformListBorder" Grid.Row ="1" Style="{StaticResource CellStyle}">
+            <!--<StackPanel>-->
+            <DockPanel>
+                <TextBlock Text="Platforms" Style="{StaticResource Heading0}" DockPanel.Dock="Top"/>
+                <local:BindableSelectionListBox x:Name="PlatformList"
+									 Grid.Row="1"
+									 ScrollViewer.CanContentScroll="True"
+									 ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+												ScrollViewer.VerticalScrollBarVisibility="Hidden"
+									 ItemsSource="{Binding PlatformsList}"
+												DockPanel.Dock="Top"
+									 IsTextSearchEnabled="True"
+									 TextSearch.TextPath="Title"
+									 MouseUp="PlatformList_MouseUp"
+									 Background="Transparent"
+									 BorderBrush="Transparent"
+									 SelectionMode="Extended"
+									 SelectedItem="{Binding SelectedPlatform, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+									 BoundSelectedItems="{Binding SelectedPlatforms, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+                    <ListBox.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="MenuItem1"/>
+                        </ContextMenu>
+                    </ListBox.ContextMenu>
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListBoxItem}">
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#FF4687A6" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.Resources>
+                        <Style x:Key="TestStyle" TargetType="TextBlock" BasedOn="{StaticResource Normal}">
+                            <Style.Triggers>
+                                <!--<DataTrigger Binding ="{Binding Path=HasGames, RelativeSource={RelativeSource Self}}" Value="True">-->
+                                <DataTrigger Binding ="{Binding Path=Preferred}" Value="True">
+                                    <Setter Property="Foreground" Value="Yellow"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListBox.Resources>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Style="{StaticResource TestStyle}" Text="{Binding Title}">
+                                <TextBlock.ContextMenu>
+                                    <ContextMenu x:Name="RomContextMenu">
+                                        <MenuItem Header="Menu item 1" />
+                                    </ContextMenu>
+                                </TextBlock.ContextMenu>
+                            </TextBlock>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </local:BindableSelectionListBox>
+            </DockPanel>
+
+            <!--</StackPanel>-->
+        </Border>
+
+        <Border x:Name="SelectedPlatformBorder" Grid.Row ="2" Style="{StaticResource CellStyle}" >
+            <StackPanel Orientation="Vertical"
+						DataContext="{Binding SelectedItem, ElementName=PlatformList}"
+						Visibility="{Binding SelectedItems.Count, ElementName=MainList, Converter={StaticResource intToVisibilityConverter}}">
+                <TextBlock Text="{Binding Title}" Style="{StaticResource Heading0}"/>
+
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                    <TextBlock Text="Total Releases: "
+										   Style="{StaticResource Heading1}"
+										   DockPanel.Dock="Top"/>
+                    <TextBlock Text="{Binding Releases.Count}"
+										   Style="{StaticResource Normal}"
+										   DockPanel.Dock="Top"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                    <TextBlock Text="Matched to GDB: "
+										   Style="{StaticResource Heading1}"
+										   DockPanel.Dock="Top"/>
+                    <TextBlock Text="{Binding MatchedToGamesDB}"
+										   Style="{StaticResource Normal}"
+										   DockPanel.Dock="Top"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                    <TextBlock Text="Matched to GB: "
+										   Style="{StaticResource Heading1}"
+										   DockPanel.Dock="Top"/>
+                    <TextBlock Text="{Binding MatchedToGiantBomb}"
+										   Style="{StaticResource Normal}"
+										   DockPanel.Dock="Top"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                    <TextBlock Text="Matched to OVG: "
+										   Style="{StaticResource Heading1}"
+										   DockPanel.Dock="Top"/>
+                    <TextBlock Text="{Binding MatchedToOpenVG}"
+										   Style="{StaticResource Normal}"
+										   DockPanel.Dock="Top"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                    <TextBlock Text="Matched to LB: "
+										   Style="{StaticResource Heading1}"
+										   DockPanel.Dock="Top"/>
+                    <TextBlock Text="{Binding MatchedToLaunchBox}"
+										   Style="{StaticResource Normal}"
+										   DockPanel.Dock="Top"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                    <TextBlock Text="Date cached: "
+										   Style="{StaticResource Heading1}"
+										   DockPanel.Dock="Top"/>
+                    <TextBlock Text="{Binding CacheDate}"
+										   Style="{StaticResource Normal}"
+										   DockPanel.Dock="Top"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+                    <TextBlock Text="Matched to Something: "
+										   Style="{StaticResource Heading1}"
+										   DockPanel.Dock="Top"/>
+                    <TextBlock Text="{Binding MatchedToSomething}"
+										   Style="{StaticResource Normal}"
+										   DockPanel.Dock="Top"/>
+                </StackPanel>
+
+
+            </StackPanel>
+
+        </Border>
+
+        <Border x:Name="DataGridBorder" Grid.Column="1" Grid.Row ="0" Grid.RowSpan="2" Style="{StaticResource CellStyle}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <ContentControl Name="DatabaseGrid"
+						  Background="Transparent"
+						  BorderBrush="Transparent"
+						  Content="{Binding}">
+                    <ContentControl.LayoutTransform>
+                        <ScaleTransform x:Name ="DataGridScale"
+												CenterX="1"
+												CenterY="1"/>
+                    </ContentControl.LayoutTransform>
+                    <ContentControl.Resources>
+                        <Style x:Key="DataGridStyle1" TargetType="DataGrid">
+                            <Setter Property="Margin" Value="5"/>
+                            <Setter Property="AutoGenerateColumns" Value="true"/>
+
+                            <Setter Property="SelectionMode" Value="Extended"/>
+                            <Setter Property="SelectionUnit" Value="Cell"/>
+
+                            <Setter Property="AlternatingRowBackground" Value="#A4BCFF"/>
+                            <Setter Property="FontSize" Value="15"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                        </Style>
+
+                        <Style TargetType="{x:Type DataGridColumnHeader}">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Foreground" Value="{StaticResource Heading1_Brush}"/>
+                            <Setter Property="FontSize" Value="16"/>
+                            <Setter Property="FontFamily" Value="Segoe UI"/>
+                            <Setter Property="Padding" Value="10,3,10,3"/>
+                        </Style>
+
+                        <DataTemplate  DataType="{x:Type local:Platform}">
+
+                            <DataGrid x:Name="GridMaster" Style="{StaticResource DataGridStyle1}"
+								  ItemsSource="{Binding SelectedItem.Releases, ElementName=PlatformList}"
+								  AutoGeneratingColumn="DatabaseGrid_AutoGeneratingColumn"
+								  PreviewMouseWheel="DataGrid_MouseWheel">
+                            </DataGrid>
+                        </DataTemplate>
+
+                        <DataTemplate DataType="{x:Type local:Compares}">
+                            <DataGrid x:Name="GridMaster" Style="{StaticResource DataGridStyle1}"
+								  ItemsSource="{Binding List}"
+								  AutoGeneratingColumn="DatabaseGrid_AutoGeneratingColumn"
+								  PreviewMouseWheel="DataGrid_MouseWheel">
+                                <DataGrid.LayoutTransform>
+                                    <ScaleTransform x:Name ="DataGridScale"
+												CenterX="1"
+												CenterY="1"/>
+                                </DataGrid.LayoutTransform>
+                            </DataGrid>
+                        </DataTemplate>
+
+                    </ContentControl.Resources>
+
+                </ContentControl>
+            </Grid>
+        </Border>
+
+        <Border x:Name="ButtonsBorder" Style="{StaticResource CellStyle}" Grid.Column="1" Grid.Row="2">
+            <Grid>
+                <StackPanel Orientation="Horizontal">
+                    <WrapPanel Margin="4" Width="490" HorizontalAlignment="Left" VerticalAlignment="Stretch" Orientation="Vertical">
+                        <WrapPanel.Resources>
+                            <Style x:Key="DatabaseWindowButtonStyle1" TargetType="{x:Type Button}">
+                                <Setter Property="Margin" Value="2"/>
+                                <Setter Property="Width" Value="110"/>
+                                <Setter Property="Height" Value="25"/>
+
+                            </Style>
+                        </WrapPanel.Resources>
+                        <Button x:Name="Compare_to_GB" Content="Compare to GB"
+							ToolTip="Compare names to GiantBomb Database"
+							Style="{StaticResource DatabaseWindowButtonStyle1}"
+							Click="Compare_to_GB_Click"/>
+                        <Button x:Name="Compare_to_gamesdb" Content="Compare to GDB"
+							ToolTip="Compare ROM names to The Games DB ROM names"
+							Style="{StaticResource DatabaseWindowButtonStyle1}"
+							Click="CompareToGamesdb_click"/>
+                        <Button x:Name="CompareToOVG_button" Content="Compare to OVG"
+							ToolTip="Get datomatic database file."
+							Style="{StaticResource DatabaseWindowButtonStyle1}"
+							Click="CompareToOVG_button_Click"/>
+                        <Button x:Name="CompareToLB_button" Content="Compare to LB"
+							ToolTip="Get datomatic database file."
+							Style="{StaticResource DatabaseWindowButtonStyle1}"
+							Click="CompareToLB_button_Click"/>
+                        <Button x:Name="GetDirectory_button" Content="Get Directory"
+							ToolTip="Find file to add to database"
+							Style="{StaticResource DatabaseWindowButtonStyle1}"
+							Click="GetDirectory_Click" />
+                        <CheckBox x:Name="Consider_Regions_checkbox"  Height="25"
+								  Margin="5,2,5,2" VerticalAlignment="Center" HorizontalAlignment="Left"
+								  VerticalContentAlignment="Center" 
+								  IsChecked="{Binding ConsiderRegions, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <TextBlock Text="Consider regions" Style="{StaticResource Heading1}" VerticalAlignment="Center" Height="25"/>
+                        </CheckBox>
+                        <Button x:Name="CacheGDB_button" Content="Cache GamesDB"
+							ToolTip="Update GamesDB cache of selected platform."
+							Style="{StaticResource DatabaseWindowButtonStyle1}"
+							Click="CacheGDB_button_Click"/>
+                        <Button x:Name="CacheGB_button" Content="Cache GiantBomb"
+							ToolTip="Update Giantbomb cache of selected platform."
+							Style="{StaticResource DatabaseWindowButtonStyle1}"
+							Click="CacheGB_button_Click"/>
+                        <Button x:Name="CacheOV_button" Content="Cache OpenVG"
+							ToolTip="Update Giantbomb cache of selected platform."
+							Style="{StaticResource DatabaseWindowButtonStyle1}"
+							Click="CacheOV_button_Click"/>
+                        <Button x:Name="CacheLB_button" Content="Cache LaunchBox"
+							ToolTip ="Write the selected database to file"
+							Style="{StaticResource DatabaseWindowButtonStyle1}"
+							Click="CacheLB_button_Click"/>
+                        <Button x:Name="GetDatomatic_button" Content="Get Datomatic File"
+								ToolTip="Get datomatic database file."
+							Style="{StaticResource DatabaseWindowButtonStyle1}"
+							Click="GetDatomatic_Click"/>
+                        <Button x:Name="BONUS_button" Content="BONUS"
+							ToolTip="Get datomatic database file."
+							Style="{StaticResource DatabaseWindowButtonStyle1}"
+							Click="BONUS_button_Click"/>
+                        <Button x:Name="Accept_button" Content="Accept Changes"
+							ToolTip="Accept current changes to database."
+							Style="{StaticResource DatabaseWindowButtonStyle1}"
+							Click="AcceptClick" />
+                        <Button Content="Write DB Changes"
+							ToolTip ="Write the selected database to file"
+							Style="{StaticResource DatabaseWindowButtonStyle1}"
+							Click="WriteDB_Click"/>
+                        <CheckBox x:Name="Subdir_ckbx"  Height="25"
+							Grid.Column="1" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Left"
+							VerticalContentAlignment="Center" >
+                            <TextBlock Text="Search sub" Style="{StaticResource Heading1}" VerticalAlignment="Center" Height="25"/>
+                        </CheckBox>
+
+                    </WrapPanel>
+
+                    <StackPanel HorizontalAlignment="Stretch" Margin="3">
+                        <StackPanel Height="20" HorizontalAlignment="Left" Orientation="Horizontal">
+                            <TextBlock Text="Threshold = "
+										 Style="{StaticResource Heading1}" Height="20" VerticalAlignment="Top"/>
+                            <TextBox x:Name="ThresholdTextBox"
+									 Text="{Binding Threshold, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+									 VerticalAlignment="Stretch" Width="17"/>
+                        </StackPanel>
+                        <StackPanel Height="20" Width="100" HorizontalAlignment="Left"  Orientation="Horizontal">
+                            <TextBlock VerticalAlignment="Stretch" Text="Count = "
+									 Style="{StaticResource Heading1}"/>
+                            <TextBlock x:Name="CountBlock"
+									 Style="{StaticResource Heading1}"
+									 VerticalAlignment="Stretch"
+									 Text="{Binding Count, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Height="20" Width="100" HorizontalAlignment="Left"  Orientation="Horizontal">
+                            <TextBlock VerticalAlignment="Center" Text="Time = " Style="{StaticResource Heading1}"/>
+                            <TextBlock x:Name="TimeBlock" VerticalAlignment="center" Style="{StaticResource Heading1}" Text="{Binding Elapsed.Seconds}" />
+                        </StackPanel>
+                    </StackPanel>
+                    <TextBlock x:Name="StatusBlock" Style="{StaticResource Normal}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" TextWrapping="Wrap" Text="{Binding Path=(local:Reporter.NewsFeed)}" />
+
+                </StackPanel>
+            </Grid>
+
+        </Border>
+
+        <GridSplitter Grid.Column="1"
+					  Grid.RowSpan="3"
+					  HorizontalAlignment="Left"
+					  Style="{StaticResource VerticalGridSplitterStyle1}" />
+
+        <GridSplitter Grid.Column="1"
+					  Grid.Row="2"
+					  VerticalAlignment="Top"
+					  Style="{StaticResource HorizontalGridSplitterStyle1}" />
+
+        <GridSplitter Grid.Column="0"
+					  Grid.Row="1"
+					  VerticalAlignment="Top"
+					  Style="{StaticResource HorizontalGridSplitterStyle1}" />
+    </Grid>
+
+</Window>
