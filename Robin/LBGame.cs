@@ -30,6 +30,27 @@ namespace Robin
     		set { _iD = value; OnPropertyChanged("ID"); } 
     	}
     
+        private Nullable<long> _lBPlatform_ID;
+    	public Nullable<long> LBPlatform_ID 
+    	{ 
+    		get { return _lBPlatform_ID; } 
+    		set { _lBPlatform_ID = value; OnPropertyChanged("LBPlatform_ID"); } 
+    	}
+    
+        private string _developer;
+    	public string Developer 
+    	{ 
+    		get { return _developer; } 
+    		set { _developer = value; OnPropertyChanged("Developer"); } 
+    	}
+    
+        private string _publisher;
+    	public string Publisher 
+    	{ 
+    		get { return _publisher; } 
+    		set { _publisher = value; OnPropertyChanged("Publisher"); } 
+    	}
+    
         private string _title;
     	public string Title 
     	{ 
@@ -51,32 +72,11 @@ namespace Robin
     		set { _overview = value; OnPropertyChanged("Overview"); } 
     	}
     
-        private Nullable<long> _lBPlatform_ID;
-    	public Nullable<long> LBPlatform_ID 
-    	{ 
-    		get { return _lBPlatform_ID; } 
-    		set { _lBPlatform_ID = value; OnPropertyChanged("LBPlatform_ID"); } 
-    	}
-    
         private string _genres;
     	public string Genres 
     	{ 
     		get { return _genres; } 
     		set { _genres = value; OnPropertyChanged("Genres"); } 
-    	}
-    
-        private string _developer;
-    	public string Developer 
-    	{ 
-    		get { return _developer; } 
-    		set { _developer = value; OnPropertyChanged("Developer"); } 
-    	}
-    
-        private string _publisher;
-    	public string Publisher 
-    	{ 
-    		get { return _publisher; } 
-    		set { _publisher = value; OnPropertyChanged("Publisher"); } 
     	}
     
         private string _videoURL;

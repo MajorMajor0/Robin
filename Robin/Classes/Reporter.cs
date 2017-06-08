@@ -15,6 +15,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -23,6 +24,8 @@ namespace Robin
 	public static class Reporter
 	{
 		public static ObservableCollection<Message> Messages { get; }
+
+        static Stopwatch watch;
 
 		private static string _newsFeed;
 		public static string NewsFeed
@@ -40,6 +43,7 @@ namespace Robin
 
 		static Reporter()
 		{
+            watch = new Stopwatch();
 			Messages = new ObservableCollection<Message>();
 			Report("I'm not your guy, buddy.");
 		}
@@ -74,6 +78,25 @@ namespace Robin
 				Messages.Last().Msg += message;
 			});
 		}
+
+        public static void Tic(string message)
+        {
+            watch.Start();
+            Report(message);
+        }
+
+        public static void Toc(string message = null)
+        {
+            watch.Stop();
+            if (message == null)
+            {
+                ReportInline(watch.Elapsed.ToString(@"ss") + " s");
+            }
+            else
+            {
+                ReportInline(message);
+            }
+        }
 
 		public class Message
 		{

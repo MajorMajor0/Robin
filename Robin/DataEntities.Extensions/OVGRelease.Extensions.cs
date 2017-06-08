@@ -14,32 +14,35 @@
 
 namespace Robin
 {
-	public partial class OVGRelease
+	public partial class OVGRelease: IDBRelease
 	{
+
+
 		public static implicit operator OVGRelease(VGDBRELEAS vgdbrelease)
 		{
-			OVGRelease ovgrelease = new OVGRelease();
-			ovgrelease.Region_ID = vgdbrelease.regionLocalizedID;
-			ovgrelease.Title = string.IsNullOrEmpty(vgdbrelease.releaseTitleName) ? null : vgdbrelease.releaseTitleName;
-			ovgrelease.Overview = string.IsNullOrEmpty(vgdbrelease.releaseDescription) ? null : vgdbrelease.releaseDescription;
-			ovgrelease.Developer = string.IsNullOrEmpty(vgdbrelease.releaseDeveloper) ? null : vgdbrelease.releaseDeveloper;
-			ovgrelease.Publisher = string.IsNullOrEmpty(vgdbrelease.releasePublisher) ? null : vgdbrelease.releasePublisher;
-			ovgrelease.Genre = string.IsNullOrEmpty(vgdbrelease.releaseGenre) ? null : vgdbrelease.releaseGenre;
-			ovgrelease.Date = string.IsNullOrEmpty(vgdbrelease.releaseDate) ? null : vgdbrelease.releaseDate;
+			OVGRelease ovgrelease = new OVGRelease()
+			{
+				Region_ID = vgdbrelease.regionLocalizedID,
+				Title = string.IsNullOrEmpty(vgdbrelease.releaseTitleName) ? null : vgdbrelease.releaseTitleName,
+				Overview = string.IsNullOrEmpty(vgdbrelease.releaseDescription) ? null : vgdbrelease.releaseDescription,
+				Developer = string.IsNullOrEmpty(vgdbrelease.releaseDeveloper) ? null : vgdbrelease.releaseDeveloper,
+				Publisher = string.IsNullOrEmpty(vgdbrelease.releasePublisher) ? null : vgdbrelease.releasePublisher,
+				Genre = string.IsNullOrEmpty(vgdbrelease.releaseGenre) ? null : vgdbrelease.releaseGenre,
+				Date = DateTimeRoutines.SafeGetDate( string.IsNullOrEmpty(vgdbrelease.releaseDate) ? null : vgdbrelease.releaseDate),
 
-			ovgrelease.CRC = string.IsNullOrEmpty(vgdbrelease.VGDBROM.romHashCRC) ? null : vgdbrelease.VGDBROM.romHashCRC;
-			ovgrelease.MD5 = string.IsNullOrEmpty(vgdbrelease.VGDBROM.romHashMD5) ? null : vgdbrelease.VGDBROM.romHashMD5;
-			ovgrelease.SHA1 = string.IsNullOrEmpty(vgdbrelease.VGDBROM.romHashSHA1) ? null : vgdbrelease.VGDBROM.romHashSHA1;
-			ovgrelease.Size = vgdbrelease.VGDBROM.romSize == null ? null: vgdbrelease.VGDBROM.romSize.ToString();
-			ovgrelease.Header = string.IsNullOrEmpty(vgdbrelease.VGDBROM.romHeader) ? null : vgdbrelease.VGDBROM.romHeader;
-			ovgrelease.Language = string.IsNullOrEmpty(vgdbrelease.VGDBROM.romLanguage) ? null : vgdbrelease.VGDBROM.romLanguage;
-			ovgrelease.Serial = string.IsNullOrEmpty(vgdbrelease.VGDBROM.romSerial) ? null : vgdbrelease.VGDBROM.romSerial;
+				CRC = string.IsNullOrEmpty(vgdbrelease.VGDBROM.romHashCRC) ? null : vgdbrelease.VGDBROM.romHashCRC,
+				MD5 = string.IsNullOrEmpty(vgdbrelease.VGDBROM.romHashMD5) ? null : vgdbrelease.VGDBROM.romHashMD5,
+				SHA1 = string.IsNullOrEmpty(vgdbrelease.VGDBROM.romHashSHA1) ? null : vgdbrelease.VGDBROM.romHashSHA1,
+				Size = vgdbrelease.VGDBROM.romSize?.ToString(),
+				Header = string.IsNullOrEmpty(vgdbrelease.VGDBROM.romHeader) ? null : vgdbrelease.VGDBROM.romHeader,
+				Language = string.IsNullOrEmpty(vgdbrelease.VGDBROM.romLanguage) ? null : vgdbrelease.VGDBROM.romLanguage,
+				Serial = string.IsNullOrEmpty(vgdbrelease.VGDBROM.romSerial) ? null : vgdbrelease.VGDBROM.romSerial,
 
-			ovgrelease.BoxFrontURL = string.IsNullOrEmpty(vgdbrelease.releaseCoverFront) ? null : vgdbrelease.releaseCoverFront;
-			ovgrelease.BoxBackURL = string.IsNullOrEmpty(vgdbrelease.releaseCoverBack) ? null : vgdbrelease.releaseCoverBack;
-			ovgrelease.ReferenceURL = string.IsNullOrEmpty(vgdbrelease.releaseReferenceURL) ? null : vgdbrelease.releaseReferenceURL;
-			ovgrelease.ReferenceImageURL = string.IsNullOrEmpty(vgdbrelease.releaseReferenceImageURL) ? null : vgdbrelease.releaseReferenceImageURL;
-
+				BoxFrontURL = string.IsNullOrEmpty(vgdbrelease.releaseCoverFront) ? null : vgdbrelease.releaseCoverFront,
+				BoxBackURL = string.IsNullOrEmpty(vgdbrelease.releaseCoverBack) ? null : vgdbrelease.releaseCoverBack,
+				ReferenceURL = string.IsNullOrEmpty(vgdbrelease.releaseReferenceURL) ? null : vgdbrelease.releaseReferenceURL,
+				ReferenceImageURL = string.IsNullOrEmpty(vgdbrelease.releaseReferenceImageURL) ? null : vgdbrelease.releaseReferenceImageURL
+			};
 			return ovgrelease;
 		}
 	}

@@ -4,25 +4,26 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="a4f08a87008d47f48524ab64ed27e755" Name="Diagram1" ZoomLevel="121">
-        <EntityTypeShape EntityType="RobinDataModel.Emulator" Width="1.5" PointX="8.25" PointY="9.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="RobinDataModel.Game" Width="1.5" PointX="8.25" PointY="17.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="RobinDataModel.GBGame" Width="1.5" PointX="8.25" PointY="12.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="RobinDataModel.GBPlatform" Width="1.5" PointX="0.75" PointY="13.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="RobinDataModel.GBRelease" Width="1.5" PointX="3" PointY="12.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="RobinDataModel.GDBPlatform" Width="1.5" PointX="3.75" PointY="6.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="RobinDataModel.GDBRelease" Width="1.5" PointX="8.25" PointY="3.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="RobinDataModel.GoodRom" Width="1.5" PointX="10.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="RobinDataModel.Language" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="RobinDataModel.LBGame" Width="1.5" PointX="8.25" PointY="27.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="RobinDataModel.LBImage" Width="1.5" PointX="13.5" PointY="18.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="RobinDataModel.LBPlatform" Width="1.5" PointX="3.75" PointY="17.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="RobinDataModel.Match" Width="1.5" PointX="3" PointY="3.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="RobinDataModel.OVGRelease" Width="1.5" PointX="11.25" PointY="7.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="RobinDataModel.Platform" Width="1.5" PointX="6" PointY="11" IsExpanded="true" />
-        <EntityTypeShape EntityType="RobinDataModel.Region" Width="1.5" PointX="0.75" PointY="7.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="RobinDataModel.Release" Width="1.5" PointX="10.5" PointY="15" IsExpanded="true" />
-        <EntityTypeShape EntityType="RobinDataModel.Rom" Width="1.5" PointX="8.25" PointY="23.25" IsExpanded="true" />
+      <Diagram DiagramId="98ab4e42df2349a09e3dc7b394b0b10d" Name="Diagram1" ZoomLevel="76">
+        <EntityTypeShape EntityType="RobinDataModel.Collection" Width="1.5" PointX="7.5" PointY="5.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RobinDataModel.Emulator" Width="1.5" PointX="1.5" PointY="29.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="RobinDataModel.Game" Width="1.5" PointX="3" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RobinDataModel.GBGame" Width="1.5" PointX="0.75" PointY="6.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RobinDataModel.GBPlatform" Width="1.5" PointX="1.5" PointY="15.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RobinDataModel.GBRelease" Width="1.5" PointX="3" PointY="11.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="RobinDataModel.GDBPlatform" Width="1.5" PointX="1.5" PointY="33.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="RobinDataModel.GDBRelease" Width="1.5" PointX="5.875" PointY="44.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="RobinDataModel.GoodRom" Width="1.5" PointX="8.75" PointY="8.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RobinDataModel.Language" Width="1.5" PointX="7.75" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RobinDataModel.LBGame" Width="1.5" PointX="3" PointY="44.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RobinDataModel.LBImage" Width="1.5" PointX="6" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RobinDataModel.LBPlatform" Width="1.5" PointX="1.5" PointY="39.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="RobinDataModel.Match" Width="1.5" PointX="3" PointY="19.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="RobinDataModel.OVGRelease" Width="1.5" PointX="3" PointY="4" IsExpanded="true" />
+        <EntityTypeShape EntityType="RobinDataModel.Platform" Width="1.5" PointX="0.75" PointY="20.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="RobinDataModel.Region" Width="1.5" PointX="0.75" PointY="11.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="RobinDataModel.Release" Width="1.5" PointX="5.25" PointY="2.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="RobinDataModel.Rom" Width="1.5" PointX="3" PointY="48.75" IsExpanded="true" />
         <AssociationConnector Association="RobinDataModel.FK_Platform_0_0" ManuallyRouted="false" />
         <AssociationConnector Association="RobinDataModel.FK_Release_4_0" ManuallyRouted="false" />
         <AssociationConnector Association="RobinDataModel.FK_GBGame_0_0" ManuallyRouted="false" />
@@ -47,10 +48,9 @@
         <AssociationConnector Association="RobinDataModel.FK_Rom_0_0" ManuallyRouted="false" />
         <AssociationConnector Association="RobinDataModel.FK_Release_5_0" ManuallyRouted="false" />
         <AssociationConnector Association="RobinDataModel.FK_Release_1_0" ManuallyRouted="false" />
+        <AssociationConnector Association="RobinDataModel.Collection_Game" ManuallyRouted="false" />
+        <AssociationConnector Association="RobinDataModel.Collection_Release" ManuallyRouted="false" />
         <AssociationConnector Association="RobinDataModel.Platform_Emulator" ManuallyRouted="false" />
-        <EntityTypeShape EntityType="RobinDataModel.Collection" Width="1.5" PointX="12.75" PointY="14.875" />
-        <AssociationConnector Association="RobinDataModel.Collection_Game" />
-        <AssociationConnector Association="RobinDataModel.Collection_Release" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

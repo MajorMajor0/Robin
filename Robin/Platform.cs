@@ -117,11 +117,11 @@ namespace Robin
     		set { _type = value; OnPropertyChanged("Type"); } 
     	}
     
-        private Nullable<System.DateTime> _releaseDate;
-    	public Nullable<System.DateTime> ReleaseDate 
+        private Nullable<System.DateTime> _date;
+    	public Nullable<System.DateTime> Date 
     	{ 
-    		get { return _releaseDate; } 
-    		set { _releaseDate = value; OnPropertyChanged("ReleaseDate"); } 
+    		get { return _date; } 
+    		set { _date = value; OnPropertyChanged("Date"); } 
     	}
     
         private string _fileName;
@@ -134,6 +134,13 @@ namespace Robin
     			OnPropertyChanged("FileName");
     			OnPropertyChanged("FilePath");
     		} 
+    	}
+    
+        private string _abbreviation;
+    	public string Abbreviation 
+    	{ 
+    		get { return _abbreviation; } 
+    		set { _abbreviation = value; OnPropertyChanged("Abbreviation"); } 
     	}
     
         private string _developer;
@@ -197,13 +204,6 @@ namespace Robin
     	{ 
     		get { return _cacheDate; } 
     		set { _cacheDate = value; OnPropertyChanged("CacheDate"); } 
-    	}
-    
-        private string _abbreviation;
-    	public string Abbreviation 
-    	{ 
-    		get { return _abbreviation; } 
-    		set { _abbreviation = value; OnPropertyChanged("Abbreviation"); } 
     	}
     
     

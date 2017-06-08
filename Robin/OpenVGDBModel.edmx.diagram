@@ -4,14 +4,14 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="2b930b4f0ec840f9b1e9462d636b3e6d" Name="Diagram1">
-        <EntityTypeShape EntityType="OpenVGDBModel.VGDBPLATFORM" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="OpenVGDBModel.VGDBREGION" Width="1.5" PointX="8.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="OpenVGDBModel.VGDBRELEAS" Width="1.5" PointX="6.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="OpenVGDBModel.VGDBROM" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
-        <AssociationConnector Association="OpenVGDBModel.FK_VGDBROMS_0_0" />
-        <AssociationConnector Association="OpenVGDBModel.FK_VGDBRELEASES_1_0" />
-        <AssociationConnector Association="OpenVGDBModel.FK_VGDBRELEASES_0_0" />
+      <Diagram DiagramId="39b85f8a83e6486fac43dcb7d6577c5c" Name="Diagram1">
+        <EntityTypeShape EntityType="mainModel.VGDBPLATFORM" Width="1.5" PointX="0.75" PointY="2.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="mainModel.VGDBREGION" Width="1.5" PointX="3" PointY="7.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="mainModel.VGDBRELEAS" Width="1.5" PointX="5.25" PointY="1.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="mainModel.VGDBROM" Width="1.5" PointX="3" PointY="1.375" IsExpanded="true" />
+        <AssociationConnector Association="mainModel.FK_VGDBROMS_0_0" ManuallyRouted="false" />
+        <AssociationConnector Association="mainModel.FK_VGDBRELEASES_1_0" ManuallyRouted="false" />
+        <AssociationConnector Association="mainModel.FK_VGDBRELEASES_0_0" ManuallyRouted="false" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -78,6 +78,13 @@ namespace Robin
     		set { _region_ID = value; OnPropertyChanged("Region_ID"); } 
     	}
     
+        private string _special;
+    	public string Special 
+    	{ 
+    		get { return _special; } 
+    		set { _special = value; OnPropertyChanged("Special"); } 
+    	}
+    
         private Nullable<long> _rom_ID;
     	public Nullable<long> Rom_ID 
     	{ 
@@ -146,13 +153,6 @@ namespace Robin
     	{ 
     		get { return _language; } 
     		set { _language = value; OnPropertyChanged("Language"); } 
-    	}
-    
-        private string _special;
-    	public string Special 
-    	{ 
-    		get { return _special; } 
-    		set { _special = value; OnPropertyChanged("Special"); } 
     	}
     
         private string _videoFormat;

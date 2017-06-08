@@ -18,7 +18,7 @@ using System.Linq;
 
 namespace Robin
 {
-	public partial class GBRelease : IComparableDB
+	public partial class GBRelease : IComparableDB, IDBRelease
 	{
 		public static List<GBRelease> GetGames(Platform platform)
 		{

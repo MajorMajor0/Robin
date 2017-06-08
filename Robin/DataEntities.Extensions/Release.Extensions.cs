@@ -518,7 +518,7 @@ namespace Robin
 
 				if (Date == null && ID_OVG != null)
 				{
-					Date = DateTimeRoutines.SafeGetDate(OVGRelease.Date);
+					Date = OVGRelease.Date;
 				}
 			}
 		}
@@ -698,6 +698,7 @@ namespace Robin
 
 		public void ScrapeArt()
 		{
+			ScrapeArt(0);
 		}
 
 		public int ScrapeArt(LocalDB DB = 0)

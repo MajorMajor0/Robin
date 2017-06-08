@@ -12,13 +12,14 @@
  * You should have received a copy of the GNU General Public License
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
 
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 
 namespace Robin
 {
-	public partial class GDBRelease : IComparableDB
+	public partial class GDBRelease : IComparableDB, IDBRelease
 	{
 		public string BoxArtFrontThumbURL
 		{
@@ -58,6 +59,11 @@ namespace Robin
 			{
 				return null;
 			}
+		}
+
+		public Region Region
+		{
+			get { return null; }
 		}
 
 		public static List<GDBRelease> GetGames(Platform platform)

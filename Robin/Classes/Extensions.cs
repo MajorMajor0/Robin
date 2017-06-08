@@ -117,7 +117,7 @@ namespace Robin
 			string Date = DateTime.Now.ToString("yyyy-MM-dd-HHmmss");
 			string CurrentFile = dbcontext.Database.Connection.ConnectionString
 				.Replace("data source=\"|DataDirectory|", FileLocation.Folder)
-				.Replace("data source=\"C:\\Users\\Major Major\\Documents\\Visual Studio 2015\\Projects\\Robin\\Robin"
+				.Replace("data source=\"C:\\Users\\Major Major\\Documents\\Visual Studio 2017\\Projects\\Robin\\Robin"
 						, FileLocation.Folder)
 				.Replace(".db3\"", ".db3");
 			string BackupFile = FileLocation.Backup + Path.GetFileNameWithoutExtension(CurrentFile) + Date + Path.GetExtension(CurrentFile);

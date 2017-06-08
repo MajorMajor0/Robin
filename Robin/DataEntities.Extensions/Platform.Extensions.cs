@@ -26,7 +26,7 @@ using System.Threading.Tasks;
 namespace Robin
 
 {
-	public partial class Platform : IDBobject, INotifyPropertyChanged
+	public partial class Platform : IDBobject, IDBPlatform, INotifyPropertyChanged
 	{
 		public string RomDirectory
 		{
@@ -110,27 +110,42 @@ namespace Robin
 
 		public string BoxFrontURL
 		{
-			get { return GDBPlatform.BoxFrontURL; }
+			get
+			{
+				return GDBPlatform != null ? GDBPlatform.BoxFrontURL : null;
+			}
 		}
 
 		public string BoxBackURL
 		{
-			get { return GDBPlatform.BoxBackURL; }
+			get
+			{
+				return GDBPlatform != null ? GDBPlatform.BoxBackURL : null;
+			}
 		}
 
 		public string BannerURL
 		{
-			get { return GDBPlatform.BannerURL; }
+			get
+			{
+				return GDBPlatform != null ? GDBPlatform.BannerURL : null;
+			}
 		}
 
 		public string ConsoleURL
 		{
-			get { return GDBPlatform.ConsoleURL; }
+			get
+			{
+				return GDBPlatform != null ? GDBPlatform.ConsoleURL : null;
+			}
 		}
 
 		public string ControllerURL
 		{
-			get { return GDBPlatform.ControllerURL; }
+			get
+			{
+				return GDBPlatform != null ? GDBPlatform.ControllerURL : null;
+			}
 		}
 
 		public string BoxFrontFile

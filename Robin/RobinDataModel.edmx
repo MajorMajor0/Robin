@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="RobinDataModel.Store" Provider="System.Data.SQLite.EF6" ProviderManifestToken="data source=&quot;C:\Users\Major Major\Documents\Visual Studio 2015\Projects\Robin\Robin\data\RobinData.db3&quot;" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="RobinDataModel.Store" Provider="System.Data.SQLite.EF6" ProviderManifestToken="data source=&quot;C:\Users\Major Major\Documents\Visual Studio 2017\Projects\Robin\Robin\data\RobinData.db3&quot;" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Collection">
           <Key>
             <PropertyRef Name="ID" />
@@ -232,7 +232,7 @@
           <Property Name="Developer" Type="nvarchar" MaxLength="2147483647" />
           <Property Name="Publisher" Type="nvarchar" MaxLength="2147483647" />
           <Property Name="Genre" Type="nvarchar" MaxLength="2147483647" />
-          <Property Name="Date" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="DateText" Type="nvarchar" MaxLength="2147483647" />
           <Property Name="CRC" Type="nvarchar" MaxLength="2147483647" />
           <Property Name="MD5" Type="nvarchar" MaxLength="2147483647" />
           <Property Name="SHA1" Type="nvarchar" MaxLength="2147483647" />
@@ -244,6 +244,7 @@
           <Property Name="BoxBackURL" Type="nvarchar" MaxLength="2147483647" />
           <Property Name="ReferenceURL" Type="nvarchar" MaxLength="2147483647" />
           <Property Name="ReferenceImageURL" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="Date" Type="datetime" />
         </EntityType>
         <EntityType Name="Platform">
           <Key>
@@ -262,7 +263,7 @@
           <Property Name="HeaderLength" Type="integer" Nullable="false" />
           <Property Name="Generation" Type="nvarchar" MaxLength="2147483647" />
           <Property Name="Type" Type="nvarchar" MaxLength="2147483647" />
-          <Property Name="ReleaseDate" Type="datetime" />
+          <Property Name="Date" Type="datetime" />
           <Property Name="FileName" Type="nvarchar" MaxLength="2147483647" Nullable="false" />
           <Property Name="Abbreviation" Type="nvarchar" MaxLength="2147483647" />
           <Property Name="Developer" Type="nvarchar" MaxLength="2147483647" />
@@ -850,6 +851,16 @@
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="RobinDataModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Collection">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Type" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Games" Relationship="Self.Collection_Game" FromRole="Collection" ToRole="Game" />
+          <NavigationProperty Name="Releases" Relationship="Self.Collection_Release" FromRole="Collection" ToRole="Release" />
+        </EntityType>
         <EntityType Name="Emulator">
           <Key>
             <PropertyRef Name="ID" />
@@ -870,7 +881,7 @@
           </Key>
           <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <NavigationProperty Name="Releases" Relationship="Self.FK_Release_4_0" FromRole="Game" ToRole="Release" />
-          <NavigationProperty Name="Collections" Relationship="RobinDataModel.Collection_Game" FromRole="Game" ToRole="Collection" />
+          <NavigationProperty Name="Collections" Relationship="Self.Collection_Game" FromRole="Game" ToRole="Collection" />
         </EntityType>
         <EntityType Name="GBGame">
           <Key>
@@ -1005,18 +1016,18 @@
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Int64" Nullable="false" />
-          <Property Name="Title" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
-          <Property Name="Date" Type="DateTime" />
-          <Property Name="Overview" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="LBPlatform_ID" Type="Int64" />
-          <Property Name="Genres" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="Developer" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="Publisher" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
-          <Property Name="VideoURL" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
-          <Property Name="WikiURL" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="LBPlatform" Relationship="Self.FK_LBGame_0_0" FromRole="LBGame" ToRole="LBPlatform" />
           <NavigationProperty Name="LBImages" Relationship="Self.FK_LBImages_1_0" FromRole="LBGame" ToRole="LBImages" />
           <NavigationProperty Name="Releases" Relationship="Self.FK_Release_0_0" FromRole="LBGame" ToRole="Release" />
+          <Property Name="Title" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Date" Type="DateTime" />
+          <Property Name="Overview" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Genres" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="VideoURL" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="WikiURL" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="Players" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="LBImage">
@@ -1077,7 +1088,6 @@
           <Property Name="Developer" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="Publisher" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="Genre" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
-          <Property Name="Date" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="CRC" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="MD5" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="SHA1" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
@@ -1089,9 +1099,11 @@
           <Property Name="BoxBackURL" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="ReferenceURL" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="ReferenceImageURL" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Date" Type="DateTime" />
           <NavigationProperty Name="Platform" Relationship="Self.FK_OVGRelease_0_0" FromRole="OVGRelease" ToRole="Platform" />
           <NavigationProperty Name="Region" Relationship="Self.FK_OVGRelease_1_0" FromRole="OVGRelease" ToRole="Region" />
           <NavigationProperty Name="Releases" Relationship="Self.FK_Release_2_0" FromRole="OVGRelease" ToRole="Release" />
+          <Property Name="DateText" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Platform">
           <Key>
@@ -1110,8 +1122,9 @@
           <Property Name="HeaderLength" Type="Int64" Nullable="false" />
           <Property Name="Generation" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="Type" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
-          <Property Name="ReleaseDate" Type="DateTime" />
+          <Property Name="Date" Type="DateTime" />
           <Property Name="FileName" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Abbreviation" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="Developer" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="Cpu" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="Sound" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
@@ -1130,7 +1143,6 @@
           <NavigationProperty Name="Releases" Relationship="Self.FK_Release_3_0" FromRole="Platform" ToRole="Release" />
           <NavigationProperty Name="Roms" Relationship="Self.FK_Rom_0_0" FromRole="Platform" ToRole="Rom" />
           <NavigationProperty Name="Emulators" Relationship="Self.Platform_Emulator" FromRole="Platform" ToRole="Emulator" />
-          <Property Name="Abbreviation" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Region">
           <Key>
@@ -1163,6 +1175,7 @@
           <Property Name="Game_ID" Type="Int64" />
           <Property Name="Platform_ID" Type="Int64" Nullable="false" />
           <Property Name="Region_ID" Type="Int64" />
+          <Property Name="Special" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="Rom_ID" Type="Int64" />
           <Property Name="Title" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="IsGame" Type="Boolean" Nullable="false" />
@@ -1173,13 +1186,13 @@
           <Property Name="Date" Type="DateTime" />
           <Property Name="Unlicensed" Type="Boolean" Nullable="false" />
           <Property Name="Language" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
-          <Property Name="Special" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="VideoFormat" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="Version" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="Players" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="Rating" Type="Decimal" Precision="53" Scale="0" />
           <Property Name="IsCrap" Type="Boolean" Nullable="false" />
           <Property Name="Preferred" Type="Boolean" Nullable="false" />
+          <Property Name="IsBeaten" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Game" Relationship="Self.FK_Release_4_0" FromRole="Release" ToRole="Game" />
           <NavigationProperty Name="GBRelease" Relationship="Self.FK_Release_7_0" FromRole="Release" ToRole="GBRelease" />
           <NavigationProperty Name="GDBRelease" Relationship="Self.FK_Release_6_0" FromRole="Release" ToRole="GDBRelease" />
@@ -1188,8 +1201,7 @@
           <NavigationProperty Name="Platform" Relationship="Self.FK_Release_3_0" FromRole="Release" ToRole="Platform" />
           <NavigationProperty Name="Region" Relationship="Self.FK_Release_5_0" FromRole="Release" ToRole="Region" />
           <NavigationProperty Name="Rom" Relationship="Self.FK_Release_1_0" FromRole="Release" ToRole="Rom" />
-          <Property Name="IsBeaten" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Collections" Relationship="RobinDataModel.Collection_Release" FromRole="Release" ToRole="Collection" />
+          <NavigationProperty Name="Collections" Relationship="Self.Collection_Release" FromRole="Release" ToRole="Collection" />
         </EntityType>
         <EntityType Name="Rom">
           <Key>
@@ -1495,11 +1507,20 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="Collection_Game">
+          <End Role="Game" Type="Self.Game" Multiplicity="*" />
+          <End Role="Collection" Type="Self.Collection" Multiplicity="*" />
+        </Association>
+        <Association Name="Collection_Release">
+          <End Role="Release" Type="Self.Release" Multiplicity="*" />
+          <End Role="Collection" Type="Self.Collection" Multiplicity="*" />
+        </Association>
         <Association Name="Platform_Emulator">
           <End Role="Platform" Type="Self.Platform" Multiplicity="*" />
           <End Role="Emulator" Type="Self.Emulator" Multiplicity="*" />
         </Association>
         <EntityContainer Name="RobinDataEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Collections" EntityType="Self.Collection" />
           <EntitySet Name="Emulators" EntityType="Self.Emulator" />
           <EntitySet Name="Games" EntityType="Self.Game" />
           <EntitySet Name="GBGames" EntityType="Self.GBGame" />
@@ -1614,44 +1635,34 @@
             <End Role="Rom" EntitySet="Roms" />
             <End Role="Release" EntitySet="Releases" />
           </AssociationSet>
+          <AssociationSet Name="Collection_Game" Association="Self.Collection_Game">
+            <End Role="Game" EntitySet="Games" />
+            <End Role="Collection" EntitySet="Collections" />
+          </AssociationSet>
+          <AssociationSet Name="Collection_Release" Association="Self.Collection_Release">
+            <End Role="Release" EntitySet="Releases" />
+            <End Role="Collection" EntitySet="Collections" />
+          </AssociationSet>
           <AssociationSet Name="Platform_Emulator" Association="Self.Platform_Emulator">
             <End Role="Platform" EntitySet="Platforms" />
             <End Role="Emulator" EntitySet="Emulators" />
           </AssociationSet>
-          <EntitySet Name="Collections" EntityType="RobinDataModel.Collection" />
-          <AssociationSet Name="Collection_Game" Association="RobinDataModel.Collection_Game">
-            <End Role="Game" EntitySet="Games" />
-            <End Role="Collection" EntitySet="Collections" />
-          </AssociationSet>
-          <AssociationSet Name="Collection_Release" Association="RobinDataModel.Collection_Release">
-            <End Role="Release" EntitySet="Releases" />
-            <End Role="Collection" EntitySet="Collections" />
-          </AssociationSet>
         </EntityContainer>
-        <EntityType Name="Collection">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Title" Type="String" Nullable="false" MaxLength="2147483647" FixedLength="false" Unicode="true" />
-          <Property Name="Type" Type="String" Nullable="false" MaxLength="2147483647" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Games" Relationship="RobinDataModel.Collection_Game" FromRole="Collection" ToRole="Game" />
-          <NavigationProperty Name="Releases" Relationship="RobinDataModel.Collection_Release" FromRole="Collection" ToRole="Release" />
-        </EntityType>
-        <Association Name="Collection_Game">
-          <End Type="RobinDataModel.Game" Role="Game" Multiplicity="*" />
-          <End Type="RobinDataModel.Collection" Role="Collection" Multiplicity="*" />
-        </Association>
-        <Association Name="Collection_Release">
-          <End Type="RobinDataModel.Release" Role="Release" Multiplicity="*" />
-          <End Type="RobinDataModel.Collection" Role="Collection" Multiplicity="*" />
-        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="RobinDataModelStoreContainer" CdmEntityContainer="RobinDataEntities">
+          <EntitySetMapping Name="Collections">
+            <EntityTypeMapping TypeName="RobinDataModel.Collection">
+              <MappingFragment StoreEntitySet="Collection">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Emulators">
             <EntityTypeMapping TypeName="RobinDataModel.Emulator">
               <MappingFragment StoreEntitySet="Emulator">
@@ -1799,16 +1810,16 @@
             <EntityTypeMapping TypeName="RobinDataModel.LBGame">
               <MappingFragment StoreEntitySet="LBGame">
                 <ScalarProperty Name="Players" ColumnName="Players" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="Title" ColumnName="Title" />
-                <ScalarProperty Name="Date" ColumnName="Date" />
-                <ScalarProperty Name="Overview" ColumnName="Overview" />
-                <ScalarProperty Name="LBPlatform_ID" ColumnName="LBPlatform_ID" />
+                <ScalarProperty Name="WikiURL" ColumnName="WikiURL" />
+                <ScalarProperty Name="VideoURL" ColumnName="VideoURL" />
                 <ScalarProperty Name="Genres" ColumnName="Genres" />
+                <ScalarProperty Name="Overview" ColumnName="Overview" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="LBPlatform_ID" ColumnName="LBPlatform_ID" />
                 <ScalarProperty Name="Developer" ColumnName="Developer" />
                 <ScalarProperty Name="Publisher" ColumnName="Publisher" />
-                <ScalarProperty Name="VideoURL" ColumnName="VideoURL" />
-                <ScalarProperty Name="WikiURL" ColumnName="WikiURL" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1858,6 +1869,7 @@
           <EntitySetMapping Name="OVGReleases">
             <EntityTypeMapping TypeName="RobinDataModel.OVGRelease">
               <MappingFragment StoreEntitySet="OVGRelease">
+                <ScalarProperty Name="DateText" ColumnName="DateText" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Rom_ID" ColumnName="Rom_ID" />
                 <ScalarProperty Name="Region_ID" ColumnName="Region_ID" />
@@ -1867,7 +1879,6 @@
                 <ScalarProperty Name="Developer" ColumnName="Developer" />
                 <ScalarProperty Name="Publisher" ColumnName="Publisher" />
                 <ScalarProperty Name="Genre" ColumnName="Genre" />
-                <ScalarProperty Name="Date" ColumnName="Date" />
                 <ScalarProperty Name="CRC" ColumnName="CRC" />
                 <ScalarProperty Name="MD5" ColumnName="MD5" />
                 <ScalarProperty Name="SHA1" ColumnName="SHA1" />
@@ -1879,13 +1890,13 @@
                 <ScalarProperty Name="BoxBackURL" ColumnName="BoxBackURL" />
                 <ScalarProperty Name="ReferenceURL" ColumnName="ReferenceURL" />
                 <ScalarProperty Name="ReferenceImageURL" ColumnName="ReferenceImageURL" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Platforms">
             <EntityTypeMapping TypeName="RobinDataModel.Platform">
               <MappingFragment StoreEntitySet="Platform">
-                <ScalarProperty Name="Abbreviation" ColumnName="Abbreviation" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
                 <ScalarProperty Name="ID_GDB" ColumnName="ID_GDB" />
@@ -1899,8 +1910,9 @@
                 <ScalarProperty Name="HeaderLength" ColumnName="HeaderLength" />
                 <ScalarProperty Name="Generation" ColumnName="Generation" />
                 <ScalarProperty Name="Type" ColumnName="Type" />
-                <ScalarProperty Name="ReleaseDate" ColumnName="ReleaseDate" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
                 <ScalarProperty Name="FileName" ColumnName="FileName" />
+                <ScalarProperty Name="Abbreviation" ColumnName="Abbreviation" />
                 <ScalarProperty Name="Developer" ColumnName="Developer" />
                 <ScalarProperty Name="Cpu" ColumnName="Cpu" />
                 <ScalarProperty Name="Sound" ColumnName="Sound" />
@@ -1931,7 +1943,6 @@
           <EntitySetMapping Name="Releases">
             <EntityTypeMapping TypeName="RobinDataModel.Release">
               <MappingFragment StoreEntitySet="Release">
-                <ScalarProperty Name="IsBeaten" ColumnName="IsBeaten" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ID_GB" ColumnName="ID_GB" />
                 <ScalarProperty Name="ID_GDB" ColumnName="ID_GDB" />
@@ -1940,6 +1951,7 @@
                 <ScalarProperty Name="Game_ID" ColumnName="Game_ID" />
                 <ScalarProperty Name="Platform_ID" ColumnName="Platform_ID" />
                 <ScalarProperty Name="Region_ID" ColumnName="Region_ID" />
+                <ScalarProperty Name="Special" ColumnName="Special" />
                 <ScalarProperty Name="Rom_ID" ColumnName="Rom_ID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
                 <ScalarProperty Name="IsGame" ColumnName="IsGame" />
@@ -1950,13 +1962,13 @@
                 <ScalarProperty Name="Date" ColumnName="Date" />
                 <ScalarProperty Name="Unlicensed" ColumnName="Unlicensed" />
                 <ScalarProperty Name="Language" ColumnName="Language" />
-                <ScalarProperty Name="Special" ColumnName="Special" />
                 <ScalarProperty Name="VideoFormat" ColumnName="VideoFormat" />
                 <ScalarProperty Name="Version" ColumnName="Version" />
                 <ScalarProperty Name="Players" ColumnName="Players" />
                 <ScalarProperty Name="Rating" ColumnName="Rating" />
                 <ScalarProperty Name="IsCrap" ColumnName="IsCrap" />
                 <ScalarProperty Name="Preferred" ColumnName="Preferred" />
+                <ScalarProperty Name="IsBeaten" ColumnName="IsBeaten" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1975,37 +1987,28 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <AssociationSetMapping Name="Collection_Game" TypeName="RobinDataModel.Collection_Game" StoreEntitySet="Collection_Game">
+            <EndProperty Name="Game">
+              <ScalarProperty Name="ID" ColumnName="Game_ID" />
+            </EndProperty>
+            <EndProperty Name="Collection">
+              <ScalarProperty Name="ID" ColumnName="Collection_ID" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="Collection_Release" TypeName="RobinDataModel.Collection_Release" StoreEntitySet="Collection_Release">
+            <EndProperty Name="Release">
+              <ScalarProperty Name="ID" ColumnName="Release_ID" />
+            </EndProperty>
+            <EndProperty Name="Collection">
+              <ScalarProperty Name="ID" ColumnName="Collection_ID" />
+            </EndProperty>
+          </AssociationSetMapping>
           <AssociationSetMapping Name="Platform_Emulator" TypeName="RobinDataModel.Platform_Emulator" StoreEntitySet="Platform_Emulator">
             <EndProperty Name="Platform">
               <ScalarProperty Name="ID" ColumnName="Platform_ID" />
             </EndProperty>
             <EndProperty Name="Emulator">
               <ScalarProperty Name="ID" ColumnName="Emulator_ID" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <EntitySetMapping Name="Collections">
-            <EntityTypeMapping TypeName="RobinDataModel.Collection">
-              <MappingFragment StoreEntitySet="Collection">
-                <ScalarProperty Name="Type" ColumnName="Type" />
-                <ScalarProperty Name="Title" ColumnName="Title" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <AssociationSetMapping Name="Collection_Game" TypeName="RobinDataModel.Collection_Game" StoreEntitySet="Collection_Game">
-            <EndProperty Name="Collection">
-              <ScalarProperty Name="ID" ColumnName="Collection_ID" />
-            </EndProperty>
-            <EndProperty Name="Game">
-              <ScalarProperty Name="ID" ColumnName="Game_ID" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="Collection_Release" TypeName="RobinDataModel.Collection_Release" StoreEntitySet="Collection_Release">
-            <EndProperty Name="Collection">
-              <ScalarProperty Name="ID" ColumnName="Collection_ID" />
-            </EndProperty>
-            <EndProperty Name="Release">
-              <ScalarProperty Name="ID" ColumnName="Release_ID" />
             </EndProperty>
           </AssociationSetMapping>
         </EntityContainerMapping>

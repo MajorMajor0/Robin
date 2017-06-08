@@ -25,6 +25,7 @@ namespace Robin
             throw new UnintentionalCodeFirstException();
         }
     
+        public virtual DbSet<Collection> Collections { get; set; }
         public virtual DbSet<Emulator> Emulators { get; set; }
         public virtual DbSet<Game> Games { get; set; }
         public virtual DbSet<GBGame> GBGames { get; set; }
@@ -43,6 +44,5 @@ namespace Robin
         public virtual DbSet<Region> Regions { get; set; }
         public virtual DbSet<Release> Releases { get; set; }
         public virtual DbSet<Rom> Roms { get; set; }
-        public virtual DbSet<Collection> Collections { get; set; }
     }
 }

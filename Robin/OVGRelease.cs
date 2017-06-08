@@ -85,13 +85,6 @@ namespace Robin
     		set { _genre = value; OnPropertyChanged("Genre"); } 
     	}
     
-        private string _date;
-    	public string Date 
-    	{ 
-    		get { return _date; } 
-    		set { _date = value; OnPropertyChanged("Date"); } 
-    	}
-    
         private string _cRC;
     	public string CRC 
     	{ 
@@ -167,6 +160,20 @@ namespace Robin
     	{ 
     		get { return _referenceImageURL; } 
     		set { _referenceImageURL = value; OnPropertyChanged("ReferenceImageURL"); } 
+    	}
+    
+        private Nullable<System.DateTime> _date;
+    	public Nullable<System.DateTime> Date 
+    	{ 
+    		get { return _date; } 
+    		set { _date = value; OnPropertyChanged("Date"); } 
+    	}
+    
+        private string _dateText;
+    	public string DateText 
+    	{ 
+    		get { return _dateText; } 
+    		set { _dateText = value; OnPropertyChanged("DateText"); } 
     	}
     
     

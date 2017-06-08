@@ -20,6 +20,8 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.ComponentModel;
+using System.Data.Entity;
+using System.Threading.Tasks;
 
 namespace Robin
 {
@@ -37,21 +39,47 @@ namespace Robin
 			InitializeComponent();
 			DataContext = MWVM;
 
-
 #if DEBUG
 			PresentationTraceSources.DataBindingSource.Switch.Level = SourceLevels.Critical;
 #endif
 		}
 
-		private void BonusButton_Click(object sender, RoutedEventArgs e)
+		private async void BonusButton_Click(object sender, RoutedEventArgs e)
 		{
-			int i = 0;
+
 			Reporter.Report("BONUS!");
-			List<Release> releaseList = MWVM.Rdata.Releases.Local.Where(x => x.IsGame && !x.Included).ToList();
-			foreach (Release release in releaseList)
+			//List<Release> releaseList = MWVM.Rdata.Releases.Local.Where(x => x.IsGame && !x.Included).ToList();
+			//foreach (Release release in releaseList)
+			//{
+			//	Debug.WriteLine(++i + "|" + release.PlatformTitle + "|" + release.Rom.Title);
+			//}
+
+			await Task.Run(() =>
 			{
-				Debug.WriteLine(++i + "|" + release.PlatformTitle + "|" + release.Rom.Title);
-			}
+				Reporter.Tic("Getting DBs..");
+				Launchbox launchbox = new Launchbox(ref MWVM.Rdata);
+				GiantBomb giantbomb = new GiantBomb(MWVM.Rdata);
+				GamesDB gamesdb = new GamesDB(MWVM.Rdata);
+				OpenVGDB openvgdb = new OpenVGDB(MWVM.Rdata);
+				Reporter.Toc();
+				Reporter.Tic("Killing games..");
+				int i = 0;
+				foreach (Platform platform in MWVM.Rdata.Platforms)
+				{
+					Reporter.Report((i++).ToString());
+					List<Release> gonreleases = platform.Releases.Skip(20).ToList();
+					MWVM.Rdata.LBGames.RemoveRange(gonreleases.Select(x => x.LBGame));
+					MWVM.Rdata.LBImages.RemoveRange(gonreleases.SelectMany(x => x.LBGame.LBImages));
+					MWVM.Rdata.GBReleases.RemoveRange(gonreleases.Select(x => x.GBRelease));
+					MWVM.Rdata.GDBReleases.RemoveRange(gonreleases.Select(x => x.GDBRelease));
+					MWVM.Rdata.OVGReleases.RemoveRange(gonreleases.Select(x => x.OVGRelease));
+
+					IEnumerable<Game> games = MWVM.Rdata.Games.Where(x => x.Releases.Count < 1);
+					MWVM.Rdata.Games.RemoveRange(games);
+				}
+				Reporter.Toc();
+			});
+
 			Reporter.Report("Finished!");
 		}
 
@@ -431,7 +459,7 @@ namespace Robin
 			Watch.Start();
 			int i = 0;
 #endif
-			
+
 			foreach (Release release in MWVM.Rdata.Releases)
 			{
 #if DEBUG
@@ -455,8 +483,7 @@ namespace Robin
 
 		private void CollectionStackPanel_Drop(object sender, DragEventArgs e)
 		{
-			Collection collection = (e.OriginalSource as Border).DataContext as Collection;
-			if (collection != null)
+			if ((e.OriginalSource as Border).DataContext is Collection collection)
 			{
 				for (int i = 0; i < MWVM.SelectedDBs.Count; i++)
 				{
@@ -469,8 +496,7 @@ namespace Robin
 
 		private void MainListWrapPanel_MouseMove(object sender, MouseEventArgs e)
 		{
-			var panel = sender as VirtualizingWrapPanel;
-			if (panel != null && MWVM.SelectedDBs != null && e.LeftButton == MouseButtonState.Pressed)
+			if (sender is VirtualizingWrapPanel panel && MWVM.SelectedDBs != null && e.LeftButton == MouseButtonState.Pressed)
 			{
 				DragDrop.DoDragDrop(panel, MWVM.SelectedDBs, DragDropEffects.Copy);
 			}

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Robin
 {
-	public partial class LBGame : IComparableDB
+	public partial class LBGame : IComparableDB, IDBRelease
 	{
 		public static List<LBGame> GetGames(Platform platform)
 		{
@@ -25,5 +25,9 @@ namespace Robin
 		{
 			get; set;
 		}
+
+		public Region Region { get { return null; } }
+
+
 	}
 }

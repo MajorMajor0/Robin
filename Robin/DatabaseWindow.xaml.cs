@@ -16,6 +16,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Collections.ObjectModel;
 
 namespace Robin
 {
@@ -32,7 +33,7 @@ namespace Robin
 		private void BONUS_button_Click(object sender, RoutedEventArgs e)
 		{
 			Reporter.Report("BONUS!");
-			DBWVM.CopyData();
+			
 		}
 
 		private void CompareToGamesdb_click(object sender, RoutedEventArgs e)
@@ -56,11 +57,31 @@ namespace Robin
 
 		private void AcceptClick(object sender, RoutedEventArgs e)
 		{
-			if (DatabaseGrid.Content != null &&
-				DatabaseGrid.Content.GetType() == typeof(Compares))
-			{
-				DBWVM.Accept();
-			}
+			//if (DatabaseGrid.Content != null &&
+			//	DatabaseGrid.Content.GetType() == typeof(Compares))
+			//{
+			//	DBWVM.Accept();
+			//}
+		}
+
+		private void GDBButton_Click(object sender, RoutedEventArgs e)
+		{
+			DBWVM.PlatformsList = DBWVM.Rdata.GDBPlatforms.Local;
+		}
+
+		private void GBButton_Click(object sender, RoutedEventArgs e)
+		{
+
+		}
+
+		private void OVGButton_Click(object sender, RoutedEventArgs e)
+		{
+
+		}
+
+		private void LBButton_Click(object sender, RoutedEventArgs e)
+		{
+
 		}
 
 		private void DatabaseGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
@@ -139,46 +160,49 @@ namespace Robin
 		// Add Database file from datomatic
 		private async void GetDatomatic_Click(object sender, RoutedEventArgs e)
 		{
-			if (PlatformList.SelectedItems.Count == 1)
+			await Task.Run(() =>
 			{
-				Platform platform = PlatformList.SelectedItem as Platform;
-				await Task.Run(() =>
-				{
-					//DBWVM.Rdata.Configuration.AutoDetectChangesEnabled = false;
-					Datomatic datomatic = new Datomatic();
-					datomatic.CacheFromXML(platform);
-					//DBWVM.Rdata.ChangeTracker.DetectChanges();
-					//DBWVM.SaveChanges();
-					//DBWVM.Rdata.Configuration.AutoDetectChangesEnabled = false;
-				});
-			}
+			});
+			//if (PlatformList.SelectedItems.Count == 1)
+			//{
+			//	Platform platform = PlatformList.SelectedItem as Platform;
+			//	await Task.Run(() =>
+			//	{
+			//		//DBWVM.Rdata.Configuration.AutoDetectChangesEnabled = false;
+			//		Datomatic datomatic = new Datomatic();
+			//		datomatic.CacheFromXML(platform);
+			//		//DBWVM.Rdata.ChangeTracker.DetectChanges();
+			//		//DBWVM.SaveChanges();
+			//		//DBWVM.Rdata.Configuration.AutoDetectChangesEnabled = false;
+			//	});
+			//}
 		}
 
 		private void PlatformList_MouseUp(object sender, MouseButtonEventArgs e)
 		{
-			if (PlatformList.SelectedItems.Count > 0)
-			{
-				DatabaseGrid.Content = PlatformList.SelectedItem;
-				CountBlock.DataContext = ((Platform)PlatformList.SelectedItem).Releases;
-			}
+			//if (PlatformList.SelectedItems.Count > 0)
+			//{
+			//	DatabaseGrid.Content = PlatformList.SelectedItem;
+			//	CountBlock.DataContext = ((Platform)PlatformList.SelectedItem).Releases;
+			//}
 		}
 
 		private void ComparisonResultsList_MouseUp(object sender, MouseButtonEventArgs e)
 		{
-			DatabaseGrid.Content = ComparisonResultsList.SelectedItem;
-			if (ComparisonResultsList.SelectedItem != null)
-			{
-				CountBlock.DataContext = ((Compares)ComparisonResultsList.SelectedItem).List;
-			}
+			//DatabaseGrid.Content = ComparisonResultsList.SelectedItem;
+			//if (ComparisonResultsList.SelectedItem != null)
+			//{
+			//	CountBlock.DataContext = ((Compares)ComparisonResultsList.SelectedItem).List;
+			//}
 		}
 
 		private void DataGrid_MouseWheel(object sender, MouseWheelEventArgs e)
 		{
-			if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
-			{
-				DataGridScale.ScaleX += (e.Delta > 0) ? .1 : -.1;
-				DataGridScale.ScaleY += (e.Delta > 0) ? .1 : -.1;
-			}
+			//if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+			//{
+			//	DataGridScale.ScaleX += (e.Delta > 0) ? .1 : -.1;
+			//	DataGridScale.ScaleY += (e.Delta > 0) ? .1 : -.1;
+			//}
 		}
 
 		private void CacheGB_button_Click(object sender, RoutedEventArgs e)

@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="OpenVGDBModel.Store" Provider="System.Data.SQLite.EF6" ProviderManifestToken="data source=&quot;C:\Users\Major Major\Documents\Visual Studio 2015\Projects\Robin\Robin\data\OpenVGDB.db3&quot;" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="mainModel.Store" Provider="System.Data.SQLite.EF6" ProviderManifestToken="data source=&quot;C:\Users\Major Major\Documents\Visual Studio 2017\Projects\Robin\Robin\Data\OpenVGDB.db3&quot;" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="VGDBPLATFORMS">
           <Key>
             <PropertyRef Name="systemID" />
@@ -107,7 +107,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="OpenVGDBModelStoreContainer">
+        <EntityContainer Name="mainModelStoreContainer">
           <EntitySet Name="VGDBPLATFORMS" EntityType="Self.VGDBPLATFORMS" store:Type="Tables" />
           <EntitySet Name="VGDBREGIONS" EntityType="Self.VGDBREGIONS" store:Type="Tables" />
           <EntitySet Name="VGDBRELEASES" EntityType="Self.VGDBRELEASES" store:Type="Tables" />
@@ -125,10 +125,11 @@
             <End Role="VGDBROMS" EntitySet="VGDBROMS" />
           </AssociationSet>
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="OpenVGDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="mainModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityType Name="VGDBPLATFORM">
           <Key>
             <PropertyRef Name="systemID" />
@@ -141,7 +142,7 @@
           <Property Name="systemHeader" Type="Int64" />
           <Property Name="systemSerial" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="systemOEID" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="VGDBROMS" Relationship="OpenVGDBModel.FK_VGDBROMS_0_0" FromRole="VGDBPLATFORM" ToRole="VGDBROM" />
+          <NavigationProperty Name="VGDBROMS" Relationship="Self.FK_VGDBROMS_0_0" FromRole="VGDBPLATFORMS" ToRole="VGDBROMS" />
         </EntityType>
         <EntityType Name="VGDBREGION">
           <Key>
@@ -152,7 +153,7 @@
           <Property Name="Datomatic" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="ID_GB" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="Title_GB" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="VGDBRELEASES" Relationship="OpenVGDBModel.FK_VGDBRELEASES_1_0" FromRole="VGDBREGION" ToRole="VGDBRELEAS" />
+          <NavigationProperty Name="VGDBRELEASES" Relationship="Self.FK_VGDBRELEASES_1_0" FromRole="VGDBREGIONS" ToRole="VGDBRELEASES" />
         </EntityType>
         <EntityType Name="VGDBRELEAS">
           <Key>
@@ -176,8 +177,8 @@
           <Property Name="releaseDate" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="releaseReferenceURL" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="releaseReferenceImageURL" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="VGDBREGION" Relationship="OpenVGDBModel.FK_VGDBRELEASES_1_0" FromRole="VGDBRELEAS" ToRole="VGDBREGION" />
-          <NavigationProperty Name="VGDBROM" Relationship="OpenVGDBModel.FK_VGDBRELEASES_0_0" FromRole="VGDBRELEAS" ToRole="VGDBROM" />
+          <NavigationProperty Name="VGDBREGION" Relationship="Self.FK_VGDBRELEASES_1_0" FromRole="VGDBRELEASES" ToRole="VGDBREGIONS" />
+          <NavigationProperty Name="VGDBROM" Relationship="Self.FK_VGDBRELEASES_0_0" FromRole="VGDBRELEASES" ToRole="VGDBROMS" />
         </EntityType>
         <EntityType Name="VGDBROM">
           <Key>
@@ -198,71 +199,71 @@
           <Property Name="TEMPromRegion" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="romDumpSource" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="CloneOf" Type="Int64" />
-          <NavigationProperty Name="VGDBPLATFORM" Relationship="OpenVGDBModel.FK_VGDBROMS_0_0" FromRole="VGDBROM" ToRole="VGDBPLATFORM" />
-          <NavigationProperty Name="VGDBRELEASES" Relationship="OpenVGDBModel.FK_VGDBRELEASES_0_0" FromRole="VGDBROM" ToRole="VGDBRELEAS" />
+          <NavigationProperty Name="VGDBPLATFORM" Relationship="Self.FK_VGDBROMS_0_0" FromRole="VGDBROMS" ToRole="VGDBPLATFORMS" />
+          <NavigationProperty Name="VGDBRELEASES" Relationship="Self.FK_VGDBRELEASES_0_0" FromRole="VGDBROMS" ToRole="VGDBRELEASES" />
         </EntityType>
-        <EntityContainer Name="OpenVGDBEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="VGDBPLATFORMS" EntityType="Self.VGDBPLATFORM" />
-          <EntitySet Name="VGDBREGIONS" EntityType="Self.VGDBREGION" />
-          <EntitySet Name="VGDBRELEASES" EntityType="Self.VGDBRELEAS" />
-          <EntitySet Name="VGDBROMS" EntityType="Self.VGDBROM" />
-          <AssociationSet Name="FK_VGDBROMS_0_0" Association="OpenVGDBModel.FK_VGDBROMS_0_0">
-            <End Role="VGDBPLATFORM" EntitySet="VGDBPLATFORMS" />
-            <End Role="VGDBROM" EntitySet="VGDBROMS" />
-          </AssociationSet>
-          <AssociationSet Name="FK_VGDBRELEASES_1_0" Association="OpenVGDBModel.FK_VGDBRELEASES_1_0">
-            <End Role="VGDBREGION" EntitySet="VGDBREGIONS" />
-            <End Role="VGDBRELEAS" EntitySet="VGDBRELEASES" />
-          </AssociationSet>
-          <AssociationSet Name="FK_VGDBRELEASES_0_0" Association="OpenVGDBModel.FK_VGDBRELEASES_0_0">
-            <End Role="VGDBROM" EntitySet="VGDBROMS" />
-            <End Role="VGDBRELEAS" EntitySet="VGDBRELEASES" />
-          </AssociationSet>
-        </EntityContainer>
         <Association Name="FK_VGDBROMS_0_0">
-          <End Type="OpenVGDBModel.VGDBPLATFORM" Role="VGDBPLATFORM" Multiplicity="1" />
-          <End Type="OpenVGDBModel.VGDBROM" Role="VGDBROM" Multiplicity="*" />
+          <End Role="VGDBPLATFORMS" Type="Self.VGDBPLATFORM" Multiplicity="1" />
+          <End Role="VGDBROMS" Type="Self.VGDBROM" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="VGDBPLATFORM">
+            <Principal Role="VGDBPLATFORMS">
               <PropertyRef Name="systemID" />
             </Principal>
-            <Dependent Role="VGDBROM">
+            <Dependent Role="VGDBROMS">
               <PropertyRef Name="systemID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_VGDBRELEASES_1_0">
-          <End Type="OpenVGDBModel.VGDBREGION" Role="VGDBREGION" Multiplicity="0..1" />
-          <End Type="OpenVGDBModel.VGDBRELEAS" Role="VGDBRELEAS" Multiplicity="*" />
+          <End Role="VGDBREGIONS" Type="Self.VGDBREGION" Multiplicity="0..1" />
+          <End Role="VGDBRELEASES" Type="Self.VGDBRELEAS" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="VGDBREGION">
+            <Principal Role="VGDBREGIONS">
               <PropertyRef Name="regionID" />
             </Principal>
-            <Dependent Role="VGDBRELEAS">
+            <Dependent Role="VGDBRELEASES">
               <PropertyRef Name="regionLocalizedID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_VGDBRELEASES_0_0">
-          <End Type="OpenVGDBModel.VGDBROM" Role="VGDBROM" Multiplicity="1" />
-          <End Type="OpenVGDBModel.VGDBRELEAS" Role="VGDBRELEAS" Multiplicity="*" />
+          <End Role="VGDBROMS" Type="Self.VGDBROM" Multiplicity="1" />
+          <End Role="VGDBRELEASES" Type="Self.VGDBRELEAS" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="VGDBROM">
+            <Principal Role="VGDBROMS">
               <PropertyRef Name="romID" />
             </Principal>
-            <Dependent Role="VGDBRELEAS">
+            <Dependent Role="VGDBRELEASES">
               <PropertyRef Name="romID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityContainer Name="OpenVGDBEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="VGDBPLATFORMS" EntityType="Self.VGDBPLATFORM" />
+          <EntitySet Name="VGDBREGIONS" EntityType="Self.VGDBREGION" />
+          <EntitySet Name="VGDBRELEASES" EntityType="Self.VGDBRELEAS" />
+          <EntitySet Name="VGDBROMS" EntityType="Self.VGDBROM" />
+          <AssociationSet Name="FK_VGDBROMS_0_0" Association="Self.FK_VGDBROMS_0_0">
+            <End Role="VGDBPLATFORMS" EntitySet="VGDBPLATFORMS" />
+            <End Role="VGDBROMS" EntitySet="VGDBROMS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_VGDBRELEASES_1_0" Association="Self.FK_VGDBRELEASES_1_0">
+            <End Role="VGDBREGIONS" EntitySet="VGDBREGIONS" />
+            <End Role="VGDBRELEASES" EntitySet="VGDBRELEASES" />
+          </AssociationSet>
+          <AssociationSet Name="FK_VGDBRELEASES_0_0" Association="Self.FK_VGDBRELEASES_0_0">
+            <End Role="VGDBROMS" EntitySet="VGDBROMS" />
+            <End Role="VGDBRELEASES" EntitySet="VGDBRELEASES" />
+          </AssociationSet>
+        </EntityContainer>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="OpenVGDBModelStoreContainer" CdmEntityContainer="OpenVGDBEntities">
+        <EntityContainerMapping StorageEntityContainer="mainModelStoreContainer" CdmEntityContainer="OpenVGDBEntities">
           <EntitySetMapping Name="VGDBPLATFORMS">
-            <EntityTypeMapping TypeName="OpenVGDBModel.VGDBPLATFORM">
+            <EntityTypeMapping TypeName="mainModel.VGDBPLATFORM">
               <MappingFragment StoreEntitySet="VGDBPLATFORMS">
                 <ScalarProperty Name="systemID" ColumnName="systemID" />
                 <ScalarProperty Name="systemName" ColumnName="systemName" />
@@ -276,7 +277,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="VGDBREGIONS">
-            <EntityTypeMapping TypeName="OpenVGDBModel.VGDBREGION">
+            <EntityTypeMapping TypeName="mainModel.VGDBREGION">
               <MappingFragment StoreEntitySet="VGDBREGIONS">
                 <ScalarProperty Name="regionID" ColumnName="regionID" />
                 <ScalarProperty Name="regionName" ColumnName="regionName" />
@@ -287,7 +288,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="VGDBRELEASES">
-            <EntityTypeMapping TypeName="OpenVGDBModel.VGDBRELEAS">
+            <EntityTypeMapping TypeName="mainModel.VGDBRELEAS">
               <MappingFragment StoreEntitySet="VGDBRELEASES">
                 <ScalarProperty Name="releaseID" ColumnName="releaseID" />
                 <ScalarProperty Name="romID" ColumnName="romID" />
@@ -311,7 +312,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="VGDBROMS">
-            <EntityTypeMapping TypeName="OpenVGDBModel.VGDBROM">
+            <EntityTypeMapping TypeName="mainModel.VGDBROM">
               <MappingFragment StoreEntitySet="VGDBROMS">
                 <ScalarProperty Name="romID" ColumnName="romID" />
                 <ScalarProperty Name="systemID" ColumnName="systemID" />
