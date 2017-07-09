@@ -204,6 +204,13 @@ namespace Robin
     		set { _isBeaten = value; OnPropertyChanged("IsBeaten"); } 
     	}
     
+        private Nullable<long> _uRL_ID;
+    	public Nullable<long> URL_ID 
+    	{ 
+    		get { return _uRL_ID; } 
+    		set { _uRL_ID = value; OnPropertyChanged("URL_ID"); } 
+    	}
+    
     
         public virtual Game Game { get; set; }
         public virtual GBRelease GBRelease { get; set; }
@@ -215,6 +222,7 @@ namespace Robin
         public virtual Rom Rom { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual List<Collection> Collections { get; set; }
+        public virtual URL URL { get; set; }
      
         public event PropertyChangedEventHandler PropertyChanged;
     

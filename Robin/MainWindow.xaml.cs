@@ -38,6 +38,7 @@ namespace Robin
 		{
 			InitializeComponent();
 			DataContext = MWVM;
+			Activate();
 
 #if DEBUG
 			PresentationTraceSources.DataBindingSource.Switch.Level = SourceLevels.Critical;
@@ -46,41 +47,52 @@ namespace Robin
 
 		private async void BonusButton_Click(object sender, RoutedEventArgs e)
 		{
+			await Task.Run(() => { Reporter.Report("BONUS!"); });
 
-			Reporter.Report("BONUS!");
-			//List<Release> releaseList = MWVM.Rdata.Releases.Local.Where(x => x.IsGame && !x.Included).ToList();
+			//Stopwatch Watch = new Stopwatch();
+			//Watch.Start();
+			//Debug.WriteLine("LoadingGDBReleases...");
+			//R.Data.GDBReleases.Load();
+			//Debug.WriteLine(Watch.ElapsedMilliseconds);
+
+			//Debug.WriteLine("GDB Releases:");
+			//foreach (GDBRelease gdbRelease in R.Data.GDBReleases)
+			//{
+			//	if (
+			//		(gdbRelease.BoxFrontURL != null && !gdbRelease.BoxFrontURL.StartsWith(@"http://thegamesdb.net/banners/boxart/original/front/"))
+			//		||
+			//		  (gdbRelease.BoxBackURL != null && !gdbRelease.BoxBackURL.StartsWith(@"http://thegamesdb.net/banners/boxart/original/back/"))
+			//		  ||
+			//		  (gdbRelease.BannerURL != null && !gdbRelease.BannerURL.StartsWith(@"http://thegamesdb.net/banners/graphical/"))
+			//		  ||
+			//		  (gdbRelease.ScreenURL != null && !gdbRelease.ScreenURL.StartsWith(@"http://thegamesdb.net/banners/screenshots/"))
+			//		  ||
+			//		  (gdbRelease.LogoURL != null && !gdbRelease.LogoURL.StartsWith(@"http://thegamesdb.net/banners/clearlogo/"))
+			//		  )
+
+			//	//			if (
+			//	//(gdbRelease.BoxFrontURL != null && gdbRelease.BoxFrontURL != @"http://thegamesdb.net/banners/boxart/original/front/" + gdbRelease.ID + "-1.jpg")
+			//	//||
+			//	//  (gdbRelease.BoxBackURL != null && gdbRelease.BoxBackURL != @"http://thegamesdb.net/banners/boxart/original/back/" + gdbRelease.ID + "-1.jpg")
+			//	//  ||
+			//	//  (gdbRelease.BannerURL != null && gdbRelease.BannerURL != @"http://thegamesdb.net/banners/graphical/" + gdbRelease.ID + "-g.jpg")
+			//	//  ||
+			//	//  (gdbRelease.ScreenURL != null && gdbRelease.ScreenURL != @"http://thegamesdb.net/banners/screenshots/" + gdbRelease.ID + "-1.jpg")
+			//	//  ||
+			//	//  (gdbRelease.LogoURL != null && gdbRelease.LogoURL != @"http://thegamesdb.net/banners/clearlogo/" + gdbRelease.ID + ".png")
+			//	//  )
+
+			//	{
+			//		Debug.WriteLine("  " + gdbRelease.ID);
+			//	}
+			//}
+
+			//List<Release> releaseList = MWVM.R.Data.Releases.Local.Where(x => x.IsGame && !x.Included).ToList();
 			//foreach (Release release in releaseList)
 			//{
 			//	Debug.WriteLine(++i + "|" + release.PlatformTitle + "|" + release.Rom.Title);
 			//}
 
-			await Task.Run(() =>
-			{
-				Reporter.Tic("Getting DBs..");
-				Launchbox launchbox = new Launchbox(ref MWVM.Rdata);
-				GiantBomb giantbomb = new GiantBomb(MWVM.Rdata);
-				GamesDB gamesdb = new GamesDB(MWVM.Rdata);
-				OpenVGDB openvgdb = new OpenVGDB(MWVM.Rdata);
-				Reporter.Toc();
-				Reporter.Tic("Killing games..");
-				int i = 0;
-				foreach (Platform platform in MWVM.Rdata.Platforms)
-				{
-					Reporter.Report((i++).ToString());
-					List<Release> gonreleases = platform.Releases.Skip(20).ToList();
-					MWVM.Rdata.LBGames.RemoveRange(gonreleases.Select(x => x.LBGame));
-					MWVM.Rdata.LBImages.RemoveRange(gonreleases.SelectMany(x => x.LBGame.LBImages));
-					MWVM.Rdata.GBReleases.RemoveRange(gonreleases.Select(x => x.GBRelease));
-					MWVM.Rdata.GDBReleases.RemoveRange(gonreleases.Select(x => x.GDBRelease));
-					MWVM.Rdata.OVGReleases.RemoveRange(gonreleases.Select(x => x.OVGRelease));
-
-					IEnumerable<Game> games = MWVM.Rdata.Games.Where(x => x.Releases.Count < 1);
-					MWVM.Rdata.Games.RemoveRange(games);
-				}
-				Reporter.Toc();
-			});
-
-			Reporter.Report("Finished!");
 		}
 
 		private void MainList_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -105,8 +117,11 @@ namespace Robin
 
 		private void Database_Click(object sender, RoutedEventArgs e)
 		{
-			var DatabaseWindow = new DatabaseWindow(MWVM.Rdata);
+
+			var DatabaseWindow = new DatabaseWindow();
 			DatabaseWindow.Show();
+			DatabaseWindow.Activate();
+
 		}
 
 		private void MainList_MenuItem_Click4(object sender, RoutedEventArgs e)
@@ -460,7 +475,7 @@ namespace Robin
 			int i = 0;
 #endif
 
-			foreach (Release release in MWVM.Rdata.Releases)
+			foreach (Release release in R.Data.Releases)
 			{
 #if DEBUG
 				Watch.Restart();
@@ -508,7 +523,7 @@ namespace Robin
 		}
 	}
 
-	public static class CustomCommands
+	public static partial class CustomCommands
 	{
 		public static RoutedUICommand GetAllArt = new RoutedUICommand("Download art for all current items", "GetAllArt", typeof(CustomCommands));
 

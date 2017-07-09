@@ -23,11 +23,11 @@ namespace Robin
     		set { _iD = value; OnPropertyChanged("ID"); } 
     	}
     
-        private long _game_ID;
-    	public long Game_ID 
+        private long _lBGame_ID;
+    	public long LBGame_ID 
     	{ 
-    		get { return _game_ID; } 
-    		set { _game_ID = value; OnPropertyChanged("Game_ID"); } 
+    		get { return _lBGame_ID; } 
+    		set { _lBGame_ID = value; OnPropertyChanged("LBGame_ID"); } 
     	}
     
         private string _type;

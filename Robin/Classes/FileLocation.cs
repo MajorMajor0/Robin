@@ -55,6 +55,8 @@ namespace Robin
 
 		public static string Data = Folder + @"\Data\";
 
+		public static string Temp = Folder + @"\Temp\";
+
 		public static string HandyConverter = Emulators + @"Handy\make_lnx.exe";
 
 	}

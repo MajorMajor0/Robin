@@ -68,7 +68,10 @@ namespace Robin
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			var path = value as string;
+#if DEBUG
+            Stopwatch Watch = Stopwatch.StartNew();
+#endif
+            var path = value as string;
 			try
 			{
 				if (path != null && File.Exists(path))
@@ -78,11 +81,17 @@ namespace Robin
 					bitmap.CacheOption = BitmapCacheOption.OnLoad;
 					bitmap.UriSource = new Uri(path);			
 					bitmap.EndInit();
-					return bitmap;
+#if DEBUG
+                    Debug.WriteLine(path + " " + Watch.ElapsedMilliseconds);
+#endif
+                    return bitmap;
 				}
 				else
 				{
-					return DependencyProperty.UnsetValue;
+#if DEBUG
+                    Debug.WriteLine("Image failure: " + Watch.ElapsedMilliseconds);
+#endif
+                    return DependencyProperty.UnsetValue;
 				}
 			}
 			catch (Exception)
@@ -112,6 +121,27 @@ namespace Robin
 		}
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
+
+	public class FileToVisibilityConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			string filePath = (string)(value ?? "");
+			if (File.Exists(filePath))
+			{
+				return Visibility.Visible;
+			}
+			else
+			{
+				return Visibility.Collapsed;
+			}
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
 			throw new NotImplementedException();
 		}

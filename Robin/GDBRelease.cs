@@ -36,11 +36,11 @@ namespace Robin
     		set { _title = value; OnPropertyChanged("Title"); } 
     	}
     
-        private long _platform_ID;
-    	public long Platform_ID 
+        private long _gDBPlatform_ID;
+    	public long GDBPlatform_ID 
     	{ 
-    		get { return _platform_ID; } 
-    		set { _platform_ID = value; OnPropertyChanged("Platform_ID"); } 
+    		get { return _gDBPlatform_ID; } 
+    		set { _gDBPlatform_ID = value; OnPropertyChanged("GDBPlatform_ID"); } 
     	}
     
         private string _developer;

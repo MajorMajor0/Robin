@@ -19,8 +19,6 @@ namespace Robin
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Platform()
         {
-    		GBGames = new List<GBGame>();
-    		OVGReleases = new List<OVGRelease>();
     		Releases = new List<Release>();
     		Roms = new List<Rom>();
     		Emulators = new List<Emulator>();
@@ -208,13 +206,9 @@ namespace Robin
     
     
         public virtual Emulator Emulator { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual List<GBGame> GBGames { get; set; }
         public virtual GBPlatform GBPlatform { get; set; }
         public virtual GDBPlatform GDBPlatform { get; set; }
         public virtual LBPlatform LBPlatform { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual List<OVGRelease> OVGReleases { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual List<Release> Releases { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

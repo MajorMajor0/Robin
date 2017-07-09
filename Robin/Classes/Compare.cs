@@ -20,18 +20,11 @@ using System.Linq;
 
 namespace Robin
 {
-	public interface IComparableDB
-	{
-		long ID { get; set; }
-		string Title { get; set; }
-		string RegionTitle { get; }
-	}
-
 	public class Compares : INotifyPropertyChanged
 	{
 		public ObservableCollection<Compare> List { get; set; }
-		public ObservableCollection<Release> RReleases { get; set; }
-		public ObservableCollection<IComparableDB> DBreleases { get; set; }
+		public List<Release> RReleases { get; set; }
+		public List<IDBRelease> DBreleases { get; set; }
 		public LocalDB Database { get; set; }
 
 		string _title;
@@ -44,45 +37,47 @@ namespace Robin
 		public Compares()
 		{
 			List = new ObservableCollection<Compare>();
-			RReleases = new ObservableCollection<Release>();
-			DBreleases = new ObservableCollection<IComparableDB>();
 			Database = LocalDB.Unknown;
 		}
 
-		public Compares(LocalDB db, Platform platform)
+		public Compares(LocalDB db, IDBPlatform idbPlatform)
 		{
+			Platform platform;
 			List = new ObservableCollection<Compare>();
-			RReleases = new ObservableCollection<Release>();
-			DBreleases = new ObservableCollection<IComparableDB>();
 			Database = db;
-			Title = "Compare " + platform.Title + " - " + Enum.GetName(typeof(LocalDB), db);
+			Title = "Compare " + idbPlatform.Title + " - " + Enum.GetName(typeof(LocalDB), db);
+			DBreleases = new List<IDBRelease>();
+			RReleases = new List<Release>();
+
+			foreach (IDBRelease idbRelease in idbPlatform.Releases)
+			{
+				DBreleases.Add(idbRelease); ;
+			}
+
 			switch (db)
 			{
 				case LocalDB.GamesDB:
-					List<GDBRelease> gdbPlatformReleases = GDBRelease.GetGames(platform);
-					foreach (GDBRelease gdbrelease in gdbPlatformReleases)
+					platform = R.Data.Platforms.FirstOrDefault(x => x.ID_GDB == idbPlatform.ID);
+					if (platform != null)
 					{
-						DBreleases.Add(gdbrelease);
+						RReleases = new List<Release>(platform.Releases.Where(x => x.ID_GDB == null && x.IsGame));
 					}
-					RReleases = new ObservableCollection<Release>(platform.Releases.Where(x => x.ID_GDB == null).ToList());
 					break;
 
 				case LocalDB.GiantBomb:
-					List<GBRelease> gbPlatformReleases = GBRelease.GetGames(platform);
-					foreach (GBRelease gbrelease in gbPlatformReleases)
+					platform = R.Data.Platforms.FirstOrDefault(x => x.ID_GB == idbPlatform.ID);
+					if (platform != null)
 					{
-						DBreleases.Add(gbrelease);
+						RReleases = new List<Release>(platform.Releases.Where(x => x.ID_GB == null && x.IsGame));
 					}
-					RReleases = new ObservableCollection<Release>(platform.Releases.Where(x => x.ID_GB == null).ToList());
 					break;
 
 				case LocalDB.LaunchBox:
-					List<LBGame> lbPlatformGames = LBGame.GetGames(platform);
-					foreach (LBGame lbPlatformGame in lbPlatformGames)
+					platform = R.Data.Platforms.FirstOrDefault(x => x.ID_LB == idbPlatform.ID);
+					if (platform != null)
 					{
-						DBreleases.Add(lbPlatformGame);
+						RReleases = new List<Release>(platform.Releases.Where(x => x.ID_LB == null && x.IsGame));
 					}
-					RReleases = new ObservableCollection<Release>(platform.Releases.Where(x => x.ID_LB == null).ToList());
 					break;
 
 				default:
@@ -98,12 +93,12 @@ namespace Robin
 			List<Compare> Matches = new List<Compare>();
 			int distance = 0;
 
-			bool GoAhead = !ConsiderRegion;
+			bool goAhead = !ConsiderRegion;
 			Release release = new Release();
-			//ComparableDB DBrelease = new ComparableDB();
-			IComparableDB DBrelease;
+			IDBRelease dbRelease;
 
 			int N_r = RReleases.Count;
+
 			// Loop over all Releases
 			for (int i_r = 0; i_r < N_r; i_r++)
 			{
@@ -114,47 +109,44 @@ namespace Robin
 
 				release = RReleases[i_r];
 
-				if (release.IsGame)
+				// Compare current Release to each relase in DBreleases 
+				for (int i_db = 0; i_db < this.DBreleases.Count; i_db++)
 				{
-					// Compare current Release to each relase in DBreleases 
-					for (int i_db = 0; i_db < this.DBreleases.Count; i_db++)
+					dbRelease = DBreleases[i_db];
+
+					if (ConsiderRegion)
 					{
-						DBrelease = this.DBreleases[i_db];
-
-						if (ConsiderRegion)
-						{
-							GoAhead = (release.Region.Title == DBrelease.RegionTitle);
-						}
-
-						if (GoAhead)
-						{
-							// Get distance between Rom i and Game j
-							distance = LevenshteinDistance.Compute(release.Title.Wash(), DBrelease.Title.Wash());
-
-							// Add the current rom/game to a list of matches for consideration
-							Matches.Add(new Compare(distance, DBrelease.ID, i_db, DBrelease.Title, release.Title, i_r, release.Region.Title, DBrelease.RegionTitle));
-
-							// If the current match is perfect, store it and check the accept box. Stop looking through the regions.
-							if (Matches.Last().Distance == 0)
-							{
-								//Matches.Last().RID = Matches.Last().DBID;
-								Matches.Last().AcceptMatch = true;
-								break;
-							}
-						}
+						goAhead = (release.Region.Title == dbRelease.RegionTitle);
 					}
 
-					if (Matches.Any())
+					if (goAhead)
 					{
-						// Find the closest match, then add the threshold from the DataBaseWindow checkbox
-						int min = Matches.Min(em => em.Distance + threshold);
+						// Get distance between Rom i and Game j
+						distance = LevenshteinDistance.Compute(release.Title.Wash(), dbRelease.Title.Wash());
 
-						// Add all of the compares from the list of matches whose distances are closer than the chosen minimum
-						// These are the matches to be displayed for consideration
-						List.AddRange(new List<Compare>(Matches.Where(n => n.Distance == min).Select(n => n).ToList()));
+						// Add the current rom/game to a list of matches for consideration
+						Matches.Add(new Compare(distance, dbRelease.ID, i_db, dbRelease.Title, release.Title, i_r, release.Region.Title, dbRelease.RegionTitle));
+
+						// If the current match is perfect, store it and check the accept box. Stop looking through the regions.
+						if (Matches.Last().Distance == 0)
+						{
+							Matches.Last().AcceptMatch = true;
+							break;
+						}
 					}
-					Matches.Clear();
 				}
+
+				if (Matches.Any())
+				{
+					// Find the closest match, then add the threshold from the DataBaseWindow checkbox
+					int min = Matches.Min(em => em.Distance + threshold);
+
+					// Add all of the compares from the list of matches whose distances are closer than the chosen minimum
+					// These are the matches to be displayed for consideration
+					List.AddRange(new List<Compare>(Matches.Where(n => n.Distance == min).Select(n => n).ToList()));
+				}
+				Matches.Clear();
+
 			}
 		}
 
@@ -175,7 +167,6 @@ namespace Robin
 		public string DBRegion { get; set; }
 		public int DBIndex { get; set; }
 
-		//public long? RID { get; set; }
 		public string RTitle { get; set; }
 		public string RRegion { get; set; }
 		public int RIndex { get; set; }
@@ -196,7 +187,6 @@ namespace Robin
 			DBID = 0;
 			DBIndex = -1;
 			DBTitle = "-";
-			//RID = 0;
 			RTitle = "-";
 			RIndex = -1;
 			AcceptMatch = false;

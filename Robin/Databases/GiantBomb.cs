@@ -27,13 +27,11 @@ namespace Robin
     {
         public string Title { get { return "GiantBomb"; } }
 
-        RobinDataEntities Rdata;
+        public LocalDB DB { get { return LocalDB.GiantBomb; } }
 
-        public LocalDB DB { get { return LocalDB.GamesDB; } }
+        public DbSet Platforms => R.Data.GBPlatforms;
 
-        public IEnumerable<IDBPlatform> Platforms { get { return Rdata.GBPlatforms; } }
-
-        public IEnumerable<IDBRelease> Releases { get { return Rdata.GBReleases; } }
+        public DbSet Releases => R.Data.GBReleases;
 
         bool disposed;
 
@@ -41,15 +39,13 @@ namespace Robin
         const string GBURL = @"http://www.giantbomb.com/api/";
         const string DATEFORMAT = @"yyyy-MM-dd hh\:mm\:ss";
 
-        public GiantBomb(RobinDataEntities rdata)
+        public GiantBomb()
         {
             Reporter.Tic("Opening GiantBomb cache...");
 
-            Rdata = rdata;
-
-            Rdata.GBPlatforms.Load();
-            Rdata.GBReleases.Load();
-            Rdata.GBGames.Load();
+            R.Data.GBPlatforms.Load();
+            R.Data.GBReleases.Load();
+            R.Data.GBGames.Load();
             Reporter.Toc();
         }
 
@@ -60,7 +56,7 @@ namespace Robin
 
         public void CachePlatformReleases(Platform platform, bool reset = false)
         {
-            GBPlatform gbPlatform = Rdata.GBPlatforms.FirstOrDefault(x => x.ID == platform.ID_GB);
+            GBPlatform gbPlatform = R.Data.GBPlatforms.FirstOrDefault(x => x.ID == platform.ID_GB);
             string startDate = reset ? @"1900-01-01 01:01:01" : gbPlatform.CacheDate.ToString(DATEFORMAT);
             string endDate = DateTime.Now.ToString(DATEFORMAT);
 
@@ -128,12 +124,12 @@ namespace Robin
                                 // If the ID XML value was found
                                 if (int.TryParse(element.SafeGetA("id"), out intCatcher))
                                 {
-                                    GBRelease gbRelease = Rdata.GBReleases.FirstOrDefault(x => x.ID == intCatcher);
+                                    GBRelease gbRelease = R.Data.GBReleases.FirstOrDefault(x => x.ID == intCatcher);
 
                                     if (gbRelease == null)
                                     {
                                         gbRelease = new GBRelease();
-                                        Rdata.GBReleases.Add(gbRelease);
+                                        R.Data.GBReleases.Add(gbRelease);
                                         N_added++;
                                     }
 
@@ -143,17 +139,17 @@ namespace Robin
 
                                     if (int.TryParse(element.SafeGetA("game", "id"), out intCatcher))
                                     {
-                                        gbRelease.Game_ID = intCatcher;
+                                        gbRelease.GBGame_ID = intCatcher;
                                     }
                                     if (int.TryParse(element.SafeGetA("maximum_players"), out intCatcher))
                                     {
                                         gbRelease.Players = intCatcher.ToString();
                                     }
 
-                                    gbRelease.Platform_ID = (long)platform.ID_GB;
+                                    gbRelease.GBPlatform_ID = (long)platform.ID_GB;
                                     if (int.TryParse(element.SafeGetA("region", "id"), out intCatcher))
                                     {
-                                        gbRelease.Region = Rdata.Regions.FirstOrDefault(x => x.ID_GB == intCatcher) ?? Rdata.Regions.FirstOrDefault(x => x.Title.Contains("Unk"));
+                                        gbRelease.Region = R.Data.Regions.FirstOrDefault(x => x.ID_GB == intCatcher) ?? R.Data.Regions.FirstOrDefault(x => x.Title.Contains("Unk"));
                                     }
 
                                     gbRelease.Date = DateTimeRoutines.SafeGetDate(element.SafeGetA("release_date"));
@@ -179,9 +175,9 @@ namespace Robin
 
             }// end using webclient
 
-            Rdata.ChangeTracker.DetectChanges();
+            R.Data.ChangeTracker.DetectChanges();
 
-            int N_total = Rdata.Save();
+            int N_total = R.Data.Save();
             Reporter.Report(N_added + " releases added to database, " + (N_total - N_added) + " releases updated.");
 
         }
@@ -193,9 +189,9 @@ namespace Robin
 
         public void CachePlatformGames(Platform platform, bool reset = false)
         {
-            Rdata.Configuration.AutoDetectChangesEnabled = false;
+            R.Data.Configuration.AutoDetectChangesEnabled = false;
 
-            GBPlatform gbPlatform = Rdata.GBPlatforms.FirstOrDefault(x => x.ID == platform.ID_GB);
+            GBPlatform gbPlatform = R.Data.GBPlatforms.FirstOrDefault(x => x.ID == platform.ID_GB);
             string startDate = reset ? @"1900-01-01 01:01:01" : gbPlatform.CacheDate.ToString(DATEFORMAT);
             string endDate = DateTime.Now.ToString(DATEFORMAT);
 
@@ -256,9 +252,9 @@ namespace Robin
                                 if (int.TryParse(element.SafeGetA("id"), out intCatcher))
                                 {
                                     GBGame gbGame = new GBGame();
-                                    if (Rdata.GBGames.Any(x => x.ID == intCatcher))
+                                    if (R.Data.GBGames.Any(x => x.ID == intCatcher))
                                     {
-                                        gbGame = Rdata.GBGames.FirstOrDefault(x => x.ID == intCatcher);
+                                        gbGame = R.Data.GBGames.FirstOrDefault(x => x.ID == intCatcher);
                                         gameAlreadyExisted = true;
                                     }
                                     else
@@ -271,14 +267,14 @@ namespace Robin
 
                                     gbGame.Title = element.SafeGetA("name");
                                     gbGame.Overview = element.SafeGetA("deck");
-                                    gbGame.Platform_ID = platform.ID_GB;
+                                    gbGame.GBPlatform_ID = platform.ID_GB;
                                     gbGame.Date = DateTimeRoutines.SafeGetDate(element.SafeGetA("release_date"));
                                     gbGame.BoxURL = element.SafeGetA("image", "medium_url");
                                     gbGame.ScreenURL = element.SafeGetA("image", "screen_url");
 
                                     if (!gameAlreadyExisted)
                                     {
-                                        Rdata.GBGames.Add(gbGame);
+                                        R.Data.GBGames.Add(gbGame);
                                         N_added++;
                                     }
 
@@ -301,16 +297,16 @@ namespace Robin
                 }
             }// end using webclient
 
-            Rdata.ChangeTracker.DetectChanges();
-            Rdata.Configuration.AutoDetectChangesEnabled = true;
+            R.Data.ChangeTracker.DetectChanges();
+            R.Data.Configuration.AutoDetectChangesEnabled = true;
 
-            int N_total = Rdata.Save();
+            int N_total = R.Data.Save();
             Reporter.Report(N_added + " games added to Games DB cache, " + (N_total - N_added) + " games updated.");
         }
 
         public void CachePlatformData(Platform platform)
         {
-            GBPlatform gbPlatform = Rdata.GBPlatforms.FirstOrDefault(x => x.ID == platform.ID_GB);
+            GBPlatform gbPlatform = R.Data.GBPlatforms.FirstOrDefault(x => x.ID == platform.ID_GB);
             DateTime startdate = gbPlatform.CacheDate;
 
             string downloadText;
@@ -347,14 +343,14 @@ namespace Robin
 
             }// end using webclient
 
-            int n = Rdata.Save();
+            int n = R.Data.Save();
             Reporter.Report(n + " changes pushed to database.");
 
         }
 
         public void CachePlatform(Platform platform)
         {
-            GBPlatform gbPlatform = Rdata.GBPlatforms.FirstOrDefault(x => x.ID == platform.ID_GB);
+            GBPlatform gbPlatform = R.Data.GBPlatforms.FirstOrDefault(x => x.ID == platform.ID_GB);
             if (gbPlatform != null)
             {
                 Reporter.Report("Caching " + platform.Title);
@@ -396,13 +392,13 @@ namespace Robin
             {
                 // free other managed objects that implement
                 // IDisposable only
-/*                Rdata.GBPlatforms.Dispose()*/;
+/*                R.Data.GBPlatforms.Dispose()*/;
             }
 
             // release any unmanaged objects
             // set the object references to null
 
-            //Rdata = null;
+            //R.Data = null;
 
             disposed = true;
         }

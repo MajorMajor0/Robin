@@ -23,36 +23,23 @@ namespace Robin
 	public partial class DatabaseWindow : Window
 	{
 		DatabaseWindowViewModel DBWVM;
-		public DatabaseWindow(RobinDataEntities rdata)
+
+		public DatabaseWindow()
 		{
-			DBWVM = new DatabaseWindowViewModel(rdata);
+			DBWVM = new DatabaseWindowViewModel();
 			InitializeComponent();
 			DataContext = DBWVM;
+			Activate();
 		}
 
 		private void BONUS_button_Click(object sender, RoutedEventArgs e)
 		{
 			Reporter.Report("BONUS!");
-			
 		}
 
-		private void CompareToGamesdb_click(object sender, RoutedEventArgs e)
+		private void Compare_Click(object sender, RoutedEventArgs e)
 		{
-			DBWVM.CompareToDBAsync(LocalDB.GamesDB);
-		}
-
-		private void Compare_to_GB_Click(object sender, RoutedEventArgs e)
-		{
-			DBWVM.CompareToDBAsync(LocalDB.GiantBomb);
-		}
-		private void CompareToOVG_button_Click(object sender, RoutedEventArgs e)
-		{
-			DBWVM.CompareToDBAsync(LocalDB.OpenVGDB);
-		}
-
-		private void CompareToLB_button_Click(object sender, RoutedEventArgs e)
-		{
-			DBWVM.CompareToDBAsync(LocalDB.LaunchBox);
+			DBWVM.CompareToDBAsync();
 		}
 
 		private void AcceptClick(object sender, RoutedEventArgs e)
@@ -62,86 +49,6 @@ namespace Robin
 			//{
 			//	DBWVM.Accept();
 			//}
-		}
-
-		private void GDBButton_Click(object sender, RoutedEventArgs e)
-		{
-			DBWVM.PlatformsList = DBWVM.Rdata.GDBPlatforms.Local;
-		}
-
-		private void GBButton_Click(object sender, RoutedEventArgs e)
-		{
-
-		}
-
-		private void OVGButton_Click(object sender, RoutedEventArgs e)
-		{
-
-		}
-
-		private void LBButton_Click(object sender, RoutedEventArgs e)
-		{
-
-		}
-
-		private void DatabaseGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
-		{
-			////string type = PlatformList.SelectedItem.GetType().ToString();
-			//string type = DatabaseGrid.Content.GetType().ToString();
-			//type = type.Split(new char[] { '.', '_' })[4];
-
-			//switch (type)
-			//{
-			//    case "Compares":
-			//        //        if (e.Column.Header.ToString() == "ToolTip") e.Cancel = true;
-			//        //        if (e.Column.Header.ToString() == "DBIndex") e.Cancel = true;
-			//        //        if (e.Column.Header.ToString() == "RIndex") e.Cancel = true;
-			//        //        if (e.Column.Header.ToString() == "Title") e.Cancel = true;
-			//        //        if (e.Column.Header.ToString() == "DBID") e.Cancel = true;
-			//        //        if (e.Column.Header.ToString() == "RID") e.Cancel = true;
-			//        //        if (e.Column.Header.ToString() == "AcceptMatch") e.Column.DisplayIndex = 1;
-			//        //        if (e.Column.Header.ToString() == "DBTitle") e.Column.DisplayIndex = 2;
-			//        break;
-
-			//    case "Release":
-			//        //    if (e.PropertyType == typeof(Robin.Game))
-			//        //    {
-			//        //        var col_gam = new DataGridTextColumn();
-			//        //        col_gam.Header = "Game";
-			//        //        col_gam.Binding = new Binding("Game.Name");
-			//        //        e.Column = col_gam;
-			//        //    }
-
-			//        //    if (e.PropertyType == typeof(Robin.id))
-			//        //    {
-			//        //        var col_id = new DataGridTextColumn();
-			//        //        col_id.Header = "ID";
-			//        //        col_id.Binding = new Binding("Id.GamesDB");
-			//        //        e.Column = col_id;
-			//        //    }
-
-			//        //    if (e.PropertyType == typeof(Robin.crc))
-			//        //    {
-			//        //        var col_crc = new DataGridTextColumn();
-			//        //        col_crc.Header = "SHA1";
-			//        //        col_crc.Binding = new Binding("Crc.SHA1");
-			//        //        e.Column = col_crc;
-			//        //    }
-			//        //    if (e.Column.Header.ToString() == "Name") e.Column.DisplayIndex = 1;
-			//        //    if (e.Column.Header.ToString() == "HasChanged") e.Cancel = true;
-			//        //    if (e.Column.Header.ToString() == "IsExpanded") e.Cancel = true;
-			//        //    if (e.Column.Header.ToString() == "ToolTip") e.Cancel = true;
-			//        break;
-
-			//    case "Platform":
-			//        if (e.Column.Header.ToString() == "Overview") e.Cancel = true;
-			//        if (e.Column.Header.ToString() == "Platform") e.Cancel = true;
-			//        if (e.Column.Header.ToString() == "Region") e.Cancel = true;
-			//        if (e.Column.Header.ToString() == "CloneOf_ID") e.Cancel = true;
-			//        if (e.Column.Header.ToString() == "games") e.Cancel = true;
-			//        break;
-			//}
-
 		}
 
 		public void GetDirectory_Click(object sender, RoutedEventArgs e)
@@ -168,32 +75,32 @@ namespace Robin
 			//	Platform platform = PlatformList.SelectedItem as Platform;
 			//	await Task.Run(() =>
 			//	{
-			//		//DBWVM.Rdata.Configuration.AutoDetectChangesEnabled = false;
+			//		//DBWVM.R.Data.Configuration.AutoDetectChangesEnabled = false;
 			//		Datomatic datomatic = new Datomatic();
 			//		datomatic.CacheFromXML(platform);
-			//		//DBWVM.Rdata.ChangeTracker.DetectChanges();
+			//		//DBWVM.R.Data.ChangeTracker.DetectChanges();
 			//		//DBWVM.SaveChanges();
-			//		//DBWVM.Rdata.Configuration.AutoDetectChangesEnabled = false;
+			//		//DBWVM.R.Data.Configuration.AutoDetectChangesEnabled = false;
 			//	});
 			//}
 		}
 
 		private void PlatformList_MouseUp(object sender, MouseButtonEventArgs e)
 		{
-			//if (PlatformList.SelectedItems.Count > 0)
-			//{
-			//	DatabaseGrid.Content = PlatformList.SelectedItem;
-			//	CountBlock.DataContext = ((Platform)PlatformList.SelectedItem).Releases;
-			//}
+			if (PlatformList.SelectedItems.Count > 0)
+			{
+				DatabaseGrid.DataContext = DBWVM.SelectedPlatform;
+				CountBlock.DataContext = PlatformList.SelectedItem;
+			}
 		}
 
 		private void ComparisonResultsList_MouseUp(object sender, MouseButtonEventArgs e)
 		{
-			//DatabaseGrid.Content = ComparisonResultsList.SelectedItem;
-			//if (ComparisonResultsList.SelectedItem != null)
-			//{
-			//	CountBlock.DataContext = ((Compares)ComparisonResultsList.SelectedItem).List;
-			//}
+			DatabaseGrid.DataContext = ComparisonResultsList.SelectedItem;
+			if (ComparisonResultsList.SelectedItem != null)
+			{
+				CountBlock.DataContext = ((Compares)ComparisonResultsList.SelectedItem).List;
+			}
 		}
 
 		private void DataGrid_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -205,24 +112,41 @@ namespace Robin
 			//}
 		}
 
-		private void CacheGB_button_Click(object sender, RoutedEventArgs e)
+		private void Cache_button_Click(object sender, RoutedEventArgs e)
 		{
-			DBWVM.CachePlatform(LocalDB.GiantBomb);
+			DBWVM.CachePlatform();
 		}
 
-		private void CacheGDB_button_Click(object sender, RoutedEventArgs e)
+		private void ArtWindow_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			DBWVM.CachePlatform(LocalDB.GamesDB);
+			e.CanExecute = true;
 		}
 
-		private void CacheOV_button_Click(object sender, RoutedEventArgs e)
+		private void ArtWindow_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			DBWVM.CachePlatform(LocalDB.OpenVGDB);
+			Release release = (e.OriginalSource as Control).DataContext as Release;
+			ArtWindow artWindow = new ArtWindow(release);
+			artWindow.Show();
+			artWindow.Activate();
 		}
 
-		private void CacheLB_button_Click(object sender, RoutedEventArgs e)
+		private void MatchWindow_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			DBWVM.CachePlatform(LocalDB.LaunchBox);
+			e.CanExecute = true;
 		}
+
+		private void MatchWindow_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			Release release = (e.OriginalSource as Control).DataContext as Release;
+			MatchWindow matchWindow = new MatchWindow(release);
+			matchWindow.Show();
+			matchWindow.Activate();
+		}
+	}
+	public static class DBCommands
+	{
+		public static RoutedUICommand ArtWindow = new RoutedUICommand("Open Art Window", "ArtWindow", typeof(CustomCommands));
+		public static RoutedUICommand MatchWindow = new RoutedUICommand("Open Match Window", "ArtWindow", typeof(CustomCommands));
+
 	}
 }

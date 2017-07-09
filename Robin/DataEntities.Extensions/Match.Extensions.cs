@@ -34,38 +34,38 @@ namespace Robin
 			return match;
 		}
 
-		public static void StoreMatches(RobinDataEntities Rdata)
+		public static void StoreMatches()
 		{
-			Rdata.Configuration.AutoDetectChangesEnabled = false;
-			Rdata.Configuration.LazyLoadingEnabled = false;
-			Rdata.Matches.Load();
+			R.Data.Configuration.AutoDetectChangesEnabled = false;
+			R.Data.Configuration.LazyLoadingEnabled = false;
+			R.Data.Matches.Load();
 			int i = 0;
-			foreach (Release release in Rdata.Releases)
+			foreach (Release release in R.Data.Releases)
 			{
 				if (release.SHA1 != null && (release.ID_GB != null || release.ID_GDB != null || release.ID_OVG != null))
 				{
-					Rdata.Matches.Add(release);
+					R.Data.Matches.Add(release);
 				}
 				Debug.WriteLine(i++);
 			}
-			Rdata.ChangeTracker.DetectChanges();
-			int o = Rdata.Save();
-			Rdata.Configuration.AutoDetectChangesEnabled = true;
+			R.Data.ChangeTracker.DetectChanges();
+			int o = R.Data.Save();
+			R.Data.Configuration.AutoDetectChangesEnabled = true;
 			Reporter.Report(o + " changes pushed to database");
 		}
 
-		public static async void RestoreMatches(RobinDataEntities Rdata)
+		public static async void RestoreMatches()
 		{
-			Rdata.Configuration.AutoDetectChangesEnabled = false;
-			Rdata.Configuration.LazyLoadingEnabled = false;
-			Rdata.Matches.Load();
+			R.Data.Configuration.AutoDetectChangesEnabled = false;
+			R.Data.Configuration.LazyLoadingEnabled = false;
+			R.Data.Matches.Load();
 			int i = 0;
 			await Task.Run(() =>
 			{
-				foreach (Match match in Rdata.Matches)
+				foreach (Match match in R.Data.Matches)
 				{
 
-					Release release = Rdata.Releases.FirstOrDefault(x => x.Rom.SHA1 == match.SHA1 && x.Region_ID == match.Region_ID);
+					Release release = R.Data.Releases.FirstOrDefault(x => x.Rom.SHA1 == match.SHA1 && x.Region_ID == match.Region_ID);
 					if (release != null)
 					{
 						Reporter.Report((i++).ToString() + " Matched " + release.TitleAndRegion);
@@ -74,9 +74,9 @@ namespace Robin
 						release.ID_OVG = release.ID_OVG ?? match.ID_OVG;
 					}
 				}
-				Rdata.ChangeTracker.DetectChanges();
-				int o = Rdata.Save();
-				Rdata.Configuration.AutoDetectChangesEnabled = true;
+				R.Data.ChangeTracker.DetectChanges();
+				int o = R.Data.Save();
+				R.Data.Configuration.AutoDetectChangesEnabled = true;
 				Reporter.Report(o + " changes pushed to database");
 			});
 		}

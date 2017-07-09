@@ -63,6 +63,10 @@
     <StartupObject>Robin.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ArtWindow.xaml.cs">
+      <DependentUpon>ArtWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ArtWindowViewModel.cs" />
     <Compile Include="Classes\AutoFilter.cs" />
     <Compile Include="Classes\Constants.cs" />
     <Compile Include="Classes\Handy.cs" />
@@ -73,6 +77,7 @@
     <Compile Include="Controls\BindableSelectionListView.cs" />
     <Compile Include="Databases\GoodTools.cs" />
     <Compile Include="Databases\Launchbox.cs" />
+    <Compile Include="Databases\RobinDB.cs" />
     <Compile Include="Databases\Validate.cs" />
     <Compile Include="Databases\Datomatic.cs" />
     <Compile Include="Databases\DBTimer.cs" />
@@ -92,6 +97,7 @@
     <Compile Include="DataEntities.Extensions\GBRelease.Extensions.cs" />
     <Compile Include="DataEntities.Extensions\Game.Extensions.cs" />
     <Compile Include="DataEntities.Extensions\Match.Extensions.cs" />
+    <Compile Include="DataEntities.Extensions\OVGPlatform.Extensions.cs" />
     <Compile Include="DataEntities.Extensions\OVGRelease.Extensions.cs" />
     <Compile Include="DataEntities.Extensions\Platform.Extensions.cs" />
     <Compile Include="DataEntities.Extensions\Release.Extensions.cs" />
@@ -118,9 +124,6 @@
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="GDBRelease.cs">
-      <DependentUpon>RobinDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="GoodRom.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Language.cs">
@@ -155,6 +158,10 @@
     <Compile Include="Match.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="MatchWindow.xaml.cs">
+      <DependentUpon>MatchWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MatchWindowViewModel.cs" />
     <Compile Include="OpenVGDBModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -169,6 +176,9 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>OpenVGDBModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="OVGPlatform.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="OVGRelease.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
@@ -202,6 +212,9 @@
     </Compile>
     <Compile Include="Settings.cs" />
     <Compile Include="DataEntities.Extensions\VGDBROM.Extensions.cs" />
+    <Compile Include="URL.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="VGDBPLATFORM.cs">
       <DependentUpon>OpenVGDBModel.tt</DependentUpon>
     </Compile>
@@ -214,6 +227,10 @@
     <Compile Include="VGDBROM.cs">
       <DependentUpon>OpenVGDBModel.tt</DependentUpon>
     </Compile>
+    <Page Include="ArtWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="DatabaseWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -230,6 +247,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="MatchWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

@@ -11,9 +11,11 @@
  * 
  * You should have received a copy of the GNU General Public License
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
- 
+
 using System;
+using System.Collections;
 using System.ComponentModel;
+using System.Data.Entity;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -28,9 +30,10 @@ namespace Robin
 {
 	public partial class Platform : IDBobject, IDBPlatform, INotifyPropertyChanged
 	{
-		public string RomDirectory
+
+		public OVGPlatform OVGPlatform
 		{
-			get { return FileLocation.Roms + FileName + @"\"; }
+			get { return R.Data.OVGPlatforms.FirstOrDefault(x => x.ID == ID); }
 		}
 
 		public int MatchedToGamesDB
@@ -73,6 +76,16 @@ namespace Robin
 			}
 		}
 
+		public int ReleasesWithArt
+		{
+			get { return Releases.Where(x => x.HasArt).Count(); }
+		}
+
+		public int ReleasesIncluded
+		{
+			get { return Releases.Where(x => x.Included).Count(); }
+		}
+
 
 		public bool Included
 		{
@@ -89,23 +102,18 @@ namespace Robin
 
 		public bool IsCrap { get; set; }
 
-
-		public int ReleasesWithArt
-		{
-			get { return Releases.Where(x => x.HasArt).Count(); }
-		}
-
-		public int ReleasesIncluded
-		{
-			get { return Releases.Where(x => x.Included).Count(); }
-		}
-
 		bool IDBobject.Unlicensed
 		{
 			get
 			{
 				throw new NotImplementedException();
 			}
+		}
+
+
+		public string RomDirectory
+		{
+			get { return FileLocation.Roms + FileName + @"\"; }
 		}
 
 		public string BoxFrontURL
@@ -173,19 +181,25 @@ namespace Robin
 			get { return FileLocation.Art.Console + this.ID + "P-CTRL.jpg"; }
 		}
 
+		IList IDBPlatform.Releases
+		{
+			get { return Releases as IList; }
+		}
+
+
 		public void GetGames()
 		{
 			//Games = GamesDB.GetPlatformGames(this);
 		}
 
-		public void Add(RobinDataEntities LDBdata)
-		{
-			Platform platform = LDBdata.Platforms.FirstOrDefault(x => x.ID == ID);
-			foreach (Release release in platform.Releases)
-			{
-				Releases.Add((Release)release);
-			}
-		}
+		//public void Add(RobinDataEntities LDBdata)
+		//{
+		//	Platform platform = LDBdata.Platforms.FirstOrDefault(x => x.ID == ID);
+		//	foreach (Release release in platform.Releases)
+		//	{
+		//		Releases.Add((Release)release);
+		//	}
+		//}
 
 		public int ScrapeBoxFront()
 		{

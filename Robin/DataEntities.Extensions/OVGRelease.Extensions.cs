@@ -12,11 +12,14 @@
  * You should have received a copy of the GNU General Public License
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
 
+using System.IO;
+using System.Net;
+
 namespace Robin
 {
-	public partial class OVGRelease: IDBRelease
+	public partial class OVGRelease : IDBRelease
 	{
-
+		public string RegionTitle { get { return Region.Title; } }
 
 		public static implicit operator OVGRelease(VGDBRELEAS vgdbrelease)
 		{
@@ -28,7 +31,7 @@ namespace Robin
 				Developer = string.IsNullOrEmpty(vgdbrelease.releaseDeveloper) ? null : vgdbrelease.releaseDeveloper,
 				Publisher = string.IsNullOrEmpty(vgdbrelease.releasePublisher) ? null : vgdbrelease.releasePublisher,
 				Genre = string.IsNullOrEmpty(vgdbrelease.releaseGenre) ? null : vgdbrelease.releaseGenre,
-				Date = DateTimeRoutines.SafeGetDate( string.IsNullOrEmpty(vgdbrelease.releaseDate) ? null : vgdbrelease.releaseDate),
+				Date = DateTimeRoutines.SafeGetDate(string.IsNullOrEmpty(vgdbrelease.releaseDate) ? null : vgdbrelease.releaseDate),
 
 				CRC = string.IsNullOrEmpty(vgdbrelease.VGDBROM.romHashCRC) ? null : vgdbrelease.VGDBROM.romHashCRC,
 				MD5 = string.IsNullOrEmpty(vgdbrelease.VGDBROM.romHashMD5) ? null : vgdbrelease.VGDBROM.romHashMD5,
@@ -45,6 +48,46 @@ namespace Robin
 			};
 			return ovgrelease;
 		}
+
+		public string BoxFrontPath
+		{
+			get { return FileLocation.Temp + ID + "OVGR-BXF.jpg"; }
+		}
+
+		public void ScrapeBoxFront()
+		{
+			using (WebClient webclient = new WebClient())
+			{
+				if (!File.Exists(BoxFrontPath))
+				{
+					if (BoxFrontURL != null)
+					{
+						Reporter.Report("Getting front box art for OVGRelease " + Title + "...");
+
+						if (webclient.DownloadFileFromDB(BoxFrontURL, BoxFrontPath))
+						{
+							Reporter.ReportInline("success!");
+							OnPropertyChanged("BoxFrontPath");
+						}
+						else
+						{
+							Reporter.ReportInline("dammit!");
+						}
+					}
+
+					else
+					{
+						Reporter.Report("No box art URL exists.");
+					}
+				}
+
+				else
+				{
+					Reporter.Report("File already exists.");
+				}
+			}
+		}
+
 	}
 
 }

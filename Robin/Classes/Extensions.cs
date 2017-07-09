@@ -123,7 +123,7 @@ namespace Robin
 			string BackupFile = FileLocation.Backup + Path.GetFileNameWithoutExtension(CurrentFile) + Date + Path.GetExtension(CurrentFile);
 			try
 			{
-				File.Copy(CurrentFile, BackupFile);
+				//File.Copy(CurrentFile, BackupFile); TODO uncomment
 				//reporter.Report("DB file backed up to " + BackupFile);
 			}
 			catch (Exception ex)

@@ -27,28 +27,25 @@ namespace Robin
 {
 	public class Datomatic
 	{
-		RobinDataEntities rdata;
-
-
 		public Datomatic()
 		{
 
-			rdata = new RobinDataEntities();
-			rdata.Configuration.AutoDetectChangesEnabled = false;
-			rdata.Configuration.LazyLoadingEnabled = false;
+			R.Data = new RobinDataEntities();
+			R.Data.Configuration.AutoDetectChangesEnabled = false;
+			R.Data.Configuration.LazyLoadingEnabled = false;
 
-			rdata.Languages.Load();
-			rdata.Regions.Load();
-			rdata.Games.Load();
-			rdata.Roms.Load();
-			rdata.Platforms.Load();
-			rdata.Releases.Load();
+			R.Data.Languages.Load();
+			R.Data.Regions.Load();
+			R.Data.Games.Load();
+			R.Data.Roms.Load();
+			R.Data.Platforms.Load();
+			R.Data.Releases.Load();
 		}
 
 		const string UNL = @".*\(Unl\).*";
 		public void CacheFromXML(Platform _platform)
 		{
-			Platform platform = rdata.Platforms.Where(x => x.ID == _platform.ID).FirstOrDefault();
+			Platform platform = R.Data.Platforms.Where(x => x.ID == _platform.ID).FirstOrDefault();
 
 			// Configure open file dialog box
 			Microsoft.Win32.OpenFileDialog Dialog = new Microsoft.Win32.OpenFileDialog();
@@ -89,7 +86,7 @@ namespace Robin
 				}
 
 
-				List<Region> datomaticRegions = rdata.Regions.Where(x => x.Datomatic != null).ToList();
+				List<Region> datomaticRegions = R.Data.Regions.Where(x => x.Datomatic != null).ToList();
 				// Add release where required to make sure xelements have standardized info
 				foreach (XElement gameElement in DatomaticFile.Root.Elements("game"))
 				{
@@ -180,7 +177,7 @@ namespace Robin
 						if (game == null)
 						{
 							game = new Game();
-							rdata.Games.Add(game);
+							R.Data.Games.Add(game);
 						}
 
 						// Check if each rom exists
@@ -193,13 +190,13 @@ namespace Robin
 								continue; // Malformed element
 							}
 
-							rom = rdata.Roms.FirstOrDefault(x => x.SHA1 == romElementSha1);
+							rom = R.Data.Roms.FirstOrDefault(x => x.SHA1 == romElementSha1);
 
 							// Not found, create a new one
 							if (rom == null)
 							{
 								rom = new Rom() { Platform_ID = platform.ID };
-								rdata.Roms.Add(rom);
+								R.Data.Roms.Add(rom);
 							}
 							Watch2.Restart();
 							// Whether existing or new, overwrite properties with new data
@@ -215,7 +212,7 @@ namespace Robin
 								{
 
 								}
-								long? regionID = rdata.Regions.FirstOrDefault(x => (x.Datomatic == releaseRegionTitle) || (x.Title == releaseRegionTitle)).ID;
+								long? regionID = R.Data.Regions.FirstOrDefault(x => (x.Datomatic == releaseRegionTitle) || (x.Title == releaseRegionTitle)).ID;
 
 								if (regionID == null)
 								{
@@ -257,9 +254,9 @@ namespace Robin
 					}
 
 					Reporter.Report("Finished. " + Watch2.Elapsed.ToString(@"m\:s") + " total elapsed");
-					rdata.ChangeTracker.DetectChanges();
-					rdata.Configuration.AutoDetectChangesEnabled = true;
-					int o = rdata.Save();
+					R.Data.ChangeTracker.DetectChanges();
+					R.Data.Configuration.AutoDetectChangesEnabled = true;
+					int o = R.Data.Save();
 					Reporter.Report(o + " changes pushed to database.");
 				}
 
@@ -297,7 +294,7 @@ namespace Robin
 			// Get languages from datomatic using regex from parenthesis
 			release.Language = "";
 
-			foreach (Language language in rdata.Languages)
+			foreach (Language language in R.Data.Languages)
 			{
 				if (Regex.IsMatch(release.Title, @"\([^)]*" + language.Abbreviation + @"[^)]*\)"))
 				{
@@ -319,7 +316,7 @@ namespace Robin
 				Matches[i] = Matches[i].Replace("(", "").Replace(")", "");
 			}
 
-			foreach (Region region in rdata.Regions)
+			foreach (Region region in R.Data.Regions)
 			{
 				Matches.Remove(region.Title);
 			}

@@ -31,7 +31,6 @@ namespace Robin
 	{
 		Platform arcadePlatform;
 		List<Region> regions;
-		RobinDataEntities Rdata;
 		List<Region> notNullRegions;
 
 		public MAME()
@@ -39,17 +38,17 @@ namespace Robin
 
 			arcadePlatform = new Platform();
 			regions = new List<Region>();
-			Rdata = new RobinDataEntities();
+			R.Data = new RobinDataEntities();
 
-			Rdata.Configuration.AutoDetectChangesEnabled = false;
-			Rdata.Configuration.LazyLoadingEnabled = false;
-			Rdata.Releases.Load();
-			Rdata.Releases.Include(x => x.Rom).Load();
-			Rdata.Regions.Load();
-			Rdata.Games.Load();
-			Rdata.Platforms.Load();
-			Rdata.Platforms.Include(x => x.Roms).Load();
-			notNullRegions = Rdata.Regions.Where(x => x.Priority != null).OrderByDescending(x => x.Priority).ToList();
+			R.Data.Configuration.AutoDetectChangesEnabled = false;
+			R.Data.Configuration.LazyLoadingEnabled = false;
+			R.Data.Releases.Load();
+			R.Data.Releases.Include(x => x.Rom).Load();
+			R.Data.Regions.Load();
+			R.Data.Games.Load();
+			R.Data.Platforms.Load();
+			R.Data.Platforms.Include(x => x.Roms).Load();
+			notNullRegions = R.Data.Regions.Where(x => x.Priority != null).OrderByDescending(x => x.Priority).ToList();
 		}
 
 		public async void GetDataBase()
@@ -73,8 +72,8 @@ namespace Robin
 				Reporter.Report("Opening databases...");
 				Watch1.Restart();
 
-				regions = Rdata.Regions.ToList();
-				arcadePlatform = Rdata.Platforms.FirstOrDefault(x => x.Title.Contains("Arcade"));
+				regions = R.Data.Regions.ToList();
+				arcadePlatform = R.Data.Platforms.FirstOrDefault(x => x.Title.Contains("Arcade"));
 
 				Reporter.ReportInline(Watch1.Elapsed.ToString(@"m\:ss"));
 				Watch1.Restart();
@@ -140,7 +139,7 @@ namespace Robin
 					if (game == null)
 					{
 						game = new Game();
-						Rdata.Games.Add(game);
+						R.Data.Games.Add(game);
 					}
 
 					// Check if each rom exists and each release exists
@@ -224,7 +223,7 @@ namespace Robin
 
 								parentRelease.Game = parentGame;
 								orphanRelease.Game = parentGame;
-								Rdata.Games.Add(parentGame);
+								R.Data.Games.Add(parentGame);
 								arcadePlatform.Releases.Add(parentRelease);
 
 								Debug.WriteLine(machineElement.SafeGetA(element1: "driver", attribute: "status"));
@@ -237,8 +236,8 @@ namespace Robin
 					Reporter.Report("No orphans found.");
 				}
 
-				Rdata.ChangeTracker.DetectChanges();
-				int i = Rdata.Save();
+				R.Data.ChangeTracker.DetectChanges();
+				int i = R.Data.Save();
 				Reporter.Report(i + " changes pushed to database, " + Watch1.Elapsed.ToString(@"m\:ss"));
 
 			});

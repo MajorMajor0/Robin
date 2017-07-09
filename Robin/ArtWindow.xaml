@@ -1,0 +1,138 @@
+﻿<Window x:Class="Robin.ArtWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:local="clr-namespace:Robin"
+		mc:Ignorable="d"
+		Title="ArtWindow"
+		SizeToContent="WidthAndHeight" >
+	<Grid>
+		<StackPanel>
+			<StackPanel x:Name="LB_StackPanel" Margin="0,10,0,0">
+				<TextBlock Style="{StaticResource Heading0}">
+					<TextBlock.Text>
+						<MultiBinding StringFormat="{} LaunchBox ({0})">
+							<Binding Path="ID_LB"
+									 TargetNullValue="-" />
+						</MultiBinding>
+					</TextBlock.Text>
+				</TextBlock>
+				<TextBlock Style="{StaticResource Normal}">
+					<TextBlock.Text>
+						<MultiBinding StringFormat="{} Box art front: {0}">
+							<Binding Path="LBGame.BoxFrontURL"
+									 TargetNullValue="-" />
+						</MultiBinding>
+					</TextBlock.Text>
+				</TextBlock>
+			</StackPanel>
+			<StackPanel x:Name="GDB_StackPanel"
+						Margin="0,10,0,0">
+				<TextBlock Style="{StaticResource Heading0}">
+					<TextBlock.Text>
+						<MultiBinding StringFormat="{} Games DB ({0})">
+							<Binding Path="ID_GDB"
+									 TargetNullValue="-" />
+						</MultiBinding>
+					</TextBlock.Text>
+				</TextBlock>
+				<TextBlock Style="{StaticResource Normal}">
+					<TextBlock.Text>
+						<MultiBinding StringFormat="{} Box art front: {0}">
+							<Binding Path="GDBRelease.BoxFrontURL"
+									 TargetNullValue="-" />
+						</MultiBinding>
+					</TextBlock.Text>
+				</TextBlock>
+				<TextBlock Style="{StaticResource Normal}">
+					<TextBlock.Text>
+						<MultiBinding StringFormat="{} Box art back: {0}">
+							<Binding Path="GDBRelease.BoxBackURL"
+									 TargetNullValue="-" />
+						</MultiBinding>
+					</TextBlock.Text>
+				</TextBlock>
+				<TextBlock Style="{StaticResource Normal}">
+					<TextBlock.Text>
+						<MultiBinding StringFormat="{} Banner: {0}">
+							<Binding Path="GDBRelease.BannerURL"
+									 TargetNullValue="-" />
+						</MultiBinding>
+					</TextBlock.Text>
+				</TextBlock>
+				<TextBlock Style="{StaticResource Normal}">
+					<TextBlock.Text>
+						<MultiBinding StringFormat="{} Screen: {0}">
+							<Binding Path="GDBRelease.ScreenURL"
+									 TargetNullValue="-" />
+						</MultiBinding>
+					</TextBlock.Text>
+				</TextBlock>
+				<TextBlock Style="{StaticResource Normal}">
+					<TextBlock.Text>
+						<MultiBinding StringFormat="{} Logo: {0}">
+							<Binding Path="GDBRelease.logoURL"
+									 TargetNullValue="-" />
+						</MultiBinding>
+					</TextBlock.Text>
+				</TextBlock>
+			</StackPanel>
+			<StackPanel x:Name="GB_StackPanel"
+						Margin="0,10,0,0">
+				<TextBlock Style="{StaticResource Heading0}">
+					<TextBlock.Text>
+						<MultiBinding StringFormat="{} GiantBomb ({0})">
+							<Binding Path="ID_GB"
+									 TargetNullValue="-" />
+						</MultiBinding>
+					</TextBlock.Text>
+				</TextBlock>
+				<TextBlock Style="{StaticResource Normal}">
+					<TextBlock.Text>
+						<MultiBinding StringFormat="{} Box art: {0}">
+							<Binding Path="GBRelease.BoxURL"
+									 TargetNullValue="-" />
+						</MultiBinding>
+					</TextBlock.Text>
+				</TextBlock>
+				<TextBlock Style="{StaticResource Normal}">
+					<TextBlock.Text>
+						<MultiBinding StringFormat="{} Screen art: {0}">
+							<Binding Path="GBRelease.ScreenURL"
+									 TargetNullValue="-" />
+						</MultiBinding>
+					</TextBlock.Text>
+				</TextBlock>
+			</StackPanel>
+			<StackPanel x:Name="OVG_StackPanel"
+						Margin="0,10,0,0">
+				<TextBlock Style="{StaticResource Heading0}">
+					<TextBlock.Text>
+						<MultiBinding StringFormat="{} Open VGDB ({0})">
+							<Binding Path="ID_OVG"
+									 TargetNullValue="-" />
+						</MultiBinding>
+					</TextBlock.Text>
+				</TextBlock>
+				<TextBlock Style="{StaticResource Normal}">
+					<TextBlock.Text>
+						<MultiBinding StringFormat="{} Box art: {0}">
+							<Binding Path="OVGRelease.BoxFrontURL"
+									 TargetNullValue="-" />
+						</MultiBinding>
+					</TextBlock.Text>
+				</TextBlock>
+				<TextBlock Style="{StaticResource Normal}">
+					<TextBlock.Text>
+						<MultiBinding StringFormat="{} Screen art: {0}">
+							<Binding Path="OVGRelease.BoxBackURL"
+									 TargetNullValue="-" />
+						</MultiBinding>
+					</TextBlock.Text>
+				</TextBlock>
+			</StackPanel>
+		</StackPanel>
+
+	</Grid>
+</Window>

@@ -36,8 +36,8 @@ namespace Robin
     		set { _title = value; OnPropertyChanged("Title"); } 
     	}
     
-        private long _region_ID;
-    	public long Region_ID 
+        private Nullable<long> _region_ID;
+    	public Nullable<long> Region_ID 
     	{ 
     		get { return _region_ID; } 
     		set { _region_ID = value; OnPropertyChanged("Region_ID"); } 
@@ -50,11 +50,11 @@ namespace Robin
     		set { _overview = value; OnPropertyChanged("Overview"); } 
     	}
     
-        private Nullable<long> _game_ID;
-    	public Nullable<long> Game_ID 
+        private Nullable<long> _gBGame_ID;
+    	public Nullable<long> GBGame_ID 
     	{ 
-    		get { return _game_ID; } 
-    		set { _game_ID = value; OnPropertyChanged("Game_ID"); } 
+    		get { return _gBGame_ID; } 
+    		set { _gBGame_ID = value; OnPropertyChanged("GBGame_ID"); } 
     	}
     
         private string _players;
@@ -64,11 +64,11 @@ namespace Robin
     		set { _players = value; OnPropertyChanged("Players"); } 
     	}
     
-        private long _platform_ID;
-    	public long Platform_ID 
+        private long _gBPlatform_ID;
+    	public long GBPlatform_ID 
     	{ 
-    		get { return _platform_ID; } 
-    		set { _platform_ID = value; OnPropertyChanged("Platform_ID"); } 
+    		get { return _gBPlatform_ID; } 
+    		set { _gBPlatform_ID = value; OnPropertyChanged("GBPlatform_ID"); } 
     	}
     
         private string _boxURL;

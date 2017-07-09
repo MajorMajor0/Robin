@@ -13,26 +13,65 @@
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
 
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
+using System.Net;
 
 namespace Robin
 {
-	public partial class GBRelease : IComparableDB, IDBRelease
+	public partial class GBRelease : IDBRelease
 	{
 		public static List<GBRelease> GetGames(Platform platform)
 		{
-			using (RobinDataEntities Rdata = new RobinDataEntities())
-			{
-				Rdata.GBReleases.Load();
-				Rdata.Regions.Load();
-				return Rdata.GBReleases.Where(x => x.Platform_ID == platform.ID_GB).ToList();
-			}
+			R.Data.GBReleases.Load();
+			R.Data.Regions.Load();
+			return R.Data.GBReleases.Where(x => x.GBPlatform_ID == platform.ID_GB).ToList();
 		}
 
 		public string RegionTitle
-			{
+		{
 			get { return Region.Title; }
+		}
+
+		public string BoxFrontPath
+		{
+			get { return FileLocation.Temp + ID + "GBR-BXF.jpg"; }
+		}
+
+		public void ScrapeBoxFront()
+		{
+			using (WebClient webclient = new WebClient())
+			{
+				if (!File.Exists(BoxFrontPath))
+				{
+					if (BoxURL != null)
+					{
+						Reporter.Report("Getting front box art for GBRelease " + Title + "...");
+
+						if (webclient.DownloadFileFromDB(BoxURL, BoxFrontPath))
+						{
+							Reporter.ReportInline("success!");
+							OnPropertyChanged("BoxFrontPath");
+						}
+						else
+						{
+							Reporter.ReportInline("dammit!");
+						}
+					}
+
+					else
+					{
+						Reporter.Report("No box art URL exists.");
+					}
+				}
+
+				else
+				{
+					Reporter.Report("File already exists.");
+				}
 			}
+		}
 	}
 }

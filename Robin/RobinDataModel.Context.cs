@@ -33,7 +33,6 @@ namespace Robin
         public virtual DbSet<GBRelease> GBReleases { get; set; }
         public virtual DbSet<GDBPlatform> GDBPlatforms { get; set; }
         public virtual DbSet<GDBRelease> GDBReleases { get; set; }
-        public virtual DbSet<GoodRom> GoodRoms { get; set; }
         public virtual DbSet<Language> Languages { get; set; }
         public virtual DbSet<LBGame> LBGames { get; set; }
         public virtual DbSet<LBImage> LBImages { get; set; }
@@ -44,5 +43,7 @@ namespace Robin
         public virtual DbSet<Region> Regions { get; set; }
         public virtual DbSet<Release> Releases { get; set; }
         public virtual DbSet<Rom> Roms { get; set; }
+        public virtual DbSet<OVGPlatform> OVGPlatforms { get; set; }
+        public virtual DbSet<URL> URLs { get; set; }
     }
 }

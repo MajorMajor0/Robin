@@ -11,8 +11,8 @@
  * 
  * You should have received a copy of the GNU General Public License
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
- 
- using System.Collections.Generic;
+
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Diagnostics;
 
@@ -22,29 +22,23 @@ namespace Robin
 	{
 		public static void ValidateGame()
 		{
-			using (RobinDataEntities Rdata = new RobinDataEntities())
+			List<Game> list = new List<Game>();
+
+			int i = 0;
+			foreach (Game game in R.Data.Games)
 			{
-				Rdata.Configuration.LazyLoadingEnabled = false;
-				Rdata.Games.Load();
-				Rdata.Releases.Load();
-				List<Game> list = new List<Game>();
-
-				int i = 0;
-				foreach (Game game in Rdata.Games)
+				if (game.Releases.Count == 0)
 				{
-					if (game.Releases.Count == 0)
-					{
-						i++;
-						Debug.WriteLine(game.ID);
-						list.Add(game);
-					}
+					i++;
+					Debug.WriteLine(game.ID);
+					list.Add(game);
 				}
-
-				Debug.WriteLine("Total = " + i);
-				Rdata.Games.RemoveRange(list);
-				int k = Rdata.Save();
-				Reporter.Report(k + " games removed");
 			}
+
+			Debug.WriteLine("Total = " + i);
+			R.Data.Games.RemoveRange(list);
+			int k = R.Data.Save();
+			Reporter.Report(k + " games removed");
 		}
 	}
 }

@@ -19,6 +19,7 @@ namespace Robin
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public GBPlatform()
         {
+    		GBGames = new List<GBGame>();
     		GBReleases = new List<GBRelease>();
     		Platforms = new List<Platform>();
         }
@@ -80,6 +81,8 @@ namespace Robin
     	}
     
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual List<GBGame> GBGames { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual List<GBRelease> GBReleases { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

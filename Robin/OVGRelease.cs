@@ -29,25 +29,11 @@ namespace Robin
     		set { _iD = value; OnPropertyChanged("ID"); } 
     	}
     
-        private long _rom_ID;
-    	public long Rom_ID 
-    	{ 
-    		get { return _rom_ID; } 
-    		set { _rom_ID = value; OnPropertyChanged("Rom_ID"); } 
-    	}
-    
         private Nullable<long> _region_ID;
     	public Nullable<long> Region_ID 
     	{ 
     		get { return _region_ID; } 
     		set { _region_ID = value; OnPropertyChanged("Region_ID"); } 
-    	}
-    
-        private long _platform_ID;
-    	public long Platform_ID 
-    	{ 
-    		get { return _platform_ID; } 
-    		set { _platform_ID = value; OnPropertyChanged("Platform_ID"); } 
     	}
     
         private string _title;
@@ -83,6 +69,13 @@ namespace Robin
     	{ 
     		get { return _genre; } 
     		set { _genre = value; OnPropertyChanged("Genre"); } 
+    	}
+    
+        private string _dateText;
+    	public string DateText 
+    	{ 
+    		get { return _dateText; } 
+    		set { _dateText = value; OnPropertyChanged("DateText"); } 
     	}
     
         private string _cRC;
@@ -169,18 +162,18 @@ namespace Robin
     		set { _date = value; OnPropertyChanged("Date"); } 
     	}
     
-        private string _dateText;
-    	public string DateText 
+        private long _oVGPlatform_ID;
+    	public long OVGPlatform_ID 
     	{ 
-    		get { return _dateText; } 
-    		set { _dateText = value; OnPropertyChanged("DateText"); } 
+    		get { return _oVGPlatform_ID; } 
+    		set { _oVGPlatform_ID = value; OnPropertyChanged("OVGPlatform_ID"); } 
     	}
     
     
-        public virtual Platform Platform { get; set; }
         public virtual Region Region { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual List<Release> Releases { get; set; }
+        public virtual OVGPlatform OVGPlatform { get; set; }
      
         public event PropertyChangedEventHandler PropertyChanged;
     

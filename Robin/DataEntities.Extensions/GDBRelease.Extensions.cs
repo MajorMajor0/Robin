@@ -12,14 +12,12 @@
  * You should have received a copy of the GNU General Public License
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
 
-using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
+using System.IO;
+using System.Net;
 
 namespace Robin
 {
-	public partial class GDBRelease : IComparableDB, IDBRelease
+	public partial class GDBRelease : IDBRelease
 	{
 		public string BoxArtFrontThumbURL
 		{
@@ -66,13 +64,43 @@ namespace Robin
 			get { return null; }
 		}
 
-		public static List<GDBRelease> GetGames(Platform platform)
+
+		public string BoxFrontPath
 		{
-			using (RobinDataEntities Rdata = new RobinDataEntities())
+			get { return FileLocation.Temp + ID + "GDBR-BXF.jpg"; }
+		}
+
+		public void ScrapeBoxFront()
+		{
+			using (WebClient webclient = new WebClient())
 			{
-				Rdata.GDBReleases.Load();
-				Rdata.Regions.Load();
-				return Rdata.GDBReleases.Where(x => x.Platform_ID == platform.ID_GDB).ToList();
+				if (!File.Exists(BoxFrontPath))
+				{
+					if (BoxFrontURL != null)
+					{
+						Reporter.Report("Getting front box art for GDBRelease " + Title + "...");
+
+						if (webclient.DownloadFileFromDB(BoxFrontURL, BoxFrontPath))
+						{
+							Reporter.ReportInline("success!");
+							OnPropertyChanged("BoxFrontPath");
+						}
+						else
+						{
+							Reporter.ReportInline("dammit!");
+						}
+					}
+
+					else
+					{
+						Reporter.Report("No box art URL exists.");
+					}
+				}
+
+				else
+				{
+					Reporter.Report("File already exists.");
+				}
 			}
 		}
 	}

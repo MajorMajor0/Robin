@@ -29,11 +29,11 @@ namespace Robin
     		set { _iD = value; OnPropertyChanged("ID"); } 
     	}
     
-        private Nullable<long> _platform_ID;
-    	public Nullable<long> Platform_ID 
+        private Nullable<long> _gBPlatform_ID;
+    	public Nullable<long> GBPlatform_ID 
     	{ 
-    		get { return _platform_ID; } 
-    		set { _platform_ID = value; OnPropertyChanged("Platform_ID"); } 
+    		get { return _gBPlatform_ID; } 
+    		set { _gBPlatform_ID = value; OnPropertyChanged("GBPlatform_ID"); } 
     	}
     
         private string _title;
@@ -93,7 +93,7 @@ namespace Robin
     	}
     
     
-        public virtual Platform Platform { get; set; }
+        public virtual GBPlatform GBPlatform { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual List<GBRelease> GBReleases { get; set; }
      

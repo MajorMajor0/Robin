@@ -11,7 +11,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
- 
+
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -22,7 +22,7 @@ using System.Threading.Tasks;
 
 namespace Robin
 {
-	public partial class Release : IDBobject, INotifyPropertyChanged
+	public partial class Release : IDBobject, IDBRelease, INotifyPropertyChanged
 	{
 
 		public Release(long platform, string title, long? id_gdb,
@@ -51,9 +51,19 @@ namespace Robin
 			get { return Platform.Title; }
 		}
 
+		public string RegionTitle
+		{
+			get { return Region.Title; }
+		}
+
 		public string FilePath
 		{
 			get { return Platform.RomDirectory + FileName; }
+		}
+
+		public bool MatchedToSomething
+		{
+			get { return ID_GB != null || ID_GDB != null || ID_LB != null || ID_OVG != null; }
 		}
 
 		public bool Included
@@ -63,8 +73,9 @@ namespace Robin
 
 		public bool HasArt
 		{
-			get { return File.Exists(BoxFrontFile); }
+			get { return File.Exists(BoxFrontPath); }
 		}
+
 
 		public string BoxFrontURL(LocalDB DB = 0)
 		{
@@ -74,11 +85,7 @@ namespace Robin
 				case LocalDB.Unknown:
 					if (ID_LB != null)
 					{
-						LBImage lbImage = LBGame.LBImages.FirstOrDefault(x => (x.Region_ID == Region_ID && x.Type == "Box - Front"));
-						if (lbImage != null)
-						{
-							URL = Launchbox.IMAGESURL + lbImage.FileName;
-						}
+						URL = LBGame.BoxFrontURL(Region_ID);
 					}
 					if (string.IsNullOrEmpty(URL) && ID_GB != null)
 					{
@@ -92,11 +99,7 @@ namespace Robin
 					{
 						if (ID_LB != null)
 						{
-							LBImage lbImage = LBGame.LBImages.FirstOrDefault(x => x.Type == "Box - Front");
-							if (lbImage != null)
-							{
-								URL = Launchbox.IMAGESURL + lbImage.FileName;
-							}
+							URL = LBGame.BoxFrontURL(null);
 						}
 
 						if (ID_GDB != null && !string.IsNullOrEmpty(GDBRelease.BoxFrontURL))
@@ -128,19 +131,11 @@ namespace Robin
 				case LocalDB.LaunchBox:
 					if (ID_LB != null)
 					{
-						LBImage lbImage = LBGame.LBImages.FirstOrDefault(x => (x.Region_ID == Region_ID && x.Type == "Box - Front"));
-						if (lbImage != null)
-						{
-							URL = Launchbox.IMAGESURL + lbImage.FileName;
-						}
+						URL = LBGame.BoxFrontURL(Region_ID);
 
 						if (string.IsNullOrEmpty(URL) && (Game.Releases.Count == 1 || Region_ID == CONSTANTS.UNKNOWN_REGION_ID))
 						{
-							LBImage lbImage2 = LBGame.LBImages.FirstOrDefault(x => x.Type == "Box - Front");
-							if (lbImage2 != null)
-							{
-								URL = Launchbox.IMAGESURL + lbImage2.FileName;
-							}
+							URL = LBGame.BoxFrontURL(null);
 						}
 
 					}
@@ -158,11 +153,7 @@ namespace Robin
 				case LocalDB.Unknown:
 					if (ID_LB != null)
 					{
-						LBImage lbImage = LBGame.LBImages.FirstOrDefault(x => (x.Region_ID == Region_ID && x.Type == "Box - Back"));
-						if (lbImage != null)
-						{
-							URL = Launchbox.IMAGESURL + lbImage.FileName;
-						}
+						URL = LBGame.BoxBackURL(Region_ID);
 					}
 					if (string.IsNullOrEmpty(URL) && ID_OVG != null)
 					{
@@ -173,11 +164,7 @@ namespace Robin
 					{
 						if (ID_LB != null)
 						{
-							LBImage lbImage = LBGame.LBImages.FirstOrDefault(x => (x.Type == "Box - Back"));
-							if (lbImage != null)
-							{
-								URL = Launchbox.IMAGESURL + lbImage.FileName;
-							}
+							URL = LBGame.BoxBackURL(null);
 						}
 
 						if (string.IsNullOrEmpty(URL) && ID_GDB != null && !string.IsNullOrEmpty(GDBRelease.BoxBackURL))
@@ -205,11 +192,7 @@ namespace Robin
 				case LocalDB.LaunchBox:
 					if (ID_LB != null)
 					{
-						LBImage lbImage = LBGame.LBImages.FirstOrDefault(x => (x.Region_ID == Region_ID && x.Type == "Box - Back"));
-						if (lbImage != null)
-						{
-							URL = Launchbox.IMAGESURL + lbImage.FileName;
-						}
+						URL = LBGame.BoxBackURL(Region_ID);
 					}
 					break;
 
@@ -281,14 +264,7 @@ namespace Robin
 				case LocalDB.Unknown:
 					if (ID_LB != null)
 					{
-						if (ID_LB != null)
-						{
-							LBImage lbImage = LBGame.LBImages.FirstOrDefault(x => (x.Region_ID == Region_ID && x.Type == "Banner"));
-							if (lbImage != null)
-							{
-								URL = Launchbox.IMAGESURL + lbImage.FileName;
-							}
-						}
+						URL = LBGame.BannerURL(null);
 					}
 
 					if (string.IsNullOrEmpty(URL) && ID_GDB != null)
@@ -307,11 +283,7 @@ namespace Robin
 					{
 						if (ID_LB != null)
 						{
-							LBImage lbImage = LBGame.LBImages.FirstOrDefault(x => (x.Region_ID == Region_ID && x.Type == "Banner"));
-							if (lbImage != null)
-							{
-								URL = Launchbox.IMAGESURL + lbImage.FileName;
-							}
+							URL = LBGame.BannerURL(null);
 						}
 					}
 					break;
@@ -331,11 +303,7 @@ namespace Robin
 
 					if (ID_LB != null)
 					{
-						LBImage lbImage = LBGame.LBImages.FirstOrDefault();
-						if (lbImage != null)
-						{
-							URL = Launchbox.IMAGESURL + lbImage.FileName;
-						}
+						URL = LBGame.LogoURL(null);
 					}
 
 					if (string.IsNullOrEmpty(URL) && ID_GDB != null)
@@ -356,11 +324,7 @@ namespace Robin
 				case LocalDB.LaunchBox:
 					if (ID_LB != null)
 					{
-						LBImage lbImage = LBGame.LBImages.FirstOrDefault();
-						if (lbImage != null)
-						{
-							URL = Launchbox.IMAGESURL + lbImage.FileName;
-						}
+						URL = LBGame.LogoURL(null);
 					}
 					break;
 
@@ -371,40 +335,42 @@ namespace Robin
 			return URL;
 		}
 
-		public string BoxFrontFile
+
+		public string BoxFrontPath
 		{
 			get { return FileLocation.Art.BoxFront + ID + "R-BXF.jpg"; }
 		}
 
-		public string BoxFrontThumbFile
+		public string BoxFrontThumbPath
 		{
 			get { return FileLocation.Art.BoxFrontThumbs + ID + "R-BXF.jpg"; }
 		}
 
-		public string BoxBackFile
+		public string BoxBackPath
 		{
 			get { return FileLocation.Art.BoxBack + ID + "R-BXB.jpg"; }
 		}
 
-		public string ScreenFile
+		public string ScreenPath
 		{
 			get { return FileLocation.Art.Screen + ID + "R-SCR.jpg"; }
 		}
 
-		public string BannerFile
+		public string BannerPath
 		{
 			get { return FileLocation.Art.Banner + ID + "R-BNR.jpg"; }
 		}
 
-		public string LogoFile
+		public string LogoPath
 		{
 			get { return FileLocation.Art.Logo + ID + "R-LGO.jpg"; }
 		}
 
-		public string MarqueeFile
+		public string MarqueePath
 		{
 			get { return Platform_ID == 1 ? FileLocation.Marquee + FileName.Replace(".zip", ".png") : null; }
 		}
+
 
 		public void CopyOverview()
 		{
@@ -566,18 +532,27 @@ namespace Robin
 
 		public string Source { get { return Rom.Source; } }
 
+		public string LBBoxFrontURL
+		{
+			get { return LBGame.BoxFrontURL(Region_ID); }
+		}
+
+		public void ScrapeBoxFront()
+		{
+			ScrapeBoxFront(0);
+		}
 
 		public int ScrapeBoxFront(LocalDB DB = 0)
 		{
 			using (WebClient webclient = new WebClient())
 			{
-				if (!File.Exists(BoxFrontFile))
+				if (!File.Exists(BoxFrontPath))
 				{
 					if (BoxFrontURL(DB) != null)
 					{
 						Reporter.Report("Getting front box art for " + Title + "...");
 
-						if (webclient.DownloadFileFromDB(BoxFrontURL(DB), BoxFrontFile))
+						if (webclient.DownloadFileFromDB(BoxFrontURL(DB), BoxFrontPath))
 						{
 							Reporter.ReportInline("success!");
 							OnPropertyChanged("BoxFrontFile");
@@ -597,13 +572,13 @@ namespace Robin
 		{
 			using (WebClient webclient = new WebClient())
 			{
-				if (!File.Exists(BoxBackFile))
+				if (!File.Exists(BoxBackPath))
 				{
 					if (BoxBackURL(DB) != null)
 					{
 						Reporter.Report("Getting back box art for " + Title + "...");
 
-						if (webclient.DownloadFileFromDB(BoxBackURL(DB), BoxBackFile))
+						if (webclient.DownloadFileFromDB(BoxBackURL(DB), BoxBackPath))
 						{
 							Reporter.ReportInline("success!");
 							OnPropertyChanged("BoxBackFile");
@@ -623,12 +598,12 @@ namespace Robin
 		{
 			using (WebClient webclient = new WebClient())
 			{
-				if (!File.Exists(ScreenFile))
+				if (!File.Exists(ScreenPath))
 				{
 					if (ScreenURL(DB) != null)
 					{
 						Reporter.Report("Getting screen shot for " + Title + "...");
-						if (webclient.DownloadFileFromDB(ScreenURL(DB), ScreenFile))
+						if (webclient.DownloadFileFromDB(ScreenURL(DB), ScreenPath))
 						{
 							Reporter.ReportInline("success");
 							OnPropertyChanged("ScreenFile");
@@ -648,13 +623,13 @@ namespace Robin
 		{
 			using (WebClient webclient = new WebClient())
 			{
-				if (!File.Exists(BannerFile))
+				if (!File.Exists(BannerPath))
 				{
 					if (BannerURL(DB) != null)
 					{
 						Reporter.Report("Getting banner for " + Title + "...");
 
-						if (webclient.DownloadFileFromDB(BannerURL(), BannerFile))
+						if (webclient.DownloadFileFromDB(BannerURL(), BannerPath))
 						{
 							Reporter.ReportInline("success");
 							OnPropertyChanged("BannerFile");
@@ -674,13 +649,13 @@ namespace Robin
 		{
 			using (WebClient webclient = new WebClient())
 			{
-				if (!File.Exists(LogoFile))
+				if (!File.Exists(LogoPath))
 				{
 					if (LogoURL(DB) != null)
 					{
 						Reporter.Report("Getting logo for " + Title + "...");
 
-						if (webclient.DownloadFileFromDB(LogoURL(), LogoFile))
+						if (webclient.DownloadFileFromDB(LogoURL(), LogoPath))
 						{
 							Reporter.ReportInline("success");
 							OnPropertyChanged("LogoFile");
@@ -773,29 +748,29 @@ namespace Robin
 		{
 			await Task.Run(() =>
 			{
-				if (File.Exists(BoxFrontFile) && !File.Exists(BoxFrontThumbFile))
+				if (File.Exists(BoxFrontPath) && !File.Exists(BoxFrontThumbPath))
 				{
 
 					try
 					{
-						using (System.Drawing.Image image = System.Drawing.Image.FromFile(BoxFrontFile))
+						using (System.Drawing.Image image = System.Drawing.Image.FromFile(BoxFrontPath))
 						{
 
 							if (image.Width > 255)
 							{
 								System.Drawing.Image thumb = Thumbs.ResizeImage(image, 255);
-								thumb.Save(BoxFrontThumbFile);
+								thumb.Save(BoxFrontThumbPath);
 							}
 
 							else
 							{
-								File.Copy(BoxFrontFile, BoxFrontThumbFile);
+								File.Copy(BoxFrontPath, BoxFrontThumbPath);
 							}
 						}
 					}
 					catch (OutOfMemoryException)
 					{
-						Reporter.Report("Bad image file: " + BoxFrontFile + " - " + Title);
+						Reporter.Report("Bad image file: " + BoxFrontPath + " - " + Title);
 					}
 					OnPropertyChanged("BoxFrontThumbFile");
 					Game.OnPropertyChanged("BoxFrontThumbFile", "");

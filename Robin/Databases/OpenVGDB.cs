@@ -20,174 +20,174 @@ using System.Threading.Tasks;
 
 namespace Robin
 {
-    class OpenVGDB : IDB
-    {
-        public string Title { get { return "Open VGDB"; } }
+	class OpenVGDB : IDB
+	{
+		public string Title { get { return "Open VGDB"; } }
 
-        RobinDataEntities Rdata;
+		OpenVGDBEntities OVdata;
 
-        OpenVGDBEntities OVdata;
+		public LocalDB DB { get { return LocalDB.OpenVGDB; } }
 
-        public LocalDB DB { get { return LocalDB.GamesDB; } }
+		public DbSet Platforms => R.Data.OVGPlatforms;
 
-        public IEnumerable<IDBPlatform> Platforms { get { return Rdata.Platforms; } }
+		public DbSet Releases => R.Data.OVGReleases;
 
-        public IEnumerable<IDBRelease> Releases { get { return Rdata.OVGReleases; } }
+		bool disposed;
 
-        bool disposed;
+		public OpenVGDB()
+		{
+			Reporter.Tic("Opening Open VGDB cache...");
 
-        public OpenVGDB(RobinDataEntities rdata)
-        {
-            Reporter.Tic("Opening Open VGDB cache...");
+			OVdata = new OpenVGDBEntities();
 
-            Rdata = rdata;
+			OVdata.VGDBPLATFORMS.Load();
+			OVdata.VGDBRELEASES.Load();
+			OVdata.VGDBROMS.Load();
+			OVdata.VGDBREGIONS.Load();
+			R.Data.OVGPlatforms.Load();
+			R.Data.OVGReleases.Load();
+			//R.Data.Releases.Include(x => x.OVGRelease);
 
-            OVdata = new OpenVGDBEntities();
+			Reporter.Toc();
+		}
 
-            OVdata.VGDBPLATFORMS.Load();
-            OVdata.VGDBRELEASES.Load();
-            OVdata.VGDBROMS.Load();
-            OVdata.VGDBREGIONS.Load();
+		public void CachePlatformReleases(Platform platform)
+		{
+			OVGPlatform ovgPlatform = R.Data.OVGPlatforms.FirstOrDefault(x => x.ID == platform.ID);
 
-            Reporter.Toc();
-        }
+			List<VGDBRELEAS> list = OVdata.VGDBRELEASES.Where(x => x.VGDBROM.systemID == platform.ID).ToList();
 
-        public void CachePlatformReleases(Platform platform)
-        {
-            List<VGDBRELEAS> list = OVdata.VGDBRELEASES.Where(x => x.VGDBROM.systemID == platform.ID).ToList();
+			foreach (VGDBRELEAS vgdbr in list)
+			{
+				ovgPlatform.OVGReleases.Add(vgdbr);
+			}
+			Reporter.Report("Cached " + list.Count() + " games.");
+		}
 
-            foreach (VGDBRELEAS vgdbr in list)
-            {
-                platform.OVGReleases.Add(vgdbr);
-            }
-            Reporter.Report("Cached " + list.Count() + " games.");
-        }
+		public void CachePlatforms()
+		{
+			Reporter.Report("Open VGDB uses Robin's platforms and does not need platforms cached.");
+		}
 
-        public void CachePlatforms()
-        {
-            Reporter.Report("Open VGDB uses Robin's platforms and does not need platforms cached.");
-        }
+		public void CachePlatformData(Platform platform)
+		{
+			Reporter.Report("Open VGDB uses Robin's platforms and does not need platform data cached.");
+		}
 
-        public void CachePlatformData(Platform platform)
-        {
-            Reporter.Report("Open VGDB uses Robin's platforms and does not need platform data cached.");
-        }
+		public void CachePlatformGames(Platform platform)
+		{
+			Reporter.Report("GamesDB does not have games and releases--try caching releases");
+		}
 
-        public void CachePlatformGames(Platform platform)
-        {
-            Reporter.Report("GamesDB does not have games and releases--try caching releases");
-        }
+		public static async void GetAtariGames()
+		{
+			using (OpenVGDBEntities OVGdata = new OpenVGDBEntities())
+			{
+				await Task.Run(() =>
+				{
+					R.Data.Configuration.LazyLoadingEnabled = false;
+					R.Data.Configuration.AutoDetectChangesEnabled = false;
+					OVGdata.Configuration.LazyLoadingEnabled = false;
 
-        public static async void GetAtariGames()
-        {
-            using (RobinDataEntities Rdata = new RobinDataEntities())
-            using (OpenVGDBEntities OVGdata = new OpenVGDBEntities())
-            {
-                await Task.Run(() =>
-                {
-                    Rdata.Configuration.LazyLoadingEnabled = false;
-                    Rdata.Configuration.AutoDetectChangesEnabled = false;
-                    OVGdata.Configuration.LazyLoadingEnabled = false;
+					R.Data.Roms.Load();
+					R.Data.Platforms.Load();
+					R.Data.Games.Load();
+					R.Data.Regions.Load();
+					R.Data.Releases.Load();
+					R.Data.Releases.Include(x => x.Rom).Load();
 
-                    Rdata.Roms.Load();
-                    Rdata.Platforms.Load();
-                    Rdata.Games.Load();
-                    Rdata.Regions.Load();
-                    Rdata.Releases.Load();
-                    Rdata.Releases.Include(x => x.Rom).Load();
+					OVGdata.VGDBROMS.Load();
+					OVGdata.VGDBRELEASES.Load();
+					OVGdata.VGDBRELEASES.Include(XamlGeneratedNamespace => XamlGeneratedNamespace.VGDBROM).Load();
 
-                    OVGdata.VGDBROMS.Load();
-                    OVGdata.VGDBRELEASES.Load();
-                    OVGdata.VGDBRELEASES.Include(XamlGeneratedNamespace => XamlGeneratedNamespace.VGDBROM).Load();
+					List<VGDBROM> atariVgdbRoms = OVGdata.VGDBROMS.Where(x => x.systemID == 3 && !x.romFileName.Contains(@"(Hack)") && !x.romFileName.Contains(@"(208 in 1)") && !x.romFileName.Contains(@"(CCE)") && !x.romFileName.Contains(@"(2600 Screen Search Console)")).OrderBy(x => x.romFileName).ToList();
+					List<Release> newAtariReleases = new List<Release>();
+					List<VGDBROM> finishedVgdbRoms = new List<VGDBROM>();
 
-                    List<VGDBROM> atariVgdbRoms = OVGdata.VGDBROMS.Where(x => x.systemID == 3 && !x.romFileName.Contains(@"(Hack)") && !x.romFileName.Contains(@"(208 in 1)") && !x.romFileName.Contains(@"(CCE)") && !x.romFileName.Contains(@"(2600 Screen Search Console)")).OrderBy(x => x.romFileName).ToList();
-                    List<Release> newAtariReleases = new List<Release>();
-                    List<VGDBROM> finishedVgdbRoms = new List<VGDBROM>();
+					int z = 0;
+					Platform atariPlatform = R.Data.Platforms.FirstOrDefault(x => x.Title.Contains("2600"));
+					foreach (VGDBROM atariVgdbRom in atariVgdbRoms)
+					{
+						if (!finishedVgdbRoms.Contains(atariVgdbRom))
+						{
+							Reporter.Report(z++.ToString());
+							Game game = new Game();
+							R.Data.Games.Add(game);
 
-                    int z = 0;
-                    Platform atariPlatform = Rdata.Platforms.FirstOrDefault(x => x.Title.Contains("2600"));
-                    foreach (VGDBROM atariVgdbRom in atariVgdbRoms)
-                    {
-                        if (!finishedVgdbRoms.Contains(atariVgdbRom))
-                        {
-                            Reporter.Report(z++.ToString());
-                            Game game = new Game();
-                            Rdata.Games.Add(game);
+							List<VGDBROM> currentGameVgdbRoms = atariVgdbRoms
+							.Where(x =>
+								x.AtariParentTitle == atariVgdbRom.AtariParentTitle ||
+								(!string.IsNullOrEmpty(x.AKA) && x.AKA == atariVgdbRom.AtariParentTitle) ||
+								(!string.IsNullOrEmpty(atariVgdbRom.AKA) && atariVgdbRom.AKA == x.AtariParentTitle) &&
+								!finishedVgdbRoms.Contains(x)
+								 ).ToList();
 
-                            List<VGDBROM> currentGameVgdbRoms = atariVgdbRoms
-                            .Where(x =>
-                                x.AtariParentTitle == atariVgdbRom.AtariParentTitle ||
-                                (!string.IsNullOrEmpty(x.AKA) && x.AKA == atariVgdbRom.AtariParentTitle) ||
-                                (!string.IsNullOrEmpty(atariVgdbRom.AKA) && atariVgdbRom.AKA == x.AtariParentTitle) &&
-                                !finishedVgdbRoms.Contains(x)
-                                 ).ToList();
+							VGDBROM parentRom = currentGameVgdbRoms.FirstOrDefault(x => x.romFileName.Contains(@"~"));
+							if (parentRom != null)
+							{
+								currentGameVgdbRoms.Remove(parentRom);
+								currentGameVgdbRoms.Insert(0, parentRom);
+							}
 
-                            VGDBROM parentRom = currentGameVgdbRoms.FirstOrDefault(x => x.romFileName.Contains(@"~"));
-                            if (parentRom != null)
-                            {
-                                currentGameVgdbRoms.Remove(parentRom);
-                                currentGameVgdbRoms.Insert(0, parentRom);
-                            }
+							foreach (VGDBROM gameVgdbRom in currentGameVgdbRoms)
+							{
+								Rom rom = gameVgdbRom;
 
-                            foreach (VGDBROM gameVgdbRom in currentGameVgdbRoms)
-                            {
-                                Rom rom = gameVgdbRom;
+								if (!atariPlatform.Roms.Any(x => x.SHA1 == rom.SHA1))
+								{
+									atariPlatform.Roms.Add(rom);
+									foreach (VGDBRELEAS atariVgdbRelease in gameVgdbRom.VGDBRELEASES)
+									{
+										Release release = atariVgdbRelease;
+										release.Rom = rom;
+										release.Game = game;
+										newAtariReleases.Add(release);
+									}
+								}
+							}
+							finishedVgdbRoms.AddRange(currentGameVgdbRoms);
+						}
+					}
 
-                                if (!atariPlatform.Roms.Any(x => x.SHA1 == rom.SHA1))
-                                {
-                                    atariPlatform.Roms.Add(rom);
-                                    foreach (VGDBRELEAS atariVgdbRelease in gameVgdbRom.VGDBRELEASES)
-                                    {
-                                        Release release = atariVgdbRelease;
-                                        release.Rom = rom;
-                                        release.Game = game;
-                                        newAtariReleases.Add(release);
-                                    }
-                                }
-                            }
-                            finishedVgdbRoms.AddRange(currentGameVgdbRoms);
-                        }
-                    }
-
-                    newAtariReleases = newAtariReleases.OrderBy(x => x.Title).ToList();
-                    atariPlatform.Releases.AddRange(newAtariReleases);
-                    Rdata.ChangeTracker.DetectChanges();
-                    int i = Rdata.Save();
-                    Reporter.Report(i + " changes pushed to database.");
-                });
-            }
-        }
+					newAtariReleases = newAtariReleases.OrderBy(x => x.Title).ToList();
+					atariPlatform.Releases.AddRange(newAtariReleases);
+					R.Data.ChangeTracker.DetectChanges();
+					int i = R.Data.Save();
+					Reporter.Report(i + " changes pushed to database.");
+				});
+			}
+		}
 
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
 
-        ~OpenVGDB()
-        {
-            Dispose(false);
-        }
+		~OpenVGDB()
+		{
+			Dispose(false);
+		}
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposed)
-                return;
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposed)
+				return;
 
-            if (disposing)
-            {
-                // free other managed objects that implement
-                // IDisposable only
-                OVdata.Dispose();
-            }
+			if (disposing)
+			{
+				// free other managed objects that implement
+				// IDisposable only
+				OVdata.Dispose();
+			}
 
-            // release any unmanaged objects
-            // set the object references to null
+			// release any unmanaged objects
+			// set the object references to null
 
-            OVdata = null;
+			OVdata = null;
 
-            disposed = true;
-        }
-    }
+			disposed = true;
+		}
+	}
 }

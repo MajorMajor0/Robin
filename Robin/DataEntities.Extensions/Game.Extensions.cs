@@ -197,9 +197,16 @@ namespace Robin
 		{
 			get
 			{
-				return BoxFrontThumbFile ?? LogoFile ?? MarqueeFile ?? Releases[0].Platform.ControllerFile;
-			}
-		}
+#if DEBUG
+                Stopwatch Watch = Stopwatch.StartNew();
+#endif
+                string returner = BoxFrontThumbFile ?? LogoFile ?? MarqueeFile ?? Releases[0].Platform.ControllerFile;
+#if DEBUG
+                Debug.WriteLine("MainDisplay: " + Title + " " + Watch.ElapsedMilliseconds);
+#endif
+                return returner;
+            }
+        }
 
 		private int? _releaseCount = null;
 		private int? ReleaseCount
@@ -223,9 +230,9 @@ namespace Robin
 				{
 					foreach (Release release in Releases)
 					{
-						if (File.Exists(release.BoxFrontFile))
+						if (File.Exists(release.BoxFrontPath))
 						{
-							_boxFrontFile = release.BoxFrontFile;
+							_boxFrontFile = release.BoxFrontPath;
 							break;
 						}
 					}
@@ -244,9 +251,9 @@ namespace Robin
 				{
 					foreach (Release release in Releases)
 					{
-						if (File.Exists(release.BoxFrontThumbFile))
+						if (File.Exists(release.BoxFrontThumbPath))
 						{
-							_boxFrontThumbFile = release.BoxFrontThumbFile;
+							_boxFrontThumbFile = release.BoxFrontThumbPath;
 							break;
 						}
 					}
@@ -257,27 +264,27 @@ namespace Robin
 
 		public string BoxBackFile
 		{
-			get { return Releases[0].BoxBackFile; }
+			get { return Releases[0].BoxBackPath; }
 		}
 
 		public string BannerFile
 		{
-			get { return Releases[0].BannerFile; }
+			get { return Releases[0].BannerPath; }
 		}
 
 		public string ScreenFile
 		{
-			get { return Releases[0].ScreenFile; }
+			get { return Releases[0].ScreenPath; }
 		}
 
 		public string LogoFile
 		{
-			get { return Releases[0].LogoFile; }
+			get { return Releases[0].LogoPath; }
 		}
 
 		public string MarqueeFile
 		{
-			get { return Releases[0].MarqueeFile; }
+			get { return Releases[0].MarqueePath; }
 		}
 
 		private Release _preferredRelease = null;
