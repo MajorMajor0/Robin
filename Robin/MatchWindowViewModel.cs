@@ -1,4 +1,18 @@
-﻿using System;
+﻿/*This file is part of Robin.
+ * 
+ * Robin is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General internal License as published 
+ * version 3 of the License, or (at your option) any later version.
+ * 
+ * Robin is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the GNU 
+ * General internal License for more details. 
+ * 
+ * You should have received a copy of the GNU General internal License
+ *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -62,13 +76,13 @@ namespace Robin
 			}
 		}
 
-		public IEnumerable<LBGame> LBReleases
+		public IEnumerable<LBRelease> LBReleases
 		{
 			get
 			{
 				if (platform.LBPlatform != null && searchTerm != null)
 				{
-					return platform.LBPlatform.LBGames.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm, RegexOptions.IgnoreCase));
+					return platform.LBPlatform.LBReleases.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm, RegexOptions.IgnoreCase));
 				}
 				return null;
 			}

@@ -21,6 +21,7 @@ namespace Robin
         {
     		GBReleases = new List<GBRelease>();
     		LBImages = new List<LBImage>();
+    		LBReleases = new List<LBRelease>();
     		Matches = new List<Match>();
     		OVGReleases = new List<OVGRelease>();
     		Releases = new List<Release>();
@@ -94,6 +95,8 @@ namespace Robin
         public virtual List<GBRelease> GBReleases { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual List<LBImage> LBImages { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual List<LBRelease> LBReleases { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual List<Match> Matches { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

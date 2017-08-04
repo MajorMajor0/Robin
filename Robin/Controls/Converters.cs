@@ -44,7 +44,28 @@ namespace Robin
 		}
 	}
 
-	public class DateToVisibilityConverter : IValueConverter
+    public class BooleanToHiddenConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool tf = (bool)value;
+            if (tf)
+            {
+                return Visibility.Visible;
+            }
+            else
+            {
+                return Visibility.Hidden;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class DateToVisibilityConverter : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
@@ -76,7 +97,7 @@ namespace Robin
 			{
 				if (path != null && File.Exists(path))
 				{
-					var bitmap = new BitmapImage();
+					BitmapImage bitmap = new BitmapImage();
 					bitmap.BeginInit();
 					bitmap.CacheOption = BitmapCacheOption.OnLoad;
 					bitmap.UriSource = new Uri(path);			

@@ -12,6 +12,7 @@
  * You should have received a copy of the GNU General Public License
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Entity;
@@ -40,7 +41,12 @@ namespace Robin
 			get { return FileLocation.Temp + ID + "GBR-BXF.jpg"; }
 		}
 
-		public void ScrapeBoxFront()
+        public string ScreenPath
+        {
+            get { return FileLocation.Temp + ID + "GBR-SCR.jpg"; }
+        }
+
+        public int ScrapeBoxFront()
 		{
 			using (WebClient webclient = new WebClient())
 			{
@@ -58,6 +64,7 @@ namespace Robin
 						else
 						{
 							Reporter.ReportInline("dammit!");
+                            return -1;
 						}
 					}
 
@@ -72,6 +79,83 @@ namespace Robin
 					Reporter.Report("File already exists.");
 				}
 			}
+            return 0;
 		}
-	}
+
+        public int ScrapeBoxBack()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int ScrapeBox3D()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int ScrapeScreen()
+        {
+            using (WebClient webclient = new WebClient())
+            {
+                if (!File.Exists(ScreenPath))
+                {
+                    if (ScreenURL != null)
+                    {
+                        Reporter.Report("Getting screen shot for GBRelease " + Title + "...");
+
+                        if (webclient.DownloadFileFromDB(ScreenURL, ScreenPath))
+                        {
+                            Reporter.ReportInline("success!");
+                            OnPropertyChanged("ScreenPath");
+                        }
+                        else
+                        {
+                            Reporter.ReportInline("dammit!");
+                            return -1;
+                        }
+                    }
+
+                    else
+                    {
+                        Reporter.Report("No screen shot URL exists.");
+                    }
+                }
+
+                else
+                {
+                    Reporter.Report("File already exists.");
+                }
+            }
+            return 0;
+        }
+
+        public int ScrapeLogo()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int ScrapeBanner()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int ScrapeCartFront()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int ScrapeCart3D()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int ScrapeMarquee()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int ScrapeControlPanel()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

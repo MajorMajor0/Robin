@@ -33,6 +33,8 @@ namespace Robin
 
         public DbSet Releases => R.Data.GBReleases;
 
+        public bool HasRegions => true;
+
         bool disposed;
 
         const string GBAPIKEY = @"?api_key=561e43b5ca29977bb624d52357764e459e22d3bd";
@@ -49,19 +51,18 @@ namespace Robin
             Reporter.Toc();
         }
 
-        public void CachePlatformReleases(Platform platform)
+        public void CachePlatformReleases(IDBPlatform idbPlatform)
         {
-            CachePlatformReleases(platform, false);
+            CachePlatformReleases(idbPlatform, false);
         }
 
-        public void CachePlatformReleases(Platform platform, bool reset = false)
+        public void CachePlatformReleases(IDBPlatform idbPlatform, bool reset = false)
         {
-            GBPlatform gbPlatform = R.Data.GBPlatforms.FirstOrDefault(x => x.ID == platform.ID_GB);
+            GBPlatform gbPlatform = idbPlatform as GBPlatform;
             string startDate = reset ? @"1900-01-01 01:01:01" : gbPlatform.CacheDate.ToString(DATEFORMAT);
             string endDate = DateTime.Now.ToString(DATEFORMAT);
 
             int N_results = 0;
-            int N_added = 0;
             bool haveResults = false;
             int intCatcher = 0;
             string downloadText;
@@ -69,21 +70,17 @@ namespace Robin
             StringBuilder urlBuilder;
             XDocument xdoc = new XDocument();
 
-            Stopwatch Watch = new Stopwatch();
-            Watch.Start();
-
             using (WebClient webClient = new WebClient())
             {
-                Reporter.Report("Checking GiantBomb for releases...");
+                Reporter.Report("Checking GiantBomb for " + gbPlatform.Title + " releases...");
                 urlBuilder = new StringBuilder(@"http://www.giantbomb.com/api/releases/", 300);
-                urlBuilder.Append(GBAPIKEY).Append(@"&filter=date_last_updated:").Append(startDate).Append("|").Append(endDate).Append(@",platform:").Append(platform.ID_GB).Append(@"&field_list=id&sort=id:asc");
+                urlBuilder.Append(GBAPIKEY).Append(@"&filter=date_last_updated:").Append(startDate).Append("|").Append(endDate).Append(@",platform:").Append(gbPlatform.ID).Append(@"&field_list=id&sort=id:asc");
                 url = urlBuilder.ToString();
 
                 //url = @"http://www.giantbomb.com/api/releases/" + GBAPIKEY + @"&filter=date_last_updated:" + startDate + "|" + endDate + @",platform:" + platform.ID_GB + @"&field_list=id&sort=id:asc";
 
                 if (webClient.SafeDownloadStringDB(url, out downloadText))
                 {
-                    Watch.Restart();
                     xdoc = XDocument.Parse(downloadText);
                     haveResults = int.TryParse(xdoc.SafeGetB("number_of_total_results"), out N_results);
                 }
@@ -97,7 +94,7 @@ namespace Robin
                 if (haveResults && N_results != 0)
                 {
                     int N_pages = N_results / 100;
-                    Reporter.Report("Found " + N_results + " new releases in GiantBomb");
+                    Reporter.Report("Found " + N_results + " " + gbPlatform.Title + " releases in GiantBomb");
 
                     // Just do the first page again to save code then go through the rest of the results
                     Reporter.Report("Loading sheet ");
@@ -105,11 +102,8 @@ namespace Robin
                     {
                         Reporter.ReportInline(" " + i);
 
-                        // Need a non-generic user-agent for giantbomb API
-                        webClient.SetStandardHeaders();
-
                         urlBuilder = new StringBuilder(@"http://www.giantbomb.com/api/releases/", 300);
-                        urlBuilder.Append(GBAPIKEY).Append(@"&filter=date_last_updated:").Append(startDate).Append("|").Append(endDate).Append(@",platform:").Append(platform.ID_GB).Append(@"&offset=").Append(i * 100).Append(@"&field_list=id,deck,game,image,region,name,maximum_players,release_date&sort=id:asc");
+                        urlBuilder.Append(GBAPIKEY).Append(@"&filter=date_last_updated:").Append(startDate).Append("|").Append(endDate).Append(@",platform:").Append(gbPlatform.ID).Append(@"&offset=").Append(i * 100).Append(@"&field_list=id,deck,game,image,region,name,maximum_players,release_date&sort=id:asc");
                         //url = @"http://www.giantbomb.com/api/releases/" + GBAPIKEY + @"&filter=date_last_updated:" + startDate + "|" + endDate + @",platform:" + platform.ID_GB + @"&offset=" + i * 100 + @"&field_list=id,deck,game,image,region,name,maximum_players,release_date&sort=id:asc";
                         url = urlBuilder.ToString();
 
@@ -117,7 +111,6 @@ namespace Robin
                         if (webClient.SafeDownloadStringDB(url, out downloadText))
                         {
                             xdoc = XDocument.Parse(downloadText);
-                            Watch.Restart();
 
                             foreach (XElement element in xdoc.Root.Element("results").Elements("release"))
                             {
@@ -130,11 +123,22 @@ namespace Robin
                                     {
                                         gbRelease = new GBRelease();
                                         R.Data.GBReleases.Add(gbRelease);
-                                        N_added++;
+                                        gbRelease.ID = intCatcher;
                                     }
 
-                                    gbRelease.ID = intCatcher;
+                                    // If a release has changed platforms, catch it and zero out match
+                                    if (gbRelease.GBPlatform_ID != gbPlatform.ID)
+                                    {
+                                        gbRelease.GBPlatform_ID = gbPlatform.ID;
+                                        Release release = R.Data.Releases.FirstOrDefault(x => x.ID_GB == gbRelease.ID);
+                                        if (release != null)
+                                        {
+                                            release.ID_GB = null;
+                                        }
+                                    }
+
                                     gbRelease.Title = element.SafeGetA("name");
+
                                     gbRelease.Overview = element.SafeGetA("deck");
 
                                     if (int.TryParse(element.SafeGetA("game", "id"), out intCatcher))
@@ -146,7 +150,7 @@ namespace Robin
                                         gbRelease.Players = intCatcher.ToString();
                                     }
 
-                                    gbRelease.GBPlatform_ID = (long)platform.ID_GB;
+                                    gbRelease.GBPlatform_ID = (long)gbPlatform.ID;
                                     if (int.TryParse(element.SafeGetA("region", "id"), out intCatcher))
                                     {
                                         gbRelease.Region = R.Data.Regions.FirstOrDefault(x => x.ID_GB == intCatcher) ?? R.Data.Regions.FirstOrDefault(x => x.Title.Contains("Unk"));
@@ -175,42 +179,31 @@ namespace Robin
 
             }// end using webclient
 
-            R.Data.ChangeTracker.DetectChanges();
-
-            int N_total = R.Data.Save();
-            Reporter.Report(N_added + " releases added to database, " + (N_total - N_added) + " releases updated.");
-
         }
 
-        public void CachePlatformGames(Platform platform)
+        public void CachePlatformGames(IDBPlatform idbPlatform)
         {
-            CachePlatformGames(platform, false);
+            CachePlatformGames(idbPlatform, false);
         }
 
-        public void CachePlatformGames(Platform platform, bool reset = false)
+        public void CachePlatformGames(IDBPlatform idbPlatform, bool reset = false)
         {
-            R.Data.Configuration.AutoDetectChangesEnabled = false;
-
-            GBPlatform gbPlatform = R.Data.GBPlatforms.FirstOrDefault(x => x.ID == platform.ID_GB);
+            GBPlatform gbPlatform = idbPlatform as GBPlatform;
             string startDate = reset ? @"1900-01-01 01:01:01" : gbPlatform.CacheDate.ToString(DATEFORMAT);
             string endDate = DateTime.Now.ToString(DATEFORMAT);
 
             int N_results = 0;
-            int N_added = 0;
             bool haveResults = false;
             int intCatcher = 0;
             string downloadText;
             string url;
             XDocument xdoc = new XDocument();
 
-            Stopwatch Watch = new Stopwatch();
-            Watch.Start();
-
             using (WebClient webClient = new WebClient())
             {
-                Reporter.Report("Checking GiantBomb for games");
+                Reporter.Report("Checking GiantBomb for " + idbPlatform.Title + " games");
 
-                url = @"http://www.giantbomb.com/api/games/" + GBAPIKEY + @"&filter=date_last_updated:" + startDate + "|" + endDate + @",platforms:" + platform.ID_GB + @"&field_list=id&sort=id:asc";
+                url = @"http://www.giantbomb.com/api/games/" + GBAPIKEY + @"&filter=date_last_updated:" + startDate + "|" + endDate + @",platforms:" + gbPlatform.ID + @"&field_list=id&sort=id:asc";
 
 
                 if (webClient.SafeDownloadStringDB(url, out downloadText))
@@ -223,7 +216,6 @@ namespace Robin
                     Reporter.Report("Error communicating with GiantBomb.");
                     return;
                 }
-                Watch.Restart();
 
                 // If there are results, go through them
                 if (haveResults && N_results != 0)
@@ -237,47 +229,32 @@ namespace Robin
                     {
                         Reporter.ReportInline(i + " ");
 
-                        url = @"http://www.giantbomb.com/api/games/" + GBAPIKEY + @"&filter=date_last_updated:" + startDate + "|" + endDate + @",platforms:" + platform.ID_GB + @"&offset=" + i * 100 + @"&field_list=id,deck,developers,publishers,genres,image,name,release_date&sort=id:asc";
+                        url = @"http://www.giantbomb.com/api/games/" + GBAPIKEY + @"&filter=date_last_updated:" + startDate + "|" + endDate + @",platforms:" + gbPlatform.ID + @"&offset=" + i * 100 + @"&field_list=id,deck,developers,publishers,genres,image,name,release_date&sort=id:asc";
 
                         // Put results into the GB Cache database
                         if (webClient.SafeDownloadStringDB(url, out downloadText))
                         {
                             xdoc = XDocument.Parse(downloadText);
-                            Watch.Restart();
-                            bool gameAlreadyExisted;
                             foreach (XElement element in xdoc.Root.Element("results").Elements("game"))
                             {
-                                Watch.Restart();
                                 // If the ID XML value was found
                                 if (int.TryParse(element.SafeGetA("id"), out intCatcher))
                                 {
-                                    GBGame gbGame = new GBGame();
-                                    if (R.Data.GBGames.Any(x => x.ID == intCatcher))
-                                    {
-                                        gbGame = R.Data.GBGames.FirstOrDefault(x => x.ID == intCatcher);
-                                        gameAlreadyExisted = true;
-                                    }
-                                    else
+                                    GBGame gbGame = R.Data.GBGames.FirstOrDefault(x => x.ID == intCatcher);
+
+                                    if (gbGame == null)
                                     {
                                         gbGame = new GBGame();
-                                        gameAlreadyExisted = false;
+                                        gbGame.ID = intCatcher;
+                                        gbPlatform.GBGames.Add(gbGame);
                                     }
-
-                                    gbGame.ID = intCatcher;
 
                                     gbGame.Title = element.SafeGetA("name");
                                     gbGame.Overview = element.SafeGetA("deck");
-                                    gbGame.GBPlatform_ID = platform.ID_GB;
+                                    gbGame.GBPlatform_ID = gbPlatform.ID;
                                     gbGame.Date = DateTimeRoutines.SafeGetDate(element.SafeGetA("release_date"));
-                                    gbGame.BoxURL = element.SafeGetA("image", "medium_url");
+                                    gbGame.BoxFrontURL = element.SafeGetA("image", "medium_url");
                                     gbGame.ScreenURL = element.SafeGetA("image", "screen_url");
-
-                                    if (!gameAlreadyExisted)
-                                    {
-                                        R.Data.GBGames.Add(gbGame);
-                                        N_added++;
-                                    }
-
                                 }
                             }
                         }
@@ -296,17 +273,11 @@ namespace Robin
                     return;
                 }
             }// end using webclient
-
-            R.Data.ChangeTracker.DetectChanges();
-            R.Data.Configuration.AutoDetectChangesEnabled = true;
-
-            int N_total = R.Data.Save();
-            Reporter.Report(N_added + " games added to Games DB cache, " + (N_total - N_added) + " games updated.");
         }
 
-        public void CachePlatformData(Platform platform)
+        public void CachePlatformData(IDBPlatform idbPlatform)
         {
-            GBPlatform gbPlatform = R.Data.GBPlatforms.FirstOrDefault(x => x.ID == platform.ID_GB);
+            GBPlatform gbPlatform = idbPlatform as GBPlatform;
             DateTime startdate = gbPlatform.CacheDate;
 
             string downloadText;
@@ -317,7 +288,7 @@ namespace Robin
 
             using (WebClient webClient = new WebClient())
             {
-                url = GBURL + @"platform/" + platform.ID_GB + "/" + GBAPIKEY;
+                url = GBURL + @"platform/" + gbPlatform.ID + "/" + GBAPIKEY;
 
                 if (webClient.SafeDownloadStringDB(url, out downloadText))
                 {
@@ -342,34 +313,42 @@ namespace Robin
                 }
 
             }// end using webclient
-
-            int n = R.Data.Save();
-            Reporter.Report(n + " changes pushed to database.");
-
-        }
-
-        public void CachePlatform(Platform platform)
-        {
-            GBPlatform gbPlatform = R.Data.GBPlatforms.FirstOrDefault(x => x.ID == platform.ID_GB);
-            if (gbPlatform != null)
-            {
-                Reporter.Report("Caching " + platform.Title);
-                CachePlatformReleases(platform, true);
-                CachePlatformGames(platform, true);
-                CachePlatformData(platform);
-                gbPlatform.CacheDate = DateTime.Now;
-            }
-            else
-            {
-                Reporter.Report("Platform does not exist in GiantBomb");
-            }
-
         }
 
         public void CachePlatforms()
         {
             // TODO Get list of platforms from giantbom and cache in GBPlatforms
-            Reporter.Report("Cache platfomrs not yet implemented for GiantBomb");
+            Reporter.Report("Cache platforms not yet implemented for GiantBomb");
+        }
+
+        public void ReportUpdates(bool detect)
+        {
+
+#if DEBUG
+            Stopwatch Watch = Stopwatch.StartNew();
+#endif
+            if (detect)
+            {
+                R.Data.ChangeTracker.DetectChanges();
+                Debug.WriteLine("Detect changes: " + Watch.ElapsedMilliseconds);
+#if DEBUG
+                Watch.Restart();
+#endif
+            }
+
+            var gbReleaseEntries = R.Data.ChangeTracker.Entries<GBRelease>();
+            var gbGameEntries = R.Data.ChangeTracker.Entries<GBGame>();
+
+            Debug.WriteLine("Get entries: " + Watch.ElapsedMilliseconds);
+
+            int gbReleaseAddCount = gbReleaseEntries.Count(x => x.State == EntityState.Added);
+            int gbReleaseModCount = gbReleaseEntries.Count(x => x.State == EntityState.Modified);
+
+            int gbGameAddCount = gbGameEntries.Count(x => x.State == EntityState.Added);
+            int gbGameModCount = gbGameEntries.Count(x => x.State == EntityState.Modified);
+
+            Reporter.Report("GBReleases added: " + gbReleaseAddCount + ", GBReleases updated: " + gbReleaseModCount);
+            Reporter.Report("GBGames added: " + gbGameAddCount + ", GBGames updated: " + gbGameModCount);
         }
 
         public void Dispose()
@@ -392,7 +371,8 @@ namespace Robin
             {
                 // free other managed objects that implement
                 // IDisposable only
-/*                R.Data.GBPlatforms.Dispose()*/;
+                /*                R.Data.GBPlatforms.Dispose()*/
+                ;
             }
 
             // release any unmanaged objects

@@ -20,133 +20,142 @@ using System.Collections.ObjectModel;
 
 namespace Robin
 {
-	public partial class DatabaseWindow : Window
-	{
-		DatabaseWindowViewModel DBWVM;
+    public partial class DatabaseWindow : Window
+    {
+        DatabaseWindowViewModel DBWVM;
 
-		public DatabaseWindow()
-		{
-			DBWVM = new DatabaseWindowViewModel();
-			InitializeComponent();
-			DataContext = DBWVM;
-			Activate();
-		}
+        public DatabaseWindow()
+        {
+            DBWVM = new DatabaseWindowViewModel();
+            InitializeComponent();
+            DataContext = DBWVM;
+            Activate();
+        }
 
-		private void BONUS_button_Click(object sender, RoutedEventArgs e)
-		{
-			Reporter.Report("BONUS!");
-		}
+        private async void BONUS_button_Click(object sender, RoutedEventArgs e)
+        {
+            Reporter.Report("BONUS!");
 
-		private void Compare_Click(object sender, RoutedEventArgs e)
-		{
-			DBWVM.CompareToDBAsync();
-		}
 
-		private void AcceptClick(object sender, RoutedEventArgs e)
-		{
-			//if (DatabaseGrid.Content != null &&
-			//	DatabaseGrid.Content.GetType() == typeof(Compares))
-			//{
-			//	DBWVM.Accept();
-			//}
-		}
+            int N = R.Data.LBGames.Local.Count;
 
-		public void GetDirectory_Click(object sender, RoutedEventArgs e)
-		{
-			//if (PlatformList.SelectedItem != null)
-			//{
-			//	(PlatformList.SelectedItem as Platform).GetReleaseDirectoryAsync(DBWVM.WindowReporter);
-			//}
-		}
+            await Task.Run(() =>
+            {
+                foreach (Release release in R.Data.Releases)
+                {
+                    release.SetLBReleaseMatch();
+                }
 
-		private void WriteDB_Click(object sender, RoutedEventArgs e)
-		{
-			DBWVM.SaveChanges();
-		}
+            });
+        }
 
-		// Add Database file from datomatic
-		private async void GetDatomatic_Click(object sender, RoutedEventArgs e)
-		{
-			await Task.Run(() =>
-			{
-			});
-			//if (PlatformList.SelectedItems.Count == 1)
-			//{
-			//	Platform platform = PlatformList.SelectedItem as Platform;
-			//	await Task.Run(() =>
-			//	{
-			//		//DBWVM.R.Data.Configuration.AutoDetectChangesEnabled = false;
-			//		Datomatic datomatic = new Datomatic();
-			//		datomatic.CacheFromXML(platform);
-			//		//DBWVM.R.Data.ChangeTracker.DetectChanges();
-			//		//DBWVM.SaveChanges();
-			//		//DBWVM.R.Data.Configuration.AutoDetectChangesEnabled = false;
-			//	});
-			//}
-		}
+        private void Compare_Click(object sender, RoutedEventArgs e)
+        {
+            DBWVM.CompareToDBAsync();
+        }
 
-		private void PlatformList_MouseUp(object sender, MouseButtonEventArgs e)
-		{
-			if (PlatformList.SelectedItems.Count > 0)
-			{
-				DatabaseGrid.DataContext = DBWVM.SelectedPlatform;
-				CountBlock.DataContext = PlatformList.SelectedItem;
-			}
-		}
+        private void AcceptClick(object sender, RoutedEventArgs e)
+        {
+            if (DatabaseGrid.Content != null &&
+                DatabaseGrid.Content.GetType() == typeof(Compares))
+            {
+                DBWVM.Accept();
+            }
+        }
 
-		private void ComparisonResultsList_MouseUp(object sender, MouseButtonEventArgs e)
-		{
-			DatabaseGrid.DataContext = ComparisonResultsList.SelectedItem;
-			if (ComparisonResultsList.SelectedItem != null)
-			{
-				CountBlock.DataContext = ((Compares)ComparisonResultsList.SelectedItem).List;
-			}
-		}
+        private void WriteDB_Click(object sender, RoutedEventArgs e)
+        {
+            R.Data.Save(true);
+        }
 
-		private void DataGrid_MouseWheel(object sender, MouseWheelEventArgs e)
-		{
-			//if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
-			//{
-			//	DataGridScale.ScaleX += (e.Delta > 0) ? .1 : -.1;
-			//	DataGridScale.ScaleY += (e.Delta > 0) ? .1 : -.1;
-			//}
-		}
+        // Add Database file from datomatic
+        private async void GetDatomatic_Click(object sender, RoutedEventArgs e)
+        {
+            await Task.Run(() =>
+            {
+            });
+            //if (PlatformList.SelectedItems.Count == 1)
+            //{
+            //	Platform platform = PlatformList.SelectedItem as Platform;
+            //	await Task.Run(() =>
+            //	{
+            //		//DBWVM.R.Data.Configuration.AutoDetectChangesEnabled = false;
+            //		Datomatic datomatic = new Datomatic();
+            //		datomatic.CacheFromXML(platform);
+            //		//DBWVM.R.Data.ChangeTracker.DetectChanges();
+            //		//DBWVM.SaveChanges();
+            //		//DBWVM.R.Data.Configuration.AutoDetectChangesEnabled = false;
+            //	});
+            //}
+        }
 
-		private void Cache_button_Click(object sender, RoutedEventArgs e)
-		{
-			DBWVM.CachePlatform();
-		}
+        private void PlatformList_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (PlatformList.SelectedItems.Count > 0)
+            {
+                DatabaseGrid.DataContext = DBWVM.SelectedPlatform;
+                CountBlock.DataContext = PlatformList.SelectedItem;
+            }
+        }
 
-		private void ArtWindow_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
-			e.CanExecute = true;
-		}
+        private void ComparisonResultsList_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            DatabaseGrid.DataContext = ComparisonResultsList.SelectedItem;
+            if (ComparisonResultsList.SelectedItem != null)
+            {
+                CountBlock.DataContext = ((Compares)ComparisonResultsList.SelectedItem).List;
+            }
+        }
 
-		private void ArtWindow_Executed(object sender, ExecutedRoutedEventArgs e)
-		{
-			Release release = (e.OriginalSource as Control).DataContext as Release;
-			ArtWindow artWindow = new ArtWindow(release);
-			artWindow.Show();
-			artWindow.Activate();
-		}
+        private void DataGrid_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            //if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+            //{
+            //	DataGridScale.ScaleX += (e.Delta > 0) ? .1 : -.1;
+            //	DataGridScale.ScaleY += (e.Delta > 0) ? .1 : -.1;
+            //}
+        }
 
-		private void MatchWindow_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
-			e.CanExecute = true;
-		}
+        private void ArtWindow_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
 
-		private void MatchWindow_Executed(object sender, ExecutedRoutedEventArgs e)
-		{
-			Release release = (e.OriginalSource as Control).DataContext as Release;
-			MatchWindow matchWindow = new MatchWindow(release);
-			matchWindow.Show();
-			matchWindow.Activate();
-		}
-	}
-	public static class DBCommands
-	{
-		public static RoutedUICommand ArtWindow = new RoutedUICommand("Open Art Window", "ArtWindow", typeof(CustomCommands));
-		public static RoutedUICommand MatchWindow = new RoutedUICommand("Open Match Window", "ArtWindow", typeof(CustomCommands));
+        private void ArtWindow_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            Release release = (e.OriginalSource as Control).DataContext as Release;
+            ArtWindow artWindow = new ArtWindow(release);
+            artWindow.Show();
+            artWindow.Activate();
+        }
 
-	}
+        private void MatchWindow_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void MatchWindow_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            Release release = (e.OriginalSource as Control).DataContext as Release;
+            MatchWindow matchWindow = new MatchWindow(release);
+            matchWindow.Show();
+            matchWindow.Activate();
+        }
+
+        private void CacheGames_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = DBWVM.SelectedIDB != null;
+        }
+
+        private void CacheGames_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            DBWVM.CachePlatform(); ;
+        }
+    }
+    public static class DBCommands
+    {
+        public static RoutedUICommand ArtWindow = new RoutedUICommand("Open Art Window", "ArtWindow", typeof(CustomCommands));
+        public static RoutedUICommand MatchWindow = new RoutedUICommand("Open Match Window", "ArtWindow", typeof(CustomCommands));
+        public static RoutedUICommand CacheGames = new RoutedUICommand("Cache games", "CacheGames", typeof(CustomCommands));
+    }
 }

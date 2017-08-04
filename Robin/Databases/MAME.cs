@@ -236,10 +236,8 @@ namespace Robin
 					Reporter.Report("No orphans found.");
 				}
 
-				R.Data.ChangeTracker.DetectChanges();
-				int i = R.Data.Save();
-				Reporter.Report(i + " changes pushed to database, " + Watch1.Elapsed.ToString(@"m\:ss"));
-
+				R.Data.Save();
+                // TODO Report total removed
 			});
 			Reporter.Report("Finished: " + Watch.Elapsed.ToString(@"m\:ss"));
 		}
@@ -349,7 +347,7 @@ namespace Robin
 
 			if (release.Region_ID == null)
 			{
-				release.Region_ID = 20;
+				release.Region_ID = CONSTANTS.UNKNOWN_REGION_ID;
 			}
 			#endregion
 

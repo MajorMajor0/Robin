@@ -43,6 +43,12 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 		<CommandBinding Command="local:DBCommands.MatchWindow"
 						CanExecute="MatchWindow_CanExecute"
 						Executed="MatchWindow_Executed" />
+		<CommandBinding Command="local:DBCommands.CacheGames"
+						CanExecute="CacheGames_CanExecute"
+						Executed="CacheGames_Executed" />
+	
+	
+	
 	</Window.CommandBindings>
 
 	<Grid x:Name="Window_Grid">
@@ -93,7 +99,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 					<RowDefinition Height="5*"
 								   MinHeight="150"/>
 					<RowDefinition Height="2*"
-								   MinHeight="150"/>
+								   MinHeight="200"/>
 				</Grid.RowDefinitions>
 
 				<Border x:Name="CommparisonResultsBorder"
@@ -159,7 +165,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										<Trigger Property="IsMouseOver"
 												 Value="True">
 											<Setter Property="Background"
-													Value="#FF4687A6" />
+													Value="{StaticResource Highlight_Brush}" />
 										</Trigger>
 									</Style.Triggers>
 								</Style>
@@ -172,7 +178,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										<DataTrigger Binding="{Binding Path=Preferred}"
 													 Value="True">
 											<Setter Property="Foreground"
-													Value="Yellow" />
+													Value="RoyalBlue" />
 										</DataTrigger>
 									</Style.Triggers>
 								</Style>
@@ -203,7 +209,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 					<StackPanel Orientation="Vertical"
 								DataContext="{Binding SelectedItem, ElementName=PlatformList}"
 								Visibility="{Binding SelectedItems.Count, ElementName=PlatformList, Converter={StaticResource intToVisibilityConverter}}">
-						<StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+						<StackPanel Orientation="Horizontal">
 							<TextBlock Text="{Binding Manufacturer}"
 									   Style="{StaticResource Heading0}" />
 							<TextBlock Text=" " />
@@ -211,11 +217,9 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 							<TextBlock Text="{Binding Title}"
 								   Style="{StaticResource Heading0}" />
 						</StackPanel>
-						
-
-						<StackPanel Orientation="Horizontal"
-									DockPanel.Dock="Top"
-									Margin="10,0,0,0">
+						<StackPanel Margin="10,0,0,0">
+							<StackPanel Orientation="Horizontal"
+										DockPanel.Dock="Top" >
 							<TextBlock Text="Total Releases: "
 									   Style="{StaticResource Heading1}"
 									   DockPanel.Dock="Top" />
@@ -224,8 +228,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 									   DockPanel.Dock="Top" />
 						</StackPanel>
 						<StackPanel Orientation="Horizontal"
-									DockPanel.Dock="Top"
-									Margin="10,0,0,0">
+									DockPanel.Dock="Top" >
 							<TextBlock Text="Matched to GDB: "
 									   Style="{StaticResource Heading1}"
 									   DockPanel.Dock="Top" />
@@ -234,8 +237,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 									   DockPanel.Dock="Top" />
 						</StackPanel>
 						<StackPanel Orientation="Horizontal"
-									DockPanel.Dock="Top"
-									Margin="10,0,0,0">
+									DockPanel.Dock="Top" >
 							<TextBlock Text="Matched to GB: "
 									   Style="{StaticResource Heading1}"
 									   DockPanel.Dock="Top" />
@@ -244,8 +246,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 									   DockPanel.Dock="Top" />
 						</StackPanel>
 						<StackPanel Orientation="Horizontal"
-									DockPanel.Dock="Top"
-									Margin="10,0,0,0">
+									DockPanel.Dock="Top" >
 							<TextBlock Text="Matched to OVG: "
 									   Style="{StaticResource Heading1}"
 									   DockPanel.Dock="Top" />
@@ -254,8 +255,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 									   DockPanel.Dock="Top" />
 						</StackPanel>
 						<StackPanel Orientation="Horizontal"
-									DockPanel.Dock="Top"
-									Margin="10,0,0,0">
+									DockPanel.Dock="Top" >
 							<TextBlock Text="Matched to LB: "
 									   Style="{StaticResource Heading1}"
 									   DockPanel.Dock="Top" />
@@ -264,8 +264,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 									   DockPanel.Dock="Top" />
 						</StackPanel>
 						<StackPanel Orientation="Horizontal"
-									DockPanel.Dock="Top"
-									Margin="10,0,0,0">
+									DockPanel.Dock="Top" >
 							<TextBlock Text="Date cached: "
 									   Style="{StaticResource Heading1}"
 									   DockPanel.Dock="Top" />
@@ -275,8 +274,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						</StackPanel>
 
 						<StackPanel Orientation="Horizontal"
-									DockPanel.Dock="Top"
-									Margin="10,0,0,0">
+									DockPanel.Dock="Top" >
 							<TextBlock Text="Matched to Something: "
 									   Style="{StaticResource Heading1}"
 									   DockPanel.Dock="Top" />
@@ -284,6 +282,10 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 									   Style="{StaticResource Normal}"
 									   DockPanel.Dock="Top" />
 						</StackPanel>
+						</StackPanel>
+						
+
+
 
 
 					</StackPanel>
@@ -379,6 +381,8 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										<DataGrid.Columns>
 											<DataGridTextColumn Header="Distance"
 																Binding="{Binding Path=Distance}" />
+											<DataGridCheckBoxColumn Header="Accept"
+																Binding="{Binding Path=AcceptMatch}" />
 											<DataGridTextColumn Header="Robin Title"
 																Binding="{Binding Path=RTitle}" />
 											<DataGridTextColumn Header="DB Title"
@@ -626,21 +630,12 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										ToolTip="Compare releases to robin"
 										Style="{StaticResource DatabaseWindowButtonStyle1}"
 										Click="Compare_Click" />
-								<Button x:Name="GetDirectory_button"
-										Content="Get Directory"
-										ToolTip="Find file to add to database"
-										Style="{StaticResource DatabaseWindowButtonStyle1}"
-										Click="GetDirectory_Click" />
 								<Button x:Name="Cache_button"
-										Content="Cache Games"
+										Content="Cache Releases"
 										ToolTip="Update cache of selected platform."
 										Style="{StaticResource DatabaseWindowButtonStyle1}"
-										Click="Cache_button_Click" />
-								<Button x:Name="GetDatomatic_button"
-										Content="Get Datomatic File"
-										ToolTip="Get datomatic database file."
-										Style="{StaticResource DatabaseWindowButtonStyle1}"
-										Click="GetDatomatic_Click" />
+										Command="local:DBCommands.CacheGames" />
+
 								<Button x:Name="BONUS_button"
 										Content="BONUS"
 										ToolTip="Get datomatic database file."

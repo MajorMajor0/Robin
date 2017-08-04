@@ -4,55 +4,75 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="e4cb8ceb747f4d2a8914a81949aa4fa0" Name="Diagram1" ZoomLevel="69">
-        <EntityTypeShape EntityType="Robin.Collection" Width="1.5" PointX="25" PointY="2.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="Robin.Emulator" Width="1.5" PointX="10.875" PointY="18.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="Robin.Game" Width="1.5" PointX="22.25" PointY="2.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="Robin.GBGame" Width="1.5" PointX="7" PointY="0.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="Robin.GBPlatform" Width="1.5" PointX="1.625" PointY="1.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="Robin.GBRelease" Width="1.5" PointX="11" PointY="0.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="Robin.GDBPlatform" Width="1.5" PointX="15" PointY="7.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="Robin.GDBRelease" Width="1.5" PointX="17.25" PointY="7.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="Robin.Language" Width="1.5" PointX="14" PointY="0.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="Robin.LBGame" Width="1.5" PointX="5" PointY="12.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="Robin.LBImage" Width="1.5" PointX="5" PointY="9.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="Robin.LBPlatform" Width="1.5" PointX="2.875" PointY="12.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="Robin.Match" Width="1.5" PointX="2.875" PointY="5.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="Robin.OVGRelease" Width="1.5" PointX="9.25" PointY="6.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="Robin.Platform" Width="1.5" PointX="7.75" PointY="13.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="Robin.Region" Width="1.5" PointX="5" PointY="4.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="Robin.Release" Width="1.5" PointX="19.875" PointY="2.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="Robin.Rom" Width="1.5" PointX="17.125" PointY="13.625" IsExpanded="true" />
+      <Diagram DiagramId="6a778e05a197455eb516efef3110c5cb" Name="Diagram1" ZoomLevel="32">
+        <EntityTypeShape EntityType="Robin.Collection" Width="1.5" PointX="17.125" PointY="6.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Robin.Emulator" Width="1.5" PointX="24.5" PointY="11.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="Robin.Game" Width="1.5" PointX="19.375" PointY="6.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Robin.GBGame" Width="1.5" PointX="2" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Robin.GBPlatform" Width="1.5" PointX="2.5" PointY="18.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Robin.GBRelease" Width="1.5" PointX="4.125" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Robin.GDBPlatform" Width="1.5" PointX="20.25" PointY="11.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="Robin.GDBRelease" Width="1.5" PointX="17.875" PointY="11.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Robin.Language" Width="1.5" PointX="3" PointY="3.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="Robin.LBGame" Width="1.5" PointX="9.25" PointY="0.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Robin.LBImage" Width="1.5" PointX="7.5" PointY="9.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Robin.LBPlatform" Width="1.5" PointX="22.375" PointY="0.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Robin.LBRelease" Width="1.5" PointX="12.5" PointY="7.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="Robin.Match" Width="1.5" PointX="10.375" PointY="10" IsExpanded="true" />
+        <EntityTypeShape EntityType="Robin.OVGPlatform" Width="1.5" PointX="9.5" PointY="15.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Robin.OVGRelease" Width="1.5" PointX="7.125" PointY="14.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="Robin.Platform" Width="1.5" PointX="22.375" PointY="11.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="Robin.Region" Width="1.5" PointX="12.625" PointY="10.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Robin.Release" Width="1.5" PointX="14.75" PointY="6.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Robin.Rom" Width="1.5" PointX="15.625" PointY="15.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Robin.URL" Width="1.5" PointX="18.25" PointY="2.125" IsExpanded="true" />
         <AssociationConnector Association="Robin.FK_Platform_0_0" ManuallyRouted="false" />
-        <AssociationConnector Association="Robin.FK_Release_4_0" ManuallyRouted="false" />
+        <AssociationConnector Association="Robin.FK_Release_6_0" ManuallyRouted="false" />
         <AssociationConnector Association="Robin.FK_GBGame_0_0" ManuallyRouted="false" />
         <AssociationConnector Association="Robin.FK_GBRelease_0_0" ManuallyRouted="false" />
-        <AssociationConnector Association="Robin.FK_GBRelease_2_0" ManuallyRouted="false" />
+        <AssociationConnector Association="Robin.FK_GBRelease_2_0" ManuallyRouted="true" >
+          <ConnectorPoint PointX="4" PointY="19.215190214995367" />
+          <ConnectorPoint PointX="4.747483491973731" PointY="19.215190214995367" />
+          <ConnectorPoint PointX="4.747483491973731" PointY="14.460999348958335" />
+        </AssociationConnector>
         <AssociationConnector Association="Robin.FK_Platform_3_0" ManuallyRouted="false" />
         <AssociationConnector Association="Robin.FK_GBRelease_1_0" ManuallyRouted="false" />
-        <AssociationConnector Association="Robin.FK_Release_7_0" ManuallyRouted="false" />
+        <AssociationConnector Association="Robin.FK_Release_9_0" ManuallyRouted="true" >
+          <ConnectorPoint PointX="4.875" PointY="10.75" />
+          <ConnectorPoint PointX="4.875" PointY="6.90625" />
+          <ConnectorPoint PointX="7.7046402571979185" PointY="6.9062499999999991" />
+          <ConnectorPoint PointX="7.8713069238645845" PointY="6.90625" />
+          <ConnectorPoint PointX="12.855695671210224" PointY="6.9062499999999991" />
+          <ConnectorPoint PointX="13.022362337876892" PointY="6.90625" />
+          <ConnectorPoint PointX="13.417433668938445" PointY="6.9062499999999991" />
+          <ConnectorPoint PointX="13.584100335605113" PointY="6.90625" />
+          <ConnectorPoint PointX="14.75" PointY="6.90625" />
+        </AssociationConnector>
         <AssociationConnector Association="Robin.FK_GDBRelease_0_0" ManuallyRouted="false" />
         <AssociationConnector Association="Robin.FK_Platform_2_0" ManuallyRouted="false" />
-        <AssociationConnector Association="Robin.FK_Release_6_0" ManuallyRouted="false" />
+        <AssociationConnector Association="Robin.FK_Release_8_0" ManuallyRouted="false" />
         <AssociationConnector Association="Robin.FK_LBGame_0_0" ManuallyRouted="false" />
-        <AssociationConnector Association="Robin.FK_LBImages_1_0" ManuallyRouted="false" />
-        <AssociationConnector Association="Robin.FK_Release_0_0" ManuallyRouted="false" />
-        <AssociationConnector Association="Robin.FK_LBImages_0_0" ManuallyRouted="false" />
-        <AssociationConnector Association="Robin.FK_Platform_1_0" ManuallyRouted="false" />
-        <AssociationConnector Association="Robin.FK_Match_0_0" ManuallyRouted="false" />
-        <AssociationConnector Association="Robin.FK_OVGRelease_1_0" ManuallyRouted="false" ></AssociationConnector>
+        <AssociationConnector Association="Robin.FK_LBImages_2_0" ManuallyRouted="false" />
+        <AssociationConnector Association="Robin.FK_LBRelease_1_0" ManuallyRouted="false" />
         <AssociationConnector Association="Robin.FK_Release_2_0" ManuallyRouted="false" />
-        <AssociationConnector Association="Robin.FK_Release_3_0" ManuallyRouted="false" />
-        <AssociationConnector Association="Robin.FK_Rom_0_0" ManuallyRouted="false" />
+        <AssociationConnector Association="Robin.FK_LBImages_0_0" ManuallyRouted="false" />
+        <AssociationConnector Association="Robin.FK_LBImages_1_0" ManuallyRouted="false" />
+        <AssociationConnector Association="Robin.FK_Platform_1_0" ManuallyRouted="false" />
+        <AssociationConnector Association="Robin.FK_LBRelease_0_0" ManuallyRouted="false" />
+        <AssociationConnector Association="Robin.FK_Release_0_0" ManuallyRouted="false" />
+        <AssociationConnector Association="Robin.FK_Match_0_0" ManuallyRouted="false" />
+        <AssociationConnector Association="Robin.FK_OVGRelease_0_0" ManuallyRouted="false" />
+        <AssociationConnector Association="Robin.FK_OVGRelease_1_0" ManuallyRouted="false" />
+        <AssociationConnector Association="Robin.FK_Release_4_0" ManuallyRouted="false" />
         <AssociationConnector Association="Robin.FK_Release_5_0" ManuallyRouted="false" />
+        <AssociationConnector Association="Robin.FK_Rom_0_0" ManuallyRouted="false" />
+        <AssociationConnector Association="Robin.FK_Release_7_0" ManuallyRouted="false" />
         <AssociationConnector Association="Robin.FK_Release_1_0" ManuallyRouted="false" />
+        <AssociationConnector Association="Robin.FK_Release_3_0" ManuallyRouted="false" />
         <AssociationConnector Association="Robin.Collection_Game" ManuallyRouted="false" />
         <AssociationConnector Association="Robin.Collection_Release" ManuallyRouted="false" />
         <AssociationConnector Association="Robin.Platform_Emulator" ManuallyRouted="false" />
-        <EntityTypeShape EntityType="Robin.OVGPlatform" Width="1.5" PointX="11.375" PointY="7.625" />
-        <AssociationConnector Association="Robin.FK_OVGRelease_0_01" />
-        <EntityTypeShape EntityType="Robin.URL" Width="1.5" PointX="11.375" PointY="11" />
-        <AssociationConnector Association="Robin.FK_Release_0_01" />
+        <AssociationConnector Association="Robin.FK_LBRelease_0_01" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

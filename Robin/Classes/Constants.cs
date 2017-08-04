@@ -32,7 +32,7 @@ namespace Robin
 
 		public const long WORLD_REGION_ID = 22;
 
-		public const long UNKNOWN_REGION_ID = 20;
+		public const long UNKNOWN_REGION_ID = 0;
 
 		public const long LYNX_PLATFORM_ID = 8;
 

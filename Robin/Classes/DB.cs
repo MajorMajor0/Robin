@@ -21,112 +21,119 @@ using System.Data.Entity;
 
 namespace Robin
 {
-	public interface IDBobject
-	{
-		string Title { get; }
-		bool Included { get; }
-		bool IsCrap { get; set; }
-		bool Preferred { get; set; }
-		bool Unlicensed { get; }
-		bool HasArt { get; }
+    public interface IDBobject
+    {
+        string Title { get; }
+        bool Included { get; }
+        bool IsCrap { get; set; }
+        bool Preferred { get; set; }
+        bool Unlicensed { get; }
+        bool HasArt { get; }
 
-		void Play();
+        void Play();
 
-		void ScrapeArt();
-	}
+        void ScrapeArt();
+    }
 
-	public interface IDBRelease
-	{
-		long ID { get; }
+    public interface IDBRelease
+    {
+        long ID { get; }
 
-		string Title { get; }
+        string Title { get; }
 
-		string Overview { get; }
+        string Overview { get; }
 
-		string BoxFrontPath { get; }
+        string BoxFrontPath { get; }
 
-		string RegionTitle { get; }
+        string RegionTitle { get; }
 
-		Region Region { get; }
 
-		DateTime? Date { get; }
-		
+        Region Region { get; }
 
-		void ScrapeBoxFront();
-	}
+        DateTime? Date { get; }
 
-	public interface IDBPlatform
-	{
-		long ID { get; }
 
-		string Title { get; }
+        int ScrapeBoxFront();
 
-		string Manufacturer { get; }
+        int ScrapeBoxBack();
 
-		DateTime? Date { get; }
+        int ScrapeBox3D();
 
-		IList Releases { get; }
-	}
+        int ScrapeScreen();
 
-	public interface IDB : IDisposable
-	{
-		LocalDB DB { get; }
+        int ScrapeLogo();
 
-		string Title { get; }
+        int ScrapeBanner();
 
-		DbSet Platforms { get; }
+        int ScrapeCartFront();
 
-		DbSet Releases { get; }
+        int ScrapeCart3D();
 
-		void CachePlatforms();
+        int ScrapeMarquee();
 
-		void CachePlatformReleases(Platform platform);
+        int ScrapeControlPanel();
+    }
 
-		void CachePlatformGames(Platform platform);
+    public interface IDBPlatform
+    {
+        long ID { get; }
 
-		void CachePlatformData(Platform platform);
+        string Title { get; }
 
-		//public DatabaseCache(LocalDB db, ref RobinDataEntities R.Data)
-		//{
-		//	DB = db;
+        string Manufacturer { get; }
 
-		//	switch (DB)
-		//	{
-		//		case LocalDB.Unknown:
-		//			Platforms = null;
-		//			Releases = null;
-		//			break;
-		//		case LocalDB.GamesDB:
-		//			break;
-		//		case LocalDB.GiantBomb:
-		//			break;
-		//		case LocalDB.OpenVGDB:
-		//			break;
-		//		case LocalDB.LaunchBox:
-		//			break;
-		//		default:
-		//			break;
-		//	}
+        DateTime? Date { get; }
 
-		//}
+        DateTime CacheDate { get; set; }
 
-	}
+        IList Releases { get; }
 
-	public enum LocalDB
-	{
-		[Description("Unknown")]
-		Unknown = 0,
-		[Description("GamesDB")]
-		GamesDB = 1,
-		[Description("GiantBomb")]
-		GiantBomb = 2,
-		[Description("OpenVGDB")]
-		OpenVGDB = 3,
-		[Description("LaunchBox")]
-		LaunchBox = 4,
-		[Description("Robin")]
-		Robin = 5
-	}
+        bool Preferred { get; }
+
+        Platform RPlatform { get;}
+
+    }
+
+    public interface IDB : IDisposable
+    {
+        LocalDB DB { get; }
+
+        string Title { get; }
+
+        DbSet Platforms { get; }
+
+        DbSet Releases { get; }
+
+        bool HasRegions { get; }
+
+        void CachePlatforms();
+
+        void CachePlatformReleases(IDBPlatform platform);
+
+        void CachePlatformGames(IDBPlatform platform);
+
+        void CachePlatformData(IDBPlatform platform);
+
+        void ReportUpdates(bool detect);
+    }
+
+    public enum LocalDB
+    {
+        [Description("Unknown")]
+        Unknown = 0,
+        [Description("GamesDB")]
+        GamesDB = 1,
+        [Description("GiantBomb")]
+        GiantBomb = 2,
+        [Description("OpenVGDB")]
+        OpenVGDB = 3,
+        [Description("LaunchBox")]
+        LaunchBox = 4,
+        [Description("Datomatic")]
+        Datomatic = 5,
+        [Description("Robin")]
+        Robin = 6
+    }
 
 }
 

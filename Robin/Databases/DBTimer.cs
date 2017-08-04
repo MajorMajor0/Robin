@@ -18,10 +18,10 @@ namespace Robin
 {
 	public class DBTimers
 	{
-		public static DBTimer GamesDB = new DBTimer(1);
-		public static DBTimer GiantBomb = new DBTimer(1100);
-		public static DBTimer GameFAQ = new DBTimer(1500);
-		public static DBTimer LaunchBox = new DBTimer(1000);
+		public static DBTimer GamesDB { get; set; } = new DBTimer(1000);
+		public static DBTimer GiantBomb { get; set; } = new DBTimer(1100);
+		public static DBTimer GameFAQ { get; set; } = new DBTimer(1500);
+		public static DBTimer LaunchBox { get; set; } = new DBTimer(1000);
 
 		public static void Wait(string url)
 		{

@@ -63,8 +63,16 @@ namespace Robin
     		set { _region_ID = value; OnPropertyChanged("Region_ID"); } 
     	}
     
+        private Nullable<long> _lBRelease_ID;
+    	public Nullable<long> LBRelease_ID 
+    	{ 
+    		get { return _lBRelease_ID; } 
+    		set { _lBRelease_ID = value; OnPropertyChanged("LBRelease_ID"); } 
+    	}
+    
     
         public virtual LBGame LBGame { get; set; }
+        public virtual LBRelease LBRelease { get; set; }
         public virtual Region Region { get; set; }
      
         public event PropertyChangedEventHandler PropertyChanged;

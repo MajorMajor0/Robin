@@ -48,13 +48,11 @@ namespace Robin
 				}
 				Debug.WriteLine(i++);
 			}
-			R.Data.ChangeTracker.DetectChanges();
-			int o = R.Data.Save();
-			R.Data.Configuration.AutoDetectChangesEnabled = true;
-			Reporter.Report(o + " changes pushed to database");
-		}
+			R.Data.Save();
+            // TODO Report total
+        }
 
-		public static async void RestoreMatches()
+        public static async void RestoreMatches()
 		{
 			R.Data.Configuration.AutoDetectChangesEnabled = false;
 			R.Data.Configuration.LazyLoadingEnabled = false;
@@ -74,11 +72,10 @@ namespace Robin
 						release.ID_OVG = release.ID_OVG ?? match.ID_OVG;
 					}
 				}
-				R.Data.ChangeTracker.DetectChanges();
-				int o = R.Data.Save();
-				R.Data.Configuration.AutoDetectChangesEnabled = true;
-				Reporter.Report(o + " changes pushed to database");
-			});
+
+				R.Data.Save();
+                // TODO Report total
+            });
 		}
 	}
 }

@@ -37,8 +37,8 @@ namespace Robin
 
 			Debug.WriteLine("Total = " + i);
 			R.Data.Games.RemoveRange(list);
-			int k = R.Data.Save();
-			Reporter.Report(k + " games removed");
+			R.Data.Save();
+            // TODO Report total removed
 		}
 	}
 }

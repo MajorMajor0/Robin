@@ -23,302 +23,243 @@ using System.Threading.Tasks;
 
 namespace Robin
 {
-	public class DatabaseWindowViewModel : INotifyPropertyChanged
-	{
-		public int Threshold { get; set; }
+    public class DatabaseWindowViewModel : INotifyPropertyChanged
+    {
+        public int Threshold { get; set; }
 
-		public bool ConsiderRegions { get; set; }
+        public bool ConsiderRegions { get; set; }
 
-		public bool SearchSubdirectories { get; set; }
+        public bool SearchSubdirectories { get; set; }
 
-		IDB selectedIDB;
-		public IDB SelectedIDB
-		{
-			get { return selectedIDB; }
-			set
-			{
-				if (value != selectedIDB)
-				{
-					selectedIDB = value;
-					OnPropertyChanged("SelectedIDB");
-				}
-			}
-		}
+        IDB selectedIDB;
+        public IDB SelectedIDB
+        {
+            get { return selectedIDB; }
+            set
+            {
+                if (value != selectedIDB)
+                {
+                    selectedIDB = value;
+                    OnPropertyChanged("SelectedIDB");
+                }
+            }
+        }
 
-		public ObservableCollection<IDB> IDBs { get; set; }
+        public ObservableCollection<IDB> IDBs { get; set; }
 
-		public IEnumerable<IDBPlatform> PlatformsList { get; set; }
+        public IEnumerable<IDBPlatform> PlatformsList { get; set; }
 
-		public IList SelectedPlatforms { get; set; }
+        public IList SelectedPlatforms { get; set; }
 
-		public IDBPlatform SelectedPlatform { get; set; }
+        public IDBPlatform SelectedPlatform { get; set; }
 
-		IEnumerable gridDBObjects;
-		public IEnumerable GridDBObjects
-		{
-			get { return gridDBObjects; }
-			set
-			{
-				if (value != gridDBObjects)
-				{
-					gridDBObjects = value;
-					OnPropertyChanged("GridDBObjects");
-				}
-			}
-		}
+        IEnumerable gridDBObjects;
+        public IEnumerable GridDBObjects
+        {
+            get { return gridDBObjects; }
+            set
+            {
+                if (value != gridDBObjects)
+                {
+                    gridDBObjects = value;
+                    OnPropertyChanged("GridDBObjects");
+                }
+            }
+        }
 
-		public ObservableCollection<Compares> ComparisonResults { get; set; }
-		public Compares SelectedComparisonResult { get; set; }
+        public ObservableCollection<Compares> ComparisonResults { get; set; }
+        public Compares SelectedComparisonResult { get; set; }
 
-		public DatabaseWindowViewModel()
-		{
-			Threshold = 0;
-			ConsiderRegions = true;
-			SearchSubdirectories = false;
+        public DatabaseWindowViewModel()
+        {
+            Threshold = 0;
+            ConsiderRegions = true;
+            SearchSubdirectories = false;
 
-			IDBs = new ObservableCollection<IDB>();
+            IDBs = new ObservableCollection<IDB>();
 
-			GetDBs();
+            GetDBs();
 
-			SelectedPlatforms = new ObservableCollection<IDBPlatform>();
+            SelectedPlatforms = new ObservableCollection<IDBPlatform>();
 
-			ComparisonResults = new ObservableCollection<Compares>();
-		}
+            ComparisonResults = new ObservableCollection<Compares>();
+        }
 
-		public async void GetDBs()
-		{
-			var uiContext = SynchronizationContext.Current;
+        public async void GetDBs()
+        {
+            var uiContext = SynchronizationContext.Current;
 
-			await Task.Run(() =>
-			{
-				uiContext.Send(x => IDBs.Add(new RobinDB()), null);
-				uiContext.Send(x => IDBs.Add(new GamesDB()), null);
-				uiContext.Send(x => IDBs.Add(new GiantBomb()), null);
-				uiContext.Send(x => IDBs.Add(new OpenVGDB()), null);
-				uiContext.Send(x => IDBs.Add(new Launchbox()), null);
-			});
-		}
+            await Task.Run(() =>
+            {
+                uiContext.Send(x => IDBs.Add(new Datomatic()), null);
+                uiContext.Send(x => IDBs.Add(new GamesDB()), null);
+                uiContext.Send(x => IDBs.Add(new GiantBomb()), null);
+                uiContext.Send(x => IDBs.Add(new OpenVGDB()), null);
+                uiContext.Send(x => IDBs.Add(new Launchbox()), null);
+            });
+        }
 
-		public async void CachePlatform()
-		{
-			LocalDB localDB = SelectedIDB.DB;
+        public async void CachePlatform()
+        {
+            LocalDB localDB = SelectedIDB.DB;
 
-			// Cache platforms to cache in case selection changes during operation
-			List<Platform> platformList = new List<Platform>();
+            // Cache platforms to cache in case selection changes during operation
+            List<IDBPlatform> IDBPlatforms = new List<IDBPlatform>();
 
-			foreach (Platform platform in SelectedPlatforms)
-			{
-				platformList.Add(platform);
-			}
+            foreach (IDBPlatform idbPlatform in SelectedPlatforms)
+            {
+                IDBPlatforms.Add(idbPlatform);
+            }
 
-			await Task.Run(() =>
-			{
-				switch (localDB)
-				{
-					case LocalDB.GamesDB:
+            Reporter.Report("Caching " + IDBPlatforms.Count + " Launchbox platforms.");
 
-						using (GamesDB gamesDB = new GamesDB())
-						{
-							foreach (Platform platform in platformList)
-							{
-								gamesDB.CachePlatform(platform);
-							}
-						}
+            await Task.Run(() =>
+            {
+                foreach (IDBPlatform idbPlatform in IDBPlatforms)
+                {
+                    SelectedIDB.CachePlatformReleases(idbPlatform);
+                    SelectedIDB.CachePlatformData(idbPlatform);
+                    idbPlatform.CacheDate = DateTime.Now;
+                }
 
-						break;
-					case LocalDB.GiantBomb:
-						using (GiantBomb giantBomb = new GiantBomb())
-						{
-							foreach (Platform platform in platformList)
-							{
-								giantBomb.CachePlatform(platform);
-							}
-						}
-						break;
-					case LocalDB.OpenVGDB:
-						using (OpenVGDB openVGDB = new OpenVGDB())
-						{
-							foreach (Platform platform in platformList)
-							{
-								openVGDB.CachePlatformGames(platform);
-								SaveChanges();
-							}
-						}
+                // ReportUpdates() calls detect changes, so not necessary in save
+                SelectedIDB.ReportUpdates(true);
+                IDBs[0].ReportUpdates(false);
+                R.Data.Save(false);
+            });
+        }
 
-						break;
-					case LocalDB.LaunchBox:
+        public async void CompareToDBAsync()
+        {
+            if (SelectedPlatforms != null && SelectedPlatforms.Count > 0)
+            {
+                List<IDBPlatform> list = new List<IDBPlatform>();
+                foreach (IDBPlatform platform in SelectedPlatforms)
+                {
+                    list.Add(platform);
+                }
 
-						Launchbox launchbox = new Launchbox();
-						foreach (Platform platform in platformList)
-						{
-							launchbox.CachePlatformReleases(platform);
-						}
+                if (SelectedIDB.DB == LocalDB.OpenVGDB)
+                {
+                    foreach (IDBPlatform platform in list)
+                    {
+                        Reporter.Report("Comparing " + platform.Releases.Count + " Robin " + platform.Title + " games to OVG.");
 
+                        await Task.Run(() => { CompareToOVGDB(platform); });
+                    }
+                }
 
-						Reporter.ReportInline("done.");
+                else
+                {
+                    foreach (IDBPlatform idbPlatform in list)
+                    {
+                        Compares comparator = new Compares(SelectedIDB.DB, idbPlatform);
+                        comparator.Title += " [" + ComparisonResults.Count().ToString() + "]";
 
-						Reporter.Report("Saving changes...");
-						R.Data.ChangeTracker.DetectChanges();
-						int i = R.Data.Save();
-						Reporter.ReportInline(i + " changes pushed to database.");
+                        Reporter.Report("Comparing " + idbPlatform.Releases.Count + " Robin " + idbPlatform.Title + " games to " + Enum.GetName(typeof(LocalDB), SelectedIDB.DB) + ".");
 
-						R.Data.Configuration.AutoDetectChangesEnabled = true;
+                        await Task.Run(() =>
+                        {
+                            comparator.CompareToDB(Threshold, (ConsiderRegions && (SelectedIDB.HasRegions)));
+                        });
 
+                        ComparisonResults.Add(comparator);
+                    }
+                    Reporter.Report("Finished");
+                }
+            }
+        }
 
+        public void CompareToOVGDB(IDBPlatform idbPlatform)
+        {
+            // There are no results in OVGDB for arcade, so skip it
+            if (idbPlatform.Title.Contains("Arcade"))
+            {
+                Reporter.Report("Skiping platform \"Arcade\"");
+                return;
+            }
 
-						break;
+            Platform RPlatform = R.Data.Platforms.FirstOrDefault(x => x.ID == idbPlatform.ID);
 
-					default:
-						break;
-				}
+            OVGRelease ovgrelease = new OVGRelease();
+            foreach (Release release in RPlatform.Releases)
+            {
+                ovgrelease = R.Data.OVGReleases.FirstOrDefault(x => x.SHA1 == release.SHA1 && x.Region_ID == release.Region_ID && (x.BoxFrontURL != null || x.BoxBackURL != null));
+                if (ovgrelease != null)
+                {
+                    release.ID_OVG = ovgrelease.ID;
+                }
+            }
+        }
 
-			});
-		}
+        public void Accept()
+        {
+            Compares Comparator = SelectedComparisonResult;
+            int N_comp = Comparator.List.Count;
+            int i_r;
+            int i_db;
 
-		public async void CompareToDBAsync()
-		{
-			if (SelectedPlatforms != null && SelectedPlatforms.Count > 0)
-			{
-				List<IDBPlatform> list = new List<IDBPlatform>();
-				foreach (IDBPlatform platform in SelectedPlatforms)
-				{
-					list.Add(platform);
-				}
+            for (int i_comp = N_comp - 1; i_comp >= 0; i_comp--)
+            {
+                i_r = Comparator.List[i_comp].RIndex;
 
-				if (SelectedIDB.DB == LocalDB.OpenVGDB)
-				{
-					foreach (IDBPlatform platform in list)
-					{
-						Reporter.Report("Comparing " + platform.Releases.Count + " Robin " + platform.Title + " games to " + Enum.GetName(typeof(LocalDB), SelectedIDB.DB) + ".");
+                switch (Comparator.Database)
+                {
+                    case LocalDB.GamesDB:
+                        if (Comparator.List[i_comp].AcceptMatch)
+                        {
+                            // Get the index of the game stored in the current compare
+                            i_db = Comparator.List[i_comp].DBIndex;
 
-						await Task.Run(() =>
-						{
-							CompareToOVGDB(platform);
-						});
-					}
-					int i = R.Data.SaveChanges();
-					Reporter.Report(i + "changes pushed to database");
-				}
+                            // Assign the rom in the current compare to the game in the current compare
+                            Comparator.RReleases[i_r].ID_GDB = Comparator.DBreleases[i_db].ID;
+                            Comparator.List.RemoveAt(i_comp);
+                        }
+                        break;
+                    case LocalDB.GiantBomb:
+                        if (Comparator.List[i_comp].AcceptMatch)
+                        {
+                            // Get the index of the game stored in the current compare
+                            i_db = Comparator.List[i_comp].DBIndex;
 
-				else
-				{
-					foreach (IDBPlatform idbPlatform in list)
-					{
-						Compares comparator = new Compares(SelectedIDB.DB, idbPlatform);
-						comparator.Title += " [" + ComparisonResults.Count().ToString() + "]";
+                            // Assign the rom in the current compare to the game in the current compare
+                            Comparator.RReleases[i_r].ID_GB = Comparator.DBreleases[i_db].ID;
+                            Comparator.List.RemoveAt(i_comp);
+                        }
+                        break;
+                    case LocalDB.LaunchBox:
+                        if (Comparator.List[i_comp].AcceptMatch)
+                        {
+                            // Get the index of the game stored in the current compare
+                            i_db = Comparator.List[i_comp].DBIndex;
 
-						Reporter.Report("Comparing " + idbPlatform.Releases.Count + " Robin " + idbPlatform.Title + " games to " + Enum.GetName(typeof(LocalDB), SelectedIDB.DB) + ".");
+                            // Assign the rom in the current compare to the game in the current compare
+                            Comparator.RReleases[i_r].ID_LB = Comparator.DBreleases[i_db].ID;
+                            Comparator.List.RemoveAt(i_comp);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
 
-						await Task.Run(() =>
-						{
-							// Consider regions is not available for GamesDB
-							comparator.CompareToDB(Threshold, (ConsiderRegions && (SelectedIDB.DB == LocalDB.GiantBomb)));
-						});
+        public void CopyData()
+        {
+            Reporter.Report("Getting data...");
+            foreach (Release release in R.Data.Releases)
+            {
+                release.CopyData();
+            }
+            Reporter.ReportInline("finished.");
+        }
 
-						ComparisonResults.Add(comparator);
-					}
-					Reporter.Report("Finished");
-				}
-			}
-		}
+        public event PropertyChangedEventHandler PropertyChanged;
 
-		public void CompareToOVGDB(IDBPlatform ovgPlatform)
-		{
-			// There are no results in OVGDB for arcade, so skip it
-			if (ovgPlatform.Title.Contains("Arcade"))
-			{
-				Reporter.Report("Skiping platform \"Arcade\"");
-				return;
-			}
+        protected void OnPropertyChanged(string name)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
 
-			Platform RPlatform = R.Data.Platforms.FirstOrDefault(x => x.ID == ovgPlatform.ID);
-
-			OVGRelease ovgrelease = new OVGRelease();
-			foreach (Release release in RPlatform.Releases)
-			{
-				ovgrelease = R.Data.OVGReleases.FirstOrDefault(x => x.SHA1 == release.SHA1 && x.Region_ID == release.Region_ID && (x.BoxFrontURL != null || x.BoxBackURL != null));
-				if (ovgrelease != null)
-				{
-					release.ID_OVG = ovgrelease.ID;
-				}
-			}
-		}
-
-		public void Accept()
-		{
-			Compares Comparator = SelectedComparisonResult;
-			int N_comp = Comparator.List.Count;
-			int i_r;
-			int i_db;
-
-			for (int i_comp = N_comp - 1; i_comp >= 0; i_comp--)
-			{
-				i_r = Comparator.List[i_comp].RIndex;
-
-				switch (Comparator.Database)
-				{
-					case LocalDB.GamesDB:
-						if (Comparator.List[i_comp].AcceptMatch)
-						{
-							// Get the index of the game stored in the current compare
-							i_db = Comparator.List[i_comp].DBIndex;
-
-							// Assign the rom in the current compare to the game in the current compare
-							Comparator.RReleases[i_r].ID_GDB = Comparator.DBreleases[i_db].ID;
-							Comparator.List.RemoveAt(i_comp);
-						}
-						break;
-					case LocalDB.GiantBomb:
-						if (Comparator.List[i_comp].AcceptMatch)
-						{
-							// Get the index of the game stored in the current compare
-							i_db = Comparator.List[i_comp].DBIndex;
-
-							// Assign the rom in the current compare to the game in the current compare
-							Comparator.RReleases[i_r].ID_GB = Comparator.DBreleases[i_db].ID;
-							Comparator.List.RemoveAt(i_comp);
-						}
-						break;
-					case LocalDB.LaunchBox:
-						if (Comparator.List[i_comp].AcceptMatch)
-						{
-							// Get the index of the game stored in the current compare
-							i_db = Comparator.List[i_comp].DBIndex;
-
-							// Assign the rom in the current compare to the game in the current compare
-							Comparator.RReleases[i_r].ID_LB = Comparator.DBreleases[i_db].ID;
-							Comparator.List.RemoveAt(i_comp);
-						}
-						break;
-					default:
-						break;
-				}
-			}
-			SaveChanges();
-		}
-
-		public void SaveChanges()
-		{
-			int i = R.Data.Save();
-			Reporter.Report(i + " objects written to database.");
-		}
-
-		public void CopyData()
-		{
-			Reporter.Report("Getting data...");
-			foreach (Release release in R.Data.Releases)
-			{
-				release.CopyData();
-			}
-			Reporter.ReportInline("finished.");
-		}
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		protected void OnPropertyChanged(string name)
-		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-		}
-
-	}
+    }
 }

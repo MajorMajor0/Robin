@@ -78,11 +78,11 @@ namespace Robin
     		set { _date = value; OnPropertyChanged("Date"); } 
     	}
     
-        private string _boxURL;
-    	public string BoxURL 
+        private string _boxFrontURL;
+    	public string BoxFrontURL 
     	{ 
-    		get { return _boxURL; } 
-    		set { _boxURL = value; OnPropertyChanged("BoxURL"); } 
+    		get { return _boxFrontURL; } 
+    		set { _boxFrontURL = value; OnPropertyChanged("BoxFrontURL"); } 
     	}
     
         private string _screenURL;

@@ -50,11 +50,11 @@ namespace Robin
     		set { _iD_OVG = value; OnPropertyChanged("ID_OVG"); } 
     	}
     
-        private Nullable<long> _iD_LB;
-    	public Nullable<long> ID_LB 
+        private Nullable<long> _iD_LBG;
+    	public Nullable<long> ID_LBG 
     	{ 
-    		get { return _iD_LB; } 
-    		set { _iD_LB = value; OnPropertyChanged("ID_LB"); } 
+    		get { return _iD_LBG; } 
+    		set { _iD_LBG = value; OnPropertyChanged("ID_LBG"); } 
     	}
     
         private Nullable<long> _game_ID;
@@ -78,11 +78,11 @@ namespace Robin
     		set { _region_ID = value; OnPropertyChanged("Region_ID"); } 
     	}
     
-        private string _special;
-    	public string Special 
+        private Nullable<long> _uRL_ID;
+    	public Nullable<long> URL_ID 
     	{ 
-    		get { return _special; } 
-    		set { _special = value; OnPropertyChanged("Special"); } 
+    		get { return _uRL_ID; } 
+    		set { _uRL_ID = value; OnPropertyChanged("URL_ID"); } 
     	}
     
         private Nullable<long> _rom_ID;
@@ -90,6 +90,13 @@ namespace Robin
     	{ 
     		get { return _rom_ID; } 
     		set { _rom_ID = value; OnPropertyChanged("Rom_ID"); } 
+    	}
+    
+        private string _special;
+    	public string Special 
+    	{ 
+    		get { return _special; } 
+    		set { _special = value; OnPropertyChanged("Special"); } 
     	}
     
         private string _title;
@@ -204,11 +211,11 @@ namespace Robin
     		set { _isBeaten = value; OnPropertyChanged("IsBeaten"); } 
     	}
     
-        private Nullable<long> _uRL_ID;
-    	public Nullable<long> URL_ID 
+        private Nullable<long> _iD_LB;
+    	public Nullable<long> ID_LB 
     	{ 
-    		get { return _uRL_ID; } 
-    		set { _uRL_ID = value; OnPropertyChanged("URL_ID"); } 
+    		get { return _iD_LB; } 
+    		set { _iD_LB = value; OnPropertyChanged("ID_LB"); } 
     	}
     
     
@@ -216,13 +223,14 @@ namespace Robin
         public virtual GBRelease GBRelease { get; set; }
         public virtual GDBRelease GDBRelease { get; set; }
         public virtual LBGame LBGame { get; set; }
+        public virtual LBRelease LBRelease { get; set; }
         public virtual OVGRelease OVGRelease { get; set; }
         public virtual Platform Platform { get; set; }
         public virtual Region Region { get; set; }
+        public virtual URL URL { get; set; }
         public virtual Rom Rom { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual List<Collection> Collections { get; set; }
-        public virtual URL URL { get; set; }
      
         public event PropertyChangedEventHandler PropertyChanged;
     

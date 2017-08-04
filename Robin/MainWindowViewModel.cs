@@ -1,4 +1,18 @@
-﻿using System;
+﻿/*This file is part of Robin.
+ * 
+ * Robin is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General internal License as published 
+ * version 3 of the License, or (at your option) any later version.
+ * 
+ * Robin is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the GNU 
+ * General internal License for more details. 
+ * 
+ * You should have received a copy of the GNU General internal License
+ * along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -225,7 +239,7 @@ namespace Robin
 				R.Data.GDBReleases.Load();
 				R.Data.GBReleases.Load();
 				R.Data.OVGReleases.Load();
-				R.Data.LBGames.Include(x => x.LBImages).Load();
+				R.Data.LBReleases.Include(x => x.LBImages).Load();
 
 				Reporter.Report("Scraping art files...");
 
@@ -280,13 +294,12 @@ namespace Robin
 			Reporter.Report("Added " + scrapedFiles + " art files.");
 		}
 
-		public void Save()
+		public void Save(bool detect = true)
 		{
-			int i = R.Data.Save();
-			Reporter.Report(i + " objects written to database.");
-		}
+			R.Data.Save(detect);
+        }
 
-		public void MarkCrap(bool value)
+        public void MarkCrap(bool value)
 		{
 			IList idbList = SelectedDBs;
 			foreach (IDBobject idbObject in idbList)
@@ -365,5 +378,10 @@ namespace Robin
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
 		}
-	}
+
+        public void ClearFilters(dynamic AFC)
+        {
+            AFC.ClearFilters();
+        }
+    }
 }

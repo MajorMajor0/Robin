@@ -67,6 +67,7 @@
       <DependentUpon>ArtWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ArtWindowViewModel.cs" />
+    <Compile Include="Classes\Art.cs" />
     <Compile Include="Classes\AutoFilter.cs" />
     <Compile Include="Classes\Constants.cs" />
     <Compile Include="Classes\Handy.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="DataEntities.Extensions\GDBRelease.Extensions.cs" />
     <Compile Include="DataEntities.Extensions\GBRelease.Extensions.cs" />
     <Compile Include="DataEntities.Extensions\Game.Extensions.cs" />
+    <Compile Include="DataEntities.Extensions\LBRelease.Extensions.cs" />
     <Compile Include="DataEntities.Extensions\Match.Extensions.cs" />
     <Compile Include="DataEntities.Extensions\OVGPlatform.Extensions.cs" />
     <Compile Include="DataEntities.Extensions\OVGRelease.Extensions.cs" />
@@ -136,6 +138,9 @@
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="LBPlatform.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="LBRelease.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="MainWindowViewModel.cs" />
@@ -227,6 +232,9 @@
     <Compile Include="VGDBROM.cs">
       <DependentUpon>OpenVGDBModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="ReporterWindow.xaml.cs">
+      <DependentUpon>ReporterWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="ArtWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -251,6 +259,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="ReporterWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -271,6 +283,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <None Include="data\RobinData.db3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Images\SNES-CART" />
     <EntityDeploy Include="OpenVGDBModel.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
@@ -329,9 +344,7 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>

@@ -32,17 +32,17 @@ namespace Robin
 			Configuration.LazyLoadingEnabled = false;
 			Configuration.AutoDetectChangesEnabled = false;
 
-			Platforms.LoadAsync();
+			Platforms.Include(x=>x.Emulators).Load();
 			Roms.LoadAsync();
 			Releases.LoadAsync();
 			Games.LoadAsync();
 			Regions.LoadAsync();
-			Collections.LoadAsync();
-			Emulators.LoadAsync();
+			Collections.Include(x=>x.Games).Include(x=>x.Releases).Load();
+			Emulators.Include(x=>x.Platforms).Load();
 
 			foreach (Game game in Games)
 			{
-				game.Releases = game.Releases.OrderBy(x => x.Region.Priority).ToList();
+				game.Releases = game.Releases.OrderBy(x => x.Region.Priority).ThenByDescending(x=>x.Version).ToList();
 			}
 		}
 

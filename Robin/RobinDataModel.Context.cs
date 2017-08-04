@@ -37,13 +37,14 @@ namespace Robin
         public virtual DbSet<LBGame> LBGames { get; set; }
         public virtual DbSet<LBImage> LBImages { get; set; }
         public virtual DbSet<LBPlatform> LBPlatforms { get; set; }
+        public virtual DbSet<LBRelease> LBReleases { get; set; }
         public virtual DbSet<Match> Matches { get; set; }
+        public virtual DbSet<OVGPlatform> OVGPlatforms { get; set; }
         public virtual DbSet<OVGRelease> OVGReleases { get; set; }
         public virtual DbSet<Platform> Platforms { get; set; }
         public virtual DbSet<Region> Regions { get; set; }
         public virtual DbSet<Release> Releases { get; set; }
         public virtual DbSet<Rom> Roms { get; set; }
-        public virtual DbSet<OVGPlatform> OVGPlatforms { get; set; }
         public virtual DbSet<URL> URLs { get; set; }
     }
 }

@@ -197,8 +197,8 @@ namespace Robin
     		set { _overview = value; OnPropertyChanged("Overview"); } 
     	}
     
-        private Nullable<System.DateTime> _cacheDate;
-    	public Nullable<System.DateTime> CacheDate 
+        private System.DateTime _cacheDate;
+    	public System.DateTime CacheDate 
     	{ 
     		get { return _cacheDate; } 
     		set { _cacheDate = value; OnPropertyChanged("CacheDate"); } 

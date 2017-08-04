@@ -40,35 +40,14 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 		<ControlTemplate x:Key="SearchBoxTemplate"
 						 TargetType="{x:Type TextBoxBase}">
-			<Border x:Name="Bd"
-					Background="{TemplateBinding Background}"
-					BorderBrush="Black"
-					BorderThickness="{TemplateBinding BorderThickness}"
-					CornerRadius="5">
-				<ScrollViewer x:Name="PART_ContentHost" />
-			</Border>
-			<ControlTemplate.Triggers>
-				<Trigger Property="IsEnabled"
-						 Value="False">
-					<Setter Property="Background"
-							Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-							TargetName="Bd" />
-					<Setter Property="Foreground"
-							Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
-				</Trigger>
-				<Trigger Property="Width"
-						 Value="Auto">
-					<Setter Property="MinWidth"
-							Value="100" />
-				</Trigger>
-
-				<Trigger Property="Height"
-						 Value="Auto">
-					<Setter Property="MinHeight"
-							Value="20" />
-				</Trigger>
-			</ControlTemplate.Triggers>
-		</ControlTemplate>
+            <Border x:Name="Bd"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="Black"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="5">
+                <ScrollViewer x:Name="PART_ContentHost" />
+            </Border>
+        </ControlTemplate>
 
 	</Window.Resources>
 
@@ -79,8 +58,6 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 		<CommandBinding Command="local:CustomCommands.GetAllData"
 						CanExecute="GetAllData_CanExecute"
 						Executed="GetAllData_Executed" />
-
-
 		<CommandBinding Command="local:CustomCommands.Play"
 						CanExecute="Play_CanExecute"
 						Executed="Play_Executed" />
@@ -124,6 +101,12 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 		<CommandBinding Command="local:CustomCommands.RemoveFromCollection"
 						CanExecute="RemoveFromCollection_CanExecute"
 						Executed="RemoveFromCollection_Executed" />
+		<CommandBinding Command="local:CustomCommands.ClearFilters"
+						CanExecute="ClearFilters_CanExecute"
+						Executed="ClearFilters_Executed" />
+		<CommandBinding Command="local:CustomCommands.ReporterWindow"
+						CanExecute="ReporterWindow_CanExecute"
+						Executed="ReporterWindow_Executed" />
 	</Window.CommandBindings>
 
 	<Grid x:Name="WindowGrid">
@@ -136,8 +119,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
-			<RowDefinition Height="Auto"
-						   MinHeight="50" />
+			<RowDefinition Height="50" />
 		</Grid.RowDefinitions>
 
 		<DockPanel x:Name="MenuDocPanel"
@@ -168,11 +150,12 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 				</MenuItem>
 
-				<MenuItem Header="Database">
+				<MenuItem Header="Window">
 					<MenuItem Header="Database Window"
 							  Click="Database_Click" />
-					<MenuItem Header="Convert Lynx Files"
-							  Click="ConvertLynx_Click" />
+					<MenuItem Command="local:CustomCommands.ReporterWindow" />
+					<!--<MenuItem Header="Convert Lynx Files"
+							  Click="ConvertLynx_Click" />-->
 
 				</MenuItem>
 				<MenuItem Header="View" />
@@ -201,47 +184,9 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<RowDefinition Height="40" />
 						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
-					<TextBox x:Name="FilterBox"
-							 Template="{StaticResource SearchBoxTemplate}"
-							 MinWidth="200"
-							 MaxWidth="350"
-							 Height="30"
-							 HorizontalAlignment="Left"
-							 VerticalContentAlignment="Center"
-							 Grid.Row="1"
-							 Padding="50,0,0,0"
-							 Foreground="{StaticResource Heading1_Brush}"
-							 FontFamily="{StaticResource NormalFontFamily}"
-							 FontSize="20"
-							 Text="{Binding Path=TextFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged }">
-
-						<TextBox.Background>
-							<LinearGradientBrush EndPoint="0.5,0"
-												 StartPoint="0.5,1">
-								<GradientStop Color="#4B4B4B"
-											  Offset="0" />
-								<GradientStop Color="#C8C8C8"
-											  Offset="1" />
-							</LinearGradientBrush>
-						</TextBox.Background>
-
-					</TextBox>
-					<Image x:Name="SearchIcon"
-						   Source="{StaticResource SearchIcon}"
-						   HorizontalAlignment="Left"
-						   VerticalAlignment="Center"
-						   Margin="5,0,0,0"
-						   Width="25"
-						   Grid.Row="1"
-						   RenderOptions.BitmapScalingMode="Fant" />
-					<Button x:Name="BonusButton"
-							HorizontalAlignment="Right"
-							Width="50"
-							Content="BONUS!"
-							Click="BonusButton_Click"
-							Grid.Row="1"
-							Height="30" />
-					<DockPanel HorizontalAlignment="Left"
+					
+					<DockPanel x:Name="SelectorButton_DockPanel"
+							   HorizontalAlignment="Left"
 							   VerticalAlignment="Top"
 							   LastChildFill="False"
 							   Height="30">
@@ -270,7 +215,63 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 									   Style="{StaticResource SelectorButtonTextStyle}" />
 						</ToggleButton>
 					</DockPanel>
-					<StackPanel x:Name="FiltersStackPanel"
+
+					<DockPanel x:Name="SearchBox_DockPanel"
+							   Grid.Row="1">
+						
+						<Grid x:Name="SearchBox_Grid"
+							  DockPanel.Dock="Left">
+							<TextBox x:Name="FilterBox"
+									 Template="{StaticResource SearchBoxTemplate}"
+									 Width="Auto"
+									 MinWidth="200"
+									 MaxWidth="350"
+									 Height="30"
+									 HorizontalAlignment="Left"
+									 VerticalContentAlignment="Center"
+									 Padding="30,0,0,0"
+									 Foreground="{StaticResource Heading1_Brush}"
+									 FontFamily="{StaticResource NormalFontFamily}"
+									 FontSize="20"
+									 Text="{Binding Path=TextFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged }">
+
+								<TextBox.Background>
+									<LinearGradientBrush EndPoint="0.5,0"
+														 StartPoint="0.5,1">
+										<GradientStop Color="#4B4B4B"
+													  Offset="0" />
+										<GradientStop Color="#C8C8C8"
+													  Offset="1" />
+									</LinearGradientBrush>
+								</TextBox.Background>
+							</TextBox>
+
+							<Image x:Name="SearchIcon"
+								   Source="{StaticResource SearchIcon}"
+								   HorizontalAlignment="Left"
+								   VerticalAlignment="Center"
+								   Margin="5,0,0,0"
+								   Width="25"
+								   Grid.Row="1"
+								   RenderOptions.BitmapScalingMode="Fant" />
+						</Grid>
+
+						<Button x:Name="ClearButton"
+								DockPanel.Dock="Right"
+								Width="50"
+								Content="Clear"
+								Height="30"
+								Command="local:CustomCommands.ClearFilters"/>
+
+						<Button x:Name="BonusButton"
+								DockPanel.Dock="Right"
+								Width="50"
+								Content="BONUS!"
+								Click="BonusButton_Click"
+								Height="30" />
+					</DockPanel>
+			
+					<StackPanel x:Name="Filters_StackPanel"
 								Orientation="Vertical"
 								Grid.Row="2"
 								Background="Transparent">
@@ -279,12 +280,12 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 								   DockPanel.Dock="Top"
 								   ItemsSource="{Binding ElementName=MainList, Path=DataContext.StringFilters}"
 								   Background="Transparent"
-								   BorderBrush="Transparent"
-								   Grid.RowSpan="2">
+								   BorderBrush="Transparent" >
 
 							<ListView.ItemsPanel>
 								<ItemsPanelTemplate>
-									<StackPanel Orientation="Vertical"
+									<StackPanel HorizontalAlignment="Left"
+												Orientation="Vertical"
 												MaxWidth="{Binding ActualWidth, ElementName=StringFilterList}" />
 								</ItemsPanelTemplate>
 							</ListView.ItemsPanel>
@@ -366,7 +367,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 												   Style="{StaticResource Heading1}"
 												   Width="100" />
 										<ToggleButton IsThreeState="True"
-													  IsChecked="{Binding Value}"
+													  IsChecked="{Binding Value, Mode=TwoWay}"
 													  Width="80">
 											<ToggleButton.Style>
 												<Style TargetType="ToggleButton">
@@ -446,9 +447,11 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 								</DataTemplate>
 							</ListView.ItemTemplate>
 						</ListView>
+						
 					</StackPanel>
 				</Grid>
 			</Border>
+            
 			<Border x:Name="CollectionBorder"
 					Grid.Row="1"
 					VerticalAlignment="Stretch"
@@ -522,26 +525,115 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 								  VerticalAlignment="Stretch"
 								  HorizontalAlignment="Stretch"
 								  DockPanel.Dock="Top"
-								  Content="{Binding SelectedDB}">
+								  Content="{Binding SelectedDB}"
+                                  Padding="10,0,0,0">
 						<ContentControl.Resources>
 
-							<DataTemplate DataType="{x:Type local:Game}">
-								<DockPanel>
+                            <DataTemplate DataType="{x:Type local:Release}">
 
-									<StackPanel x:Name="ID_Stackpanel"
-												Orientation="Horizontal"
-												DockPanel.Dock="Top"
-												Margin="10,0,0,0">
-										<TextBlock Text="ID: "
-												   Style="{StaticResource Heading1}" />
-										<TextBlock Text="{Binding ID}"
-												   Style="{StaticResource Normal}" />
-									</StackPanel>
+                                <DockPanel>
+
+                                    <StackPanel x:Name="Platform_Stackpanel"
+                                                Orientation="Horizontal"
+                                                DockPanel.Dock="Top">
+                                        <TextBlock Text="Platform: "
+                                                   Style="{StaticResource Heading1}"
+                                                   DockPanel.Dock="Top" />
+                                        <TextBlock Text="{Binding Platform.Title}"
+                                                   Style="{StaticResource Normal}"
+                                                   DockPanel.Dock="Top" />
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="Version_Stackpanel"
+                                                Orientation="Horizontal"
+                                                DockPanel.Dock="Top">
+                                        <TextBlock Text="Version: "
+                                                   Style="{StaticResource Heading1}"
+                                                   DockPanel.Dock="Top" />
+                                        <TextBlock Text="{Binding Version}"
+                                                   Style="{StaticResource Normal}"
+                                                   DockPanel.Dock="Top" />
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="Region_Stackpanel"
+                                                Orientation="Horizontal"
+                                                DockPanel.Dock="Top">
+                                        <TextBlock Text="Region: "
+                                                   Style="{StaticResource Heading1}" />
+                                        <TextBlock Text="{Binding Region.Title}"
+                                                   Style="{StaticResource Normal}"
+                                                   DockPanel.Dock="Top" />
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="Genre_Stackpanel"
+                                                Orientation="Horizontal"
+                                                DockPanel.Dock="Top">
+                                        <TextBlock Text="Genre: "
+                                                   Style="{StaticResource Heading1}" />
+                                        <TextBlock Text="{Binding Genre}"
+                                                   Style="{StaticResource Normal}" />
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="Players_Stackpanel"
+                                                Orientation="Horizontal"
+                                                DockPanel.Dock="Top">
+                                        <TextBlock Text="Players: "
+                                                   Style="{StaticResource Heading1}" />
+                                        <TextBlock Text="{Binding Players}"
+                                                   Style="{StaticResource Normal}" />
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="Beaten_Stackpanel"
+                                                Orientation="Horizontal"
+                                                DockPanel.Dock="Top">
+                                        <TextBlock Text="Beaten: "
+                                                   Style="{StaticResource Heading1}" />
+                                        <TextBlock Text="{Binding IsBeaten}"
+                                                   Style="{StaticResource Normal}" />
+                                    </StackPanel>
+                                    <StackPanel x:Name="Crap_Stackpanel"
+                                                Orientation="Horizontal"
+                                                DockPanel.Dock="Top">
+                                        <TextBlock Text="Crap: "
+                                                   Style="{StaticResource Heading1}" />
+                                        <TextBlock Text="{Binding IsCrap}"
+                                                   Style="{StaticResource Normal}" />
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="File_Stackpanel"
+                                                Orientation="Horizontal"
+                                                DockPanel.Dock="Top">
+                                        <TextBlock Text="File: "
+                                                   Style="{StaticResource Heading1}"
+                                                   DockPanel.Dock="Top" />
+                                        <TextBlock Text="{Binding FileName}"
+                                                   Style="{StaticResource Normal}"
+                                                   DockPanel.Dock="Top" />
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="Overview_Stackpanel"
+                                                Orientation="Vertical"
+                                                DockPanel.Dock="Top">
+                                        <TextBlock Text="Overview: "
+                                                   Style="{StaticResource Heading1}" />
+
+                                        <TextBlock Text="{Binding Overview}"
+                                                   Style="{StaticResource Normal}"
+                                                   FontSize="14"
+                                                   DockPanel.Dock="Top"
+                                                   Margin="10,0,0,0" />
+                                    </StackPanel>
+
+                                </DockPanel>
+
+                            </DataTemplate>
+
+                            <DataTemplate DataType="{x:Type local:Game}">
+								<DockPanel>
 
 									<StackPanel x:Name="Platform_Stackpanel"
 												Orientation="Horizontal"
-												DockPanel.Dock="Top"
-												Margin="10,0,0,0">
+												DockPanel.Dock="Top" >
 										<TextBlock Text="Platform: "
 												   Style="{StaticResource Heading1}" />
 										<TextBlock Text="{Binding Platform}"
@@ -550,33 +642,25 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 									<StackPanel x:Name="Date_Stackpanel"
 												Orientation="Horizontal"
-												DockPanel.Dock="Top"
-												Margin="10,0,0,0">
+												DockPanel.Dock="Top" >
 										<TextBlock Text="Date: "
 												   Style="{StaticResource Heading1}" />
 										<TextBlock Text="{Binding Date,  StringFormat=yyyy}"
 												   Style="{StaticResource Normal}" />
 									</StackPanel>
 
-									<StackPanel x:Name="Region_Stackpanel"
-												Orientation="Horizontal"
-												DockPanel.Dock="Top"
-												Margin="10,0,0,0">
-										<TextBlock Text="Regions: "
-												   Style="{StaticResource Heading1}" />
-										<TextBlock Text="{Binding Regions}"
-												   Style="{StaticResource Normal}" />
-									</StackPanel>
+                                    <StackPanel x:Name="Region_Stackpanel"
+                                                Orientation="Horizontal"
+                                                DockPanel.Dock="Top">
+                                        <TextBlock Text="Regions: "
+                                                   Style="{StaticResource Heading1}" />
+                                        <TextBlock Text="{Binding Regions}"
+                                                   Style="{StaticResource Normal}" />
+                                    </StackPanel>
 
-									<!--<StackPanel x:Name="Included_Stackpanel" Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
-                                        <TextBlock Text="Included: " Style="{StaticResource Heading1}" />
-                                        <TextBlock Text="{Binding Included}" Style="{StaticResource Normal}" />
-                                    </StackPanel>-->
-
-									<StackPanel x:Name="Genre_Stackpanel"
+                                    <StackPanel x:Name="Genre_Stackpanel"
 												Orientation="Horizontal"
-												DockPanel.Dock="Top"
-												Margin="10,0,0,0">
+												DockPanel.Dock="Top" >
 										<TextBlock Text="Genre: "
 												   Style="{StaticResource Heading1}" />
 										<TextBlock Text="{Binding Genres}"
@@ -585,45 +669,34 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 									<StackPanel x:Name="Players_Stackpanel"
 												Orientation="Horizontal"
-												DockPanel.Dock="Top"
-												Margin="10,0,0,0">
+												DockPanel.Dock="Top" >
 										<TextBlock Text="Players: "
 												   Style="{StaticResource Heading1}" />
 										<TextBlock Text="{Binding Players}"
 												   Style="{StaticResource Normal}" />
 									</StackPanel>
+                                    
 									<StackPanel x:Name="Beaten_Stackpanel"
 												Orientation="Horizontal"
-												DockPanel.Dock="Top"
-												Margin="10,0,0,0">
+												DockPanel.Dock="Top" >
 										<TextBlock Text="Beaten: "
 												   Style="{StaticResource Heading1}" />
 										<TextBlock Text="{Binding IsBeaten}"
 												   Style="{StaticResource Normal}" />
 									</StackPanel>
-									<StackPanel x:Name="Crap_Stackpanel"
-												Orientation="Horizontal"
-												DockPanel.Dock="Top"
-												Margin="10,0,0,0">
-										<TextBlock Text="Crap: "
-												   Style="{StaticResource Heading1}" />
-										<TextBlock Text="{Binding IsCrap}"
-												   Style="{StaticResource Normal}" />
-									</StackPanel>
-									<StackPanel x:Name="IsGame_Stackpanel"
-												Orientation="Horizontal"
-												DockPanel.Dock="Top"
-												Margin="10,0,0,0">
-										<TextBlock Text="Is game: "
-												   Style="{StaticResource Heading1}" />
-										<TextBlock Text="{Binding IsGame}"
-												   Style="{StaticResource Normal}" />
-									</StackPanel>
+                                    
+                                    <StackPanel x:Name="Crap_Stackpanel"
+                                                Orientation="Horizontal"
+                                                DockPanel.Dock="Top">
+                                        <TextBlock Text="Crap: "
+                                                   Style="{StaticResource Heading1}" />
+                                        <TextBlock Text="{Binding IsCrap}"
+                                                   Style="{StaticResource Normal}" />
+                                    </StackPanel>
 
-									<StackPanel x:Name="Overview_Stackpanel"
+                                    <StackPanel x:Name="Overview_Stackpanel"
 												Orientation="Vertical"
-												DockPanel.Dock="Top"
-												Margin="10,0,0,0">
+												DockPanel.Dock="Top" >
 										<TextBlock Text="Overview: "
 												   Style="{StaticResource Heading1}" />
 
@@ -631,17 +704,15 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 												   Style="{StaticResource Normal}"
 												   FontSize="14"
 												   DockPanel.Dock="Top"
-												   Margin="10,0,0,0" />
+                                                   Margin="10,0,0,0"/>
 									</StackPanel>
 
 									<StackPanel x:Name="Releases_StackPanel"
 												Orientation="Vertical"
 												DockPanel.Dock="Top"
-												Margin="0,10,0,0"
 												Panel.ZIndex="1">
 										<TextBlock Text="Releases"
-												   Style="{StaticResource Heading1}"
-												   Margin="10,0,0,0" />
+												   Style="{StaticResource Heading1}" />
 										<ListBox x:Name="GameReleaseListBox"
 												 ItemsSource="{Binding Releases}"
 												 ScrollViewer.HorizontalScrollBarVisibility="Hidden"
@@ -663,19 +734,13 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 											<ListBox.ItemTemplate>
 												<DataTemplate>
-													<StackPanel Orientation="Horizontal"
-																Panel.ZIndex="1">
-														<Canvas Width="17"
-																Panel.ZIndex="1">
-															<Ellipse Fill="White"
-																	 Height="6"
-																	 Width="6"
-																	 Canvas.Right="4"
-																	 Canvas.Top="7"
-																	 Panel.ZIndex="1"
-																	 Visibility="{Binding Path=Preferred, Mode=OneWay, Converter={StaticResource booleanToVisibilityConverter}}" />
-														</Canvas>
-														<TextBlock Text="{Binding TitleAndRegion}"
+                                                    <StackPanel Orientation="Horizontal"
+                                                                Panel.ZIndex="1">
+                                                        <TextBlock Text="• "
+                                                                   Margin="-4,0,0,0"
+                                                                   Style="{StaticResource Normal}"
+                                                                   Visibility="{Binding Path=Preferred, Mode=OneWay, Converter={StaticResource boolToHiddenConverter}}" />
+                                                        <TextBlock Text="{Binding TitleAndRegion}"
 																   Style="{StaticResource IncludedTextBlockStyle1}" />
 													</StackPanel>
 												</DataTemplate>
@@ -690,8 +755,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 									<StackPanel x:Name="Media_Stackpanel"
 												Orientation="Horizontal"
-												DockPanel.Dock="Top"
-												Margin="10,0,0,0">
+												DockPanel.Dock="Top" >
 										<TextBlock Text="Media: "
 												   Style="{StaticResource Heading1}" />
 										<TextBlock Text="{Binding Media}"
@@ -700,8 +764,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 									<StackPanel x:Name="Controllers_Stackpanel"
 												Orientation="Horizontal"
-												DockPanel.Dock="Top"
-												Margin="10,0,0,0">
+												DockPanel.Dock="Top" >
 										<TextBlock Text="Controllers: "
 												   Style="{StaticResource Heading1}" />
 										<TextBlock Text="{Binding Controllers}"
@@ -710,8 +773,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 									<StackPanel x:Name="Overview_Stackpanel"
 												Orientation="Vertical"
-												DockPanel.Dock="Top"
-												Margin="10,0,0,0">
+												DockPanel.Dock="Top" >
 										<TextBlock Text="Overview: "
 												   Style="{StaticResource Heading1}" />
 										<TextBlock Text="{Binding Overview}"
@@ -720,81 +782,67 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 												   Margin="10,0,0,0" />
 									</StackPanel>
 
-									<StackPanel x:Name="Releases_Stackpanel"
-												Orientation="Horizontal"
-												DockPanel.Dock="Top"
-												Margin="10,0,0,0">
-										<TextBlock Text="Releases: "
+                                    <StackPanel x:Name="Releases_Stackpanel"
+                                                Orientation="Horizontal"
+                                                DockPanel.Dock="Top" >
+                                        <TextBlock Text="Releases: "
 												   Style="{StaticResource Heading1}" />
-										<TextBlock Text="{Binding Releases.Count}"
-												   Style="{StaticResource Normal}"
-												   FontSize="14"
-												   Margin="10,0,0,0" />
+                                        <TextBlock Style="{StaticResource Normal}" >
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0}">
+                                                    <Binding Path="Releases.Count" />
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
 									</StackPanel>
 
 									<StackPanel x:Name="ReleasesIncluded_Stackpanel"
 												Orientation="Horizontal"
-												DockPanel.Dock="Top"
-												Margin="10,0,0,0">
+												DockPanel.Dock="Top" >
 										<TextBlock Text="Playable: "
 												   Style="{StaticResource Heading1}" />
 										<TextBlock Text="{Binding ReleasesIncluded}"
-												   Style="{StaticResource Normal}"
-												   FontSize="14"
-												   Margin="10,0,0,0" />
+												   Style="{StaticResource Normal}" />
 									</StackPanel>
 
 									<StackPanel x:Name="ReleasesWithArt_Stackpanel"
 												Orientation="Horizontal"
-												DockPanel.Dock="Top"
-												Margin="10,0,0,0">
+												DockPanel.Dock="Top" >
 										<TextBlock Text="With art: "
 												   Style="{StaticResource Heading1}" />
 										<TextBlock Text="{Binding ReleasesWithArt}"
-												   Style="{StaticResource Normal}"
-												   FontSize="14"
-												   Margin="10,0,0,0" />
+												   Style="{StaticResource Normal}" />
 									</StackPanel>
 
 									<StackPanel x:Name="Matched_Stackpanel"
 												Orientation="Horizontal"
-												DockPanel.Dock="Top"
-												Margin="10,0,0,0">
+												DockPanel.Dock="Top" >
 										<TextBlock Text="Matched: "
 												   Style="{StaticResource Heading1}" />
 										<TextBlock Text="{Binding MatchedToSomething}"
-												   Style="{StaticResource Normal}"
-												   FontSize="14"
-												   Margin="10,0,0,0" />
+												   Style="{StaticResource Normal}" />
 									</StackPanel>
 
 									<StackPanel x:Name="Emulators_StackPanel"
 												Orientation="Vertical"
-												DockPanel.Dock="Top"
-												Margin="0,10,0,0">
+												DockPanel.Dock="Top" >
 										<TextBlock Text="Emulators"
-												   Style="{StaticResource Heading1}"
-												   Margin="10,0,0,0" />
+												   Style="{StaticResource Heading1}" />
 										<ListBox x:Name="PlatformEmulatorListBox"
 												 ItemsSource="{Binding Emulators}" >
 											<ListBox.ItemTemplate>
 												<DataTemplate>
-													<StackPanel Orientation="Horizontal">
-														<Canvas Width="17">
-															<Ellipse Fill="White"
-																	 Height="6"
-																	 Width="6"
-																	 Canvas.Right="4"
-																	 Canvas.Top="7">
-																<Ellipse.Visibility>
+                                                    <StackPanel Orientation="Horizontal"
+                                                                Margin="-4,0,0,0">
+                                                        <TextBlock Text="• " Style="{StaticResource Normal}">
+                                                            <TextBlock.Visibility>
 																	<MultiBinding Converter="{StaticResource PreferredMultiValueConverter}">
 																		<Binding Path="ID" />
 																		<Binding ElementName="CurrentItemScrollViewer"
-																				 Path="Content.PreferredEmulator_ID" />
+                                                                                 Path="Content.PreferredEmulator_ID" />
 																	</MultiBinding>
-																</Ellipse.Visibility>
-															</Ellipse>
-														</Canvas>
+																</TextBlock.Visibility>
+                                                        </TextBlock>
 														<TextBlock Text="{Binding Title}"
 																   Style="{StaticResource IncludedTextBlockStyle1}">
 															<TextBlock.ContextMenu>
@@ -818,130 +866,13 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 							</DataTemplate>
 
-							<DataTemplate DataType="{x:Type local:Release}">
-
-								<DockPanel>
-									<StackPanel x:Name="Version_Stackpanel"
-												Orientation="Horizontal"
-												DockPanel.Dock="Top"
-												Margin="10,0,0,0">
-										<TextBlock Text="Version: "
-												   Style="{StaticResource Heading1}"
-												   DockPanel.Dock="Top" />
-										<TextBlock Text="{Binding Version}"
-												   Style="{StaticResource Normal}"
-												   DockPanel.Dock="Top" />
-									</StackPanel>
-
-									<StackPanel x:Name="Region_Stackpanel"
-												Orientation="Horizontal"
-												DockPanel.Dock="Top"
-												Margin="10,0,0,0">
-										<TextBlock Text="Region: "
-												   Style="{StaticResource Heading1}" />
-										<TextBlock Text="{Binding Region.Title}"
-												   Style="{StaticResource Normal}"
-												   DockPanel.Dock="Top" />
-									</StackPanel>
-
-									<StackPanel x:Name="CRC32_Stackpanel"
-												Orientation="Horizontal"
-												DockPanel.Dock="Top"
-												Margin="10,0,0,0">
-										<TextBlock Text="CRC32: "
-												   Style="{StaticResource Heading1}"
-												   DockPanel.Dock="Top" />
-										<TextBlock Text="{Binding CRC32}"
-												   Style="{StaticResource Normal}"
-												   DockPanel.Dock="Top" />
-									</StackPanel>
-
-									<StackPanel x:Name="SHA1_Stackpanel"
-												Orientation="Horizontal"
-												DockPanel.Dock="Top"
-												Margin="10,0,0,0">
-										<TextBlock Text="SHA1: "
-												   Style="{StaticResource Heading1}"
-												   DockPanel.Dock="Top" />
-										<TextBlock Text="{Binding SHA1}"
-												   Style="{StaticResource Normal}"
-												   DockPanel.Dock="Top" />
-									</StackPanel>
-
-									<StackPanel x:Name="ID_Stackpanel"
-												Orientation="Horizontal"
-												DockPanel.Dock="Top"
-												Margin="10,0,0,0">
-										<TextBlock Text="ID: "
-												   Style="{StaticResource Heading1}"
-												   DockPanel.Dock="Top" />
-										<TextBlock Text="{Binding ID}"
-												   Style="{StaticResource Normal}"
-												   DockPanel.Dock="Top" />
-									</StackPanel>
-
-									<StackPanel x:Name="GDBID_Stackpanel"
-												Orientation="Horizontal"
-												DockPanel.Dock="Top"
-												Margin="10,0,0,0">
-										<TextBlock Text="GDB ID: "
-												   Style="{StaticResource Heading1}"
-												   DockPanel.Dock="Top" />
-										<TextBlock Text="{Binding ID_GamesDB}"
-												   Style="{StaticResource Normal}"
-												   DockPanel.Dock="Top" />
-									</StackPanel>
-
-									<StackPanel x:Name="File_Stackpanel"
-												Orientation="Horizontal"
-												DockPanel.Dock="Top"
-												Margin="10,0,0,0">
-										<TextBlock Text="File: "
-												   Style="{StaticResource Heading1}"
-												   DockPanel.Dock="Top" />
-										<TextBlock Text="{Binding File}"
-												   Style="{StaticResource Normal}"
-												   DockPanel.Dock="Top" />
-									</StackPanel>
-
-									<StackPanel x:Name="Platform_Stackpanel"
-												Orientation="Horizontal"
-												DockPanel.Dock="Top"
-												Margin="10,0,0,0">
-										<TextBlock Text="Platform: "
-												   Style="{StaticResource Heading1}"
-												   DockPanel.Dock="Top" />
-										<TextBlock Text="{Binding Platform.Title}"
-												   Style="{StaticResource Normal}"
-												   DockPanel.Dock="Top" />
-									</StackPanel>
-
-									<StackPanel x:Name="Overview_Stackpanel"
-												Orientation="Vertical"
-												DockPanel.Dock="Top"
-												Margin="10,0,0,0">
-										<TextBlock Text="Overview: "
-												   Style="{StaticResource Heading1}" />
-
-										<TextBlock Text="{Binding Overview}"
-												   Style="{StaticResource Normal}"
-												   FontSize="14"
-												   DockPanel.Dock="Top"
-												   Margin="10,0,0,0" />
-									</StackPanel>
-
-								</DockPanel>
-
-							</DataTemplate>
-
 							<DataTemplate DataType="{x:Type local:Emulator}">
 								<DockPanel>
 									<!--<TextBlock Text="{Binding Title}" Style="{StaticResource Heading0}" DockPanel.Dock="Top"/>-->
 
 									<StackPanel x:Name="Website_Stackpanel"
 												Orientation="Horizontal"
-												DockPanel.Dock="Top"
-												Margin="10,0,0,0">
+												DockPanel.Dock="Top" >
 										<TextBlock Text="Website: "
 												   Style="{StaticResource Heading1}" />
 										<TextBlock Text="{Binding Website}"
@@ -950,8 +881,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 									<StackPanel x:Name="Included_Stackpanel"
 												Orientation="Horizontal"
-												DockPanel.Dock="Top"
-												Margin="10,0,0,0">
+												DockPanel.Dock="Top" >
 										<TextBlock Text="Included: "
 												   Style="{StaticResource Heading1}" />
 										<TextBlock Text="{Binding Included}"
@@ -960,32 +890,27 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 									<StackPanel x:Name="Platforms_StackPanel"
 												Orientation="Vertical"
-												DockPanel.Dock="Top"
-												Margin="0,10,0,0">
+												DockPanel.Dock="Top" >
 										<TextBlock Text="Platforms"
-												   Style="{StaticResource Heading1}"
-												   Margin="10,0,0,0" />
+												   Style="{StaticResource Heading1}" />
 										<ListBox x:Name="EmulatorPlatformListBox"
 												 ItemsSource="{Binding Platforms1}">
 											<ListBox.ItemTemplate>
 												<DataTemplate>
-													<StackPanel Orientation="Horizontal">
-														<Canvas Width="17">
-															<Ellipse Fill="White"
-																	 Height="6"
-																	 Width="6"
-																	 Canvas.Right="4"
-																	 Canvas.Top="7">
-																<Ellipse.Visibility>
-																	<MultiBinding Converter="{StaticResource PreferredMultiValueConverter}">
-																		<Binding Path="PreferredEmulator_ID" />
-																		<Binding ElementName="CurrentItemScrollViewer"
-																				 Path="Content.ID" />
-																	</MultiBinding>
-																</Ellipse.Visibility>
-															</Ellipse>
-														</Canvas>
-														<TextBlock Text="{Binding Title}"
+													<StackPanel Orientation="Horizontal" Margin="-4,0,0,0">
+														
+                                                        <TextBlock Text="• "
+                                                                   Style="{StaticResource Normal}">
+                                                            <TextBlock.Visibility>
+                                                                <MultiBinding Converter="{StaticResource PreferredMultiValueConverter}">
+                                                                    <Binding Path="PreferredEmulator_ID" />
+                                                                    <Binding ElementName="CurrentItemScrollViewer"
+                                                                             Path="Content.ID" />
+                                                                </MultiBinding>
+                                                            </TextBlock.Visibility>
+                                                        </TextBlock>
+
+                                                        <TextBlock Text="{Binding Title}"
 																   Style="{StaticResource IncludedTextBlockStyle1}">
 															<TextBlock.ContextMenu>
 																<ContextMenu>
@@ -1013,7 +938,8 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 			<GridSplitter Grid.Row="1"
 						  VerticalAlignment="Top"
 						  Style="{StaticResource HorizontalGridSplitterStyle1}" />
-			<GridSplitter Grid.Row="2"
+			
+            <GridSplitter Grid.Row="2"
 						  VerticalAlignment="Top"
 						  Style="{StaticResource HorizontalGridSplitterStyle1}" />
 
@@ -1210,7 +1136,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 									Orientation="Vertical">
 							<Border x:Name="GameImageBorder"
 									Style="{StaticResource ImageBorderStyle1}">
-								<Image Source="{Binding MainDisplay, IsAsync=True,
+								<Image Source="{Binding MainDisplay, Mode=OneTime, IsAsync=True,
 								   Converter={StaticResource ImageConverter},
 								   FallbackValue={StaticResource ArtNotFoundImage},
 								   TargetNullValue={StaticResource ArtNotFoundImage}}"
@@ -1246,7 +1172,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 									AllowDrop="True"
 									Drop="MainListPlatform_Drop">
 							<Border Style="{StaticResource ImageBorderStyle2}">
-								<Image Source="{Binding ConsoleFile, Mode=OneWay, IsAsync=True,
+                                <Image Source="{Binding ConsoleFile, Mode=OneTime, IsAsync=True,
 								   Converter={StaticResource ImageConverter},
 								   FallbackValue={StaticResource ArtNotFoundImage},
 								   TargetNullValue={StaticResource ArtNotFoundImage}}"
@@ -1268,7 +1194,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 									VerticalAlignment="Top">
 							<Border x:Name="ReleaseImageBorder"
 									Style="{StaticResource ImageBorderStyle1}">
-								<Image Source="{Binding BoxFrontThumbPath, IsAsync=True,
+                                <Image Source="{Binding BoxFrontThumbPath, Mode=OneTime, IsAsync=True,
 								   Converter={StaticResource ImageConverter},
 								   FallbackValue={StaticResource ArtNotFoundImage},
 								   TargetNullValue={StaticResource ArtNotFoundImage}}"
@@ -1278,8 +1204,9 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 							<TextBlock Style="{StaticResource TextBlockStyle1}"
 									   HorizontalAlignment="Stretch">
 								<TextBlock.Text>
-									<MultiBinding StringFormat="{}{0} ({1})">
+									<MultiBinding StringFormat="{}{0} {1} ({2})">
 										<Binding Path="Title" />
+										<Binding Path="Version" />
 										<Binding Path="Region.Title" />
 									</MultiBinding>
 								</TextBlock.Text>
@@ -1304,7 +1231,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<StackPanel x:Name="ReleaseStackPanel"
 									HorizontalAlignment="Center"
 									VerticalAlignment="Top">
-							<Image Source="{Binding ImageFile, IsAsync=True,
+                            <Image Source="{Binding ImageFile, Mode=OneTime, IsAsync=True,
 								   Converter={StaticResource ImageConverter},
 								   FallbackValue={StaticResource ArtNotFoundImage},
 								   TargetNullValue={StaticResource ArtNotFoundImage}}"
@@ -1358,17 +1285,13 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 		<Border x:Name="ReporterBorder"
 				Grid.Row="2"
 				Grid.Column="1"
-				Style="{StaticResource CellStyle}"
-				Height="50">
+				Style="{StaticResource CellStyle}">
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*" />
 					<ColumnDefinition Width="Auto" />
 				</Grid.ColumnDefinitions>
 				<TextBlock x:Name="StatusBlock"
-						   Grid.Column="0"
-						   VerticalAlignment="Bottom"
-						   TextWrapping="Wrap"
 						   Text="{Binding Path=(local:Reporter.NewsFeed)}"
 						   Style="{StaticResource Normal}" />
 				<StackPanel Orientation="Horizontal"
@@ -1391,6 +1314,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 		<GridSplitter Grid.Column="1"
 					  Grid.Row="1"
+                      Grid.RowSpan="2"
 					  HorizontalAlignment="Left"
 					  Style="{StaticResource VerticalGridSplitterStyle1}" />
 

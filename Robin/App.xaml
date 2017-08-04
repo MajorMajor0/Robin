@@ -28,7 +28,9 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 			<local:IntToVisibilityConverter x:Key="intToVisibilityConverter" />
 
-			<local:DateToVisibilityConverter x:Key="dateToVisibilityConverter" />
+            <local:BooleanToHiddenConverter x:Key="boolToHiddenConverter" />
+
+            <local:DateToVisibilityConverter x:Key="dateToVisibilityConverter" />
 
 			<local:FileToVisibilityConverter x:Key="fileToVisibilityConverter" />
 
@@ -44,7 +46,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						 UriSource="/Images/SearchIcon.png" />
 			<BitmapImage x:Key="TestPattern"
 						 UriSource="/Images/TestPattern.png" />
-			<Color x:Key="Selected_Color">#1B365D</Color>
+            <Color x:Key="Selected_Color">#FF4687A6</Color>
 			<!--<Color x:Key="Text_Color">#C41E3A</Color> -->
 			<!--Cardinal red-->
 			<!--<Color x:Key="Text_Color">#000066</Color> -->
@@ -85,8 +87,10 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 			<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
 							 Color="{StaticResource Selected_Color}" />
 
-			<FontFamily x:Key="NormalFontFamily">Calibri Light</FontFamily>
+			<FontFamily x:Key="NormalFontFamily">Calibri</FontFamily>
+            
 			<FontWeight x:Key="NormalFontWeight">Light</FontWeight>
+            
 			<System:Double x:Key="NormalFontSize">17</System:Double>
 
 			<Style TargetType="ListBox">
@@ -234,7 +238,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 			<Style x:Key="SelectorButtonTextStyle"
 				   TargetType="TextBlock"
-				   BasedOn="{StaticResource Heading1}">
+				   BasedOn="{StaticResource Heading0}">
 				<Setter Property="Text"
 						Value="{Binding Name}" />
 

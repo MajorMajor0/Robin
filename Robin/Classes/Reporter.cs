@@ -18,12 +18,17 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Data;
 
 namespace Robin
 {
 	public static class Reporter
 	{
-		public static ObservableCollection<Message> Messages { get; }
+        //private static ObservableCollection<Message> messages;
+
+        private static object messagesLock = new object();
+
+        public static ObservableCollection<Message> Messages { get; set; }
 
         static Stopwatch watch;
 
@@ -45,7 +50,8 @@ namespace Robin
 		{
             watch = new Stopwatch();
 			Messages = new ObservableCollection<Message>();
-			Report("I'm not your guy, buddy.");
+            BindingOperations.EnableCollectionSynchronization(Messages, messagesLock);
+            Report("I'm not your guy, buddy.");
 		}
 
 		public static async void Report(string msg, Message.Sort sort = Message.Sort.Note)
@@ -88,6 +94,7 @@ namespace Robin
         public static void Toc(string message = null)
         {
             watch.Stop();
+            watch.Reset();
             if (message == null)
             {
                 ReportInline(watch.Elapsed.ToString(@"ss") + " s");
@@ -119,7 +126,7 @@ namespace Robin
 			internal Message(string msg)
 			{
 				TimeStamp = DateTime.Now;
-				Msg = Msg;
+				Msg = msg;
 			}
 		}
 

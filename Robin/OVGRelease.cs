@@ -36,6 +36,13 @@ namespace Robin
     		set { _region_ID = value; OnPropertyChanged("Region_ID"); } 
     	}
     
+        private long _oVGPlatform_ID;
+    	public long OVGPlatform_ID 
+    	{ 
+    		get { return _oVGPlatform_ID; } 
+    		set { _oVGPlatform_ID = value; OnPropertyChanged("OVGPlatform_ID"); } 
+    	}
+    
         private string _title;
     	public string Title 
     	{ 
@@ -162,18 +169,11 @@ namespace Robin
     		set { _date = value; OnPropertyChanged("Date"); } 
     	}
     
-        private long _oVGPlatform_ID;
-    	public long OVGPlatform_ID 
-    	{ 
-    		get { return _oVGPlatform_ID; } 
-    		set { _oVGPlatform_ID = value; OnPropertyChanged("OVGPlatform_ID"); } 
-    	}
     
-    
+        public virtual OVGPlatform OVGPlatform { get; set; }
         public virtual Region Region { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual List<Release> Releases { get; set; }
-        public virtual OVGPlatform OVGPlatform { get; set; }
      
         public event PropertyChangedEventHandler PropertyChanged;
     

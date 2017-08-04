@@ -30,8 +30,9 @@ namespace Robin
 {
 	public partial class Platform : IDBobject, IDBPlatform, INotifyPropertyChanged
 	{
+        public Platform RPlatform => throw new NotImplementedException();
 
-		public OVGPlatform OVGPlatform
+        public OVGPlatform OVGPlatform
 		{
 			get { return R.Data.OVGPlatforms.FirstOrDefault(x => x.ID == ID); }
 		}

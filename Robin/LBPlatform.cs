@@ -21,6 +21,7 @@ namespace Robin
         {
     		LBGames = new List<LBGame>();
     		Platforms = new List<Platform>();
+    		LBReleases = new List<LBRelease>();
         }
     
         private long _iD;
@@ -114,11 +115,20 @@ namespace Robin
     		set { _controllers = value; OnPropertyChanged("Controllers"); } 
     	}
     
+        private System.DateTime _cacheDate;
+    	public System.DateTime CacheDate 
+    	{ 
+    		get { return _cacheDate; } 
+    		set { _cacheDate = value; OnPropertyChanged("CacheDate"); } 
+    	}
+    
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual List<LBGame> LBGames { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual List<Platform> Platforms { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual List<LBRelease> LBReleases { get; set; }
      
         public event PropertyChangedEventHandler PropertyChanged;
     
