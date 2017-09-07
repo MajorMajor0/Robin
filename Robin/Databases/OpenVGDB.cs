@@ -58,14 +58,14 @@ namespace Robin
             OVdata.VGDBREGIONS.Load();
         }
 
-        public void CachePlatformReleases(IDBPlatform idbPlatform)
+        public void CachePlatformReleases(Platform platform)
         {
             if (OVdata == null)
             {
                 LoadOVData();
             }
 
-            OVGPlatform ovgPlatform = idbPlatform as OVGPlatform;
+            OVGPlatform ovgPlatform = platform.OVGPlatform;
 
             List<VGDBRELEAS> list = OVdata.VGDBRELEASES.Where(x => x.VGDBROM.systemID == ovgPlatform.ID).ToList();
 
@@ -80,12 +80,12 @@ namespace Robin
             Reporter.Report("Open VGDB uses Robin's platforms and does not need platforms cached.");
         }
 
-        public void CachePlatformData(IDBPlatform idbPlatform)
+        public void CachePlatformData(Platform platform)
         {
             Reporter.Report("Open VGDB uses Robin's platforms and does not need platform data cached.");
         }
 
-        public void CachePlatformGames(IDBPlatform idbPlatform)
+        public void CachePlatformGames(Platform platform)
         {
             Reporter.Report("GamesDB does not have games and releases--try caching releases");
         }
@@ -163,22 +163,21 @@ namespace Robin
 
         public void ReportUpdates( bool detect)
         {
-
 #if DEBUG
             Stopwatch Watch = Stopwatch.StartNew();
 #endif
             if (detect)
             {
                 R.Data.ChangeTracker.DetectChanges();
-                Debug.WriteLine("Detect changes: " + Watch.ElapsedMilliseconds);
 #if DEBUG
+                Debug.WriteLine("Detect changes: " + Watch.ElapsedMilliseconds);
                 Watch.Restart();
 #endif
             }
             var ovgReleaseEntries = R.Data.ChangeTracker.Entries<OVGRelease>();
-
+#if DEBUG
             Debug.WriteLine("Get entries: " + Watch.ElapsedMilliseconds);
-
+#endif
             int ovgReleaseAddCount = ovgReleaseEntries.Count(x => x.State == EntityState.Added);
             int ovgReleaseModCount = ovgReleaseEntries.Count(x => x.State == EntityState.Modified);
 

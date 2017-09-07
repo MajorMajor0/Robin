@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Robin
 {
@@ -28,25 +25,6 @@ namespace Robin
         {
             get { return FileLocation.Temp + "LBR-" + ID + "-BXF.jpg"; }
         }
-
-        public Art BoxF
-        {
-            get
-            {
-                return new Art()
-                {
-                    Description = "Front box art",
-                    FileName = "LBR-" + ID + "-BXF.jpg",
-                    FilePath = FileLocation.Temp + "LBR-" + ID + "-BXF.jpg",
-                    URL = GetURL("Box - Front")
-                };
-
-            }
-        }
-
-
-
-
 
         public string BoxBackPath
         {

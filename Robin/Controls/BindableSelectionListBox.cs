@@ -37,11 +37,11 @@ namespace Robin
                 return SelectedItems;
             }
 
-            set { SetValue(SelectedItemsListProperty, value); }
+            set { SetValue(BoundSelectedItemsProperty, value); }
         }
 
 
-        public static readonly DependencyProperty SelectedItemsListProperty =
+        public static readonly DependencyProperty BoundSelectedItemsProperty =
        DependencyProperty.Register("BoundSelectedItems", typeof(IList), typeof(BindableSelectionListBox), new PropertyMetadata(null));
 
       //  public static readonly DependencyProperty BoundSelectedItemProperty =

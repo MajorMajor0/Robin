@@ -14,8 +14,6 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data.Entity;
 
@@ -24,12 +22,13 @@ namespace Robin
     public interface IDBobject
     {
         string Title { get; }
+        string MainDisplay { get; }
         bool Included { get; }
         bool IsCrap { get; set; }
         bool Preferred { get; set; }
         bool Unlicensed { get; }
         bool HasArt { get; }
-
+        
         void Play();
 
         void ScrapeArt();
@@ -77,43 +76,26 @@ namespace Robin
     public interface IDBPlatform
     {
         long ID { get; }
-
         string Title { get; }
-
         string Manufacturer { get; }
-
         DateTime? Date { get; }
-
         DateTime CacheDate { get; set; }
-
         IList Releases { get; }
-
         bool Preferred { get; }
-
         Platform RPlatform { get;}
-
     }
 
     public interface IDB : IDisposable
     {
         LocalDB DB { get; }
-
         string Title { get; }
-
         DbSet Platforms { get; }
-
         DbSet Releases { get; }
-
         bool HasRegions { get; }
-
         void CachePlatforms();
-
-        void CachePlatformReleases(IDBPlatform platform);
-
-        void CachePlatformGames(IDBPlatform platform);
-
-        void CachePlatformData(IDBPlatform platform);
-
+        void CachePlatformReleases(Platform platform);
+        void CachePlatformGames(Platform platform);
+        void CachePlatformData(Platform platform);
         void ReportUpdates(bool detect);
     }
 

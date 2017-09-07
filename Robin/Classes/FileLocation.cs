@@ -22,7 +22,7 @@ namespace Robin
 		public static string Folder = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 		public static class Art
 		{
-			public static string Folder = FileLocation.Folder + @"\Art\";
+		    public static string Folder = FileLocation.Folder + @"\Art\";
 			public static string BoxFront = Folder + @"BoxFront\";
 			public static string BoxFrontThumbs = Folder + @"BoxFront\Thumbs\";
 			public static string BoxBack = Folder + @"BoxBack\";

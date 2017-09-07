@@ -53,7 +53,7 @@ namespace Robin
             R.Data.LBImages.Load();
             R.Data.LBReleases.Load();
             R.Data.LBGames.Load();
-            
+
             platformsCached = false;
 
             Reporter.Toc();
@@ -85,7 +85,7 @@ namespace Robin
             Reporter.Toc();
         }
 
-        public void CachePlatformData(IDBPlatform idbPlatform)
+        public void CachePlatformData(Platform platform)
         {
             if (!platformsCached)
             {
@@ -132,9 +132,9 @@ namespace Robin
             }
         }
 
-        public void CachePlatformReleases(IDBPlatform idbPlatform)
+        public void CachePlatformReleases(Platform platform)
         {
-            LBPlatform lbPlatform = idbPlatform as LBPlatform;
+            LBPlatform lbPlatform = platform.LBPlatform;
 
             if (launchboxFile == null)
             {
@@ -179,7 +179,7 @@ namespace Robin
                     }
                 }
 
-                lbGame.Title = gameElement.SafeGetA("Name"); ;
+                lbGame.Title = gameElement.SafeGetA("Name");
                 lbGame.Date = DateTimeRoutines.SafeGetDateTime(gameElement.SafeGetA("ReleaseDate") ?? gameElement.SafeGetA("ReleaseYear") + @"-01-01 00:00:00");
                 lbGame.Overview = gameElement.SafeGetA("Overview");
                 lbGame.Genres = gameElement.SafeGetA("Genres");
@@ -229,7 +229,7 @@ namespace Robin
             }
         }
 
-        public void CachePlatformGames(IDBPlatform idbPlatform)
+        public void CachePlatformGames(Platform platform)
         {
             // TODO: split up cache platform games and cache platform releases
             throw new NotImplementedException();
@@ -256,27 +256,24 @@ namespace Robin
 
         public void ReportUpdates(bool detect)
         {
-
-
 #if DEBUG
             Stopwatch Watch = Stopwatch.StartNew();
 #endif
             if (detect)
             {
                 R.Data.ChangeTracker.DetectChanges();
-                Debug.WriteLine("Detect changes: " + Watch.ElapsedMilliseconds);
 #if DEBUG
+                Debug.WriteLine("Detect changes: " + Watch.ElapsedMilliseconds);
                 Watch.Restart();
 #endif
             }
             var lbReleaseEntries = R.Data.ChangeTracker.Entries<LBRelease>();
             var lbImageEntries = R.Data.ChangeTracker.Entries<LBImage>();
             var lbGameEntries = R.Data.ChangeTracker.Entries<LBGame>();
-
+#if DEBUG
             Debug.WriteLine("Get entries: " + Watch.ElapsedMilliseconds);
-
+#endif
             int lbReleaseAddCount = lbReleaseEntries.Count(x => x.State == EntityState.Added);
-
 
             int lbImageAddCount = lbImageEntries.Count(x => x.State == EntityState.Added);
             int lbGameAddCount = lbGameEntries.Count(x => x.State == EntityState.Added);

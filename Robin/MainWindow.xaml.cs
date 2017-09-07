@@ -20,8 +20,8 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.ComponentModel;
-using System.Data.Entity;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace Robin
 {
@@ -34,26 +34,34 @@ namespace Robin
     {
         MainWindowViewModel MWVM = new MainWindowViewModel();
 
-        internal MainWindow()
+        public MainWindow()
         {
             InitializeComponent();
             DataContext = MWVM;
+            ListViewScale.ScaleX = .8;
+            ListViewScale.ScaleY = .8;
             Activate();
-
 #if DEBUG
+            Button BonusButton = new Button();
+            BonusButton.Content = "BONUS!";
+            BonusButton.Width = 50;
+            BonusButton.Height = 30;
+            BonusButton.Click += BonusButton_Click;
+            DockPanel.SetDock(BonusButton, Dock.Right);
+            SearchBox_DockPanel.Children.Add(BonusButton);
             PresentationTraceSources.DataBindingSource.Switch.Level = SourceLevels.Critical;
 #endif
         }
-
+#if DEBUG
         private async void BonusButton_Click(object sender, RoutedEventArgs e)
         {
-            await Task.Run(()=>
-            {
-                Launchbox launchbox = new Launchbox();
-                launchbox.CreateReleases();
-            });    
-        }
+            Reporter.Report("BONUS!");
 
+            await Task.Run(() =>
+            {
+            });
+        }
+#endif
         private void MainList_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
@@ -69,8 +77,11 @@ namespace Robin
 
                 }
 
-                ListViewScale.ScaleX += (e.Delta > 0) ? .1 : -.1;
-                ListViewScale.ScaleY += (e.Delta > 0) ? .1 : -.1;
+                else
+                {
+                    ListViewScale.ScaleX += 0;
+                    ListViewScale.ScaleY += 0;
+                }
             }
         }
 
@@ -80,16 +91,6 @@ namespace Robin
             var DatabaseWindow = new DatabaseWindow();
             DatabaseWindow.Show();
             DatabaseWindow.Activate();
-
-        }
-
-        //private void MainList_MenuItem_Click4(object sender, RoutedEventArgs e)
-        //{
-        //    ListViewItem selected_lvi = this.MainList.SelectedItem as ListViewItem;
-        //}
-
-        private void MainList_Loaded(object sender, RoutedEventArgs e)
-        {
         }
 
         private void MainListPlatform_Drop(object sender, DragEventArgs e)
@@ -101,14 +102,29 @@ namespace Robin
             }
         }
 
+        private void EmulatorStackPanel_Drop(object sender, DragEventArgs e)
+        {
+            Emulator emulator = (sender as StackPanel).DataContext as Emulator;
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] filePath = e.Data.GetData(DataFormats.FileDrop, false) as string[];
+                if (filePath != null)
+                {
+                    emulator.Add(filePath[0]);
+                }
+                else
+                {
+                    Reporter.Warn("Something is wrong with the file path you dropped.");
+                }
+
+
+            }
+        }
+
         private void SaveDatabase_Click(object sender, RoutedEventArgs e)
         {
             MWVM.Save();
         }
-
-        //private void MenuItem_Click_2(object sender, RoutedEventArgs e)
-        //{
-        //}
 
         private void MainList_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -210,8 +226,14 @@ namespace Robin
             MWVM.Save();
         }
 
-        private void Main_Window_Loaded(object sender, RoutedEventArgs e)
+        private void About_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
+            e.CanExecute = true;
+        }
+
+        private void About_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            AboutBox aboutBox = new AboutBox();
         }
 
 
@@ -228,21 +250,6 @@ namespace Robin
                 (MainList.SelectedItem as Game).Play(null);
             }
         }
-
-
-        //private void PlayRelease_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        //{
-        //	e.CanExecute = MainList.SelectedItem != null && (MainList.SelectedItem as Release).Included;
-        //}
-
-        //private void PlayRelease_Executed(object sender, ExecutedRoutedEventArgs e)
-        //{
-        //	if (MainList.SelectedItem != null)
-        //	{
-        //		(MainList.SelectedItem as Release).Play(null, MWVM.WindowReporter);
-        //	}
-        //}
-
 
         private void GetAllArt_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
@@ -275,34 +282,13 @@ namespace Robin
 
         private void GetSelectedArt_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = MWVM.SelectedDB as IDBobject != null;
+            e.CanExecute = MWVM.SelectedDB != null;
         }
 
         private void GetSelectedArt_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             //MWVM.GetSelectedArt();
         }
-
-        //private void GetSelectedReleaseArt_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        //{
-        //	e.CanExecute = MWVM.SelectedDB != null;
-        //}
-
-        //private void GetSelectedReleaseArt_Executed(object sender, ExecutedRoutedEventArgs e)
-        //{
-        //	MWVM.GetSelectedReleaseArt();
-        //}
-
-
-        //private void GetAllReleaseArt_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        //{
-        //	e.CanExecute = MainList.DataContext == MWVM.ReleaseCollection;
-        //}
-
-        //private void GetAllReleaseArt_Executed(object sender, ExecutedRoutedEventArgs e)
-        //{
-        //	MWVM.GetAllReleaseArt();
-        //}
 
         private void MarkAsCrap_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
@@ -504,60 +490,15 @@ namespace Robin
             reporterWindow.Show();
             reporterWindow.Activate();
         }
+
+        private void QuitFocus_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void QuitFocus_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            FocusManager.SetFocusedElement(this, null);
+        }
     }
-
-    public static partial class CustomCommands
-    {
-        public static RoutedUICommand GetAllArt = new RoutedUICommand("Download art for all current items", "GetAllArt", typeof(CustomCommands));
-
-        public static RoutedUICommand GetAllData = new RoutedUICommand("Copy data for all current items from local cache", "GetAllData", typeof(CustomCommands));
-
-        public static RoutedUICommand Play = new RoutedUICommand("Play this", "Play", typeof(CustomCommands));
-
-        public static RoutedUICommand MarkAsCrap = new RoutedUICommand("Mark as crap", "MarkAsCrap", typeof(CustomCommands));
-
-        public static RoutedUICommand MarkNotCrap = new RoutedUICommand("Mark as not crap", "MarkNotCrap", typeof(CustomCommands));
-
-        public static RoutedUICommand MarkAsBeaten = new RoutedUICommand("Mark as beaten", "MarkAsbeaten", typeof(CustomCommands));
-
-        public static RoutedUICommand MarkNotBeaten = new RoutedUICommand("Mark as not beaten", "MarkNotbeaten", typeof(CustomCommands));
-
-        public static RoutedUICommand MarkAsGame = new RoutedUICommand("Mark as game", "MarkAsGame", typeof(CustomCommands));
-
-        public static RoutedUICommand MarkNotGame = new RoutedUICommand("Mark as not game", "MarkNotGame", typeof(CustomCommands));
-
-        public static RoutedUICommand MarkAsPreferred = new RoutedUICommand("Mark as preferred", "MarkAsPreferred", typeof(CustomCommands));
-
-        public static RoutedUICommand MarkNotPreferred = new RoutedUICommand("Mark as not preferred", "MarkNotPreferred", typeof(CustomCommands));
-
-        public static RoutedUICommand GetSelectedArt = new RoutedUICommand("Download art for selected items", "GetSelectedArt", typeof(CustomCommands));
-
-        public static RoutedUICommand MarkEmulatorPreferred = new RoutedUICommand("Mark as preferred", "MarkEmulatorPreferred", typeof(CustomCommands));
-
-        public static RoutedUICommand AddCollection = new RoutedUICommand("Add new collection", "AddCollection", typeof(CustomCommands));
-
-        public static RoutedUICommand RemoveCollection = new RoutedUICommand("Remove collection", "RemoveCollection", typeof(CustomCommands));
-
-        public static RoutedUICommand RemoveFromCollection = new RoutedUICommand("Remove from collection", "RemoveFromCollection", typeof(CustomCommands));
-
-        public static RoutedUICommand ClearFilters = new RoutedUICommand("Clear filters", "ClearFilters", typeof(CustomCommands));
-
-        public static RoutedUICommand ReporterWindow = new RoutedUICommand("Reporter Window", "ReporterWindow", typeof(CustomCommands));
-
-        //public static RoutedUICommand PlayGame = new RoutedUICommand("Play this game", "PlayGame", typeof(CustomCommands));
-
-        //public static RoutedUICommand PlayRelease = new RoutedUICommand("Play this release", "PlayRelease", typeof(CustomCommands));
-
-        //public static RoutedUICommand GetSelectedReleaseArt = new RoutedUICommand("Download art for selected release", "GetSelectedReleaseArt", typeof(CustomCommands));
-
-        //public static RoutedUICommand GetAllReleaseArt = new RoutedUICommand("Download art for all releases", "GetAllReleaseArt", typeof(CustomCommands));
-
-
-
-        //public static RoutedUICommand MarkEmulatorNotPreferred = new RoutedUICommand("Mark as not preferred", "MarkEmulatorNotPreferred", typeof(CustomCommands));
-
-
-
-    }
-
 }

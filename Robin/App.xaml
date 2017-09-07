@@ -28,25 +28,29 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 			<local:IntToVisibilityConverter x:Key="intToVisibilityConverter" />
 
-            <local:BooleanToHiddenConverter x:Key="boolToHiddenConverter" />
+			<local:BooleanToHiddenConverter x:Key="boolToHiddenConverter" />
 
-            <local:DateToVisibilityConverter x:Key="dateToVisibilityConverter" />
+			<local:DateToVisibilityConverter x:Key="dateToVisibilityConverter" />
 
 			<local:FileToVisibilityConverter x:Key="fileToVisibilityConverter" />
 
 			<local:ImageConverter x:Key="ImageConverter" />
 
 			<local:PreferredMultiValueConverter x:Key="PreferredMultiValueConverter" />
-			
+
+			<local:StarConverter x:Key="starConverter" />
+
+			<local:RatingColorConverter x:Key="RatingColorConverter" />
+
 			<BitmapImage x:Key="ArtNotFoundImage"
 						 UriSource="/Images/Snow.png" />
-			<BitmapImage x:Key="RobinIcon"
-						 UriSource="/Images/Robin.jpg" />
+			<!--<BitmapImage x:Key="RobinIcon"
+						 UriSource="/Images/OldPogue.jpg" />-->
 			<BitmapImage x:Key="SearchIcon"
 						 UriSource="/Images/SearchIcon.png" />
 			<BitmapImage x:Key="TestPattern"
 						 UriSource="/Images/TestPattern.png" />
-            <Color x:Key="Selected_Color">#FF4687A6</Color>
+			<Color x:Key="Selected_Color">#FF4687A6</Color>
 			<!--<Color x:Key="Text_Color">#C41E3A</Color> -->
 			<!--Cardinal red-->
 			<!--<Color x:Key="Text_Color">#000066</Color> -->
@@ -59,13 +63,15 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 			<!--Tan-->
 			<!--<Color x:Key="Text_Color">#FFFFFF00</Color> -->
 			<!--Yellow-->
-			<Color x:Key="Text_Color">#FFFFD700</Color>
+			<!--<Color x:Key="Text_Color">#FFFFD700</Color>-->
+			<Color x:Key="Text_Color">#5E8CA6</Color>
 			<!--Gold-->
 			<!--Yellow-->
 
-
+			<SolidColorBrush x:Key="TP_Brush"
+							 Color="Transparent" />
 			<SolidColorBrush x:Key="Normal_Brush"
-							 Color="Silver" />
+							 Color="White" />
 			<SolidColorBrush x:Key="Heading0_Brush"
 							 Color="{StaticResource Text_Color}" />
 			<SolidColorBrush x:Key="Heading1_Brush"
@@ -88,9 +94,9 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 							 Color="{StaticResource Selected_Color}" />
 
 			<FontFamily x:Key="NormalFontFamily">Calibri</FontFamily>
-            
+
 			<FontWeight x:Key="NormalFontWeight">Light</FontWeight>
-            
+
 			<System:Double x:Key="NormalFontSize">17</System:Double>
 
 			<Style TargetType="ListBox">
@@ -101,8 +107,8 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 				<Setter Property="ScrollViewer.HorizontalScrollBarVisibility"
 						Value="Disabled" />
 			</Style>
-			
-			
+
+
 			<Style x:Key="WindowStyle1"
 				   TargetType="{x:Type Window}">
 				<Setter Property="Background"
@@ -208,12 +214,16 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						Value="Center" />
 				<Setter Property="Margin"
 						Value="3,0,3,0" />
+				
 				<Setter Property="Template">
 					<Setter.Value>
 						<ControlTemplate TargetType="ToggleButton">
 							<Border Name="border"
-									BorderBrush="White"
-									Background="Transparent">
+									BorderBrush="Transparent"
+									BorderThickness="1"
+									Background="Transparent"
+									Padding="3,0,3,0"
+									CornerRadius="3">
 								<ContentPresenter HorizontalAlignment="Center"
 												  VerticalAlignment="Center" />
 							</Border>
@@ -223,12 +233,16 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 									<Setter TargetName="border"
 											Property="Background"
 											Value="{StaticResource Highlight_Brush}" />
+									<Setter TargetName="border"
+											Property="BorderBrush"
+											Value="{StaticResource Selected_Brush}" />
 								</Trigger>
 								<Trigger Property="ToggleButton.IsChecked"
 										 Value="True">
 									<Setter TargetName="border"
-											Property="Background"
-											Value="{StaticResource Selected_Brush}" />
+											Property="BorderBrush"
+											Value="Yellow" />
+									
 								</Trigger>
 							</ControlTemplate.Triggers>
 						</ControlTemplate>
@@ -246,7 +260,45 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						Value="Center" />
 			</Style>
 
+			<Style x:Key="StarTextBlock"
+				   TargetType="TextBlock"
+				   BasedOn="{StaticResource Normal}">
+				<Setter Property="FontWeight"
+						Value="Bold" />
+				<Setter Property="TextWrapping"
+						Value="NoWrap" />
+				<Setter Property="Text"
+						Value="&#x2605;&#x2605;&#x2605;&#x2605;&#x2605;" />
+				<Setter Property="Width">
+					<Setter.Value>
+						<Binding Path="Rating"
+								 Converter="{StaticResource starConverter}" />
+					</Setter.Value>
+				</Setter>
+				<Setter Property="Foreground">
+					<Setter.Value>
+						<Binding Path="Rating"
+								 Converter="{StaticResource RatingColorConverter}"
+								 TargetNullValue="{StaticResource TP_Brush}" />
+					</Setter.Value>
+				</Setter>
+			</Style>
 
+			<Style x:Key="BeatenTextBlock"
+				   TargetType="TextBlock">
+				<Setter Property="Text"
+						Value="&#0252;" />
+				<Setter Property="FontFamily"
+						Value="Wingdings" />
+				<Setter Property="FontSize"
+						Value="{StaticResource NormalFontSize}" />
+				<Setter Property="Foreground"
+						Value="{StaticResource Heading0_Brush}" />
+				<Setter Property="FontWeight"
+						Value="Bold" />
+				<Setter Property="Visibility"
+						Value="{Binding IsBeaten, Converter={StaticResource booleanToVisibilityConverter}}" />
+			</Style>
 		</ResourceDictionary>
 	</Application.Resources>
 </Application>

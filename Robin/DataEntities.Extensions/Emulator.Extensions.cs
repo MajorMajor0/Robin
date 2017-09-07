@@ -11,74 +11,89 @@
  * 
  * You should have received a copy of the GNU General Public License
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
- 
- using System;
+
+using System;
 using System.IO;
 
 namespace Robin
 {
-	public partial class Emulator : IDBobject
-	{
-		public string FilePath
-		{
-			get { return FileLocation.Emulators + FileName; }
-		}
+    public partial class Emulator : IDBobject
+    {
+        public string FilePath
+        {
+            get { return FileLocation.Emulators + FileName; }
+        }
 
-		public bool HasArt
-		{
-			get { return File.Exists(ImageFile); }
-		}
+        public bool HasArt
+        {
+            get { return File.Exists(ImageFile); }
+        }
 
-		public bool Included
-		{
-			get { return File.Exists(FilePath); }
-		}
+        public bool Included
+        {
+            get { return File.Exists(FilePath); }
+        }
 
-		public bool Preferred
-		{
-			get { return true; }
-		}
+        public bool Preferred
+        {
+            set { }
+            get { return true; }
+        }
 
-		public string ImageFile
-		{
-			get { return FileLocation.Images + Image; }
-		}
+        public string ImageFile
+        {
+            get { return FileLocation.Images + Image; }
+        }
 
-		bool IDBobject.Unlicensed
-		{
-			get
-			{
-				throw new NotImplementedException();
-			}
-		}
+        public string MainDisplay => ImageFile;
 
-		public void MarkPreferred(Platform platform)
-		{
-			if (platform != null)
-			{
-				platform.PreferredEmulator_ID = ID;
-			}
-		}
+        public bool Unlicensed => false;
 
-		public void Play()
-		{
-			throw new NotImplementedException();
-		}
+        public void MarkPreferred(Platform platform)
+        {
+            if (platform != null)
+            {
+                platform.PreferredEmulator_ID = ID;
+            }
+        }
 
-		bool IDBobject.Preferred
-		{
-			set
-			{
-				throw new NotImplementedException();
-			}
-			get
-			{
-				throw new NotImplementedException();
-			}
-		}
+        public void Play()
+        {
+            throw new NotImplementedException();
+        }
 
-		public void ScrapeArt()
-		{
-		}
-	}
+        public void ScrapeArt()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Add(string sourceFilePath)
+        {
+            if (Path.GetExtension(sourceFilePath) == ".exe")
+            {
+                try
+                {
+                    Reporter.Report("Adding " + Title);
+
+                    string destinationDirectory = Path.GetDirectoryName(FilePath);
+                    string sourceDirectory = Path.GetDirectoryName(sourceFilePath);
+                    string sourceFile = Path.GetFileName(sourceFilePath);
+                    string sourceFileAfterMove = destinationDirectory + @"\" + sourceFile;
+
+                    Directory.CreateDirectory(destinationDirectory);
+                    Filex.CopyDirectory(sourceDirectory, destinationDirectory);
+                    File.Move(sourceFileAfterMove, FilePath);
+                    OnPropertyChanged("Included");
+                }
+                catch
+                {
+                    Reporter.Warn("Problem creating directory of moving file.");
+                }
+            }
+            else
+            {
+                Reporter.Warn("The dropped file doesn't look like an executable.");
+            }
+        }
+    }
 }

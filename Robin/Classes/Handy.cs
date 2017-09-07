@@ -36,7 +36,7 @@ namespace Robin
 
 				handy.Start();
 				string output = handy.StandardOutput.ReadToEnd();
-				string error = handy.StandardError.ReadToEnd();
+				//string error = handy.StandardError.ReadToEnd();
 				handy.WaitForExit();
 
 				if(output.StartsWith("DONE"))

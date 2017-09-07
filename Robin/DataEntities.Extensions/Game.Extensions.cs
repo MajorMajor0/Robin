@@ -21,11 +21,11 @@ using System.Linq;
 
 namespace Robin
 {
-    public partial class Game : IDBobject, INotifyPropertyChanged
+    public partial class Game : IDBobject
     {
-        Stopwatch Watch = new Stopwatch();
+        //Stopwatch Watch = new Stopwatch();
 
-        private string _title = null;
+        private string _title;
         public string Title
         {
             get
@@ -38,33 +38,31 @@ namespace Robin
             }
         }
 
-        public string Overview
-        {
-            get { return Releases[0].Overview; }
-        }
-
-        public string Developer
-        {
-            get { return Releases[0].Developer; }
-        }
-
-        public string Publisher
-        {
-            get { return Releases[0].Publisher; }
-        }
-
-        string genres;
-        public string Genres //TODO: Genres does not look right
+        public decimal? Rating
         {
             get
             {
-                if (genres == null)
+                return Releases[0].Rating;
+            }
+            set
+            {
+                foreach (Release release in Releases)
                 {
-                    genres = Releases[0].Genre ?? "Unknown";
+                    release.Rating = value;
                 }
-                return genres;
+                OnPropertyChanged("Rating");
             }
         }
+
+        public string Year => Releases[0].Year;
+
+        public string Overview => Releases[0].Overview;
+
+        public string Developer => Releases[0].Developer;
+
+        public string Publisher => Releases[0].Publisher;
+
+        public string Genres => Releases[0].Genre ?? "Unknown";
 
         List<string> genreList;
         public List<string> GenreList
@@ -79,21 +77,13 @@ namespace Robin
             }
         }
 
-        public string Players
-        {
-            get { return Releases[0].Players; }
-        }
+        public string Players => Releases[0].Players;
 
-        public string Platform
-        {
-            get { return Releases[0].Platform.Title; }
-        }
+        public Platform Platform => Releases[0].Platform;
 
-        public long Platform_ID
-        {
-            get { return Releases[0].Platform_ID; }
-        }
+        public string PlatformTitle => Platform.Title;
 
+        public long Platform_ID => Releases[0].Platform_ID;
 
         string regions;
         public string Regions
@@ -121,31 +111,29 @@ namespace Robin
             }
         }
 
-        public DateTime? Date
-        {
-            get { return Releases[0].Date; }
-        }
+        public DateTime? Date => Releases[0].Date;
 
-        public long? ID_GDB
-        {
-            get
-            { return Releases[0].ID_GDB; }
-        }
+        //public long? ID_GDB
+        //{
+        //    get
+        //    { return Releases[0].ID_GDB; }
+        //}
 
-        public long? ID_OVG
-        {
-            get { return Releases[0].ID_OVG; }
-        }
+        //public long? ID_OVG
+        //{
+        //    get { return Releases[0].ID_OVG; }
+        //}
 
-        public bool Included
-        {
-            get { return Releases.Where(x => x.Included).Any(); }
-        }
 
+        public long PlayCount => Releases.Sum(x => x.PlayCount);
+
+
+        public bool Included => Releases.Any(x => x.Included);
 
         public bool IsCrap
         {
-            get { return Releases[0].IsCrap; }
+            get => Releases[0].IsCrap;
+
             set
             {
                 foreach (Release release in Releases)
@@ -159,7 +147,7 @@ namespace Robin
 
         public bool IsGame
         {
-            get { return Releases[0].IsGame; }
+            get => Releases[0].IsGame;
             set
             {
                 foreach (Release release in Releases)
@@ -172,7 +160,8 @@ namespace Robin
 
         public bool IsBeaten
         {
-            get { return Releases[0].IsBeaten; }
+            get => Releases[0].IsBeaten;
+
             set
             {
                 foreach (Release release in Releases)
@@ -183,15 +172,11 @@ namespace Robin
             }
         }
 
-        public bool Unlicensed
-        {
-            get { return Releases[0].Unlicensed; }
-        }
+        public bool Unlicensed => Releases[0].Unlicensed;
 
-        public bool HasArt
-        {
-            get { return Releases.Any(x => x.HasArt); }
-        }
+        public bool HasArt => Releases.Any(x => x.HasArt);
+
+        public int BorderThickness { get; set; } = 1;
 
         public string MainDisplay
         {
@@ -200,105 +185,100 @@ namespace Robin
 #if DEBUG
                 Stopwatch Watch = Stopwatch.StartNew();
 #endif
-                string returner = null;
-
                 if (Platform_ID == CONSTANTS.ARCADE_PLATFORM_ID)
                 {
-                    returner = LogoFile ?? BoxFrontFile ?? MarqueeFile ?? Releases[0].Platform.ControllerFile;
+                    if (File.Exists(LogoPath)) { BorderThickness = 0; OnPropertyChanged("BorderThickness"); return LogoPath; }
+                    if (File.Exists(MarqueePath)) { BorderThickness = 1; OnPropertyChanged("BorderThickness"); return MarqueePath; }
+                    if (File.Exists(BoxFrontThumbPath)) { BorderThickness = 1; OnPropertyChanged("BorderThickness"); return BoxFrontThumbPath; }
                 }
 
                 else
                 {
-                    returner = BoxFrontFile ?? LogoFile ?? MarqueeFile ?? Releases[0].Platform.ControllerFile;
+                    if (File.Exists(BoxFrontThumbPath)) { BorderThickness = 1; OnPropertyChanged("BorderThickness"); return BoxFrontThumbPath; }
+                    if (File.Exists(LogoPath)) { BorderThickness = 0; OnPropertyChanged("BorderThickness"); return LogoPath; }
+                    if (File.Exists(MarqueePath)) { BorderThickness = 1; OnPropertyChanged("BorderThickness"); return MarqueePath; }
                 }
-
 #if DEBUG
                 Debug.WriteLine("MainDisplay: " + Title + " " + Watch.ElapsedMilliseconds);
 #endif
-                return returner;
+                BorderThickness = 0;
+                OnPropertyChanged("BorderThickness");
+                return Releases[0].Platform.ControllerPath;
             }
         }
 
-        private int? _releaseCount = null;
-        private int? ReleaseCount
+        private string _boxFrontPath;
+        public string BoxFrontPath
         {
             get
             {
-                if (_releaseCount == null)
-                {
-                    _releaseCount = Releases.Count();
-                }
-                return _releaseCount;
-            }
-        }
-
-        private string _boxFrontFile = null;
-        public string BoxFrontFile
-        {
-            get
-            {
-                if (_boxFrontFile == null)
+                if (_boxFrontPath == null)
                 {
                     foreach (Release release in Releases)
                     {
                         if (File.Exists(release.BoxFrontPath))
                         {
-                            _boxFrontFile = release.BoxFrontPath;
+                            _boxFrontPath = release.BoxFrontPath;
                             break;
                         }
                     }
                 }
 
-                return _boxFrontFile;
+                return _boxFrontPath;
             }
         }
 
-        private string _boxFrontThumbFile = null;
-        public string BoxFrontThumbFile
+        private string _boxFrontThumbPath;
+        public string BoxFrontThumbPath
         {
             get
             {
-                if (_boxFrontThumbFile == null)
+                if (_boxFrontThumbPath == null)
                 {
                     foreach (Release release in Releases)
                     {
                         if (File.Exists(release.BoxFrontThumbPath))
                         {
-                            _boxFrontThumbFile = release.BoxFrontThumbPath;
+                            _boxFrontThumbPath = release.BoxFrontThumbPath;
                             break;
                         }
                     }
                 }
-                return _boxFrontThumbFile;
+                return _boxFrontThumbPath;
             }
         }
 
-        public string BoxBackFile
+        public string BoxBackPath
         {
+            // TODO this should probably go through all realeases looking for a file
             get { return Releases[0].BoxBackPath; }
         }
 
-        public string BannerFile
+        public string BannerPath
         {
+            // TODO this should probably go through all realeases looking for a file
             get { return Releases[0].BannerPath; }
         }
 
-        public string ScreenFile
+        public string ScreenPath
         {
+            // TODO this should probably go through all realeases looking for a file
             get { return Releases[0].ScreenPath; }
         }
 
-        public string LogoFile
+        public string LogoPath
         {
+            // TODO this should probably go through all realeases looking for a file
             get { return Releases[0].LogoPath; }
         }
 
-        public string MarqueeFile
+        public string MarqueePath
         {
+            // TODO this should probably go through all realeases looking for a file
             get { return Releases[0].MarqueePath; }
         }
 
-        private Release _preferredRelease = null;
+        private Release _preferredRelease;
         public Release PreferredRelease
         {
             get
@@ -317,15 +297,18 @@ namespace Robin
             }
         }
 
-        bool IDBobject.Preferred
+        public bool Preferred
         {
             set
             {
-                throw new NotImplementedException();
+                if (value == true)
+                {
+                    Rating = 5;
+                }
             }
             get
             {
-                throw new NotImplementedException();
+                return Rating == 5;
             }
         }
 

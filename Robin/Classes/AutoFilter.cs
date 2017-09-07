@@ -60,7 +60,7 @@ namespace Robin
         public AutoFilterCollection(List<T> sourceCollection)
         {
 #if DEBUG
-            for (int i = 0; i < Watch.Count(); i++)
+            for (int i = 0; i < Watch.Length; i++)
             {
                 Watch[i] = new Stopwatch();
                 Watch[i].Start();
@@ -96,7 +96,7 @@ namespace Robin
 
         public int HasArtCount
         {
-            get { return FilteredCollection.Where(x => x.HasArt).Count(); }
+            get { return FilteredCollection.Count(x => x.HasArt); }
         }
 
         // Determine list of string filter columns--one time only
@@ -111,12 +111,15 @@ namespace Robin
                     StringFilters.Add(new StringFilter("Publisher", () => Update()));
                     StringFilters.Add(new StringFilter("Genres", () => Update()));
                     StringFilters.Add(new StringFilter("Players", () => Update()));
-                    StringFilters.Add(new StringFilter("Platform", () => Update()));
+                    StringFilters.Add(new StringFilter("PlatformTitle", () => Update(), "Platform"));
                     StringFilters.Add(new StringFilter("Regions", () => Update()));
+                    StringFilters.Add(new StringFilter("Year", () => Update()));
                     break;
 
                 case "Release":
                     StringFilters.Add(new StringFilter("PlatformTitle", () => Update(), "Platform"));
+                    StringFilters.Add(new StringFilter("RegionTitle", () => Update(), "Region"));
+                    StringFilters.Add(new StringFilter("Year", () => Update()));
                     break;
 
                 case "Platform":
@@ -126,8 +129,7 @@ namespace Robin
                     StringFilters.Add(new StringFilter("Manufacturer", () => Update()));
                     StringFilters.Add(new StringFilter("Media", () => Update()));
                     break;
-                default:
-                    break;
+
             }
 #if DEBUG
             Debug.WriteLine("CalculateStringFilters (1x): " + Watch[0].ElapsedMilliseconds);
@@ -159,8 +161,7 @@ namespace Robin
                     BoolFilters.Add(new BoolFilter("Included", () => Update(), "Playable"));
                     BoolFilters.Add(new BoolFilter("Preferred", () => Update()));
                     break;
-                default:
-                    break;
+
             }
 #if DEBUG
             Debug.WriteLine("CalculateBoolFilters: " + Watch[1].ElapsedMilliseconds);
@@ -216,12 +217,32 @@ namespace Robin
                 case "Players":
                     stringFilter.DistinctValues = (FilteredCollection as IEnumerable<Game>).Select(x => x.Players).Distinct().Concat(new List<string>() { ALL }).OrderBy(x => x);
                     break;
-                case "Platform":
-                    stringFilter.DistinctValues = (FilteredCollection as IEnumerable<Game>).Select(x => x.Platform).Distinct().Concat(new List<string>() { ALL }).OrderBy(x => x);
+
+                case "RegionTitle":
+                    stringFilter.DistinctValues = (FilteredCollection as IEnumerable<Release>).Select(x => x.RegionTitle).Distinct().Concat(new List<string>() { ALL }).OrderBy(x => x);
                     break;
 
                 case "PlatformTitle":
-                    stringFilter.DistinctValues = (FilteredCollection as IEnumerable<Release>).Select(x => x.PlatformTitle).Distinct().Concat(new List<string>() { ALL }).OrderBy(x => x);
+                    switch (Type.Name)
+                    {
+                        case "Game":
+                            stringFilter.DistinctValues = (FilteredCollection as IEnumerable<Game>).Select(x => x.PlatformTitle).Distinct().Concat(new List<string>() { ALL }).OrderBy(x => x);
+                            break;
+                        case "Release":
+                            stringFilter.DistinctValues = (FilteredCollection as IEnumerable<Release>).Select(x => x.PlatformTitle).Distinct().Concat(new List<string>() { ALL }).OrderBy(x => x);
+                            break;
+                    }
+                    break;
+                case "Year":
+                    switch (Type.Name)
+                    {
+                        case "Game":
+                            stringFilter.DistinctValues = (FilteredCollection as IEnumerable<Game>).Select(x => x.Year).Distinct().Concat(new List<string>() { ALL }).OrderBy(x => x);
+                            break;
+                        case "Release":
+                            stringFilter.DistinctValues = (FilteredCollection as IEnumerable<Release>).Select(x => x.Year).Distinct().Concat(new List<string>() { ALL }).OrderBy(x => x);
+                            break;
+                    }
                     break;
 
                 case "Type":
@@ -239,8 +260,7 @@ namespace Robin
                 case "Media":
                     stringFilter.DistinctValues = (FilteredCollection as IEnumerable<Platform>).Select(x => x.Media).Distinct().Concat(new List<string>() { ALL }).OrderBy(x => x);
                     break;
-                default:
-                    break;
+
             }
 #if DEBUG
             Debug.WriteLine(stringFilter.Property + "DistinctValues: " + Watch[2].ElapsedMilliseconds);
@@ -319,8 +339,6 @@ namespace Robin
                         case "Preferred":
                             filteredCollection = filteredCollection.Where(x => x.Preferred == boolFilter.Value);
                             break;
-                        default:
-                            break;
                     }
                 }
             }
@@ -354,7 +372,7 @@ class StringFilter : INotifyPropertyChanged
     public string Name { get; set; }
     public string Property { get; set; }
 
-    string _value = null;
+    string _value;
     public string Value
     {
         get { return _value; }
@@ -386,7 +404,7 @@ class StringFilter : INotifyPropertyChanged
     public StringFilter(string property, Action callback, string name = null)
     {
 #if DEBUG
-        for (int i = 0; i < Watch.Count(); i++)
+        for (int i = 0; i < Watch.Length; i++)
         {
             Watch[i] = new Stopwatch();
             Watch[i].Start();
@@ -420,7 +438,7 @@ class BoolFilter : INotifyPropertyChanged
     public string Property { get; set; }
     Action Callback;
 
-    bool? _value = null;
+    bool? _value;
     public bool? Value
     {
         get { return _value; }

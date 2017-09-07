@@ -12,11 +12,9 @@
  * You should have received a copy of the GNU General internal License
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -141,8 +139,6 @@ namespace Robin
 					break;
 				case "OVGRelease":
 					release.ID_OVG = idbRelease.ID;
-					break;
-				default:
 					break;
 			}
 

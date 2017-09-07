@@ -57,6 +57,13 @@ namespace Robin
     		set { _iD_LBG = value; OnPropertyChanged("ID_LBG"); } 
     	}
     
+        private Nullable<long> _iD_LB;
+    	public Nullable<long> ID_LB 
+    	{ 
+    		get { return _iD_LB; } 
+    		set { _iD_LB = value; OnPropertyChanged("ID_LB"); } 
+    	}
+    
         private Nullable<long> _game_ID;
     	public Nullable<long> Game_ID 
     	{ 
@@ -71,8 +78,8 @@ namespace Robin
     		set { _platform_ID = value; OnPropertyChanged("Platform_ID"); } 
     	}
     
-        private Nullable<long> _region_ID;
-    	public Nullable<long> Region_ID 
+        private long _region_ID;
+    	public long Region_ID 
     	{ 
     		get { return _region_ID; } 
     		set { _region_ID = value; OnPropertyChanged("Region_ID"); } 
@@ -211,11 +218,11 @@ namespace Robin
     		set { _isBeaten = value; OnPropertyChanged("IsBeaten"); } 
     	}
     
-        private Nullable<long> _iD_LB;
-    	public Nullable<long> ID_LB 
+        private long _playCount;
+    	public long PlayCount 
     	{ 
-    		get { return _iD_LB; } 
-    		set { _iD_LB = value; OnPropertyChanged("ID_LB"); } 
+    		get { return _playCount; } 
+    		set { _playCount = value; OnPropertyChanged("PlayCount"); } 
     	}
     
     
@@ -227,8 +234,8 @@ namespace Robin
         public virtual OVGRelease OVGRelease { get; set; }
         public virtual Platform Platform { get; set; }
         public virtual Region Region { get; set; }
-        public virtual URL URL { get; set; }
         public virtual Rom Rom { get; set; }
+        public virtual URL URL { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual List<Collection> Collections { get; set; }
      

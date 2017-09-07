@@ -44,8 +44,8 @@ namespace Robin
     		set { _region_ID = value; OnPropertyChanged("Region_ID"); } 
     	}
     
-        private Nullable<long> _lBPlatform_ID;
-    	public Nullable<long> LBPlatform_ID 
+        private long _lBPlatform_ID;
+    	public long LBPlatform_ID 
     	{ 
     		get { return _lBPlatform_ID; } 
     		set { _lBPlatform_ID = value; OnPropertyChanged("LBPlatform_ID"); } 
@@ -55,10 +55,10 @@ namespace Robin
         public virtual LBGame LBGame { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual List<LBImage> LBImages { get; set; }
+        public virtual LBPlatform LBPlatform { get; set; }
         public virtual Region Region { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual List<Release> Releases { get; set; }
-        public virtual LBPlatform LBPlatform { get; set; }
      
         public event PropertyChangedEventHandler PropertyChanged;
     

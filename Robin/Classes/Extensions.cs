@@ -78,7 +78,7 @@ namespace Robin
 
         public static void Save(this DbContext dbContext, bool detectChanges = false)
         {
-            int i = 0;
+            int i;
             dbContext.Backup();
 
             if (detectChanges)
@@ -106,10 +106,6 @@ namespace Robin
                     }
                 }
             }
-            finally
-            {
-
-            }
 
         }
 
@@ -120,7 +116,7 @@ namespace Robin
             string Date = DateTime.Now.ToString("yyyy-MM-dd-HHmmss");
             string CurrentFile = dbcontext.Database.Connection.ConnectionString
                 .Replace("data source=\"|DataDirectory|", FileLocation.Folder)
-                .Replace("data source=\"C:\\Users\\Major Major\\Documents\\Visual Studio 2017\\Projects\\Robin\\Robin"
+                .Replace("data source=\"C:\\Users\\MajorMajor\\Documents\\Visual Studio 2017\\Projects\\Robin\\Robin"
                         , FileLocation.Folder)
                 .Replace(".db3\"", ".db3");
             string BackupFile = FileLocation.Backup + Path.GetFileNameWithoutExtension(CurrentFile) + Date + Path.GetExtension(CurrentFile);
@@ -190,8 +186,6 @@ namespace Robin
                           Convert.ToInt16((!string.IsNullOrEmpty(element3))).ToString() +
                           Convert.ToInt16((!string.IsNullOrEmpty(attribute))).ToString();
 
-            int i = 0;
-            i++;
             switch (test)
             {
                 case "0001":
@@ -201,7 +195,7 @@ namespace Robin
                     }
                     else
                     {
-                        return element.Attribute(attribute).Value;
+                        return element.Attribute(attribute)?.Value;
                     }
 
                 case "1000":
@@ -291,8 +285,6 @@ namespace Robin
                 Convert.ToInt16((!string.IsNullOrEmpty(element4))).ToString() +
                 Convert.ToInt16((!string.IsNullOrEmpty(attribute))).ToString();
 
-            int i = 0;
-            i++;
             switch (test)
             {
                 case "00001":
@@ -462,7 +454,7 @@ namespace Robin
             {
                 List<XElement> xElements = Xdoc.Root.Descendants("boxart").ToList();
 
-                if (xElements != null)
+                if (xElements.Count > 0)
                 {
                     XElement xElement = xElements.FirstOrDefault(x => x.Attribute("side").Value == side);
 
@@ -531,7 +523,7 @@ namespace Robin
             webclient.Headers["ACCEPT"] = CONSTANTS.HEADER_ACCEPT;
             webclient.Headers["ACCEPT_ENCODING"] = CONSTANTS.HEADER_ACCEPT_ENCODING;
             webclient.Headers["ACCEPT_LANGUAGE"] = CONSTANTS.HEADER_ACCEPT_LANGUAGE;
-            webclient.Headers["User-Agent"] = CONSTANTS.VERSION + "(" + Environment.OSVersion.ToString() + ")";
+            webclient.Headers["User-Agent"] = CONSTANTS.VERSION + "(" + Environment.OSVersion + ")";
         }
 
         public static bool SafeDownloadStringDB(this WebClient webclient, string url, out string downloadtext)
@@ -548,15 +540,20 @@ namespace Robin
 
             catch (WebException ex)
             {
-                var response = new StreamReader(ex.Response.GetResponseStream()).ReadToEnd();
+                if (ex.Response != null)
+                {
+                    var response = new StreamReader(ex.Response.GetResponseStream()).ReadToEnd();
 
-                Debug.WriteLine(response);
-                Debug.WriteLine(ex.Message);
-                Debug.WriteLine(ex.Source);
-                Debug.WriteLine(ex.TargetSite);
-                Debug.WriteLine(ex.Status);
-                Debug.WriteLine(ex.HResult);
-                downloadtext = response;
+                    Debug.WriteLine(response);
+                    Debug.WriteLine(ex.Message);
+                    Debug.WriteLine(ex.Source);
+                    Debug.WriteLine(ex.TargetSite);
+                    Debug.WriteLine(ex.Status);
+                    Debug.WriteLine(ex.HResult);
+                    downloadtext = response;
+                }
+
+                downloadtext = "Unknown web exception.";
                 return false;
             }
         }

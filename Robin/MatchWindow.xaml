@@ -69,6 +69,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 		<Border Style="{StaticResource CellStyle}">
 			<StackPanel>
 				<StackPanel.Resources>
+					
 					<Style x:Key="ListBoxStyle_DB"
 						   TargetType="ListBox">
 						<Setter Property="Background"
@@ -100,31 +101,12 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 							</Setter.Value>
 						</Setter>
 					</Style>
+					
 					<Style x:Key="ListBoxStyle_LB"
 						   TargetType="ListBox"
 						   BasedOn="{StaticResource ListBoxStyle_DB}">
-						<Setter Property="ItemTemplate">
-							<Setter.Value>
-								<DataTemplate>
-									<StackPanel Orientation="Vertical"
-												Margin="10,0,0,0">
-										<TextBlock Style="{StaticResource Normal}"
-												   ContextMenu="{StaticResource ReleaseContextMenu}">
-											<TextBlock.Text>
-												<MultiBinding StringFormat="{}{0} ({1})">
-													<Binding Path="Title" />
-													<Binding Path="Region.Title"
-															 TargetNullValue="-"
-															 FallbackValue="-" />
-												</MultiBinding>
-											</TextBlock.Text>
-										</TextBlock>
-										<Image Style="{StaticResource ImageStyle1}" />
-									</StackPanel>
-								</DataTemplate>
-							</Setter.Value>
-						</Setter>
 					</Style>
+					
 					<Style x:Key="ListBoxStyle_OVG"
 						   TargetType="ListBox"
 						   BasedOn="{StaticResource ListBoxStyle_DB}">
@@ -153,7 +135,9 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 							</Setter.Value>
 						</Setter>
 					</Style>
+				
 				</StackPanel.Resources>
+				
 				<TextBlock Style="{StaticResource Heading0}"
 						   Margin="0,0,0,10">
 					<TextBlock.Text>
@@ -240,7 +224,6 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 		<Border Style="{StaticResource CellStyle}"
 				Grid.Row="1">
 			<TextBlock x:Name="StatusBlock"
-					   TextWrapping="Wrap"
 					   Text="{Binding Path=(local:Reporter.NewsFeed)}"
 					   Style="{StaticResource Normal}" />
 		</Border>

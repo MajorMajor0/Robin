@@ -20,11 +20,11 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 		Title="Robin"
 		Height="900"
 		Width="1600"
-		Loaded="Main_Window_Loaded"
-		Icon="{StaticResource RobinIcon}"
+		
 		Closing="Main_Window_Closing"
 		Style="{StaticResource WindowStyle1}">
 	<Window.Resources>
+		<!--Icon="{StaticResource RobinIcon}"-->
 
 		<Style x:Key="IncludedTextBlockStyle1"
 			   TargetType="TextBlock"
@@ -40,73 +40,80 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 		<ControlTemplate x:Key="SearchBoxTemplate"
 						 TargetType="{x:Type TextBoxBase}">
-            <Border x:Name="Bd"
-                    Background="{TemplateBinding Background}"
-                    BorderBrush="Black"
-                    BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="5">
-                <ScrollViewer x:Name="PART_ContentHost" />
-            </Border>
-        </ControlTemplate>
+			<Border x:Name="Bd"
+					Background="{TemplateBinding Background}"
+					BorderBrush="Black"
+					BorderThickness="{TemplateBinding BorderThickness}"
+					CornerRadius="5">
+				<ScrollViewer x:Name="PART_ContentHost" />
+			</Border>
+		</ControlTemplate>
 
 	</Window.Resources>
 
 	<Window.CommandBindings>
-		<CommandBinding Command="local:CustomCommands.GetAllArt"
+		<CommandBinding Command="local:MainWindowCommands.About"
+						CanExecute="About_CanExecute"
+						Executed="About_Executed" />
+		
+		<CommandBinding Command="local:MainWindowCommands.GetAllArt"
 						CanExecute="GetAllArt_CanExecute"
 						Executed="GetAllArt_Executed" />
-		<CommandBinding Command="local:CustomCommands.GetAllData"
+		<CommandBinding Command="local:MainWindowCommands.GetAllData"
 						CanExecute="GetAllData_CanExecute"
 						Executed="GetAllData_Executed" />
-		<CommandBinding Command="local:CustomCommands.Play"
+		<CommandBinding Command="local:MainWindowCommands.Play"
 						CanExecute="Play_CanExecute"
 						Executed="Play_Executed" />
-		<CommandBinding Command="local:CustomCommands.MarkAsCrap"
+		<CommandBinding Command="local:MainWindowCommands.MarkAsCrap"
 						CanExecute="MarkAsCrap_CanExecute"
 						Executed="MarkAsCrap_Executed" />
-		<CommandBinding Command="local:CustomCommands.MarkNotCrap"
+		<CommandBinding Command="local:MainWindowCommands.MarkNotCrap"
 						CanExecute="MarkNotCrap_CanExecute"
 						Executed="MarkNotCrap_Executed" />
-		<CommandBinding Command="local:CustomCommands.MarkAsBeaten"
+		<CommandBinding Command="local:MainWindowCommands.MarkAsBeaten"
 						CanExecute="MarkAsBeaten_CanExecute"
 						Executed="MarkAsBeaten_Executed" />
-		<CommandBinding Command="local:CustomCommands.MarkNotBeaten"
+		<CommandBinding Command="local:MainWindowCommands.MarkNotBeaten"
 						CanExecute="MarkNotBeaten_CanExecute"
 						Executed="MarkNotBeaten_Executed" />
-		<CommandBinding Command="local:CustomCommands.MarkAsGame"
+		<CommandBinding Command="local:MainWindowCommands.MarkAsGame"
 						CanExecute="MarkAsGame_CanExecute"
 						Executed="MarkAsGame_Executed" />
-		<CommandBinding Command="local:CustomCommands.MarkNotGame"
+		<CommandBinding Command="local:MainWindowCommands.MarkNotGame"
 						CanExecute="MarkNotGame_CanExecute"
 						Executed="MarkNotGame_Executed" />
 
-		<CommandBinding Command="local:CustomCommands.MarkAsPreferred"
+		<CommandBinding Command="local:MainWindowCommands.MarkAsPreferred"
 						CanExecute="MarkAsPreferred_CanExecute"
 						Executed="MarkAsPreferred_Executed" />
-		<CommandBinding Command="local:CustomCommands.MarkNotPreferred"
+		<CommandBinding Command="local:MainWindowCommands.MarkNotPreferred"
 						CanExecute="MarkNotPreferred_CanExecute"
 						Executed="MarkNotPreferred_Executed" />
-		<CommandBinding Command="local:CustomCommands.MarkEmulatorPreferred"
+		<CommandBinding Command="local:MainWindowCommands.MarkEmulatorPreferred"
 						CanExecute="MarkEmulatorPreferred_CanExecute"
 						Executed="MarkEmulatorPreferred_Executed" />
-		<CommandBinding Command="local:CustomCommands.GetSelectedArt"
+		<CommandBinding Command="local:MainWindowCommands.GetSelectedArt"
 						CanExecute="GetSelectedArt_CanExecute"
 						Executed="GetSelectedArt_Executed" />
-		<CommandBinding Command="local:CustomCommands.AddCollection"
+		<CommandBinding Command="local:MainWindowCommands.AddCollection"
 						CanExecute="AddCollection_CanExecute"
 						Executed="AddCollection_Executed" />
-		<CommandBinding Command="local:CustomCommands.RemoveCollection"
+		<CommandBinding Command="local:MainWindowCommands.RemoveCollection"
 						CanExecute="RemoveCollection_CanExecute"
 						Executed="RemoveCollection_Executed" />
-		<CommandBinding Command="local:CustomCommands.RemoveFromCollection"
+		<CommandBinding Command="local:MainWindowCommands.RemoveFromCollection"
 						CanExecute="RemoveFromCollection_CanExecute"
 						Executed="RemoveFromCollection_Executed" />
-		<CommandBinding Command="local:CustomCommands.ClearFilters"
+		<CommandBinding Command="local:MainWindowCommands.ClearFilters"
 						CanExecute="ClearFilters_CanExecute"
 						Executed="ClearFilters_Executed" />
-		<CommandBinding Command="local:CustomCommands.ReporterWindow"
+		<CommandBinding Command="local:MainWindowCommands.ReporterWindow"
 						CanExecute="ReporterWindow_CanExecute"
 						Executed="ReporterWindow_Executed" />
+		<CommandBinding Command="local:MainWindowCommands.QuitFocus"
+						CanExecute="QuitFocus_CanExecute"
+						Executed="QuitFocus_Executed" />
 	</Window.CommandBindings>
 
 	<Grid x:Name="WindowGrid">
@@ -125,21 +132,12 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 		<DockPanel x:Name="MenuDocPanel"
 				   Grid.ColumnSpan="2">
 			<Menu IsMainMenu="True"
-				  DockPanel.Dock="Top"
-				  Grid.ColumnSpan="2">
+				  DockPanel.Dock="Top">
 				<MenuItem Header="File">
-					<MenuItem Header="New" />
-					<MenuItem Header="Open" />
 					<MenuItem Header="Save Database"
 							  Click="SaveDatabase_Click" />
 					<Separator />
 					<MenuItem Header="Exit" />
-				</MenuItem>
-
-				<MenuItem Header="Games">
-					<MenuItem Header="Find/add games" />
-					<MenuItem Header="Edit game data" />
-
 				</MenuItem>
 
 				<MenuItem Header="Art">
@@ -147,22 +145,25 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 							  Click="Database_Click" />
 					<MenuItem Header="Create thumbnails"
 							  Click="CreateThumbNail_Click" />
-
 				</MenuItem>
 
 				<MenuItem Header="Window">
 					<MenuItem Header="Database Window"
 							  Click="Database_Click" />
-					<MenuItem Command="local:CustomCommands.ReporterWindow" />
+					<MenuItem Command="local:MainWindowCommands.ReporterWindow" />
+					<!--<MenuItem Command="Help"-->
 					<!--<MenuItem Header="Convert Lynx Files"
 							  Click="ConvertLynx_Click" />-->
-
 				</MenuItem>
-				<MenuItem Header="View" />
+				<MenuItem Header="Help">
+					<MenuItem Header="Help" />
+					<MenuItem Command="local:MainWindowCommands.About" />
+				</MenuItem>
 			</Menu>
 		</DockPanel>
 
 		<Grid  x:Name="LeftGrid"
+			   Grid.Column="0"
 			   Grid.Row="1"
 			   Grid.RowSpan="2"
 			   VerticalAlignment="Stretch">
@@ -175,7 +176,6 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 			<Border x:Name="FilterBorder"
 					Grid.Row="0"
-					Padding="10"
 					Style="{StaticResource CellStyle}"
 					DataContext="{Binding ElementName=MainList, Path=DataContext}">
 				<Grid>
@@ -184,7 +184,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<RowDefinition Height="40" />
 						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
-					
+
 					<DockPanel x:Name="SelectorButton_DockPanel"
 							   HorizontalAlignment="Left"
 							   VerticalAlignment="Top"
@@ -218,7 +218,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 					<DockPanel x:Name="SearchBox_DockPanel"
 							   Grid.Row="1">
-						
+
 						<Grid x:Name="SearchBox_Grid"
 							  DockPanel.Dock="Left">
 							<TextBox x:Name="FilterBox"
@@ -230,7 +230,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 									 HorizontalAlignment="Left"
 									 VerticalContentAlignment="Center"
 									 Padding="30,0,0,0"
-									 Foreground="{StaticResource Heading1_Brush}"
+									 Foreground="{StaticResource Normal_Brush}"
 									 FontFamily="{StaticResource NormalFontFamily}"
 									 FontSize="20"
 									 Text="{Binding Path=TextFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged }">
@@ -252,7 +252,6 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 								   VerticalAlignment="Center"
 								   Margin="5,0,0,0"
 								   Width="25"
-								   Grid.Row="1"
 								   RenderOptions.BitmapScalingMode="Fant" />
 						</Grid>
 
@@ -261,16 +260,16 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 								Width="50"
 								Content="Clear"
 								Height="30"
-								Command="local:CustomCommands.ClearFilters"/>
+								Command="local:MainWindowCommands.ClearFilters" />
 
-						<Button x:Name="BonusButton"
+						<!--<Button x:Name="BonusButton"
 								DockPanel.Dock="Right"
 								Width="50"
 								Content="BONUS!"
 								Click="BonusButton_Click"
-								Height="30" />
+								Height="30" />-->
 					</DockPanel>
-			
+
 					<StackPanel x:Name="Filters_StackPanel"
 								Orientation="Vertical"
 								Grid.Row="2"
@@ -280,7 +279,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 								   DockPanel.Dock="Top"
 								   ItemsSource="{Binding ElementName=MainList, Path=DataContext.StringFilters}"
 								   Background="Transparent"
-								   BorderBrush="Transparent" >
+								   BorderBrush="Transparent">
 
 							<ListView.ItemsPanel>
 								<ItemsPanelTemplate>
@@ -297,7 +296,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 												   Style="{StaticResource Heading1}" />
 										<ComboBox ItemsSource="{Binding DistinctValues}"
 												  SelectedItem="{Binding Value}"
-												  Foreground="{StaticResource Normal_Brush}"
+												  Foreground="{StaticResource Heading0_Brush}"
 												  FontFamily="{StaticResource NormalFontFamily}"
 												  FontSize="{StaticResource NormalFontSize}"
 												  Background="Transparent"
@@ -447,11 +446,12 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 								</DataTemplate>
 							</ListView.ItemTemplate>
 						</ListView>
-						
+
+
 					</StackPanel>
 				</Grid>
 			</Border>
-            
+
 			<Border x:Name="CollectionBorder"
 					Grid.Row="1"
 					VerticalAlignment="Stretch"
@@ -468,14 +468,14 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 						<ListView.ItemsPanel>
 							<ItemsPanelTemplate>
-								<StackPanel x:Name="CollectionStackPanel"
+								<StackPanel x:Name="CollectionStackPanel2"
 											Orientation="Vertical"
 											MouseUp="CollectionStackPanel_MouseUp"
 											Drop="CollectionStackPanel_Drop"
 											AllowDrop="True">
 									<StackPanel.ContextMenu>
 										<ContextMenu>
-											<MenuItem Command="local:CustomCommands.RemoveCollection"
+											<MenuItem Command="local:MainWindowCommands.RemoveCollection"
 													  Visibility="{Binding Path=IsEnabled,
                             	  RelativeSource={RelativeSource Self},
                                   Mode=OneWay,
@@ -498,7 +498,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 					</ListView>
 					<StackPanel.ContextMenu>
 						<ContextMenu>
-							<MenuItem Command="local:CustomCommands.AddCollection" />
+							<MenuItem Command="local:MainWindowCommands.AddCollection" />
 						</ContextMenu>
 					</StackPanel.ContextMenu>
 
@@ -513,154 +513,170 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 				<DockPanel x:Name="CurrentItemPanel"
 						   Visibility="{Binding ElementName=Main_Window, Path=DataContext.SelectedDBs.Count, Converter={StaticResource intToVisibilityConverter}}">
-					<TextBlock x:Name="CurrentItemTextBlock"
-							   DataContext="{Binding SelectedDB}"
-							   Text="{Binding Title}"
-							   Style="{StaticResource Heading0}"
-							   DockPanel.Dock="Top" />
+					<DockPanel DockPanel.Dock="Top">
+						<TextBlock x:Name="CurrentItemTextBlock"
+								   DataContext="{Binding SelectedDB}"
+								   Text="{Binding Title}"
+								   Style="{StaticResource Heading0}"
+								   DockPanel.Dock="Left" />
+						<TextBlock Style="{StaticResource StarTextBlock}"
+								   DataContext="{Binding SelectedDB}"
+								   HorizontalAlignment="Right" />
+					</DockPanel>
+
 					<ScrollViewer x:Name="CurrentItemScrollViewer"
-								  ScrollViewer.CanContentScroll="True"
-								  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-								  ScrollViewer.VerticalScrollBarVisibility="Hidden"
+								  CanContentScroll="True"
+								  HorizontalScrollBarVisibility="Disabled"
+								  VerticalScrollBarVisibility="Hidden"
 								  VerticalAlignment="Stretch"
 								  HorizontalAlignment="Stretch"
 								  DockPanel.Dock="Top"
 								  Content="{Binding SelectedDB}"
-                                  Padding="10,0,0,0">
+								  Padding="10,0,0,0">
 						<ContentControl.Resources>
 
-                            <DataTemplate DataType="{x:Type local:Release}">
+							<DataTemplate DataType="{x:Type local:Release}">
 
-                                <DockPanel>
-
-                                    <StackPanel x:Name="Platform_Stackpanel"
-                                                Orientation="Horizontal"
-                                                DockPanel.Dock="Top">
-                                        <TextBlock Text="Platform: "
-                                                   Style="{StaticResource Heading1}"
-                                                   DockPanel.Dock="Top" />
-                                        <TextBlock Text="{Binding Platform.Title}"
-                                                   Style="{StaticResource Normal}"
-                                                   DockPanel.Dock="Top" />
-                                    </StackPanel>
-
-                                    <StackPanel x:Name="Version_Stackpanel"
-                                                Orientation="Horizontal"
-                                                DockPanel.Dock="Top">
-                                        <TextBlock Text="Version: "
-                                                   Style="{StaticResource Heading1}"
-                                                   DockPanel.Dock="Top" />
-                                        <TextBlock Text="{Binding Version}"
-                                                   Style="{StaticResource Normal}"
-                                                   DockPanel.Dock="Top" />
-                                    </StackPanel>
-
-                                    <StackPanel x:Name="Region_Stackpanel"
-                                                Orientation="Horizontal"
-                                                DockPanel.Dock="Top">
-                                        <TextBlock Text="Region: "
-                                                   Style="{StaticResource Heading1}" />
-                                        <TextBlock Text="{Binding Region.Title}"
-                                                   Style="{StaticResource Normal}"
-                                                   DockPanel.Dock="Top" />
-                                    </StackPanel>
-
-                                    <StackPanel x:Name="Genre_Stackpanel"
-                                                Orientation="Horizontal"
-                                                DockPanel.Dock="Top">
-                                        <TextBlock Text="Genre: "
-                                                   Style="{StaticResource Heading1}" />
-                                        <TextBlock Text="{Binding Genre}"
-                                                   Style="{StaticResource Normal}" />
-                                    </StackPanel>
-
-                                    <StackPanel x:Name="Players_Stackpanel"
-                                                Orientation="Horizontal"
-                                                DockPanel.Dock="Top">
-                                        <TextBlock Text="Players: "
-                                                   Style="{StaticResource Heading1}" />
-                                        <TextBlock Text="{Binding Players}"
-                                                   Style="{StaticResource Normal}" />
-                                    </StackPanel>
-
-                                    <StackPanel x:Name="Beaten_Stackpanel"
-                                                Orientation="Horizontal"
-                                                DockPanel.Dock="Top">
-                                        <TextBlock Text="Beaten: "
-                                                   Style="{StaticResource Heading1}" />
-                                        <TextBlock Text="{Binding IsBeaten}"
-                                                   Style="{StaticResource Normal}" />
-                                    </StackPanel>
-                                    <StackPanel x:Name="Crap_Stackpanel"
-                                                Orientation="Horizontal"
-                                                DockPanel.Dock="Top">
-                                        <TextBlock Text="Crap: "
-                                                   Style="{StaticResource Heading1}" />
-                                        <TextBlock Text="{Binding IsCrap}"
-                                                   Style="{StaticResource Normal}" />
-                                    </StackPanel>
-
-                                    <StackPanel x:Name="File_Stackpanel"
-                                                Orientation="Horizontal"
-                                                DockPanel.Dock="Top">
-                                        <TextBlock Text="File: "
-                                                   Style="{StaticResource Heading1}"
-                                                   DockPanel.Dock="Top" />
-                                        <TextBlock Text="{Binding FileName}"
-                                                   Style="{StaticResource Normal}"
-                                                   DockPanel.Dock="Top" />
-                                    </StackPanel>
-
-                                    <StackPanel x:Name="Overview_Stackpanel"
-                                                Orientation="Vertical"
-                                                DockPanel.Dock="Top">
-                                        <TextBlock Text="Overview: "
-                                                   Style="{StaticResource Heading1}" />
-
-                                        <TextBlock Text="{Binding Overview}"
-                                                   Style="{StaticResource Normal}"
-                                                   FontSize="14"
-                                                   DockPanel.Dock="Top"
-                                                   Margin="10,0,0,0" />
-                                    </StackPanel>
-
-                                </DockPanel>
-
-                            </DataTemplate>
-
-                            <DataTemplate DataType="{x:Type local:Game}">
 								<DockPanel>
 
 									<StackPanel x:Name="Platform_Stackpanel"
 												Orientation="Horizontal"
-												DockPanel.Dock="Top" >
+												DockPanel.Dock="Top">
+										<TextBlock Text="Platform: "
+												   Style="{StaticResource Heading1}"
+												   DockPanel.Dock="Top" />
+										<TextBlock Text="{Binding Platform.Title}"
+												   Style="{StaticResource Normal}"
+												   DockPanel.Dock="Top" />
+									</StackPanel>
+
+									<StackPanel x:Name="Version_Stackpanel"
+												Orientation="Horizontal"
+												DockPanel.Dock="Top">
+										<TextBlock Text="Version: "
+												   Style="{StaticResource Heading1}"
+												   DockPanel.Dock="Top" />
+										<TextBlock Text="{Binding Version}"
+												   Style="{StaticResource Normal}"
+												   DockPanel.Dock="Top" />
+									</StackPanel>
+
+									<StackPanel x:Name="Region_Stackpanel"
+												Orientation="Horizontal"
+												DockPanel.Dock="Top">
+										<TextBlock Text="Region: "
+												   Style="{StaticResource Heading1}" />
+										<TextBlock Text="{Binding Region.Title}"
+												   Style="{StaticResource Normal}"
+												   DockPanel.Dock="Top" />
+									</StackPanel>
+
+									<StackPanel x:Name="Genre_Stackpanel"
+												Orientation="Horizontal"
+												DockPanel.Dock="Top">
+										<TextBlock Text="Genre: "
+												   Style="{StaticResource Heading1}" />
+										<TextBlock Text="{Binding Genre}"
+												   Style="{StaticResource Normal}" />
+									</StackPanel>
+
+									<StackPanel x:Name="Players_Stackpanel"
+												Orientation="Horizontal"
+												DockPanel.Dock="Top">
+										<TextBlock Text="Players: "
+												   Style="{StaticResource Heading1}" />
+										<TextBlock Text="{Binding Players}"
+												   Style="{StaticResource Normal}" />
+									</StackPanel>
+
+									<StackPanel x:Name="Beaten_Stackpanel"
+												Orientation="Horizontal"
+												DockPanel.Dock="Top">
+										<TextBlock Text="Beaten: "
+												   Style="{StaticResource Heading1}" />
+										<TextBlock Text="{Binding IsBeaten}"
+												   Style="{StaticResource Normal}" />
+									</StackPanel>
+
+									<StackPanel x:Name="PlayCount_Stackpanel"
+												Orientation="Horizontal"
+												DockPanel.Dock="Top">
+										<TextBlock Text="Play count: "
+												   Style="{StaticResource Heading1}" />
+										<TextBlock Text="{Binding PlayCount}"
+												   Style="{StaticResource Normal}" />
+									</StackPanel>
+
+									<StackPanel x:Name="Crap_Stackpanel"
+												Orientation="Horizontal"
+												DockPanel.Dock="Top">
+										<TextBlock Text="Crap: "
+												   Style="{StaticResource Heading1}" />
+										<TextBlock Text="{Binding IsCrap}"
+												   Style="{StaticResource Normal}" />
+									</StackPanel>
+
+									<StackPanel x:Name="File_Stackpanel"
+												Orientation="Horizontal"
+												DockPanel.Dock="Top">
+										<TextBlock Text="File: "
+												   Style="{StaticResource Heading1}"
+												   DockPanel.Dock="Top" />
+										<TextBlock Text="{Binding FileName}"
+												   Style="{StaticResource Normal}"
+												   DockPanel.Dock="Top" />
+									</StackPanel>
+
+									<StackPanel x:Name="Overview_Stackpanel"
+												Orientation="Vertical"
+												DockPanel.Dock="Top">
+										<TextBlock Text="Overview: "
+												   Style="{StaticResource Heading1}" />
+
+										<TextBlock Text="{Binding Overview}"
+												   Style="{StaticResource Normal}"
+												   FontSize="14"
+												   DockPanel.Dock="Top"
+												   Margin="10,0,0,0" />
+									</StackPanel>
+
+								</DockPanel>
+
+							</DataTemplate>
+
+							<DataTemplate DataType="{x:Type local:Game}">
+								<DockPanel>
+
+									<StackPanel x:Name="Platform_Stackpanel"
+												Orientation="Horizontal"
+												DockPanel.Dock="Top">
 										<TextBlock Text="Platform: "
 												   Style="{StaticResource Heading1}" />
-										<TextBlock Text="{Binding Platform}"
+										<TextBlock Text="{Binding Platform.Title}"
 												   Style="{StaticResource Normal}" />
 									</StackPanel>
 
 									<StackPanel x:Name="Date_Stackpanel"
 												Orientation="Horizontal"
-												DockPanel.Dock="Top" >
+												DockPanel.Dock="Top">
 										<TextBlock Text="Date: "
 												   Style="{StaticResource Heading1}" />
 										<TextBlock Text="{Binding Date,  StringFormat=yyyy}"
 												   Style="{StaticResource Normal}" />
 									</StackPanel>
 
-                                    <StackPanel x:Name="Region_Stackpanel"
-                                                Orientation="Horizontal"
-                                                DockPanel.Dock="Top">
-                                        <TextBlock Text="Regions: "
-                                                   Style="{StaticResource Heading1}" />
-                                        <TextBlock Text="{Binding Regions}"
-                                                   Style="{StaticResource Normal}" />
-                                    </StackPanel>
-
-                                    <StackPanel x:Name="Genre_Stackpanel"
+									<StackPanel x:Name="Region_Stackpanel"
 												Orientation="Horizontal"
-												DockPanel.Dock="Top" >
+												DockPanel.Dock="Top">
+										<TextBlock Text="Regions: "
+												   Style="{StaticResource Heading1}" />
+										<TextBlock Text="{Binding Regions}"
+												   Style="{StaticResource Normal}" />
+									</StackPanel>
+
+									<StackPanel x:Name="Genre_Stackpanel"
+												Orientation="Horizontal"
+												DockPanel.Dock="Top">
 										<TextBlock Text="Genre: "
 												   Style="{StaticResource Heading1}" />
 										<TextBlock Text="{Binding Genres}"
@@ -669,34 +685,61 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 									<StackPanel x:Name="Players_Stackpanel"
 												Orientation="Horizontal"
-												DockPanel.Dock="Top" >
+												DockPanel.Dock="Top">
 										<TextBlock Text="Players: "
 												   Style="{StaticResource Heading1}" />
 										<TextBlock Text="{Binding Players}"
 												   Style="{StaticResource Normal}" />
 									</StackPanel>
-                                    
+
 									<StackPanel x:Name="Beaten_Stackpanel"
 												Orientation="Horizontal"
-												DockPanel.Dock="Top" >
+												DockPanel.Dock="Top">
 										<TextBlock Text="Beaten: "
 												   Style="{StaticResource Heading1}" />
 										<TextBlock Text="{Binding IsBeaten}"
 												   Style="{StaticResource Normal}" />
 									</StackPanel>
-                                    
-                                    <StackPanel x:Name="Crap_Stackpanel"
-                                                Orientation="Horizontal"
-                                                DockPanel.Dock="Top">
-                                        <TextBlock Text="Crap: "
-                                                   Style="{StaticResource Heading1}" />
-                                        <TextBlock Text="{Binding IsCrap}"
-                                                   Style="{StaticResource Normal}" />
-                                    </StackPanel>
 
-                                    <StackPanel x:Name="Overview_Stackpanel"
+									<StackPanel x:Name="PlayCount_Stackpanel"
+												Orientation="Horizontal"
+												DockPanel.Dock="Top">
+										<TextBlock Text="Play count: "
+												   Style="{StaticResource Heading1}" />
+										<TextBlock Text="{Binding PlayCount}"
+												   Style="{StaticResource Normal}" />
+									</StackPanel>
+
+									<StackPanel x:Name="Crap_Stackpanel"
+												Orientation="Horizontal"
+												DockPanel.Dock="Top">
+										<TextBlock Text="Crap: "
+												   Style="{StaticResource Heading1}" />
+										<TextBlock Text="{Binding IsCrap}"
+												   Style="{StaticResource Normal}" />
+									</StackPanel>
+
+									<StackPanel x:Name="Rating_Stackpanel"
+												Orientation="Horizontal"
+												DockPanel.Dock="Top">
+										<TextBlock Text="Rating: "
+												   Style="{StaticResource Heading1}" />
+										<TextBox Width="30"
+												 BorderBrush="{StaticResource Selected_Brush}"
+												 Text="{Binding Rating, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+												 Style="{StaticResource NormalBox}"
+												 HorizontalAlignment="Center">
+
+											<TextBox.InputBindings>
+												<KeyBinding Key="Return"
+															Command="local:MainWindowCommands.QuitFocus" />
+											</TextBox.InputBindings>
+										</TextBox>
+									</StackPanel>
+
+									<StackPanel x:Name="Overview_Stackpanel"
 												Orientation="Vertical"
-												DockPanel.Dock="Top" >
+												DockPanel.Dock="Top">
 										<TextBlock Text="Overview: "
 												   Style="{StaticResource Heading1}" />
 
@@ -704,7 +747,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 												   Style="{StaticResource Normal}"
 												   FontSize="14"
 												   DockPanel.Dock="Top"
-                                                   Margin="10,0,0,0"/>
+												   Margin="10,0,0,0" />
 									</StackPanel>
 
 									<StackPanel x:Name="Releases_StackPanel"
@@ -719,12 +762,12 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 												 Panel.ZIndex="1">
 											<ListBox.ContextMenu>
 												<ContextMenu>
-													<MenuItem Command="local:CustomCommands.MarkAsPreferred"
+													<MenuItem Command="local:MainWindowCommands.MarkAsPreferred"
 															  Visibility="{Binding Path=IsEnabled,
                                                     RelativeSource={RelativeSource Self},
                                                     Mode=OneWay,
                                                     Converter={StaticResource booleanToVisibilityConverter}}" />
-													<MenuItem Command="local:CustomCommands.MarkNotPreferred"
+													<MenuItem Command="local:MainWindowCommands.MarkNotPreferred"
 															  Visibility="{Binding Path=IsEnabled,
                                                     RelativeSource={RelativeSource Self},
                                                     Mode=OneWay,
@@ -734,13 +777,13 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 											<ListBox.ItemTemplate>
 												<DataTemplate>
-                                                    <StackPanel Orientation="Horizontal"
-                                                                Panel.ZIndex="1">
-                                                        <TextBlock Text="• "
-                                                                   Margin="-4,0,0,0"
-                                                                   Style="{StaticResource Normal}"
-                                                                   Visibility="{Binding Path=Preferred, Mode=OneWay, Converter={StaticResource boolToHiddenConverter}}" />
-                                                        <TextBlock Text="{Binding TitleAndRegion}"
+													<StackPanel Orientation="Horizontal"
+																Panel.ZIndex="1">
+														<TextBlock Text="• "
+																   Margin="-4,0,0,0"
+																   Style="{StaticResource Normal}"
+																   Visibility="{Binding Path=Preferred, Mode=OneWay, Converter={StaticResource boolToHiddenConverter}}" />
+														<TextBlock Text="{Binding TitleAndRegion}"
 																   Style="{StaticResource IncludedTextBlockStyle1}" />
 													</StackPanel>
 												</DataTemplate>
@@ -755,7 +798,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 									<StackPanel x:Name="Media_Stackpanel"
 												Orientation="Horizontal"
-												DockPanel.Dock="Top" >
+												DockPanel.Dock="Top">
 										<TextBlock Text="Media: "
 												   Style="{StaticResource Heading1}" />
 										<TextBlock Text="{Binding Media}"
@@ -764,7 +807,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 									<StackPanel x:Name="Controllers_Stackpanel"
 												Orientation="Horizontal"
-												DockPanel.Dock="Top" >
+												DockPanel.Dock="Top">
 										<TextBlock Text="Controllers: "
 												   Style="{StaticResource Heading1}" />
 										<TextBlock Text="{Binding Controllers}"
@@ -773,7 +816,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 									<StackPanel x:Name="Overview_Stackpanel"
 												Orientation="Vertical"
-												DockPanel.Dock="Top" >
+												DockPanel.Dock="Top">
 										<TextBlock Text="Overview: "
 												   Style="{StaticResource Heading1}" />
 										<TextBlock Text="{Binding Overview}"
@@ -782,23 +825,23 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 												   Margin="10,0,0,0" />
 									</StackPanel>
 
-                                    <StackPanel x:Name="Releases_Stackpanel"
-                                                Orientation="Horizontal"
-                                                DockPanel.Dock="Top" >
-                                        <TextBlock Text="Releases: "
+									<StackPanel x:Name="Releases_Stackpanel"
+												Orientation="Horizontal"
+												DockPanel.Dock="Top">
+										<TextBlock Text="Releases: "
 												   Style="{StaticResource Heading1}" />
-                                        <TextBlock Style="{StaticResource Normal}" >
-                                            <TextBlock.Text>
-                                                <MultiBinding StringFormat="{}{0}">
-                                                    <Binding Path="Releases.Count" />
-                                                </MultiBinding>
-                                            </TextBlock.Text>
-                                        </TextBlock>
+										<TextBlock Style="{StaticResource Normal}">
+											<TextBlock.Text>
+												<MultiBinding StringFormat="{}{0}">
+													<Binding Path="Releases.Count" />
+												</MultiBinding>
+											</TextBlock.Text>
+										</TextBlock>
 									</StackPanel>
 
 									<StackPanel x:Name="ReleasesIncluded_Stackpanel"
 												Orientation="Horizontal"
-												DockPanel.Dock="Top" >
+												DockPanel.Dock="Top">
 										<TextBlock Text="Playable: "
 												   Style="{StaticResource Heading1}" />
 										<TextBlock Text="{Binding ReleasesIncluded}"
@@ -807,7 +850,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 									<StackPanel x:Name="ReleasesWithArt_Stackpanel"
 												Orientation="Horizontal"
-												DockPanel.Dock="Top" >
+												DockPanel.Dock="Top">
 										<TextBlock Text="With art: "
 												   Style="{StaticResource Heading1}" />
 										<TextBlock Text="{Binding ReleasesWithArt}"
@@ -816,7 +859,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 									<StackPanel x:Name="Matched_Stackpanel"
 												Orientation="Horizontal"
-												DockPanel.Dock="Top" >
+												DockPanel.Dock="Top">
 										<TextBlock Text="Matched: "
 												   Style="{StaticResource Heading1}" />
 										<TextBlock Text="{Binding MatchedToSomething}"
@@ -825,29 +868,30 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 									<StackPanel x:Name="Emulators_StackPanel"
 												Orientation="Vertical"
-												DockPanel.Dock="Top" >
+												DockPanel.Dock="Top">
 										<TextBlock Text="Emulators"
 												   Style="{StaticResource Heading1}" />
 										<ListBox x:Name="PlatformEmulatorListBox"
-												 ItemsSource="{Binding Emulators}" >
+												 ItemsSource="{Binding Emulators}">
 											<ListBox.ItemTemplate>
 												<DataTemplate>
-                                                    <StackPanel Orientation="Horizontal"
-                                                                Margin="-4,0,0,0">
-                                                        <TextBlock Text="• " Style="{StaticResource Normal}">
-                                                            <TextBlock.Visibility>
-																	<MultiBinding Converter="{StaticResource PreferredMultiValueConverter}">
-																		<Binding Path="ID" />
-																		<Binding ElementName="CurrentItemScrollViewer"
-                                                                                 Path="Content.PreferredEmulator_ID" />
-																	</MultiBinding>
-																</TextBlock.Visibility>
-                                                        </TextBlock>
+													<StackPanel Orientation="Horizontal"
+																Margin="-4,0,0,0">
+														<TextBlock Text="• "
+																   Style="{StaticResource Normal}">
+															<TextBlock.Visibility>
+																<MultiBinding Converter="{StaticResource PreferredMultiValueConverter}">
+																	<Binding Path="ID" />
+																	<Binding ElementName="CurrentItemScrollViewer"
+																			 Path="Content.PreferredEmulator_ID" />
+																</MultiBinding>
+															</TextBlock.Visibility>
+														</TextBlock>
 														<TextBlock Text="{Binding Title}"
 																   Style="{StaticResource IncludedTextBlockStyle1}">
 															<TextBlock.ContextMenu>
 																<ContextMenu>
-																	<MenuItem Command="local:CustomCommands.MarkEmulatorPreferred"
+																	<MenuItem Command="local:MainWindowCommands.MarkEmulatorPreferred"
 																			  Visibility="{Binding Path=IsEnabled,
                                                                     RelativeSource={RelativeSource Self},
                                                                     Mode=OneWay,
@@ -872,7 +916,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 									<StackPanel x:Name="Website_Stackpanel"
 												Orientation="Horizontal"
-												DockPanel.Dock="Top" >
+												DockPanel.Dock="Top">
 										<TextBlock Text="Website: "
 												   Style="{StaticResource Heading1}" />
 										<TextBlock Text="{Binding Website}"
@@ -881,7 +925,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 									<StackPanel x:Name="Included_Stackpanel"
 												Orientation="Horizontal"
-												DockPanel.Dock="Top" >
+												DockPanel.Dock="Top">
 										<TextBlock Text="Included: "
 												   Style="{StaticResource Heading1}" />
 										<TextBlock Text="{Binding Included}"
@@ -890,31 +934,32 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 									<StackPanel x:Name="Platforms_StackPanel"
 												Orientation="Vertical"
-												DockPanel.Dock="Top" >
+												DockPanel.Dock="Top">
 										<TextBlock Text="Platforms"
 												   Style="{StaticResource Heading1}" />
 										<ListBox x:Name="EmulatorPlatformListBox"
 												 ItemsSource="{Binding Platforms1}">
 											<ListBox.ItemTemplate>
 												<DataTemplate>
-													<StackPanel Orientation="Horizontal" Margin="-4,0,0,0">
-														
-                                                        <TextBlock Text="• "
-                                                                   Style="{StaticResource Normal}">
-                                                            <TextBlock.Visibility>
-                                                                <MultiBinding Converter="{StaticResource PreferredMultiValueConverter}">
-                                                                    <Binding Path="PreferredEmulator_ID" />
-                                                                    <Binding ElementName="CurrentItemScrollViewer"
-                                                                             Path="Content.ID" />
-                                                                </MultiBinding>
-                                                            </TextBlock.Visibility>
-                                                        </TextBlock>
+													<StackPanel Orientation="Horizontal"
+																Margin="-4,0,0,0">
 
-                                                        <TextBlock Text="{Binding Title}"
+														<TextBlock Text="• "
+																   Style="{StaticResource Normal}">
+															<TextBlock.Visibility>
+																<MultiBinding Converter="{StaticResource PreferredMultiValueConverter}">
+																	<Binding Path="PreferredEmulator_ID" />
+																	<Binding ElementName="CurrentItemScrollViewer"
+																			 Path="Content.ID" />
+																</MultiBinding>
+															</TextBlock.Visibility>
+														</TextBlock>
+
+														<TextBlock Text="{Binding Title}"
 																   Style="{StaticResource IncludedTextBlockStyle1}">
 															<TextBlock.ContextMenu>
 																<ContextMenu>
-																	<MenuItem Command="local:CustomCommands.MarkEmulatorPreferred"
+																	<MenuItem Command="local:MainWindowCommands.MarkEmulatorPreferred"
 																			  Visibility="{Binding Path=IsEnabled,
                                                                     RelativeSource={RelativeSource Self},
                                                                     Mode=OneWay,
@@ -938,8 +983,8 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 			<GridSplitter Grid.Row="1"
 						  VerticalAlignment="Top"
 						  Style="{StaticResource HorizontalGridSplitterStyle1}" />
-			
-            <GridSplitter Grid.Row="2"
+
+			<GridSplitter Grid.Row="2"
 						  VerticalAlignment="Top"
 						  Style="{StaticResource HorizontalGridSplitterStyle1}" />
 
@@ -958,20 +1003,19 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 											 Background="Transparent"
 											 BorderBrush="Transparent"
 											 PreviewMouseWheel="MainList_MouseWheel"
-											 Loaded="MainList_Loaded"
 											 MouseLeftButtonDown="MainList_MouseLeftButtonDown"
 											 SelectedItem="{Binding ElementName=Main_Window, Path=DataContext.SelectedDB, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
 											 BoundSelectedItems="{Binding ElementName=Main_Window, Path=DataContext.SelectedDBs, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
 
 				<ListView.ContextMenu>
 					<ContextMenu>
-						<MenuItem Command="local:CustomCommands.GetAllArt"
+						<MenuItem Command="local:MainWindowCommands.GetAllArt"
 								  Visibility="{Binding Path=IsEnabled,
                             	  RelativeSource={RelativeSource Self},
                                   Mode=OneWay,
 								  Converter={StaticResource booleanToVisibilityConverter}}" />
 
-						<MenuItem Command="local:CustomCommands.GetAllData"
+						<MenuItem Command="local:MainWindowCommands.GetAllData"
 								  Visibility="{Binding Path=IsEnabled,
                             	  RelativeSource={RelativeSource Self},
                                   Mode=OneWay,
@@ -981,107 +1025,103 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 				<ListView.Resources>
 					<ContextMenu x:Key="HammerContextMenu">
-						<MenuItem Command="local:CustomCommands.Play"
+						<MenuItem Command="local:MainWindowCommands.Play"
 								  Visibility="{Binding Path=IsEnabled,
                                         RelativeSource={RelativeSource Self},
                                         Mode=OneWay,
                                         Converter={StaticResource booleanToVisibilityConverter}}" />
 
-						<MenuItem Command="local:CustomCommands.MarkAsCrap"
+						<MenuItem Command="local:MainWindowCommands.MarkAsCrap"
 								  Visibility="{Binding Path=IsEnabled,
                                         RelativeSource={RelativeSource Self},
                                         Mode=OneWay,
                                         Converter={StaticResource booleanToVisibilityConverter}}" />
 
-						<MenuItem Command="local:CustomCommands.MarkNotCrap"
+						<MenuItem Command="local:MainWindowCommands.MarkNotCrap"
 								  Visibility="{Binding Path=IsEnabled,
                                         RelativeSource={RelativeSource Self},
                                         Mode=OneWay,
                                         Converter={StaticResource booleanToVisibilityConverter}}" />
 
-						<MenuItem Command="local:CustomCommands.MarkAsBeaten"
+						<MenuItem Command="local:MainWindowCommands.MarkAsBeaten"
 								  Visibility="{Binding Path=IsEnabled,
                                         RelativeSource={RelativeSource Self},
                                         Mode=OneWay,
                                         Converter={StaticResource booleanToVisibilityConverter}}" />
 
-						<MenuItem Command="local:CustomCommands.MarkNotBeaten"
+						<MenuItem Command="local:MainWindowCommands.MarkNotBeaten"
 								  Visibility="{Binding Path=IsEnabled,
                                         RelativeSource={RelativeSource Self},
                                         Mode=OneWay,
                                         Converter={StaticResource booleanToVisibilityConverter}}" />
 
-						<MenuItem Command="local:CustomCommands.MarkAsGame"
+						<MenuItem Command="local:MainWindowCommands.MarkAsGame"
 								  Visibility="{Binding Path=IsEnabled,
                                         RelativeSource={RelativeSource Self},
                                         Mode=OneWay,
                                         Converter={StaticResource booleanToVisibilityConverter}}" />
 
-						<MenuItem Command="local:CustomCommands.MarkNotGame"
+						<MenuItem Command="local:MainWindowCommands.MarkNotGame"
 								  Visibility="{Binding Path=IsEnabled,
                                         RelativeSource={RelativeSource Self},
                                         Mode=OneWay,
                                         Converter={StaticResource booleanToVisibilityConverter}}" />
 
-						<MenuItem Command="local:CustomCommands.MarkAsPreferred"
+						<MenuItem Command="local:MainWindowCommands.MarkAsPreferred"
 								  Visibility="{Binding Path=IsEnabled,
                                         RelativeSource={RelativeSource Self},
                                         Mode=OneWay,
                                         Converter={StaticResource booleanToVisibilityConverter}}" />
 
-						<MenuItem Command="local:CustomCommands.MarkNotPreferred"
+						<MenuItem Command="local:MainWindowCommands.MarkNotPreferred"
 								  Visibility="{Binding Path=IsEnabled,
                                         RelativeSource={RelativeSource Self},
                                         Mode=OneWay,
                                         Converter={StaticResource booleanToVisibilityConverter}}" />
 
-						<MenuItem Command="local:CustomCommands.GetSelectedArt"
+						<MenuItem Command="local:MainWindowCommands.GetSelectedArt"
 								  Visibility="{Binding Path=IsEnabled,
                                         RelativeSource={RelativeSource Self},
                                         Mode=OneWay,
                                         Converter={StaticResource booleanToVisibilityConverter}}" />
 
-						<MenuItem Command="local:CustomCommands.GetAllArt"
+						<MenuItem Command="local:MainWindowCommands.GetAllArt"
 								  Visibility="{Binding Path=IsEnabled,
                                         RelativeSource={RelativeSource Self},
                                         Mode=OneWay,
                                         Converter={StaticResource booleanToVisibilityConverter}}" />
 
-						<MenuItem Command="local:CustomCommands.RemoveFromCollection"
+						<MenuItem Command="local:MainWindowCommands.RemoveFromCollection"
 								  Visibility="{Binding Path=IsEnabled,
                                         RelativeSource={RelativeSource Self},
                                         Mode=OneWay,
                                         Converter={StaticResource booleanToVisibilityConverter}}" />
 					</ContextMenu>
 
-					<Style x:Key="TextBlockStyle1"
+					<Style x:Key="MainListTextBoxStyle"
 						   TargetType="TextBlock"
-						   BasedOn="{StaticResource Heading1}">
+						   BasedOn="{StaticResource Normal}">
 						<Setter Property="HorizontalAlignment"
 								Value="Stretch" />
 						<Setter Property="DockPanel.Dock"
 								Value="Bottom" />
 						<Setter Property="TextAlignment"
 								Value="Center" />
-						<Style.Triggers>
-							<DataTrigger Binding="{Binding DataContext.IsBeaten, RelativeSource={RelativeSource AncestorType=StackPanel}}"
-										 Value="True">
-								<Setter Property="Foreground"
-										Value="Cyan" />
-							</DataTrigger>
-						</Style.Triggers>
 					</Style>
 
-					<Style x:Key="ImageStyle1"
+					<Style x:Key="MainListImageStyle"
 						   TargetType="Image">
-						<Setter Property="MaxHeight"
-								Value="285" />
 						<Setter Property="MaxWidth"
-								Value="285" />
-						<Setter Property="DockPanel.Dock"
-								Value="Top" />
+								Value="255" />
+						<Setter Property="MaxHeight"
+								Value="255" />
 						<Setter Property="RenderOptions.BitmapScalingMode"
 								Value="Linear" />
+						<Setter Property="Source"
+								Value="{Binding MainDisplay, Mode=OneWay, IsAsync=True,
+                                    Converter={StaticResource ImageConverter},
+                                    FallbackValue={StaticResource ArtNotFoundImage},
+                                    TargetNullValue={StaticResource ArtNotFoundImage}}" />
 						<Setter Property="Effect">
 							<Setter.Value>
 								<DropShadowEffect Color="Black"
@@ -1103,55 +1143,41 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<Setter Property="BorderBrush"
 								Value="Black" />
 						<Setter Property="BorderThickness"
-								Value="0" />
-
-						<Setter Property="HorizontalAlignment"
-								Value="Center" />
-						<Setter Property="VerticalAlignment"
-								Value="Center" />
-						<Setter Property="DockPanel.Dock"
-								Value="Top" />
+								Value="{Binding BorderThickness}" />
 						<Setter Property="Margin"
-								Value="20" />
-					</Style>
+								Value="15,5,15,10" />
 
-					<Style x:Key="ImageBorderStyle2"
-						   TargetType="Border">
-						<Setter Property="BorderThickness"
-								Value="0" />
-						<Setter Property="HorizontalAlignment"
-								Value="Center" />
-						<Setter Property="VerticalAlignment"
-								Value="Center" />
-						<Setter Property="DockPanel.Dock"
-								Value="Top" />
-						<Setter Property="Margin"
-								Value="20" />
 					</Style>
 
 					<DataTemplate DataType="{x:Type local:Game}">
-						<StackPanel x:Name="GameStackPanel"
-									HorizontalAlignment="Center"
-									VerticalAlignment="Top"
-									Orientation="Vertical">
+
+						<StackPanel x:Name="GameStackPanel">
+
 							<Border x:Name="GameImageBorder"
 									Style="{StaticResource ImageBorderStyle1}">
-								<Image Source="{Binding MainDisplay, Mode=OneTime, IsAsync=True,
-								   Converter={StaticResource ImageConverter},
-								   FallbackValue={StaticResource ArtNotFoundImage},
-								   TargetNullValue={StaticResource ArtNotFoundImage}}"
-									   Style="{StaticResource ImageStyle1}" />
+
+								<Image Style="{StaticResource MainListImageStyle}" />
 							</Border>
 
-							<StackPanel HorizontalAlignment="Stretch"
-										VerticalAlignment="Top">
-								<TextBlock Style="{StaticResource TextBlockStyle1}"
+							<StackPanel HorizontalAlignment="Center"
+										Width="{Binding ElementName=GameImageBorder, Path=ActualWidth}"
+										Height="100">
+
+								<Grid>
+									<TextBlock Style="{StaticResource StarTextBlock}"
+											   HorizontalAlignment="Center" />
+									<TextBlock Style="{StaticResource BeatenTextBlock}"
+											   HorizontalAlignment="Right" />
+								</Grid>
+
+								<TextBlock Style="{StaticResource MainListTextBoxStyle}"
 										   Text="{Binding Title}" />
+
 								<StackPanel Orientation="Horizontal"
 											HorizontalAlignment="Center">
-									<TextBlock Style="{StaticResource TextBlockStyle1}"
-											   Text="{Binding Platform}" />
-									<TextBlock Style="{StaticResource TextBlockStyle1}">
+									<TextBlock Style="{StaticResource MainListTextBoxStyle}"
+											   Text="{Binding Platform.Title}" />
+									<TextBlock Style="{StaticResource MainListTextBoxStyle}">
 										<TextBlock.Text>
 											<Binding Path="Date"
 													 StringFormat=" - yyyy" />
@@ -1162,7 +1188,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 							<StackPanel.InputBindings>
 								<MouseBinding Gesture="LeftDoubleClick"
-											  Command="local:CustomCommands.Play" />
+											  Command="local:MainWindowCommands.Play" />
 							</StackPanel.InputBindings>
 						</StackPanel>
 					</DataTemplate>
@@ -1171,17 +1197,12 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<StackPanel x:Name="PlatformStackPanel"
 									AllowDrop="True"
 									Drop="MainListPlatform_Drop">
-							<Border Style="{StaticResource ImageBorderStyle2}">
-                                <Image Source="{Binding ConsoleFile, Mode=OneTime, IsAsync=True,
-								   Converter={StaticResource ImageConverter},
-								   FallbackValue={StaticResource ArtNotFoundImage},
-								   TargetNullValue={StaticResource ArtNotFoundImage}}"
-									   Style="{StaticResource ImageStyle1}">
-								</Image>
-							</Border>
+
+							<Image Style="{StaticResource MainListImageStyle}" />
+
 
 							<TextBlock Text="{Binding Title}"
-									   Style="{StaticResource TextBlockStyle1}"
+									   Style="{StaticResource MainListTextBoxStyle}"
 									   Margin="0,0,0,20" />
 
 						</StackPanel>
@@ -1189,68 +1210,65 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 					</DataTemplate>
 
 					<DataTemplate DataType="{x:Type local:Release}">
-						<StackPanel x:Name="ReleaseStackPanel"
-									HorizontalAlignment="Center"
-									VerticalAlignment="Top">
+						<StackPanel x:Name="ReleaseStackPanel">
+
 							<Border x:Name="ReleaseImageBorder"
 									Style="{StaticResource ImageBorderStyle1}">
-                                <Image Source="{Binding BoxFrontThumbPath, Mode=OneTime, IsAsync=True,
-								   Converter={StaticResource ImageConverter},
-								   FallbackValue={StaticResource ArtNotFoundImage},
-								   TargetNullValue={StaticResource ArtNotFoundImage}}"
-									   Style="{StaticResource ImageStyle1}" />
+
+								<Image Style="{StaticResource MainListImageStyle}" />
 							</Border>
+							<StackPanel HorizontalAlignment="Center"
+										Width="{Binding ElementName=ReleaseImageBorder, Path=ActualWidth}">
+								<Grid>
+									<TextBlock Style="{StaticResource StarTextBlock}"
+											   HorizontalAlignment="Center" />
+									<TextBlock Style="{StaticResource BeatenTextBlock}"
+											   HorizontalAlignment="Right" />
+								</Grid>
 
-							<TextBlock Style="{StaticResource TextBlockStyle1}"
-									   HorizontalAlignment="Stretch">
-								<TextBlock.Text>
-									<MultiBinding StringFormat="{}{0} {1} ({2})">
-										<Binding Path="Title" />
-										<Binding Path="Version" />
-										<Binding Path="Region.Title" />
-									</MultiBinding>
-								</TextBlock.Text>
-							</TextBlock>
-
-							<StackPanel Orientation="Horizontal"
-										HorizontalAlignment="Center">
-								<TextBlock Style="{StaticResource TextBlockStyle1}"
-										   Text="{Binding Platform.Title}" />
-								<TextBlock Style="{StaticResource TextBlockStyle1}">
+								<TextBlock Style="{StaticResource MainListTextBoxStyle}">
 									<TextBlock.Text>
-										<Binding Path="Date"
-												 StringFormat=" - yyyy" />
+										<MultiBinding StringFormat="{}{0} {1} ({2})">
+											<Binding Path="Title" />
+											<Binding Path="Version" />
+											<Binding Path="Region.Title" />
+										</MultiBinding>
 									</TextBlock.Text>
 								</TextBlock>
-							</StackPanel>
 
+								<StackPanel Orientation="Horizontal"
+											HorizontalAlignment="Center">
+									<TextBlock Style="{StaticResource MainListTextBoxStyle}"
+											   Text="{Binding Platform.Title}" />
+									<TextBlock Style="{StaticResource MainListTextBoxStyle}">
+										<TextBlock.Text>
+											<Binding Path="Date"
+													 StringFormat=" - yyyy" />
+										</TextBlock.Text>
+									</TextBlock>
+								</StackPanel>
+							</StackPanel>
 						</StackPanel>
 					</DataTemplate>
 
 					<DataTemplate DataType="{x:Type local:Emulator}">
-						<StackPanel x:Name="ReleaseStackPanel"
+						<StackPanel x:Name="EmulatorStackPanel"
 									HorizontalAlignment="Center"
-									VerticalAlignment="Top">
-                            <Image Source="{Binding ImageFile, Mode=OneTime, IsAsync=True,
-								   Converter={StaticResource ImageConverter},
-								   FallbackValue={StaticResource ArtNotFoundImage},
-								   TargetNullValue={StaticResource ArtNotFoundImage}}"
-								   Style="{StaticResource ImageStyle1}" />
+									VerticalAlignment="Top"
+									AllowDrop="True"
+									Drop="EmulatorStackPanel_Drop">
+							<Image Style="{StaticResource MainListImageStyle}" />
 
-							<TextBlock Style="{StaticResource TextBlockStyle1}"
-									   Margin="0,20,0,20">
-								<TextBlock.Text>
-									<Binding Path="Title" />
-								</TextBlock.Text>
-
-							</TextBlock>
-
+							<TextBlock Style="{StaticResource MainListTextBoxStyle}"
+									   Margin="0,20,0,20"
+									   Text="{Binding Title}" />
 						</StackPanel>
 					</DataTemplate>
 				</ListView.Resources>
 
 				<ListView.ItemContainerStyle>
 					<Style TargetType="ListViewItem">
+
 						<Style.Triggers>
 							<Trigger Property="IsMouseOver"
 									 Value="True">
@@ -1277,7 +1295,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 				<ListView.InputBindings>
 					<KeyBinding Key="Delete"
-								Command="local:CustomCommands.RemoveFromCollection" />
+								Command="local:MainWindowCommands.RemoveFromCollection" />
 				</ListView.InputBindings>
 			</local:BindableSelectionListView>
 		</Border>
@@ -1314,7 +1332,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 		<GridSplitter Grid.Column="1"
 					  Grid.Row="1"
-                      Grid.RowSpan="2"
+					  Grid.RowSpan="2"
 					  HorizontalAlignment="Left"
 					  Style="{StaticResource VerticalGridSplitterStyle1}" />
 

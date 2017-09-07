@@ -45,13 +45,13 @@ namespace Robin
             Platform platform;
             List = new ObservableCollection<Compare>();
             Database = db;
-            Title = "Compare " + idbPlatform.Title + " - " + Enum.GetName(typeof(LocalDB), db);
+            Title = idbPlatform.Title + " - " + Enum.GetName(typeof(LocalDB), db);
             DBreleases = new List<IDBRelease>();
             RReleases = new List<Release>();
 
             foreach (IDBRelease idbRelease in idbPlatform.Releases)
             {
-                DBreleases.Add(idbRelease); ;
+                DBreleases.Add(idbRelease);
             }
 
             switch (db)
@@ -80,8 +80,6 @@ namespace Robin
                     }
                     break;
 
-                default:
-                    break;
             }
         }
 
@@ -91,10 +89,10 @@ namespace Robin
 
             // List for storing matches
             List<Compare> Matches = new List<Compare>();
-            int distance = 0;
+            int distance;
 
             bool goAhead = !ConsiderRegion;
-            Release release = new Release();
+            Release release;
             IDBRelease dbRelease;
 
             int N_r = RReleases.Count;
@@ -110,7 +108,7 @@ namespace Robin
                 release = RReleases[i_r];
 
                 // Compare current Release to each relase in DBreleases 
-                for (int i_db = 0; i_db < this.DBreleases.Count; i_db++)
+                for (int i_db = 0; i_db < DBreleases.Count; i_db++)
                 {
                     dbRelease = DBreleases[i_db];
 

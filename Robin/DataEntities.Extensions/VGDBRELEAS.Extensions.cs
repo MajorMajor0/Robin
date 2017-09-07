@@ -14,17 +14,17 @@
 
 namespace Robin
 {
-	public partial class VGDBRELEAS
-	{
-		public static implicit operator Release(VGDBRELEAS vgdbRelease)
-		{
-			Release release = new Release();
-			release.Platform_ID = vgdbRelease.VGDBROM.systemID;
-			release.Region_ID = vgdbRelease.regionLocalizedID;
-			release.Title = vgdbRelease.releaseTitleName;
-			release.IsGame = true;
+    public partial class VGDBRELEAS
+    {
+        public static implicit operator Release(VGDBRELEAS vgdbRelease)
+        {
+            Release release = new Release();
+            release.Platform_ID = vgdbRelease.VGDBROM.systemID;
+            release.Region_ID = vgdbRelease.regionLocalizedID ?? 0;
+            release.Title = vgdbRelease.releaseTitleName;
+            release.IsGame = true;
 
-			return release;
-		}
-	}
+            return release;
+        }
+    }
 }

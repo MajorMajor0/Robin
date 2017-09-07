@@ -18,31 +18,13 @@ namespace Robin
 {
 	public partial class VGDBROM
 	{
-		public string AtariTitle
-		{
-			get
-			{
-				return romFileName.Split(new string[] { " (" }, 0)[0];
-			}
-		}
+	    public string AtariTitle => romFileName.Split(new[] {" ("}, 0)[0];
 
-		public string AtariParentTitle
-		{
-			get
-			{
-				return AtariTitle.Split(new string[] { " - " }, 0)[0];
-			}
-		}
+	    public string AtariParentTitle => AtariTitle.Split(new[] {" - "}, 0)[0];
 
-		public string AKA
-		{
-			get
-			{
-				return Regex.Match(romFileName, @"(?<=\(AKA\ )(.*?)(?=\))").Value;
-			}
-		}
+	    public string AKA => Regex.Match(romFileName, @"(?<=\(AKA\ )(.*?)(?=\))").Value;
 
-		public static implicit operator Rom(VGDBROM vgdbRom)
+	    public static implicit operator Rom(VGDBROM vgdbRom)
 		{
 			Rom rom = new Rom();
 			rom.Platform_ID = vgdbRom.systemID;

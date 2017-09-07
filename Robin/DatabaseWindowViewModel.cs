@@ -27,9 +27,9 @@ namespace Robin
     {
         public int Threshold { get; set; }
 
-        public bool ConsiderRegions { get; set; }
+        //public bool ConsiderRegions { get; set; }
 
-        public bool SearchSubdirectories { get; set; }
+        //public bool SearchSubdirectories { get; set; }
 
         IDB selectedIDB;
         public IDB SelectedIDB
@@ -73,8 +73,8 @@ namespace Robin
         public DatabaseWindowViewModel()
         {
             Threshold = 0;
-            ConsiderRegions = true;
-            SearchSubdirectories = false;
+            //ConsiderRegions = true;
+            //SearchSubdirectories = false;
 
             IDBs = new ObservableCollection<IDB>();
 
@@ -101,7 +101,7 @@ namespace Robin
 
         public async void CachePlatform()
         {
-            LocalDB localDB = SelectedIDB.DB;
+            //LocalDB localDB = SelectedIDB.DB;
 
             // Cache platforms to cache in case selection changes during operation
             List<IDBPlatform> IDBPlatforms = new List<IDBPlatform>();
@@ -117,8 +117,8 @@ namespace Robin
             {
                 foreach (IDBPlatform idbPlatform in IDBPlatforms)
                 {
-                    SelectedIDB.CachePlatformReleases(idbPlatform);
-                    SelectedIDB.CachePlatformData(idbPlatform);
+                    SelectedIDB.CachePlatformReleases(idbPlatform.RPlatform);
+                    SelectedIDB.CachePlatformData(idbPlatform.RPlatform);
                     idbPlatform.CacheDate = DateTime.Now;
                 }
 
@@ -154,13 +154,13 @@ namespace Robin
                     foreach (IDBPlatform idbPlatform in list)
                     {
                         Compares comparator = new Compares(SelectedIDB.DB, idbPlatform);
-                        comparator.Title += " [" + ComparisonResults.Count().ToString() + "]";
+                        comparator.Title += "-" + ComparisonResults.Count;
 
                         Reporter.Report("Comparing " + idbPlatform.Releases.Count + " Robin " + idbPlatform.Title + " games to " + Enum.GetName(typeof(LocalDB), SelectedIDB.DB) + ".");
 
                         await Task.Run(() =>
                         {
-                            comparator.CompareToDB(Threshold, (ConsiderRegions && (SelectedIDB.HasRegions)));
+                            comparator.CompareToDB(Threshold, (SelectedIDB.HasRegions));
                         });
 
                         ComparisonResults.Add(comparator);
@@ -181,7 +181,7 @@ namespace Robin
 
             Platform RPlatform = R.Data.Platforms.FirstOrDefault(x => x.ID == idbPlatform.ID);
 
-            OVGRelease ovgrelease = new OVGRelease();
+            OVGRelease ovgrelease;
             foreach (Release release in RPlatform.Releases)
             {
                 ovgrelease = R.Data.OVGReleases.FirstOrDefault(x => x.SHA1 == release.SHA1 && x.Region_ID == release.Region_ID && (x.BoxFrontURL != null || x.BoxBackURL != null));
@@ -237,8 +237,6 @@ namespace Robin
                             Comparator.RReleases[i_r].ID_LB = Comparator.DBreleases[i_db].ID;
                             Comparator.List.RemoveAt(i_comp);
                         }
-                        break;
-                    default:
                         break;
                 }
             }

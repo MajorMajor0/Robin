@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Robin", "Robin\Robin.csproj", "{44603014-394A-461F-9001-276A9F91C8AF}"
 EndProject
@@ -10,55 +10,28 @@ Global
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
-		Release X64|Any CPU = Release X64|Any CPU
-		Release X64|x64 = Release X64|x64
-		Release X64|x86 = Release X64|x86
-		Release X86|Any CPU = Release X86|Any CPU
-		Release X86|x64 = Release X86|x64
-		Release X86|x86 = Release X86|x86
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-		X64|Any CPU = X64|Any CPU
-		X64|x64 = X64|x64
-		X64|x86 = X64|x86
-		X86|Any CPU = X86|Any CPU
-		X86|x64 = X86|x64
-		X86|x86 = X86|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{44603014-394A-461F-9001-276A9F91C8AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{44603014-394A-461F-9001-276A9F91C8AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44603014-394A-461F-9001-276A9F91C8AF}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{44603014-394A-461F-9001-276A9F91C8AF}.Debug|Any CPU.Build.0 = Debug|x64
+		{44603014-394A-461F-9001-276A9F91C8AF}.Debug|Any CPU.Deploy.0 = Debug|x64
 		{44603014-394A-461F-9001-276A9F91C8AF}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{44603014-394A-461F-9001-276A9F91C8AF}.Debug|x64.Build.0 = Debug|Any CPU
 		{44603014-394A-461F-9001-276A9F91C8AF}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{44603014-394A-461F-9001-276A9F91C8AF}.Release X64|Any CPU.ActiveCfg = Release|Any CPU
-		{44603014-394A-461F-9001-276A9F91C8AF}.Release X64|Any CPU.Build.0 = Release|Any CPU
-		{44603014-394A-461F-9001-276A9F91C8AF}.Release X64|x64.ActiveCfg = Debug|Any CPU
-		{44603014-394A-461F-9001-276A9F91C8AF}.Release X64|x64.Build.0 = Debug|Any CPU
-		{44603014-394A-461F-9001-276A9F91C8AF}.Release X64|x86.ActiveCfg = Release|Any CPU
-		{44603014-394A-461F-9001-276A9F91C8AF}.Release X86|Any CPU.ActiveCfg = Release|Any CPU
-		{44603014-394A-461F-9001-276A9F91C8AF}.Release X86|Any CPU.Build.0 = Release|Any CPU
-		{44603014-394A-461F-9001-276A9F91C8AF}.Release X86|x64.ActiveCfg = Debug|Any CPU
-		{44603014-394A-461F-9001-276A9F91C8AF}.Release X86|x64.Build.0 = Debug|Any CPU
-		{44603014-394A-461F-9001-276A9F91C8AF}.Release X86|x86.ActiveCfg = Release|Any CPU
-		{44603014-394A-461F-9001-276A9F91C8AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{44603014-394A-461F-9001-276A9F91C8AF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{44603014-394A-461F-9001-276A9F91C8AF}.Release|x64.ActiveCfg = Debug|Any CPU
-		{44603014-394A-461F-9001-276A9F91C8AF}.Release|x64.Build.0 = Debug|Any CPU
+		{44603014-394A-461F-9001-276A9F91C8AF}.Release|Any CPU.ActiveCfg = Release|x64
+		{44603014-394A-461F-9001-276A9F91C8AF}.Release|Any CPU.Build.0 = Release|x64
+		{44603014-394A-461F-9001-276A9F91C8AF}.Release|Any CPU.Deploy.0 = Release|x64
+		{44603014-394A-461F-9001-276A9F91C8AF}.Release|x64.ActiveCfg = Release|x64
+		{44603014-394A-461F-9001-276A9F91C8AF}.Release|x64.Build.0 = Release|x64
 		{44603014-394A-461F-9001-276A9F91C8AF}.Release|x86.ActiveCfg = Release|Any CPU
-		{44603014-394A-461F-9001-276A9F91C8AF}.X64|Any CPU.ActiveCfg = Release|Any CPU
-		{44603014-394A-461F-9001-276A9F91C8AF}.X64|Any CPU.Build.0 = Release|Any CPU
-		{44603014-394A-461F-9001-276A9F91C8AF}.X64|x64.ActiveCfg = Debug|Any CPU
-		{44603014-394A-461F-9001-276A9F91C8AF}.X64|x64.Build.0 = Debug|Any CPU
-		{44603014-394A-461F-9001-276A9F91C8AF}.X64|x86.ActiveCfg = Release|Any CPU
-		{44603014-394A-461F-9001-276A9F91C8AF}.X86|Any CPU.ActiveCfg = Release|Any CPU
-		{44603014-394A-461F-9001-276A9F91C8AF}.X86|Any CPU.Build.0 = Release|Any CPU
-		{44603014-394A-461F-9001-276A9F91C8AF}.X86|x64.ActiveCfg = Debug|Any CPU
-		{44603014-394A-461F-9001-276A9F91C8AF}.X86|x64.Build.0 = Debug|Any CPU
-		{44603014-394A-461F-9001-276A9F91C8AF}.X86|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {93DE19C6-F4F8-4F50-88F6-2A56E8B78D57}
 	EndGlobalSection
 EndGlobal

@@ -15,7 +15,6 @@
 using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Robin
 {
@@ -29,22 +28,34 @@ namespace Robin
 	{
 		public RobinDataEntities(object sender)
 		{
+
 			Configuration.LazyLoadingEnabled = false;
 			Configuration.AutoDetectChangesEnabled = false;
 
-			Platforms.Include(x=>x.Emulators).Load();
-			Roms.LoadAsync();
-			Releases.LoadAsync();
-			Games.LoadAsync();
-			Regions.LoadAsync();
-			Collections.Include(x=>x.Games).Include(x=>x.Releases).Load();
-			Emulators.Include(x=>x.Platforms).Load();
+            Stopwatch Watch = Stopwatch.StartNew();
 
-			foreach (Game game in Games)
+			Platforms.Include(x=>x.Emulators).Load();
+
+            Reporter.Report("Platforms loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
+			Roms.LoadAsync();
+            Reporter.Report("Roms loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
+            Releases.LoadAsync();
+            Reporter.Report("Releases loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
+            Games.LoadAsync();
+            Reporter.Report("Games loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
+            Regions.LoadAsync();
+            Reporter.Report("Regions loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
+            Collections.Include(x=>x.Games).Include(x=>x.Releases).Load();
+            Reporter.Report("Collections loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
+            Emulators.Include(x=>x.Platforms).Load();
+            Reporter.Report("Games loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
+
+            foreach (Game game in Games)
 			{
 				game.Releases = game.Releases.OrderBy(x => x.Region.Priority).ThenByDescending(x=>x.Version).ToList();
 			}
-		}
+            Reporter.Report("Games ordered " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
+        }
 
 		//		public void LoadAll()
 		//		{

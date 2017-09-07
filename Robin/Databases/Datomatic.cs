@@ -50,47 +50,45 @@ namespace Robin
             if (detect)
             {
                 R.Data.ChangeTracker.DetectChanges();
-                Debug.WriteLine("Detect changes: " + Watch.ElapsedMilliseconds);
 #if DEBUG
+                Debug.WriteLine("Detect changes: " + Watch.ElapsedMilliseconds);
                 Watch.Restart();
 #endif
             }
 
             var ReleaseEntries = R.Data.ChangeTracker.Entries<Release>();
-
+#if DEBUG
             Debug.WriteLine("Get entries: " + Watch.ElapsedMilliseconds);
+#endif
+            int releaseAddCount = ReleaseEntries.Count(x => x.State == EntityState.Added);
 
-            int ReleaseAddCount = ReleaseEntries.Count(x => x.State == EntityState.Added);
+            int releaseModCount = ReleaseEntries.Count(x => x.State == EntityState.Modified);
 
-            int ReleaseModCount = ReleaseEntries.Count(x => x.State == EntityState.Modified);
-
-            Reporter.Report("Releases added: " + ReleaseAddCount + ", Releases updated: " + ReleaseModCount);
+            Reporter.Report("Releases added: " + releaseAddCount + ", Releases updated: " + releaseModCount);
         }
 
         public void CachePlatforms()
         {
-            throw new NotImplementedException();
+            Reporter.Report("It is not possible to cache platforms for Robin/Datomatic");
         }
 
-        public void CachePlatformGames(IDBPlatform idbPlatform)
+        public void CachePlatformGames(Platform platform)
         {
-            throw new NotImplementedException();
+            Reporter.Report("It is not possible to cache games for Robin/Datomatic, only releases");
         }
 
-        public void CachePlatformData(IDBPlatform idbPlatform)
+        public void CachePlatformData(Platform platform)
         {
             // TODO make this copy data from DBs to Platforms
-            throw new NotImplementedException();
+            Reporter.Report("It is not possible to cache platform data for Robin/Datomatic");
         }
 
         bool disposed;
 
         const string UNL = @".*\(Unl\).*";
 
-        public void CachePlatformReleases(IDBPlatform _platform)
+        public void CachePlatformReleases(Platform platform)
         {
-            Platform platform = R.Data.Platforms.Where(x => x.ID == _platform.ID).FirstOrDefault();
-
             //TODO: customize dialog window to explain what is going on here--i.e., that you have to find a datomatic file
             // Configure open file dialog box
             Microsoft.Win32.OpenFileDialog Dialog = new Microsoft.Win32.OpenFileDialog();
@@ -108,9 +106,9 @@ namespace Robin
 #if DEBUG
                 Stopwatch Watch2 = Stopwatch.StartNew();
 #endif
-                Stopwatch Watch3 = Stopwatch.StartNew();
+                //Stopwatch Watch3 = Stopwatch.StartNew();
 
-                XDocument DatomaticFile = new XDocument();
+                XDocument DatomaticFile;
 
                 if (Path.GetExtension(Dialog.FileName) == ".zip")
                 {
@@ -130,11 +128,11 @@ namespace Robin
                 }
 
                 List<Region> datomaticRegions = R.Data.Regions.Where(x => x.Datomatic != null).ToList();
-                
+
                 // Add release where required to make sure xelements have standardized info
                 foreach (XElement gameElement in DatomaticFile.Root.Elements("game"))
                 {
-                    if (gameElement.Descendants("release").Count() == 0)
+                    if (!gameElement.Descendants("release").Any())
                     {
                         string elementName = gameElement.SafeGetA(attribute: "name") ?? "Unk";
                         string regionName = "UNK";
@@ -171,10 +169,12 @@ namespace Robin
                 {
                     List<XElement> parentElements = DatomaticFile.Root.Descendants("game").Where(x => x.SafeGetA(attribute: "cloneof") == null).ToList();
                     List<XElement> childElements = DatomaticFile.Root.Descendants("game").Where(x => x.SafeGetA(attribute: "cloneof") != null).ToList();
+#if DEBUG
                     Watch2.Restart();
                     Debug.WriteLine("00: " + Watch2.ElapsedMilliseconds); Watch2.Restart();
+#endif                  
                     int j = 0;
-                    int parentCount = parentElements.Count();
+                    int parentCount = parentElements.Count;
                     int releaseCount = DatomaticFile.Root.Descendants("release").Count();
                     int romCount = DatomaticFile.Root.Descendants("rom").Count();
 
@@ -193,29 +193,36 @@ namespace Robin
 
                         Game game = null;
                         string parentTitle = parentElement.SafeGetA(attribute: "name");
-
+#if DEBUG
                         Watch2.Restart();
+#endif
                         // Collect all child roms
                         List<XElement> romElements = childElements.Where(x => x.SafeGetA(attribute: "cloneof") == parentTitle).ToList();
                         romElements.Insert(0, parentElement);
+#if DEBUG
                         Debug.WriteLine("A: " + Watch2.ElapsedMilliseconds); Watch2.Restart();
+#endif
 
                         // Check if game exists
                         foreach (XElement romElement in romElements)
                         {
                             string romElementSha1 = romElement.SafeGetA(element1: "rom", attribute: "sha1");
-
+#if DEBUG
                             Watch2.Restart();
+#endif
                             Release release = platform.Releases.FirstOrDefault(x => x.Rom.SHA1 == romElementSha1);
                             if (release != null)
                             {
                                 game = release.Game;
                                 break; // Game exists--no need to keep looking
                             }
+#if DEBUG
                             Debug.WriteLine("AA: " + Watch2.ElapsedMilliseconds); Watch2.Restart();
+#endif
                         }
+#if DEBUG
                         Debug.WriteLine("B: " + Watch2.ElapsedMilliseconds); Watch2.Restart();
-
+#endif
                         // If the game wasn't found, create a new one and add it
                         if (game == null)
                         {
@@ -226,14 +233,13 @@ namespace Robin
                         // Check if each rom exists
                         foreach (XElement romElement in romElements)
                         {
-                            Rom rom = null;
                             string romElementSha1 = romElement.SafeGetA(element1: "rom", attribute: "sha1");
                             if (romElementSha1 == null)
                             {
                                 continue; // Malformed element
                             }
 
-                            rom = R.Data.Roms.FirstOrDefault(x => x.SHA1 == romElementSha1);
+                            var rom = R.Data.Roms.FirstOrDefault(x => x.SHA1 == romElementSha1);
 
                             // Not found, create a new one
                             if (rom == null)
@@ -241,20 +247,26 @@ namespace Robin
                                 rom = new Rom() { Platform_ID = platform.ID };
                                 R.Data.Roms.Add(rom);
                             }
+#if DEBUG
                             Watch2.Restart();
+#endif
                             // Whether existing or new, overwrite properties with new data
                             ParseElementToRom(romElement, rom);
+#if DEBUG
                             Debug.WriteLine("C: " + Watch2.ElapsedMilliseconds); Watch2.Restart();
-
+#endif
                             // Get the releases from the rom element
                             foreach (XElement releaseElement in romElement.Descendants("release"))
                             {
-                                string releaseTitle = releaseElement.SafeGetA(attribute: "name");
+                                //string releaseTitle = releaseElement.SafeGetA(attribute: "name");
                                 string releaseRegionTitle = releaseElement.SafeGetA(attribute: "region");
+
                                 if (releaseRegionTitle == null)
                                 {
-
+                                    Reporter.Report("Skipped release (SHA1: " + romElementSha1 + ") because the datomatic file lists it with no region");
+                                    continue;
                                 }
+
                                 long? regionID = R.Data.Regions.FirstOrDefault(x => (x.Datomatic == releaseRegionTitle) || (x.Title == releaseRegionTitle)).ID;
 
                                 if (regionID == null)
@@ -262,26 +274,32 @@ namespace Robin
                                     Reporter.Report("Skipped Datomatic release (SHA1: " + romElementSha1 + ", Region: " + releaseRegionTitle + ") because the region wasn't recognized. Consider adding this region to the database");
                                     continue;
                                 }
+#if DEBUG
                                 Watch2.Restart();
+#endif
                                 Release release = platform.Releases.FirstOrDefault(x => x.Rom_ID == rom.ID && x.Region_ID == regionID);
                                 if (release == null)
                                 {
                                     release = new Release();
                                     release.Game = game;
                                     release.Rom = rom;
-                                    release.Region_ID = regionID;
+                                    release.Region_ID = (long)regionID;
                                     platform.Releases.Add(release);
                                 }
+#if DEBUG
                                 Debug.WriteLine("D: " + Watch2.ElapsedMilliseconds); Watch2.Restart();
+#endif
                                 ParseElementToRelease(releaseElement, release);
+#if DEBUG
                                 Debug.WriteLine("E: " + Watch2.ElapsedMilliseconds); Watch2.Restart();
+#endif
                             }
                         }
                     }
 
                     // Update platform cache date
                     string dateString = DatomaticFile.SafeGetB("header", "date");
-                    DateTime cacheDate = new DateTime();
+                    DateTime cacheDate;
                     if (dateString != null)
                     {
                         CultureInfo enUS = new CultureInfo("en-US");
@@ -296,7 +314,7 @@ namespace Robin
                         }
                     }
 
-                    Reporter.Report("Finished. " + Watch2.Elapsed.ToString(@"m\:s") + " total elapsed");
+                    Reporter.Report("Finished.");
                 }
 
                 catch (NullReferenceException)
@@ -350,7 +368,7 @@ namespace Robin
 
             Matches.RemoveAll(x => Regex.IsMatch(x, @".*Rev.*|.*v.*|.*Beta.*|.*Proto.*|.*NTSC.*|.*PAL.*|.*Unl.*|.*Japan.*|.*USA.*"));
 
-            for (int i = 0; i < Matches.Count(); i++)
+            for (int i = 0; i < Matches.Count; i++)
             {
                 Matches[i] = Matches[i].Replace("(", "").Replace(")", "");
             }
@@ -364,7 +382,7 @@ namespace Robin
             string languages = @"\w{2},\w{2},.*";
             Matches.RemoveAll(x => Regex.IsMatch(x, languages));
 
-            if (Matches.Count() > 0)
+            if (Matches.Any())
             {
                 release.Special = string.Join(", ", Matches);
             }
@@ -394,7 +412,7 @@ namespace Robin
             rom.Source = "Datomatic";
             rom.CRC32 = romElement.SafeGetA(element1: "rom", attribute: "crc");
             rom.MD5 = romElement.SafeGetA(element1: "rom", attribute: "md5");
-            rom.SHA1 = romElement.SafeGetA(element1: "rom", attribute: "sha1"); ;
+            rom.SHA1 = romElement.SafeGetA(element1: "rom", attribute: "sha1");
             rom.Size = romElement.SafeGetA(element1: "rom", attribute: "size");
             rom.Title = romElement.SafeGetA(element1: "rom", attribute: "name");
             rom.Title = Path.GetFileNameWithoutExtension(rom.Title);
@@ -420,8 +438,7 @@ namespace Robin
             {
                 // free other managed objects that implement
                 // IDisposable only
-                // R.Data.GBPlatforms.Dispose()
-                ;
+                // R.Data.GBPlatforms.Dispose();
             }
 
             // release any unmanaged objects

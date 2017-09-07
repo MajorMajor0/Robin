@@ -16,7 +16,6 @@ using System.Windows;
 using System.Windows.Input;
 using System.Threading.Tasks;
 using System.Windows.Controls;
-using System.Collections.ObjectModel;
 
 namespace Robin
 {
@@ -30,25 +29,25 @@ namespace Robin
             InitializeComponent();
             DataContext = DBWVM;
             Activate();
+#if DEBUG
+            Button BonusButton = new Button();
+            BonusButton.Content = "BONUS!";
+            BonusButton.Style = FindResource("DatabaseWindowButtonStyle1") as Style;
+            BonusButton.Click += BonusButton_Click;
+            DockPanel.SetDock(BonusButton, Dock.Right);
+            Buttons_StackPanel.Children.Add(BonusButton);
+#endif
         }
-
-        private async void BONUS_button_Click(object sender, RoutedEventArgs e)
+#if DEBUG
+        private async void BonusButton_Click(object sender, RoutedEventArgs e)
         {
             Reporter.Report("BONUS!");
 
-
-            int N = R.Data.LBGames.Local.Count;
-
             await Task.Run(() =>
             {
-                foreach (Release release in R.Data.Releases)
-                {
-                    release.SetLBReleaseMatch();
-                }
-
             });
         }
-
+#endif
         private void Compare_Click(object sender, RoutedEventArgs e)
         {
             DBWVM.CompareToDBAsync();
@@ -68,33 +67,12 @@ namespace Robin
             R.Data.Save(true);
         }
 
-        // Add Database file from datomatic
-        private async void GetDatomatic_Click(object sender, RoutedEventArgs e)
-        {
-            await Task.Run(() =>
-            {
-            });
-            //if (PlatformList.SelectedItems.Count == 1)
-            //{
-            //	Platform platform = PlatformList.SelectedItem as Platform;
-            //	await Task.Run(() =>
-            //	{
-            //		//DBWVM.R.Data.Configuration.AutoDetectChangesEnabled = false;
-            //		Datomatic datomatic = new Datomatic();
-            //		datomatic.CacheFromXML(platform);
-            //		//DBWVM.R.Data.ChangeTracker.DetectChanges();
-            //		//DBWVM.SaveChanges();
-            //		//DBWVM.R.Data.Configuration.AutoDetectChangesEnabled = false;
-            //	});
-            //}
-        }
-
         private void PlatformList_MouseUp(object sender, MouseButtonEventArgs e)
         {
             if (PlatformList.SelectedItems.Count > 0)
             {
                 DatabaseGrid.DataContext = DBWVM.SelectedPlatform;
-                CountBlock.DataContext = PlatformList.SelectedItem;
+                CountBlock.DataContext = (PlatformList.SelectedItem as IDBPlatform).Releases;
             }
         }
 
@@ -109,12 +87,13 @@ namespace Robin
 
         private void DataGrid_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            //if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
-            //{
-            //	DataGridScale.ScaleX += (e.Delta > 0) ? .1 : -.1;
-            //	DataGridScale.ScaleY += (e.Delta > 0) ? .1 : -.1;
-            //}
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+            {
+                DataGridScale.ScaleX += (e.Delta > 0) ? .1 : -.1;
+                DataGridScale.ScaleY += (e.Delta > 0) ? .1 : -.1;
+            }
         }
+
 
         private void ArtWindow_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
@@ -138,24 +117,23 @@ namespace Robin
         {
             Release release = (e.OriginalSource as Control).DataContext as Release;
             MatchWindow matchWindow = new MatchWindow(release);
-            matchWindow.Show();
-            matchWindow.Activate();
         }
 
-        private void CacheGames_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private void CacheReleases_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = DBWVM.SelectedIDB != null;
         }
 
-        private void CacheGames_Executed(object sender, ExecutedRoutedEventArgs e)
+        private void CacheReleases_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            DBWVM.CachePlatform(); ;
+            DBWVM.CachePlatform();
         }
     }
+
     public static class DBCommands
     {
-        public static RoutedUICommand ArtWindow = new RoutedUICommand("Open Art Window", "ArtWindow", typeof(CustomCommands));
-        public static RoutedUICommand MatchWindow = new RoutedUICommand("Open Match Window", "ArtWindow", typeof(CustomCommands));
-        public static RoutedUICommand CacheGames = new RoutedUICommand("Cache games", "CacheGames", typeof(CustomCommands));
+        public static RoutedUICommand ArtWindow = new RoutedUICommand("Open Art Window", "ArtWindow", typeof(MainWindowCommands));
+        public static RoutedUICommand MatchWindow = new RoutedUICommand("Open Match Window", "ArtWindow", typeof(MainWindowCommands));
+        public static RoutedUICommand CacheReleases = new RoutedUICommand("Cache releases", "CacheReleases", typeof(MainWindowCommands));
     }
 }

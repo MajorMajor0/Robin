@@ -18,14 +18,11 @@ namespace Robin
 {
 	public partial class Rom
 	{
-		public bool IsBios { get { return Regex.IsMatch(Title, @"\[BIOS\]") ? true : false; } }
+	    public bool IsBios => Regex.IsMatch(Title, @"\[BIOS\]");
 
-		public string FilePath
-		{
-			get { return Platform.RomDirectory + FileName; }
-		}
+	    public string FilePath => Platform.RomDirectory + FileName;
 
-		public void StoreFileName(string extension)
+	    public void StoreFileName(string extension)
 		{
 			if (Platform_ID != CONSTANTS.ARCADE_PLATFORM_ID)
 			{

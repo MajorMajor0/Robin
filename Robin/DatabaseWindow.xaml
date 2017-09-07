@@ -21,18 +21,26 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 		Title="Databases"
 		Height="700"
 		Width="1200"
-		Style="{StaticResource WindowStyle1}"
-		Icon="{StaticResource RobinIcon}">
+		Style="{StaticResource WindowStyle1}">
+
+	<!--Icon="{StaticResource RobinIcon}"-->
 	<Window.Resources>
-		<local:IntToVisibilityConverter x:Key="intToVisibilityConverter" />
 
-
-		<Style TargetType="DataGridColumnHeader"
+		<!--<Style TargetType="DataGridColumnHeader"
 			   x:Key="MyHeaderStyle">
 			<Setter Property="FontSize"
 					Value="14" />
 			<Setter Property="Foreground"
 					Value="Blue" />
+		</Style>-->
+		<Style x:Key="DatabaseWindowButtonStyle1"
+			   TargetType="{x:Type Button}">
+			<Setter Property="Margin"
+					Value="0,0,15,0" />
+			<Setter Property="Width"
+					Value="110" />
+			<Setter Property="Height"
+					Value="25" />
 		</Style>
 	</Window.Resources>
 
@@ -43,12 +51,10 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 		<CommandBinding Command="local:DBCommands.MatchWindow"
 						CanExecute="MatchWindow_CanExecute"
 						Executed="MatchWindow_Executed" />
-		<CommandBinding Command="local:DBCommands.CacheGames"
-						CanExecute="CacheGames_CanExecute"
-						Executed="CacheGames_Executed" />
-	
-	
-	
+		<CommandBinding Command="local:DBCommands.CacheReleases"
+						CanExecute="CacheReleases_CanExecute"
+						Executed="CacheReleases_Executed" />
+
 	</Window.CommandBindings>
 
 	<Grid x:Name="Window_Grid">
@@ -56,6 +62,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 			<RowDefinition Height="40" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
+		
 		<ListView x:Name="Tabs_ListView"
 				  VerticalAlignment="Stretch"
 				  VerticalContentAlignment="Center"
@@ -87,7 +94,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 		<Grid x:Name="Content_Grid"
 			  Grid.Row="1">
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="270" />
+				<ColumnDefinition Width="300" />
 				<ColumnDefinition Width="2*" />
 			</Grid.ColumnDefinitions>
 
@@ -145,7 +152,6 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 								   Style="{StaticResource Heading0}"
 								   DockPanel.Dock="Top" />
 						<local:BindableSelectionListBox x:Name="PlatformList"
-														Grid.Row="1"
 														ScrollViewer.CanContentScroll="True"
 														ScrollViewer.HorizontalScrollBarVisibility="Hidden"
 														ScrollViewer.VerticalScrollBarVisibility="Hidden"
@@ -332,13 +338,11 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 									<Setter Property="Margin"
 											Value="5" />
 									<Setter Property="AutoGenerateColumns"
-											Value="true" />
-
+											Value="False" />
 									<Setter Property="SelectionMode"
 											Value="Extended" />
 									<Setter Property="SelectionUnit"
 											Value="Cell" />
-
 									<Setter Property="AlternatingRowBackground"
 											Value="LightGray" />
 									<Setter Property="RowBackground"
@@ -354,7 +358,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 											Value="Transparent" />
 								</Style>
 
-								<Style x:Key="DataGridColumnHeaderStyle1"
+								<!--<Style x:Key="DataGridColumnHeaderStyle1"
 									   TargetType="{x:Type DataGridColumnHeader}">
 									<Setter Property="Background"
 											Value="Transparent" />
@@ -366,12 +370,12 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 											Value="{StaticResource NormalFontFamily}" />
 									<Setter Property="Padding"
 											Value="10,3,10,3" />
-								</Style>
+								</Style>-->
 
-								<DataTemplate DataType="{x:Type local:Compares}">
+								<DataTemplate x:Name="ComparesTemplate"
+											  DataType="{x:Type local:Compares}">
 									<DataGrid Style="{StaticResource DataGridStyle1}"
 											  ItemsSource="{Binding List}"
-											  AutoGenerateColumns="False"
 											  PreviewMouseWheel="DataGrid_MouseWheel">
 										<DataGrid.LayoutTransform>
 											<ScaleTransform x:Name="DataGridScale"
@@ -395,11 +399,11 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										</DataGrid.Columns>
 									</DataGrid>
 								</DataTemplate>
+								
 								<DataTemplate x:Name="PlatformTemplate"
 											  DataType="{x:Type local:Platform}">
 									<DataGrid Style="{StaticResource DataGridStyle1}"
 											  ItemsSource="{Binding Path=(local:Platform.Releases), Mode=OneWay}"
-											  AutoGenerateColumns="False"
 											  PreviewMouseWheel="DataGrid_MouseWheel">
 										<DataGrid.ContextMenu>
 											<ContextMenu>
@@ -444,6 +448,8 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 																Binding="{Binding Version, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Matched"
 																Binding="{Binding MatchedToSomething, TargetNullValue=-}" />
+											<DataGridTextColumn Header="Is Game"
+																Binding="{Binding IsGame, TargetNullValue=-}" />
 										</DataGrid.Columns>
 									</DataGrid>
 								</DataTemplate>
@@ -452,7 +458,6 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 											  DataType="{x:Type local:GDBPlatform}">
 									<DataGrid Style="{StaticResource DataGridStyle1}"
 											  ItemsSource="{Binding Path=(local:IDBPlatform.Releases), Mode=OneWay}"
-											  AutoGenerateColumns="False"
 											  PreviewMouseWheel="DataGrid_MouseWheel">
 										<DataGrid.Columns>
 											<DataGridTextColumn Header="ID"
@@ -490,11 +495,11 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										</DataGrid.Columns>
 									</DataGrid>
 								</DataTemplate>
+								
 								<DataTemplate x:Name="GBTemplate"
 											  DataType="{x:Type local:GBPlatform}">
 									<DataGrid Style="{StaticResource DataGridStyle1}"
 											  ItemsSource="{Binding Path=(local:IDBPlatform.Releases), Mode=OneWay}"
-											  AutoGenerateColumns="False"
 											  PreviewMouseWheel="DataGrid_MouseWheel">
 										<DataGrid.Columns>
 											<DataGridTextColumn Header="ID"
@@ -516,11 +521,11 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										</DataGrid.Columns>
 									</DataGrid>
 								</DataTemplate>
+								
 								<DataTemplate x:Name="LBTemplate"
 											  DataType="{x:Type local:LBPlatform}">
 									<DataGrid Style="{StaticResource DataGridStyle1}"
 											  ItemsSource="{Binding Path=(local:IDBPlatform.Releases), Mode=OneWay}"
-											  AutoGenerateColumns="False"
 											  PreviewMouseWheel="DataGrid_MouseWheel">
 										<DataGrid.Columns>
 											<DataGridTextColumn Header="ID"
@@ -550,11 +555,11 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										</DataGrid.Columns>
 									</DataGrid>
 								</DataTemplate>
+								
 								<DataTemplate x:Name="OVGTemplate"
 											  DataType="{x:Type local:OVGPlatform}">
 									<DataGrid Style="{StaticResource DataGridStyle1}"
 											  ItemsSource="{Binding Path=(local:IDBPlatform.Releases), Mode=OneWay}"
-											  AutoGenerateColumns="False"
 											  PreviewMouseWheel="DataGrid_MouseWheel">
 										<DataGrid.Columns>
 											<DataGridTextColumn Header="ID"
@@ -606,46 +611,39 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 				<Border x:Name="ButtonsBorder"
 						Style="{StaticResource CellStyle}"
-						Grid.Column="1"
-						Grid.Row="2">
+						Grid.Row="1">
 					<Grid x:Name="ButtonsGrid">
-						<DockPanel VerticalAlignment="Stretch">
+						<DockPanel x:Name="ButtonsDockPanel" VerticalAlignment="Stretch">
 							<StackPanel x:Name="Buttons_StackPanel"
 										DockPanel.Dock="Top"
 										HorizontalAlignment="Stretch"
 										Orientation="Horizontal">
 								<StackPanel.Resources>
-									<Style x:Key="DatabaseWindowButtonStyle1"
-										   TargetType="{x:Type Button}">
-										<Setter Property="Margin"
-												Value="0,0,15,0" />
-										<Setter Property="Width"
-												Value="110" />
-										<Setter Property="Height"
-												Value="25" />
-									</Style>
+
 								</StackPanel.Resources>
 								<Button x:Name="Compare_Button"
 										Content="Compare"
 										ToolTip="Compare releases to robin"
 										Style="{StaticResource DatabaseWindowButtonStyle1}"
 										Click="Compare_Click" />
+								
 								<Button x:Name="Cache_button"
 										Content="Cache Releases"
 										ToolTip="Update cache of selected platform."
 										Style="{StaticResource DatabaseWindowButtonStyle1}"
-										Command="local:DBCommands.CacheGames" />
+										Command="local:DBCommands.CacheReleases" />
 
-								<Button x:Name="BONUS_button"
+								<!--<Button x:Name="BONUS_button"
 										Content="BONUS"
-										ToolTip="Get datomatic database file."
 										Style="{StaticResource DatabaseWindowButtonStyle1}"
-										Click="BONUS_button_Click" />
+										Click="BONUS_button_Click" />-->
+								
 								<Button x:Name="Accept_button"
 										Content="Accept Changes"
 										ToolTip="Accept current changes to database."
 										Style="{StaticResource DatabaseWindowButtonStyle1}"
 										Click="AcceptClick" />
+								
 								<Button Content="Write DB Changes"
 										ToolTip="Write the selected database to file"
 										Style="{StaticResource DatabaseWindowButtonStyle1}"
@@ -653,12 +651,13 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 							</StackPanel>
 
-							<StackPanel HorizontalAlignment="Stretch"
+							<StackPanel x:Name="CheckBoxStackPanel"
+										HorizontalAlignment="Stretch"
 										Height="40"
 										Orientation="Horizontal"
 										DockPanel.Dock="Top">
 
-								<CheckBox x:Name="Consider_Regions_checkbox"
+								<!--<CheckBox x:Name="Consider_Regions_checkbox"
 										  Margin="0,0,20,0"
 										  VerticalAlignment="Center"
 										  HorizontalAlignment="Left"
@@ -675,7 +674,8 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										  VerticalContentAlignment="Center">
 									<TextBlock Text="Search subdirectories"
 											   Style="{StaticResource Heading1}" />
-								</CheckBox>
+								</CheckBox>-->
+								
 								<StackPanel VerticalAlignment="Center"
 											Margin="0,0,20,0"
 											Orientation="Horizontal">
@@ -683,7 +683,8 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 											 Text="{Binding Threshold, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 											 VerticalAlignment="Stretch"
 											 Width="17"
-											 Margin="0,0,5,0" />
+											 Margin="0,0,5,0" 
+											 HorizontalContentAlignment="Center"/>
 									<TextBlock Text="Threshold"
 											   Style="{StaticResource Heading1}"
 											   VerticalAlignment="Center" />
@@ -692,7 +693,9 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 
 							</StackPanel>
-							<Grid Height="20"
+							
+							<Grid x:Name="StatusGrid"
+								Height="20"
 								  VerticalAlignment="Bottom">
 								<Grid.ColumnDefinitions>
 									<ColumnDefinition Width="*" />
@@ -702,7 +705,6 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										   Style="{StaticResource Normal}"
 										   VerticalAlignment="Stretch"
 										   HorizontalAlignment="Stretch"
-										   TextWrapping="Wrap"
 										   Text="{Binding Path=(local:Reporter.NewsFeed)}" />
 								<StackPanel Grid.Column="1"
 											VerticalAlignment="Stretch"
@@ -714,7 +716,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 									<TextBlock x:Name="CountBlock"
 											   Style="{StaticResource Normal}"
 											   VerticalAlignment="Stretch"
-											   Text="{Binding Releases.Count,NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}" />
+											   Text="{Binding Count, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}" />
 
 								</StackPanel>
 

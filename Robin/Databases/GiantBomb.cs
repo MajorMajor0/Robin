@@ -13,7 +13,6 @@
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
 
 using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
@@ -51,24 +50,24 @@ namespace Robin
             Reporter.Toc();
         }
 
-        public void CachePlatformReleases(IDBPlatform idbPlatform)
+        public void CachePlatformReleases(Platform platform)
         {
-            CachePlatformReleases(idbPlatform, false);
+            CachePlatformReleases(platform, false);
         }
 
-        public void CachePlatformReleases(IDBPlatform idbPlatform, bool reset = false)
+        public void CachePlatformReleases(Platform platform, bool reset = false)
         {
-            GBPlatform gbPlatform = idbPlatform as GBPlatform;
+            GBPlatform gbPlatform = platform.GBPlatform;
             string startDate = reset ? @"1900-01-01 01:01:01" : gbPlatform.CacheDate.ToString(DATEFORMAT);
             string endDate = DateTime.Now.ToString(DATEFORMAT);
 
-            int N_results = 0;
-            bool haveResults = false;
-            int intCatcher = 0;
+            int N_results;
+            bool haveResults;
+            int intCatcher;
             string downloadText;
             string url;
             StringBuilder urlBuilder;
-            XDocument xdoc = new XDocument();
+            XDocument xdoc;
 
             using (WebClient webClient = new WebClient())
             {
@@ -150,7 +149,7 @@ namespace Robin
                                         gbRelease.Players = intCatcher.ToString();
                                     }
 
-                                    gbRelease.GBPlatform_ID = (long)gbPlatform.ID;
+                                    gbRelease.GBPlatform_ID = gbPlatform.ID;
                                     if (int.TryParse(element.SafeGetA("region", "id"), out intCatcher))
                                     {
                                         gbRelease.Region = R.Data.Regions.FirstOrDefault(x => x.ID_GB == intCatcher) ?? R.Data.Regions.FirstOrDefault(x => x.Title.Contains("Unk"));
@@ -181,32 +180,28 @@ namespace Robin
 
         }
 
-        public void CachePlatformGames(IDBPlatform idbPlatform)
+        public void CachePlatformGames(Platform platform)
         {
-            CachePlatformGames(idbPlatform, false);
+            CachePlatformGames(platform, false);
         }
 
-        public void CachePlatformGames(IDBPlatform idbPlatform, bool reset = false)
+        public void CachePlatformGames(Platform platform, bool reset = false)
         {
-            GBPlatform gbPlatform = idbPlatform as GBPlatform;
+            GBPlatform gbPlatform = platform.GBPlatform;
             string startDate = reset ? @"1900-01-01 01:01:01" : gbPlatform.CacheDate.ToString(DATEFORMAT);
             string endDate = DateTime.Now.ToString(DATEFORMAT);
 
-            int N_results = 0;
-            bool haveResults = false;
-            int intCatcher = 0;
-            string downloadText;
-            string url;
-            XDocument xdoc = new XDocument();
-
             using (WebClient webClient = new WebClient())
             {
-                Reporter.Report("Checking GiantBomb for " + idbPlatform.Title + " games");
+                int N_results;
+                bool haveResults;
+                XDocument xdoc;
+                Reporter.Report("Checking GiantBomb for " + platform.Title + " games");
 
-                url = @"http://www.giantbomb.com/api/games/" + GBAPIKEY + @"&filter=date_last_updated:" + startDate + "|" + endDate + @",platforms:" + gbPlatform.ID + @"&field_list=id&sort=id:asc";
+                var url = @"http://www.giantbomb.com/api/games/" + GBAPIKEY + @"&filter=date_last_updated:" + startDate + "|" + endDate + @",platforms:" + gbPlatform.ID + @"&field_list=id&sort=id:asc";
 
 
-                if (webClient.SafeDownloadStringDB(url, out downloadText))
+                if (webClient.SafeDownloadStringDB(url, out var downloadText))
                 {
                     xdoc = XDocument.Parse(downloadText);
                     haveResults = int.TryParse(xdoc.SafeGetB("number_of_total_results"), out N_results);
@@ -238,7 +233,7 @@ namespace Robin
                             foreach (XElement element in xdoc.Root.Element("results").Elements("game"))
                             {
                                 // If the ID XML value was found
-                                if (int.TryParse(element.SafeGetA("id"), out intCatcher))
+                                if (int.TryParse(element.SafeGetA("id"), out var intCatcher))
                                 {
                                     GBGame gbGame = R.Data.GBGames.FirstOrDefault(x => x.ID == intCatcher);
 
@@ -275,14 +270,14 @@ namespace Robin
             }// end using webclient
         }
 
-        public void CachePlatformData(IDBPlatform idbPlatform)
+        public void CachePlatformData(Platform platform)
         {
-            GBPlatform gbPlatform = idbPlatform as GBPlatform;
-            DateTime startdate = gbPlatform.CacheDate;
+            GBPlatform gbPlatform = platform.GBPlatform;
+            //DateTime startdate = gbPlatform.CacheDate;
 
             string downloadText;
             string url;
-            XDocument xDocument = new XDocument();
+            XDocument xDocument;
 
             Reporter.Tic("Attempting to cache " + gbPlatform.Title + "...");
 
@@ -330,17 +325,18 @@ namespace Robin
             if (detect)
             {
                 R.Data.ChangeTracker.DetectChanges();
-                Debug.WriteLine("Detect changes: " + Watch.ElapsedMilliseconds);
+
 #if DEBUG
+                Debug.WriteLine("Detect changes: " + Watch.ElapsedMilliseconds);
                 Watch.Restart();
 #endif
             }
 
             var gbReleaseEntries = R.Data.ChangeTracker.Entries<GBRelease>();
             var gbGameEntries = R.Data.ChangeTracker.Entries<GBGame>();
-
+#if DEBUG
             Debug.WriteLine("Get entries: " + Watch.ElapsedMilliseconds);
-
+#endif
             int gbReleaseAddCount = gbReleaseEntries.Count(x => x.State == EntityState.Added);
             int gbReleaseModCount = gbReleaseEntries.Count(x => x.State == EntityState.Modified);
 
@@ -372,7 +368,7 @@ namespace Robin
                 // free other managed objects that implement
                 // IDisposable only
                 /*                R.Data.GBPlatforms.Dispose()*/
-                ;
+
             }
 
             // release any unmanaged objects

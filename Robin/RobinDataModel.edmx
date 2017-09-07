@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="Robin.Store" Provider="System.Data.SQLite.EF6" ProviderManifestToken="data source=&quot;C:\Users\Major Major\Documents\Visual Studio 2017\Projects\Robin\Robin\data\RobinData.db3&quot;" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="RobinDataModel.Store" Provider="System.Data.SQLite.EF6" ProviderManifestToken="data source=&quot;C:\Users\MajorMajor\Documents\Visual Studio 2017\Projects\Robin\Robin\Data\RobinData.db3&quot;" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Collection">
           <Key>
             <PropertyRef Name="ID" />
@@ -196,7 +196,7 @@
           <Property Name="ID" Type="integer" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="LBGame_ID" Type="integer" Nullable="false" />
           <Property Name="Region_ID" Type="integer" Nullable="false" />
-          <Property Name="LBPlatform_ID" Type="integer" />
+          <Property Name="LBPlatform_ID" Type="integer" Nullable="false" />
         </EntityType>
         <EntityType Name="Match">
           <Key>
@@ -303,9 +303,10 @@
           <Property Name="ID_GDB" Type="integer" />
           <Property Name="ID_OVG" Type="integer" />
           <Property Name="ID_LBG" Type="integer" />
+          <Property Name="ID_LB" Type="integer" />
           <Property Name="Game_ID" Type="integer" />
           <Property Name="Platform_ID" Type="integer" Nullable="false" />
-          <Property Name="Region_ID" Type="integer" />
+          <Property Name="Region_ID" Type="integer" Nullable="false" />
           <Property Name="URL_ID" Type="integer" />
           <Property Name="Rom_ID" Type="integer" />
           <Property Name="Special" Type="nvarchar" MaxLength="2147483647" />
@@ -325,7 +326,7 @@
           <Property Name="IsCrap" Type="bit" Nullable="false" />
           <Property Name="Preferred" Type="bit" Nullable="false" />
           <Property Name="IsBeaten" Type="bit" Nullable="false" />
-          <Property Name="ID_LB" Type="integer" />
+          <Property Name="PlayCount" Type="integer" Nullable="false" />
         </EntityType>
         <EntityType Name="Rom">
           <Key>
@@ -516,7 +517,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_LBRelease_0_0">
-          <End Role="LBPlatform" Type="Self.LBPlatform" Multiplicity="0..1" />
+          <End Role="LBPlatform" Type="Self.LBPlatform" Multiplicity="1" />
           <End Role="LBRelease" Type="Self.LBRelease" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="LBPlatform">
@@ -660,18 +661,6 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Release_0_0">
-          <End Role="URL" Type="Self.URL" Multiplicity="0..1" />
-          <End Role="Release" Type="Self.Release" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="URL">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="Release">
-              <PropertyRef Name="URL_ID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Release_1_0">
           <End Role="Rom" Type="Self.Rom" Multiplicity="0..1" />
           <End Role="Release" Type="Self.Release" Multiplicity="*" />
           <ReferentialConstraint>
@@ -683,7 +672,31 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Release_1_0">
+          <End Role="URL" Type="Self.URL" Multiplicity="0..1" />
+          <End Role="Release" Type="Self.Release" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="URL">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Release">
+              <PropertyRef Name="URL_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Release_2_0">
+          <End Role="Region" Type="Self.Region" Multiplicity="1" />
+          <End Role="Release" Type="Self.Release" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Region">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Release">
+              <PropertyRef Name="Region_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Release_3_0">
           <End Role="Platform" Type="Self.Platform" Multiplicity="1" />
           <End Role="Release" Type="Self.Release" Multiplicity="*" />
           <ReferentialConstraint>
@@ -695,7 +708,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Release_3_0">
+        <Association Name="FK_Release_4_0">
           <End Role="Game" Type="Self.Game" Multiplicity="0..1" />
           <End Role="Release" Type="Self.Release" Multiplicity="*" />
           <ReferentialConstraint>
@@ -704,18 +717,6 @@
             </Principal>
             <Dependent Role="Release">
               <PropertyRef Name="Game_ID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Release_4_0">
-          <End Role="Region" Type="Self.Region" Multiplicity="0..1" />
-          <End Role="Release" Type="Self.Release" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Region">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="Release">
-              <PropertyRef Name="Region_ID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -791,7 +792,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="RobinStoreContainer">
+        <EntityContainer Name="RobinDataModelStoreContainer">
           <EntitySet Name="Collection" EntityType="Self.Collection" store:Type="Tables" />
           <EntitySet Name="Collection_Game" EntityType="Self.Collection_Game" store:Type="Tables" />
           <EntitySet Name="Collection_Release" EntityType="Self.Collection_Release" store:Type="Tables" />
@@ -917,23 +918,23 @@
             <End Role="Platform_Emulator" EntitySet="Platform_Emulator" />
           </AssociationSet>
           <AssociationSet Name="FK_Release_0_0" Association="Self.FK_Release_0_0">
-            <End Role="URL" EntitySet="URL" />
-            <End Role="Release" EntitySet="Release" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Release_1_0" Association="Self.FK_Release_1_0">
             <End Role="Rom" EntitySet="Rom" />
             <End Role="Release" EntitySet="Release" />
           </AssociationSet>
+          <AssociationSet Name="FK_Release_1_0" Association="Self.FK_Release_1_0">
+            <End Role="URL" EntitySet="URL" />
+            <End Role="Release" EntitySet="Release" />
+          </AssociationSet>
           <AssociationSet Name="FK_Release_2_0" Association="Self.FK_Release_2_0">
-            <End Role="Platform" EntitySet="Platform" />
+            <End Role="Region" EntitySet="Region" />
             <End Role="Release" EntitySet="Release" />
           </AssociationSet>
           <AssociationSet Name="FK_Release_3_0" Association="Self.FK_Release_3_0">
-            <End Role="Game" EntitySet="Game" />
+            <End Role="Platform" EntitySet="Platform" />
             <End Role="Release" EntitySet="Release" />
           </AssociationSet>
           <AssociationSet Name="FK_Release_4_0" Association="Self.FK_Release_4_0">
-            <End Role="Region" EntitySet="Region" />
+            <End Role="Game" EntitySet="Game" />
             <End Role="Release" EntitySet="Release" />
           </AssociationSet>
           <AssociationSet Name="FK_Release_5_0" Association="Self.FK_Release_5_0">
@@ -961,10 +962,11 @@
             <End Role="Rom" EntitySet="Rom" />
           </AssociationSet>
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="Robin" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="RobinDataModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityType Name="Collection">
           <Key>
             <PropertyRef Name="ID" />
@@ -994,7 +996,7 @@
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <NavigationProperty Name="Releases" Relationship="Self.FK_Release_6_0" FromRole="Game" ToRole="Release" />
+          <NavigationProperty Name="Releases" Relationship="Self.FK_Release_4_0" FromRole="Game" ToRole="Release" />
           <NavigationProperty Name="Collections" Relationship="Self.Collection_Game" FromRole="Game" ToRole="Collection" />
         </EntityType>
         <EntityType Name="GBGame">
@@ -1122,8 +1124,8 @@
           <Property Name="Players" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="LBPlatform" Relationship="Self.FK_LBGame_0_0" FromRole="LBGame" ToRole="LBPlatform" />
           <NavigationProperty Name="LBImages" Relationship="Self.FK_LBImages_2_0" FromRole="LBGame" ToRole="LBImages" />
-          <NavigationProperty Name="LBReleases" Relationship="Self.FK_LBRelease_1_0" FromRole="LBGame" ToRole="LBRelease" />
-          <NavigationProperty Name="Releases" Relationship="Self.FK_Release_2_0" FromRole="LBGame" ToRole="Release" />
+          <NavigationProperty Name="LBReleases" Relationship="Self.FK_LBRelease_2_0" FromRole="LBGame" ToRole="LBRelease" />
+          <NavigationProperty Name="Releases" Relationship="Self.FK_Release_6_0" FromRole="LBGame" ToRole="Release" />
         </EntityType>
         <EntityType Name="LBImage">
           <Key>
@@ -1159,8 +1161,8 @@
           <Property Name="Controllers" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="CacheDate" Type="DateTime" Nullable="false" />
           <NavigationProperty Name="LBGames" Relationship="Self.FK_LBGame_0_0" FromRole="LBPlatform" ToRole="LBGame" />
+          <NavigationProperty Name="LBReleases" Relationship="Self.FK_LBRelease_0_0" FromRole="LBPlatform" ToRole="LBRelease" />
           <NavigationProperty Name="Platforms" Relationship="Self.FK_Platform_1_0" FromRole="LBPlatform" ToRole="Platform" />
-          <NavigationProperty Name="LBReleases" Relationship="Robin.FK_LBRelease_0_01" FromRole="LBPlatform" ToRole="LBRelease" />
         </EntityType>
         <EntityType Name="LBRelease">
           <Key>
@@ -1169,12 +1171,12 @@
           <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="LBGame_ID" Type="Int64" Nullable="false" />
           <Property Name="Region_ID" Type="Int64" Nullable="false" />
-          <NavigationProperty Name="LBGame" Relationship="Self.FK_LBRelease_1_0" FromRole="LBRelease" ToRole="LBGame" />
+          <Property Name="LBPlatform_ID" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="LBGame" Relationship="Self.FK_LBRelease_2_0" FromRole="LBRelease" ToRole="LBGame" />
           <NavigationProperty Name="LBImages" Relationship="Self.FK_LBImages_0_0" FromRole="LBRelease" ToRole="LBImages" />
-          <NavigationProperty Name="Region" Relationship="Self.FK_LBRelease_0_0" FromRole="LBRelease" ToRole="Region" />
-          <NavigationProperty Name="Releases" Relationship="Self.FK_Release_0_0" FromRole="LBRelease" ToRole="Release" />
-          <Property Name="LBPlatform_ID" Type="Int64" />
-          <NavigationProperty Name="LBPlatform" Relationship="Robin.FK_LBRelease_0_01" FromRole="LBRelease" ToRole="LBPlatform" />
+          <NavigationProperty Name="LBPlatform" Relationship="Self.FK_LBRelease_0_0" FromRole="LBRelease" ToRole="LBPlatform" />
+          <NavigationProperty Name="Region" Relationship="Self.FK_LBRelease_1_0" FromRole="LBRelease" ToRole="Region" />
+          <NavigationProperty Name="Releases" Relationship="Self.FK_Release_5_0" FromRole="LBRelease" ToRole="Release" />
         </EntityType>
         <EntityType Name="Match">
           <Key>
@@ -1223,7 +1225,7 @@
           <Property Name="Date" Type="DateTime" />
           <NavigationProperty Name="OVGPlatform" Relationship="Self.FK_OVGRelease_0_0" FromRole="OVGRelease" ToRole="OVGPlatform" />
           <NavigationProperty Name="Region" Relationship="Self.FK_OVGRelease_1_0" FromRole="OVGRelease" ToRole="Region" />
-          <NavigationProperty Name="Releases" Relationship="Self.FK_Release_4_0" FromRole="OVGRelease" ToRole="Release" />
+          <NavigationProperty Name="Releases" Relationship="Self.FK_Release_7_0" FromRole="OVGRelease" ToRole="Release" />
         </EntityType>
         <EntityType Name="Platform">
           <Key>
@@ -1258,7 +1260,7 @@
           <NavigationProperty Name="GBPlatform" Relationship="Self.FK_Platform_3_0" FromRole="Platform" ToRole="GBPlatform" />
           <NavigationProperty Name="GDBPlatform" Relationship="Self.FK_Platform_2_0" FromRole="Platform" ToRole="GDBPlatform" />
           <NavigationProperty Name="LBPlatform" Relationship="Self.FK_Platform_1_0" FromRole="Platform" ToRole="LBPlatform" />
-          <NavigationProperty Name="Releases" Relationship="Self.FK_Release_5_0" FromRole="Platform" ToRole="Release" />
+          <NavigationProperty Name="Releases" Relationship="Self.FK_Release_3_0" FromRole="Platform" ToRole="Release" />
           <NavigationProperty Name="Roms" Relationship="Self.FK_Rom_0_0" FromRole="Platform" ToRole="Rom" />
           <NavigationProperty Name="Emulators" Relationship="Self.Platform_Emulator" FromRole="Platform" ToRole="Emulator" />
         </EntityType>
@@ -1277,10 +1279,10 @@
           <Property Name="Launchbox" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="GBReleases" Relationship="Self.FK_GBRelease_1_0" FromRole="Region" ToRole="GBRelease" />
           <NavigationProperty Name="LBImages" Relationship="Self.FK_LBImages_1_0" FromRole="Region" ToRole="LBImages" />
-          <NavigationProperty Name="LBReleases" Relationship="Self.FK_LBRelease_0_0" FromRole="Region" ToRole="LBRelease" />
+          <NavigationProperty Name="LBReleases" Relationship="Self.FK_LBRelease_1_0" FromRole="Region" ToRole="LBRelease" />
           <NavigationProperty Name="Matches" Relationship="Self.FK_Match_0_0" FromRole="Region" ToRole="Match" />
           <NavigationProperty Name="OVGReleases" Relationship="Self.FK_OVGRelease_1_0" FromRole="Region" ToRole="OVGRelease" />
-          <NavigationProperty Name="Releases" Relationship="Self.FK_Release_7_0" FromRole="Region" ToRole="Release" />
+          <NavigationProperty Name="Releases" Relationship="Self.FK_Release_2_0" FromRole="Region" ToRole="Release" />
         </EntityType>
         <EntityType Name="Release">
           <Key>
@@ -1291,9 +1293,10 @@
           <Property Name="ID_GDB" Type="Int64" />
           <Property Name="ID_OVG" Type="Int64" />
           <Property Name="ID_LBG" Type="Int64" />
+          <Property Name="ID_LB" Type="Int64" />
           <Property Name="Game_ID" Type="Int64" />
           <Property Name="Platform_ID" Type="Int64" Nullable="false" />
-          <Property Name="Region_ID" Type="Int64" />
+          <Property Name="Region_ID" Type="Int64" Nullable="false" />
           <Property Name="URL_ID" Type="Int64" />
           <Property Name="Rom_ID" Type="Int64" />
           <Property Name="Special" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
@@ -1313,17 +1316,17 @@
           <Property Name="IsCrap" Type="Boolean" Nullable="false" />
           <Property Name="Preferred" Type="Boolean" Nullable="false" />
           <Property Name="IsBeaten" Type="Boolean" Nullable="false" />
-          <Property Name="ID_LB" Type="Int64" />
-          <NavigationProperty Name="Game" Relationship="Self.FK_Release_6_0" FromRole="Release" ToRole="Game" />
+          <Property Name="PlayCount" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="Game" Relationship="Self.FK_Release_4_0" FromRole="Release" ToRole="Game" />
           <NavigationProperty Name="GBRelease" Relationship="Self.FK_Release_9_0" FromRole="Release" ToRole="GBRelease" />
           <NavigationProperty Name="GDBRelease" Relationship="Self.FK_Release_8_0" FromRole="Release" ToRole="GDBRelease" />
-          <NavigationProperty Name="LBGame" Relationship="Self.FK_Release_2_0" FromRole="Release" ToRole="LBGame" />
-          <NavigationProperty Name="LBRelease" Relationship="Self.FK_Release_0_0" FromRole="Release" ToRole="LBRelease" />
-          <NavigationProperty Name="OVGRelease" Relationship="Self.FK_Release_4_0" FromRole="Release" ToRole="OVGRelease" />
-          <NavigationProperty Name="Platform" Relationship="Self.FK_Release_5_0" FromRole="Release" ToRole="Platform" />
-          <NavigationProperty Name="Region" Relationship="Self.FK_Release_7_0" FromRole="Release" ToRole="Region" />
+          <NavigationProperty Name="LBGame" Relationship="Self.FK_Release_6_0" FromRole="Release" ToRole="LBGame" />
+          <NavigationProperty Name="LBRelease" Relationship="Self.FK_Release_5_0" FromRole="Release" ToRole="LBRelease" />
+          <NavigationProperty Name="OVGRelease" Relationship="Self.FK_Release_7_0" FromRole="Release" ToRole="OVGRelease" />
+          <NavigationProperty Name="Platform" Relationship="Self.FK_Release_3_0" FromRole="Release" ToRole="Platform" />
+          <NavigationProperty Name="Region" Relationship="Self.FK_Release_2_0" FromRole="Release" ToRole="Region" />
+          <NavigationProperty Name="Rom" Relationship="Self.FK_Release_0_0" FromRole="Release" ToRole="Rom" />
           <NavigationProperty Name="URL" Relationship="Self.FK_Release_1_0" FromRole="Release" ToRole="URL" />
-          <NavigationProperty Name="Rom" Relationship="Self.FK_Release_3_0" FromRole="Release" ToRole="Rom" />
           <NavigationProperty Name="Collections" Relationship="Self.Collection_Release" FromRole="Release" ToRole="Collection" />
         </EntityType>
         <EntityType Name="Rom">
@@ -1340,7 +1343,7 @@
           <Property Name="Source" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="FileName" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Platform" Relationship="Self.FK_Rom_0_0" FromRole="Rom" ToRole="Platform" />
-          <NavigationProperty Name="Releases" Relationship="Self.FK_Release_3_0" FromRole="Rom" ToRole="Release" />
+          <NavigationProperty Name="Releases" Relationship="Self.FK_Release_0_0" FromRole="Rom" ToRole="Release" />
         </EntityType>
         <EntityType Name="URL">
           <Key>
@@ -1373,7 +1376,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Release_6_0">
+        <Association Name="FK_Release_4_0">
           <End Role="Game" Type="Self.Game" Multiplicity="0..1" />
           <End Role="Release" Type="Self.Release" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1517,7 +1520,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_LBRelease_1_0">
+        <Association Name="FK_LBRelease_2_0">
           <End Role="LBGame" Type="Self.LBGame" Multiplicity="1" />
           <End Role="LBRelease" Type="Self.LBRelease" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1529,7 +1532,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Release_2_0">
+        <Association Name="FK_Release_6_0">
           <End Role="LBGame" Type="Self.LBGame" Multiplicity="0..1" />
           <End Role="Release" Type="Self.Release" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1565,6 +1568,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_LBRelease_0_0">
+          <End Role="LBPlatform" Type="Self.LBPlatform" Multiplicity="1" />
+          <End Role="LBRelease" Type="Self.LBRelease" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LBPlatform">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="LBRelease">
+              <PropertyRef Name="LBPlatform_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Platform_1_0">
           <End Role="LBPlatform" Type="Self.LBPlatform" Multiplicity="0..1" />
           <End Role="Platform" Type="Self.Platform" Multiplicity="*" />
@@ -1577,7 +1592,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_LBRelease_0_0">
+        <Association Name="FK_LBRelease_1_0">
           <End Role="Region" Type="Self.Region" Multiplicity="1" />
           <End Role="LBRelease" Type="Self.LBRelease" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1589,7 +1604,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Release_0_0">
+        <Association Name="FK_Release_5_0">
           <End Role="LBRelease" Type="Self.LBRelease" Multiplicity="0..1" />
           <End Role="Release" Type="Self.Release" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1637,7 +1652,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Release_4_0">
+        <Association Name="FK_Release_7_0">
           <End Role="OVGRelease" Type="Self.OVGRelease" Multiplicity="0..1" />
           <End Role="Release" Type="Self.Release" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1649,7 +1664,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Release_5_0">
+        <Association Name="FK_Release_3_0">
           <End Role="Platform" Type="Self.Platform" Multiplicity="1" />
           <End Role="Release" Type="Self.Release" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1673,8 +1688,8 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Release_7_0">
-          <End Role="Region" Type="Self.Region" Multiplicity="0..1" />
+        <Association Name="FK_Release_2_0">
+          <End Role="Region" Type="Self.Region" Multiplicity="1" />
           <End Role="Release" Type="Self.Release" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Region">
@@ -1682,6 +1697,18 @@
             </Principal>
             <Dependent Role="Release">
               <PropertyRef Name="Region_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Release_0_0">
+          <End Role="Rom" Type="Self.Rom" Multiplicity="0..1" />
+          <End Role="Release" Type="Self.Release" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Rom">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Release">
+              <PropertyRef Name="Rom_ID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1694,18 +1721,6 @@
             </Principal>
             <Dependent Role="Release">
               <PropertyRef Name="URL_ID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Release_3_0">
-          <End Role="Rom" Type="Self.Rom" Multiplicity="0..1" />
-          <End Role="Release" Type="Self.Release" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Rom">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="Release">
-              <PropertyRef Name="Rom_ID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1747,7 +1762,7 @@
             <End Role="Emulator" EntitySet="Emulators" />
             <End Role="Platform" EntitySet="Platforms" />
           </AssociationSet>
-          <AssociationSet Name="FK_Release_6_0" Association="Self.FK_Release_6_0">
+          <AssociationSet Name="FK_Release_4_0" Association="Self.FK_Release_4_0">
             <End Role="Game" EntitySet="Games" />
             <End Role="Release" EntitySet="Releases" />
           </AssociationSet>
@@ -1795,11 +1810,11 @@
             <End Role="LBGame" EntitySet="LBGames" />
             <End Role="LBImages" EntitySet="LBImages" />
           </AssociationSet>
-          <AssociationSet Name="FK_LBRelease_1_0" Association="Self.FK_LBRelease_1_0">
+          <AssociationSet Name="FK_LBRelease_2_0" Association="Self.FK_LBRelease_2_0">
             <End Role="LBGame" EntitySet="LBGames" />
             <End Role="LBRelease" EntitySet="LBReleases" />
           </AssociationSet>
-          <AssociationSet Name="FK_Release_2_0" Association="Self.FK_Release_2_0">
+          <AssociationSet Name="FK_Release_6_0" Association="Self.FK_Release_6_0">
             <End Role="LBGame" EntitySet="LBGames" />
             <End Role="Release" EntitySet="Releases" />
           </AssociationSet>
@@ -1811,15 +1826,19 @@
             <End Role="Region" EntitySet="Regions" />
             <End Role="LBImages" EntitySet="LBImages" />
           </AssociationSet>
+          <AssociationSet Name="FK_LBRelease_0_0" Association="Self.FK_LBRelease_0_0">
+            <End Role="LBPlatform" EntitySet="LBPlatforms" />
+            <End Role="LBRelease" EntitySet="LBReleases" />
+          </AssociationSet>
           <AssociationSet Name="FK_Platform_1_0" Association="Self.FK_Platform_1_0">
             <End Role="LBPlatform" EntitySet="LBPlatforms" />
             <End Role="Platform" EntitySet="Platforms" />
           </AssociationSet>
-          <AssociationSet Name="FK_LBRelease_0_0" Association="Self.FK_LBRelease_0_0">
+          <AssociationSet Name="FK_LBRelease_1_0" Association="Self.FK_LBRelease_1_0">
             <End Role="Region" EntitySet="Regions" />
             <End Role="LBRelease" EntitySet="LBReleases" />
           </AssociationSet>
-          <AssociationSet Name="FK_Release_0_0" Association="Self.FK_Release_0_0">
+          <AssociationSet Name="FK_Release_5_0" Association="Self.FK_Release_5_0">
             <End Role="LBRelease" EntitySet="LBReleases" />
             <End Role="Release" EntitySet="Releases" />
           </AssociationSet>
@@ -1835,11 +1854,11 @@
             <End Role="Region" EntitySet="Regions" />
             <End Role="OVGRelease" EntitySet="OVGReleases" />
           </AssociationSet>
-          <AssociationSet Name="FK_Release_4_0" Association="Self.FK_Release_4_0">
+          <AssociationSet Name="FK_Release_7_0" Association="Self.FK_Release_7_0">
             <End Role="OVGRelease" EntitySet="OVGReleases" />
             <End Role="Release" EntitySet="Releases" />
           </AssociationSet>
-          <AssociationSet Name="FK_Release_5_0" Association="Self.FK_Release_5_0">
+          <AssociationSet Name="FK_Release_3_0" Association="Self.FK_Release_3_0">
             <End Role="Platform" EntitySet="Platforms" />
             <End Role="Release" EntitySet="Releases" />
           </AssociationSet>
@@ -1847,16 +1866,16 @@
             <End Role="Platform" EntitySet="Platforms" />
             <End Role="Rom" EntitySet="Roms" />
           </AssociationSet>
-          <AssociationSet Name="FK_Release_7_0" Association="Self.FK_Release_7_0">
+          <AssociationSet Name="FK_Release_2_0" Association="Self.FK_Release_2_0">
             <End Role="Region" EntitySet="Regions" />
+            <End Role="Release" EntitySet="Releases" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Release_0_0" Association="Self.FK_Release_0_0">
+            <End Role="Rom" EntitySet="Roms" />
             <End Role="Release" EntitySet="Releases" />
           </AssociationSet>
           <AssociationSet Name="FK_Release_1_0" Association="Self.FK_Release_1_0">
             <End Role="URL" EntitySet="URLs" />
-            <End Role="Release" EntitySet="Releases" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Release_3_0" Association="Self.FK_Release_3_0">
-            <End Role="Rom" EntitySet="Roms" />
             <End Role="Release" EntitySet="Releases" />
           </AssociationSet>
           <AssociationSet Name="Collection_Game" Association="Self.Collection_Game">
@@ -1871,31 +1890,15 @@
             <End Role="Platform" EntitySet="Platforms" />
             <End Role="Emulator" EntitySet="Emulators" />
           </AssociationSet>
-          <AssociationSet Name="FK_LBRelease_0_01" Association="Robin.FK_LBRelease_0_01">
-            <End Role="LBPlatform" EntitySet="LBPlatforms" />
-            <End Role="LBRelease" EntitySet="LBReleases" />
-          </AssociationSet>
         </EntityContainer>
-        <Association Name="FK_LBRelease_0_01">
-          <End Type="Robin.LBPlatform" Role="LBPlatform" Multiplicity="0..1" />
-          <End Type="Robin.LBRelease" Role="LBRelease" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="LBPlatform">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="LBRelease">
-              <PropertyRef Name="LBPlatform_ID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="RobinStoreContainer" CdmEntityContainer="RobinDataEntities">
+        <EntityContainerMapping StorageEntityContainer="RobinDataModelStoreContainer" CdmEntityContainer="RobinDataEntities">
           <EntitySetMapping Name="Collections">
-            <EntityTypeMapping TypeName="Robin.Collection">
+            <EntityTypeMapping TypeName="RobinDataModel.Collection">
               <MappingFragment StoreEntitySet="Collection">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
@@ -1904,7 +1907,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Emulators">
-            <EntityTypeMapping TypeName="Robin.Emulator">
+            <EntityTypeMapping TypeName="RobinDataModel.Emulator">
               <MappingFragment StoreEntitySet="Emulator">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
@@ -1917,14 +1920,14 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Games">
-            <EntityTypeMapping TypeName="Robin.Game">
+            <EntityTypeMapping TypeName="RobinDataModel.Game">
               <MappingFragment StoreEntitySet="Game">
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="GBGames">
-            <EntityTypeMapping TypeName="Robin.GBGame">
+            <EntityTypeMapping TypeName="RobinDataModel.GBGame">
               <MappingFragment StoreEntitySet="GBGame">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="GBPlatform_ID" ColumnName="GBPlatform_ID" />
@@ -1940,7 +1943,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="GBPlatforms">
-            <EntityTypeMapping TypeName="Robin.GBPlatform">
+            <EntityTypeMapping TypeName="RobinDataModel.GBPlatform">
               <MappingFragment StoreEntitySet="GBPlatform">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
@@ -1954,7 +1957,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="GBReleases">
-            <EntityTypeMapping TypeName="Robin.GBRelease">
+            <EntityTypeMapping TypeName="RobinDataModel.GBRelease">
               <MappingFragment StoreEntitySet="GBRelease">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
@@ -1970,7 +1973,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="GDBPlatforms">
-            <EntityTypeMapping TypeName="Robin.GDBPlatform">
+            <EntityTypeMapping TypeName="RobinDataModel.GDBPlatform">
               <MappingFragment StoreEntitySet="GDBPlatform">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
@@ -1994,7 +1997,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="GDBReleases">
-            <EntityTypeMapping TypeName="Robin.GDBRelease">
+            <EntityTypeMapping TypeName="RobinDataModel.GDBRelease">
               <MappingFragment StoreEntitySet="GDBRelease">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
@@ -2016,7 +2019,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Languages">
-            <EntityTypeMapping TypeName="Robin.Language">
+            <EntityTypeMapping TypeName="RobinDataModel.Language">
               <MappingFragment StoreEntitySet="Language">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
@@ -2025,7 +2028,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="LBGames">
-            <EntityTypeMapping TypeName="Robin.LBGame">
+            <EntityTypeMapping TypeName="RobinDataModel.LBGame">
               <MappingFragment StoreEntitySet="LBGame">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
@@ -2042,7 +2045,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="LBImages">
-            <EntityTypeMapping TypeName="Robin.LBImage">
+            <EntityTypeMapping TypeName="RobinDataModel.LBImage">
               <MappingFragment StoreEntitySet="LBImages">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="LBGame_ID" ColumnName="LBGame_ID" />
@@ -2055,7 +2058,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="LBPlatforms">
-            <EntityTypeMapping TypeName="Robin.LBPlatform">
+            <EntityTypeMapping TypeName="RobinDataModel.LBPlatform">
               <MappingFragment StoreEntitySet="LBPlatform">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
@@ -2075,17 +2078,17 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="LBReleases">
-            <EntityTypeMapping TypeName="Robin.LBRelease">
+            <EntityTypeMapping TypeName="RobinDataModel.LBRelease">
               <MappingFragment StoreEntitySet="LBRelease">
-                <ScalarProperty Name="LBPlatform_ID" ColumnName="LBPlatform_ID" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="LBGame_ID" ColumnName="LBGame_ID" />
                 <ScalarProperty Name="Region_ID" ColumnName="Region_ID" />
+                <ScalarProperty Name="LBPlatform_ID" ColumnName="LBPlatform_ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Matches">
-            <EntityTypeMapping TypeName="Robin.Match">
+            <EntityTypeMapping TypeName="RobinDataModel.Match">
               <MappingFragment StoreEntitySet="Match">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ID_GB" ColumnName="ID_GB" />
@@ -2097,7 +2100,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="OVGPlatforms">
-            <EntityTypeMapping TypeName="Robin.OVGPlatform">
+            <EntityTypeMapping TypeName="RobinDataModel.OVGPlatform">
               <MappingFragment StoreEntitySet="OVGPlatform">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
@@ -2105,7 +2108,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="OVGReleases">
-            <EntityTypeMapping TypeName="Robin.OVGRelease">
+            <EntityTypeMapping TypeName="RobinDataModel.OVGRelease">
               <MappingFragment StoreEntitySet="OVGRelease">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Region_ID" ColumnName="Region_ID" />
@@ -2132,7 +2135,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Platforms">
-            <EntityTypeMapping TypeName="Robin.Platform">
+            <EntityTypeMapping TypeName="RobinDataModel.Platform">
               <MappingFragment StoreEntitySet="Platform">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
@@ -2163,7 +2166,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Regions">
-            <EntityTypeMapping TypeName="Robin.Region">
+            <EntityTypeMapping TypeName="RobinDataModel.Region">
               <MappingFragment StoreEntitySet="Region">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
@@ -2178,13 +2181,14 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Releases">
-            <EntityTypeMapping TypeName="Robin.Release">
+            <EntityTypeMapping TypeName="RobinDataModel.Release">
               <MappingFragment StoreEntitySet="Release">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ID_GB" ColumnName="ID_GB" />
                 <ScalarProperty Name="ID_GDB" ColumnName="ID_GDB" />
                 <ScalarProperty Name="ID_OVG" ColumnName="ID_OVG" />
                 <ScalarProperty Name="ID_LBG" ColumnName="ID_LBG" />
+                <ScalarProperty Name="ID_LB" ColumnName="ID_LB" />
                 <ScalarProperty Name="Game_ID" ColumnName="Game_ID" />
                 <ScalarProperty Name="Platform_ID" ColumnName="Platform_ID" />
                 <ScalarProperty Name="Region_ID" ColumnName="Region_ID" />
@@ -2207,12 +2211,12 @@
                 <ScalarProperty Name="IsCrap" ColumnName="IsCrap" />
                 <ScalarProperty Name="Preferred" ColumnName="Preferred" />
                 <ScalarProperty Name="IsBeaten" ColumnName="IsBeaten" />
-                <ScalarProperty Name="ID_LB" ColumnName="ID_LB" />
+                <ScalarProperty Name="PlayCount" ColumnName="PlayCount" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Roms">
-            <EntityTypeMapping TypeName="Robin.Rom">
+            <EntityTypeMapping TypeName="RobinDataModel.Rom">
               <MappingFragment StoreEntitySet="Rom">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Platform_ID" ColumnName="Platform_ID" />
@@ -2227,7 +2231,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="URLs">
-            <EntityTypeMapping TypeName="Robin.URL">
+            <EntityTypeMapping TypeName="RobinDataModel.URL">
               <MappingFragment StoreEntitySet="URL">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="BoxFront" ColumnName="BoxFront" />
@@ -2245,7 +2249,7 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <AssociationSetMapping Name="Collection_Game" TypeName="Robin.Collection_Game" StoreEntitySet="Collection_Game">
+          <AssociationSetMapping Name="Collection_Game" TypeName="RobinDataModel.Collection_Game" StoreEntitySet="Collection_Game">
             <EndProperty Name="Game">
               <ScalarProperty Name="ID" ColumnName="Game_ID" />
             </EndProperty>
@@ -2253,7 +2257,7 @@
               <ScalarProperty Name="ID" ColumnName="Collection_ID" />
             </EndProperty>
           </AssociationSetMapping>
-          <AssociationSetMapping Name="Collection_Release" TypeName="Robin.Collection_Release" StoreEntitySet="Collection_Release">
+          <AssociationSetMapping Name="Collection_Release" TypeName="RobinDataModel.Collection_Release" StoreEntitySet="Collection_Release">
             <EndProperty Name="Release">
               <ScalarProperty Name="ID" ColumnName="Release_ID" />
             </EndProperty>
@@ -2261,7 +2265,7 @@
               <ScalarProperty Name="ID" ColumnName="Collection_ID" />
             </EndProperty>
           </AssociationSetMapping>
-          <AssociationSetMapping Name="Platform_Emulator" TypeName="Robin.Platform_Emulator" StoreEntitySet="Platform_Emulator">
+          <AssociationSetMapping Name="Platform_Emulator" TypeName="RobinDataModel.Platform_Emulator" StoreEntitySet="Platform_Emulator">
             <EndProperty Name="Platform">
               <ScalarProperty Name="ID" ColumnName="Platform_ID" />
             </EndProperty>
