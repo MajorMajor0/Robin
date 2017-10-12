@@ -95,7 +95,6 @@
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Controls\BindableSelectionTreeView.cs" />
-    <Compile Include="Classes\Art.cs" />
     <Compile Include="Classes\AutoFilter.cs" />
     <Compile Include="Classes\Constants.cs" />
     <Compile Include="Classes\Filex.cs" />
@@ -104,13 +103,10 @@
     <Compile Include="Controls\BindableSelectionListView.cs" />
     <Compile Include="Databases\GoodTools.cs" />
     <Compile Include="Databases\Launchbox.cs" />
-    <Compile Include="Databases\RobinDB.cs" />
-    <Compile Include="Databases\Validate.cs" />
     <Compile Include="Databases\Datomatic.cs" />
     <Compile Include="Databases\DBTimer.cs" />
     <Compile Include="Databases\GamesDB.cs" />
     <Compile Include="Databases\GiantBomb.cs" />
-    <Compile Include="Classes\SNES.cs" />
     <Compile Include="Classes\Reporter.cs" />
     <Compile Include="Controls\BindableSelectionListBox.cs" />
     <Compile Include="Databases\MAME.cs" />

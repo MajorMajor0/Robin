@@ -1,6 +1,6 @@
 ﻿/*This file is part of Robin.
  * 
- * Robin is free software: you can redistribute it and/or modify
+ * Robin is free software: you can redistribute this file and/or modify
  * it under the terms of the Code Project Open Licence 1.02, or (at your 
  * option) any later version. See https://www.codeproject.com/info/cpol10.aspx */
 
