@@ -192,7 +192,9 @@ namespace Robin
 				Stopwatch Watch1 = Stopwatch.StartNew();
 #endif
 				LBGame lbGame = R.Data.LBGames.FirstOrDefault(x => x.ID == id);
+#if DEBUG
 				Debug.WriteLine("Scrounge game : " + Watch1.ElapsedMilliseconds);
+#endif
 				if (lbGame == null)
 				{
 					lbGame = new LBGame();

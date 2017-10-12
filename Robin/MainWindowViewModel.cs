@@ -88,7 +88,7 @@ namespace Robin
 			}
 		}
 
-		public TitledCollection<Collection> CollectionList { get; set; }
+		public CollectionList CollectionList { get; set; }
 
 		IList selectedDBs { get; set; }
 		public IList SelectedDBs
@@ -135,7 +135,7 @@ namespace Robin
 			PlatformCollection = new AutoFilterCollection<Platform>(R.Data.Platforms.Local.ToList(), "Platforms");
 			EmulatorCollection = new AutoFilterCollection<Emulator>(R.Data.Emulators.Local.ToList(), "Emulators");
 
-			CollectionList = new TitledCollection<Collection>("Collections");
+			CollectionList = new CollectionList("Collections");
 
 			MainBigList = new ObservableCollection<object>();
 			MainBigList.Add(ReleaseCollection);
@@ -156,24 +156,24 @@ namespace Robin
 		}
 	}
 
-	//public class CollectionList
-	//{
-	//	public string Title { get; set; }
+	public class CollectionList
+	{
+		public string Title { get; set; }
 
-	//	public ObservableCollection<Collection> List => R.Data.Collections.Local;
+		public ObservableCollection<Collection> List => R.Data.Collections.Local;
 
-	//	public CollectionList(string title)
-	//	{
-	//		Title = title;
-	//	}
+		public CollectionList(string title)
+		{
+			Title = title;
+		}
 
-	//	public void Add(Collection collection)
-	//	{
-	//		List.Add(collection);
-	//	}
-	//	public void Remove(Collection collection)
-	//	{
-	//		List.Remove(collection);
-	//	}
-	//}
+		public void Add(Collection collection)
+		{
+			List.Add(collection);
+		}
+		public void Remove(Collection collection)
+		{
+			List.Remove(collection);
+		}
+	}
 }
