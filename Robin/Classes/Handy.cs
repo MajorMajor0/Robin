@@ -20,7 +20,7 @@ namespace Robin
 {
 	class Handy
 	{
-		public static bool ConvertLnx(string fileName)
+		public static bool ConvertLynx(string fileName)
 		{
 			try
 			{

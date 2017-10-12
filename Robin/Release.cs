@@ -204,13 +204,13 @@ namespace Robin
     		set { _isCrap = value; OnPropertyChanged("IsCrap"); } 
     	}
     
-        private bool _preferred;
-    	public bool Preferred 
-    	{ 
+        /* private bool _preferred;
+     	public bool Preferred 
+     	{ 
     		get { return _preferred; } 
     		set { _preferred = value; OnPropertyChanged("Preferred"); } 
     	}
-    
+    */
         private bool _isBeaten;
     	public bool IsBeaten 
     	{ 

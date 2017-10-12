@@ -24,13 +24,13 @@ namespace Robin
 {
 	public static class Reporter
 	{
-        //private static ObservableCollection<Message> messages;
+		//private static ObservableCollection<Message> messages;
 
-        private static object messagesLock = new object();
+		private static object messagesLock = new object();
 
-        public static ObservableCollection<Message> Messages { get; set; }
+		public static ObservableCollection<Message> Messages { get; set; }
 
-        static Stopwatch watch;
+		static Stopwatch watch;
 
 		private static string _newsFeed;
 		public static string NewsFeed
@@ -48,22 +48,19 @@ namespace Robin
 
 		static Reporter()
 		{
-            watch = new Stopwatch();
+			watch = new Stopwatch();
 			Messages = new ObservableCollection<Message>();
-            BindingOperations.EnableCollectionSynchronization(Messages, messagesLock);
-            Report("I'm not your guy, buddy.");
+			BindingOperations.EnableCollectionSynchronization(Messages, messagesLock);
+			Report("I'm not your guy, buddy.");
 		}
 
-		public static async void Report(string msg, Message.Sort sort = Message.Sort.Note)
+		public static void Report(string msg, Message.Sort sort = Message.Sort.Note)
 		{
-			await Task.Run(() =>
-			{
-				NewsFeed = msg;
+			NewsFeed = msg;
 
-				Message message = new Message(msg);
-				message.MsgSort = sort;
-				Messages.Add(message);
-			});
+			Message message = new Message(msg);
+			message.MsgSort = sort;
+			Messages.Add(message);
 		}
 
 		public static void Warn(string message)
@@ -76,34 +73,32 @@ namespace Robin
 			Report(message, Message.Sort.Error);
 		}
 
-		public static async void ReportInline(string message)
+		public static void ReportInline(string message)
 		{
-			await Task.Run(() =>
-			{
-				NewsFeed += message;
-				Messages.Last().Msg += message;
-			});
+
+			NewsFeed += message;
+			Messages.Last().Msg += message;
 		}
 
-        public static void Tic(string message)
-        {
-            watch.Start();
-            Report(message);
-        }
+		public static void Tic(string message)
+		{
+			watch.Start();
+			Report(message);
+		}
 
-        public static void Toc(string message = null)
-        {
-            watch.Stop();
-            watch.Reset();
-            if (message == null)
-            {
-                ReportInline(watch.Elapsed.ToString(@"ss") + " s");
-            }
-            else
-            {
-                ReportInline(message);
-            }
-        }
+		public static void Toc(string message = null)
+		{
+			watch.Stop();
+			watch.Reset();
+			if (message == null)
+			{
+				ReportInline(watch.Elapsed.ToString(@"ss") + " s");
+			}
+			else
+			{
+				ReportInline(message);
+			}
+		}
 
 		public class Message
 		{

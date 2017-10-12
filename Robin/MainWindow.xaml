@@ -20,9 +20,11 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 		Title="Robin"
 		Height="900"
 		Width="1600"
-		
 		Closing="Main_Window_Closing"
 		Style="{StaticResource WindowStyle1}">
+	<Window.DataContext>
+		<local:MainWindowViewModel />
+	</Window.DataContext>
 	<Window.Resources>
 		<!--Icon="{StaticResource RobinIcon}"-->
 
@@ -51,71 +53,6 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 	</Window.Resources>
 
-	<Window.CommandBindings>
-		<CommandBinding Command="local:MainWindowCommands.About"
-						CanExecute="About_CanExecute"
-						Executed="About_Executed" />
-		
-		<CommandBinding Command="local:MainWindowCommands.GetAllArt"
-						CanExecute="GetAllArt_CanExecute"
-						Executed="GetAllArt_Executed" />
-		<CommandBinding Command="local:MainWindowCommands.GetAllData"
-						CanExecute="GetAllData_CanExecute"
-						Executed="GetAllData_Executed" />
-		<CommandBinding Command="local:MainWindowCommands.Play"
-						CanExecute="Play_CanExecute"
-						Executed="Play_Executed" />
-		<CommandBinding Command="local:MainWindowCommands.MarkAsCrap"
-						CanExecute="MarkAsCrap_CanExecute"
-						Executed="MarkAsCrap_Executed" />
-		<CommandBinding Command="local:MainWindowCommands.MarkNotCrap"
-						CanExecute="MarkNotCrap_CanExecute"
-						Executed="MarkNotCrap_Executed" />
-		<CommandBinding Command="local:MainWindowCommands.MarkAsBeaten"
-						CanExecute="MarkAsBeaten_CanExecute"
-						Executed="MarkAsBeaten_Executed" />
-		<CommandBinding Command="local:MainWindowCommands.MarkNotBeaten"
-						CanExecute="MarkNotBeaten_CanExecute"
-						Executed="MarkNotBeaten_Executed" />
-		<CommandBinding Command="local:MainWindowCommands.MarkAsGame"
-						CanExecute="MarkAsGame_CanExecute"
-						Executed="MarkAsGame_Executed" />
-		<CommandBinding Command="local:MainWindowCommands.MarkNotGame"
-						CanExecute="MarkNotGame_CanExecute"
-						Executed="MarkNotGame_Executed" />
-
-		<CommandBinding Command="local:MainWindowCommands.MarkAsPreferred"
-						CanExecute="MarkAsPreferred_CanExecute"
-						Executed="MarkAsPreferred_Executed" />
-		<CommandBinding Command="local:MainWindowCommands.MarkNotPreferred"
-						CanExecute="MarkNotPreferred_CanExecute"
-						Executed="MarkNotPreferred_Executed" />
-		<CommandBinding Command="local:MainWindowCommands.MarkEmulatorPreferred"
-						CanExecute="MarkEmulatorPreferred_CanExecute"
-						Executed="MarkEmulatorPreferred_Executed" />
-		<CommandBinding Command="local:MainWindowCommands.GetSelectedArt"
-						CanExecute="GetSelectedArt_CanExecute"
-						Executed="GetSelectedArt_Executed" />
-		<CommandBinding Command="local:MainWindowCommands.AddCollection"
-						CanExecute="AddCollection_CanExecute"
-						Executed="AddCollection_Executed" />
-		<CommandBinding Command="local:MainWindowCommands.RemoveCollection"
-						CanExecute="RemoveCollection_CanExecute"
-						Executed="RemoveCollection_Executed" />
-		<CommandBinding Command="local:MainWindowCommands.RemoveFromCollection"
-						CanExecute="RemoveFromCollection_CanExecute"
-						Executed="RemoveFromCollection_Executed" />
-		<CommandBinding Command="local:MainWindowCommands.ClearFilters"
-						CanExecute="ClearFilters_CanExecute"
-						Executed="ClearFilters_Executed" />
-		<CommandBinding Command="local:MainWindowCommands.ReporterWindow"
-						CanExecute="ReporterWindow_CanExecute"
-						Executed="ReporterWindow_Executed" />
-		<CommandBinding Command="local:MainWindowCommands.QuitFocus"
-						CanExecute="QuitFocus_CanExecute"
-						Executed="QuitFocus_Executed" />
-	</Window.CommandBindings>
-
 	<Grid x:Name="WindowGrid">
 
 		<Grid.ColumnDefinitions>
@@ -123,6 +60,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 							  MinWidth="250" />
 			<ColumnDefinition Width="2*" />
 		</Grid.ColumnDefinitions>
+
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
@@ -134,30 +72,36 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 			<Menu IsMainMenu="True"
 				  DockPanel.Dock="Top">
 				<MenuItem Header="File">
-					<MenuItem Header="Save Database"
-							  Click="SaveDatabase_Click" />
-					<Separator />
-					<MenuItem Header="Exit" />
+
+					<MenuItem Style="{StaticResource CMenuItemStyle}"
+							  Command="{Binding SaveDataBaseCommand}" />
+
+					<MenuItem Header="Exit"
+							  Click="Exit_Click" />
 				</MenuItem>
 
-				<MenuItem Header="Art">
-					<MenuItem Header="Get art for all releases"
-							  Click="Database_Click" />
-					<MenuItem Header="Create thumbnails"
-							  Click="CreateThumbNail_Click" />
+				<MenuItem x:Name="ArtMenuItem"
+						  Header="Art">
+
+					<MenuItem Style="{StaticResource CMenuItemStyle}"
+							  Command="{Binding GetAllArtCommand}" />
 				</MenuItem>
 
 				<MenuItem Header="Window">
-					<MenuItem Header="Database Window"
-							  Click="Database_Click" />
-					<MenuItem Command="local:MainWindowCommands.ReporterWindow" />
-					<!--<MenuItem Command="Help"-->
-					<!--<MenuItem Header="Convert Lynx Files"
-							  Click="ConvertLynx_Click" />-->
+
+					<MenuItem Style="{StaticResource CMenuItemStyle}"
+							  Command="{Binding DatabaseWindowCommand}" />
+
+					<MenuItem Style="{StaticResource CMenuItemStyle}"
+							  Command="{Binding ReporterWindowCommand}" />
 				</MenuItem>
 				<MenuItem Header="Help">
-					<MenuItem Header="Help" />
-					<MenuItem Command="local:MainWindowCommands.About" />
+
+					<MenuItem Style="{StaticResource CMenuItemStyle}"
+							  Command="{Binding HelpCommand}" />
+
+					<MenuItem Style="{StaticResource CMenuItemStyle}"
+							  Command="{Binding AboutCommand}" />
 				</MenuItem>
 			</Menu>
 		</DockPanel>
@@ -174,50 +118,83 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 			</Grid.RowDefinitions>
 
-			<Border x:Name="FilterBorder"
+			<Border x:Name="SelectorBorder"
 					Grid.Row="0"
-					Style="{StaticResource CellStyle}"
-					DataContext="{Binding ElementName=MainList, Path=DataContext}">
+					VerticalAlignment="Stretch"
+					Style="{StaticResource CellStyle}">
+				<local:BindableSelectionTreeView x:Name="SelectorTreeView"
+												 Background="Transparent"
+												 BorderThickness="0"
+												 Padding="-19,0,0,0"
+												 ItemsSource="{Binding MainBigList}"
+												 SelectedItem_="{Binding MainBigSelection, Mode=OneWayToSource}"
+												 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+												 ScrollViewer.VerticalScrollBarVisibility="Disabled">
+
+					<TreeView.ItemTemplate>
+						<HierarchicalDataTemplate ItemsSource="{Binding List}">
+							<TextBlock Style="{StaticResource Heading0}"
+									   Text="{Binding Title}"
+									   Tag="{Binding ElementName=Main_Window, Path=DataContext}">
+								<TextBlock.ContextMenu>
+									<ContextMenu>
+										<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+												  Command="{Binding AddCollectionCommand}" />
+									</ContextMenu>
+								</TextBlock.ContextMenu>
+							</TextBlock>
+							<HierarchicalDataTemplate.ItemTemplate>
+								<DataTemplate>
+									<TextBlock x:Name="TreeTextBlock"
+											   Style="{StaticResource Normal}"
+											   Text="{Binding Title}"
+											   AllowDrop="True"
+											   Drop="TreeTextBlock_Drop"
+											   Tag="{Binding ElementName=Main_Window, Path=DataContext}">
+										<TextBlock.ContextMenu>
+											<ContextMenu>
+												<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+														  Command="{Binding RemoveCollectionCommand}" />
+											</ContextMenu>
+										</TextBlock.ContextMenu>
+
+
+									</TextBlock>
+
+								</DataTemplate>
+
+							</HierarchicalDataTemplate.ItemTemplate>
+
+						</HierarchicalDataTemplate>
+					</TreeView.ItemTemplate>
+
+					<TreeView.ItemsPanel>
+						<ItemsPanelTemplate>
+							<WrapPanel Orientation="Horizontal" />
+						</ItemsPanelTemplate>
+					</TreeView.ItemsPanel>
+					<TreeView.InputBindings>
+						<KeyBinding Key="Delete"
+									Command="{Binding ElementName=Main_Window, Path=DataContext.RemoveCollectionCommand}" />
+					</TreeView.InputBindings>
+				</local:BindableSelectionTreeView>
+
+			</Border>
+
+			<Border x:Name="FilterBorder"
+					Grid.Row="1"
+					Style="{StaticResource CellStyle}">
 				<Grid>
 					<Grid.RowDefinitions>
-						<RowDefinition Height="40" />
+						<!--<RowDefinition Height="Auto"
+									   MinHeight="40" />-->
 						<RowDefinition Height="40" />
 						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
 
-					<DockPanel x:Name="SelectorButton_DockPanel"
-							   HorizontalAlignment="Left"
-							   VerticalAlignment="Top"
-							   LastChildFill="False"
-							   Height="30">
-						<ToggleButton x:Name="ReleasesButton"
-									  Click="ReleasesButton_Click"
-									  Style="{StaticResource SelectorButtonStyle}">
-							<TextBlock Text="Releases"
-									   Style="{StaticResource SelectorButtonTextStyle}" />
-						</ToggleButton>
-						<ToggleButton x:Name="GamesButton"
-									  Click="GamesButton_Click"
-									  Style="{StaticResource SelectorButtonStyle}">
-							<TextBlock Text="Games"
-									   Style="{StaticResource SelectorButtonTextStyle}" />
-						</ToggleButton>
-						<ToggleButton x:Name="PlatformsButton"
-									  Click="PlatformsButton_Click"
-									  Style="{StaticResource SelectorButtonStyle}">
-							<TextBlock Text="Platforms"
-									   Style="{StaticResource SelectorButtonTextStyle}" />
-						</ToggleButton>
-						<ToggleButton x:Name="EmulatorsButton"
-									  Click="EmulatorsButton_Click"
-									  Style="{StaticResource SelectorButtonStyle}">
-							<TextBlock Text="Emulators"
-									   Style="{StaticResource SelectorButtonTextStyle}" />
-						</ToggleButton>
-					</DockPanel>
-
 					<DockPanel x:Name="SearchBox_DockPanel"
-							   Grid.Row="1">
+							   Grid.Row="0"
+							   DataContext="{Binding ElementName=MainList, Path=DataContext}">
 
 						<Grid x:Name="SearchBox_Grid"
 							  DockPanel.Dock="Left">
@@ -256,24 +233,21 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						</Grid>
 
 						<Button x:Name="ClearButton"
+								DataContext="{Binding ElementName=Main_Window, Path=DataContext}"
+								Style="{StaticResource CButtonStyle}"
+								Command="{Binding ClearFiltersCommand}"
 								DockPanel.Dock="Right"
 								Width="50"
-								Content="Clear"
-								Height="30"
-								Command="local:MainWindowCommands.ClearFilters" />
+								Height="30" />
 
-						<!--<Button x:Name="BonusButton"
-								DockPanel.Dock="Right"
-								Width="50"
-								Content="BONUS!"
-								Click="BonusButton_Click"
-								Height="30" />-->
+
 					</DockPanel>
 
 					<StackPanel x:Name="Filters_StackPanel"
 								Orientation="Vertical"
-								Grid.Row="2"
-								Background="Transparent">
+								Grid.Row="1"
+								Background="Transparent"
+								DataContext="{Binding ElementName=MainList, Path=DataContext}">
 
 						<ListView  x:Name="StringFilterList"
 								   DockPanel.Dock="Top"
@@ -427,18 +401,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 															</ControlTemplate>
 														</Setter.Value>
 													</Setter>
-													<!--<Style.Triggers>
-                                                        <Trigger Property="IsChecked" Value="True">
-                                                            <Setter Property="Content" Value="True"/>
-                                                            <Setter Property="Background" Value="Green"/>
-                                                        </Trigger>
-                                                        <Trigger Property="IsChecked" Value="False">
-                                                            <Setter Property="Content" Value="False"/>
-                                                        </Trigger>
-                                                        <Trigger Property="IsChecked" Value="{x:Null}">
-                                                            <Setter Property="Content" Value="Both"/>
-                                                        </Trigger>
-                                                    </Style.Triggers>-->
+
 												</Style>
 											</ToggleButton.Style>
 										</ToggleButton>
@@ -452,76 +415,24 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 				</Grid>
 			</Border>
 
-			<Border x:Name="CollectionBorder"
-					Grid.Row="1"
-					VerticalAlignment="Stretch"
-					Style="{StaticResource CellStyle}">
-				<StackPanel x:Name="CollectionStackPanel"
-							Orientation="Vertical">
-					<TextBlock Text="Collections"
-							   Style="{StaticResource Heading0}" />
-					<ListView  x:Name="CollectionList"
-							   ItemsSource="{Binding CollectionList}"
-							   Background="Transparent"
-							   BorderBrush="Transparent"
-							   SelectedItem="{Binding ElementName=Main_Window, Path=DataContext.SelectedCollection, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
-
-						<ListView.ItemsPanel>
-							<ItemsPanelTemplate>
-								<StackPanel x:Name="CollectionStackPanel2"
-											Orientation="Vertical"
-											MouseUp="CollectionStackPanel_MouseUp"
-											Drop="CollectionStackPanel_Drop"
-											AllowDrop="True">
-									<StackPanel.ContextMenu>
-										<ContextMenu>
-											<MenuItem Command="local:MainWindowCommands.RemoveCollection"
-													  Visibility="{Binding Path=IsEnabled,
-                            	  RelativeSource={RelativeSource Self},
-                                  Mode=OneWay,
-								  Converter={StaticResource booleanToVisibilityConverter}}" />
-										</ContextMenu>
-									</StackPanel.ContextMenu>
-								</StackPanel>
-							</ItemsPanelTemplate>
-						</ListView.ItemsPanel>
-
-						<ListView.ItemTemplate>
-							<DataTemplate>
-								<TextBox x:Name="CollectionTextBlock"
-										 MouseUp="CollectionStackPanel_MouseUp"
-										 Text="{Binding Title, Mode=TwoWay}"
-										 SpellCheck.IsEnabled="True"
-										 Style="{StaticResource NormalBox}" />
-							</DataTemplate>
-						</ListView.ItemTemplate>
-					</ListView>
-					<StackPanel.ContextMenu>
-						<ContextMenu>
-							<MenuItem Command="local:MainWindowCommands.AddCollection" />
-						</ContextMenu>
-					</StackPanel.ContextMenu>
-
-				</StackPanel>
-
-			</Border>
-
 			<Border x:Name="CurrentItemBorder"
 					Grid.Row="2"
 					VerticalAlignment="Stretch"
-					Style="{StaticResource CellStyle}">
+					Style="{StaticResource CellStyle}"
+					DataContext="{Binding ElementName=MainList, Path=SelectedItem}">
 
-				<DockPanel x:Name="CurrentItemPanel"
-						   Visibility="{Binding ElementName=Main_Window, Path=DataContext.SelectedDBs.Count, Converter={StaticResource intToVisibilityConverter}}">
-					<DockPanel DockPanel.Dock="Top">
+				<DockPanel x:Name="CurrentItemPanel">
+					<DockPanel DockPanel.Dock="Top"
+							   LastChildFill="False">
 						<TextBlock x:Name="CurrentItemTextBlock"
-								   DataContext="{Binding SelectedDB}"
 								   Text="{Binding Title}"
 								   Style="{StaticResource Heading0}"
 								   DockPanel.Dock="Left" />
-						<TextBlock Style="{StaticResource StarTextBlock}"
-								   DataContext="{Binding SelectedDB}"
-								   HorizontalAlignment="Right" />
+						<Grid DockPanel.Dock="Right"
+							  Width="75">
+							<TextBlock Style="{StaticResource StarTextBlock}"
+									   HorizontalAlignment="Left" />
+						</Grid>
 					</DockPanel>
 
 					<ScrollViewer x:Name="CurrentItemScrollViewer"
@@ -531,7 +442,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 								  VerticalAlignment="Stretch"
 								  HorizontalAlignment="Stretch"
 								  DockPanel.Dock="Top"
-								  Content="{Binding SelectedDB}"
+								  Content="{Binding}"
 								  Padding="10,0,0,0">
 						<ContentControl.Resources>
 
@@ -622,7 +533,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										<TextBlock Text="File: "
 												   Style="{StaticResource Heading1}"
 												   DockPanel.Dock="Top" />
-										<TextBlock Text="{Binding FileName}"
+										<TextBlock Text="{Binding Rom.FileName}"
 												   Style="{StaticResource Normal}"
 												   DockPanel.Dock="Top" />
 									</StackPanel>
@@ -725,14 +636,15 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										<TextBlock Text="Rating: "
 												   Style="{StaticResource Heading1}" />
 										<TextBox Width="30"
-												 BorderBrush="{StaticResource Selected_Brush}"
+												 BorderBrush="White"
+												 Background="Gray"
 												 Text="{Binding Rating, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
 												 Style="{StaticResource NormalBox}"
 												 HorizontalAlignment="Center">
 
 											<TextBox.InputBindings>
 												<KeyBinding Key="Return"
-															Command="local:MainWindowCommands.QuitFocus" />
+															Command="{Binding ElementName=Main_Window, Path=QuitFocusCommand}" />
 											</TextBox.InputBindings>
 										</TextBox>
 									</StackPanel>
@@ -759,32 +671,26 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										<ListBox x:Name="GameReleaseListBox"
 												 ItemsSource="{Binding Releases}"
 												 ScrollViewer.HorizontalScrollBarVisibility="Hidden"
-												 Panel.ZIndex="1">
-											<ListBox.ContextMenu>
-												<ContextMenu>
-													<MenuItem Command="local:MainWindowCommands.MarkAsPreferred"
-															  Visibility="{Binding Path=IsEnabled,
-                                                    RelativeSource={RelativeSource Self},
-                                                    Mode=OneWay,
-                                                    Converter={StaticResource booleanToVisibilityConverter}}" />
-													<MenuItem Command="local:MainWindowCommands.MarkNotPreferred"
-															  Visibility="{Binding Path=IsEnabled,
-                                                    RelativeSource={RelativeSource Self},
-                                                    Mode=OneWay,
-                                        Converter={StaticResource booleanToVisibilityConverter}}" />
-												</ContextMenu>
-											</ListBox.ContextMenu>
+												 Panel.ZIndex="1"
+												 SelectedItem="{Binding ElementName=Main_Window, Path=DataContext.SelectedGameRelease}">
 
 											<ListBox.ItemTemplate>
 												<DataTemplate>
 													<StackPanel Orientation="Horizontal"
-																Panel.ZIndex="1">
+																Panel.ZIndex="1"
+																Margin="-4,0,0,0"
+																Tag="{Binding ElementName=Main_Window, Path=DataContext}">
 														<TextBlock Text="• "
-																   Margin="-4,0,0,0"
 																   Style="{StaticResource Normal}"
 																   Visibility="{Binding Path=Preferred, Mode=OneWay, Converter={StaticResource boolToHiddenConverter}}" />
 														<TextBlock Text="{Binding TitleAndRegion}"
 																   Style="{StaticResource IncludedTextBlockStyle1}" />
+														<StackPanel.ContextMenu>
+															<ContextMenu>
+																<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+																		  Command="{Binding MarkSelectedGameReleasePreferredCommand}" />
+															</ContextMenu>
+														</StackPanel.ContextMenu>
 													</StackPanel>
 												</DataTemplate>
 											</ListBox.ItemTemplate>
@@ -872,11 +778,13 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										<TextBlock Text="Emulators"
 												   Style="{StaticResource Heading1}" />
 										<ListBox x:Name="PlatformEmulatorListBox"
-												 ItemsSource="{Binding Emulators}">
+												 ItemsSource="{Binding Emulators}"
+												 SelectedItem="{Binding ElementName=Main_Window, Path=DataContext.SelectedPlatformEmulator}">
 											<ListBox.ItemTemplate>
 												<DataTemplate>
 													<StackPanel Orientation="Horizontal"
-																Margin="-4,0,0,0">
+																Margin="-4,0,0,0"
+																Tag="{Binding ElementName=Main_Window, Path=DataContext}">
 														<TextBlock Text="• "
 																   Style="{StaticResource Normal}">
 															<TextBlock.Visibility>
@@ -888,17 +796,13 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 															</TextBlock.Visibility>
 														</TextBlock>
 														<TextBlock Text="{Binding Title}"
-																   Style="{StaticResource IncludedTextBlockStyle1}">
-															<TextBlock.ContextMenu>
-																<ContextMenu>
-																	<MenuItem Command="local:MainWindowCommands.MarkEmulatorPreferred"
-																			  Visibility="{Binding Path=IsEnabled,
-                                                                    RelativeSource={RelativeSource Self},
-                                                                    Mode=OneWay,
-                                                                    Converter={StaticResource booleanToVisibilityConverter}}" />
-																</ContextMenu>
-															</TextBlock.ContextMenu>
-														</TextBlock>
+																   Style="{StaticResource IncludedTextBlockStyle1}" />
+														<StackPanel.ContextMenu>
+															<ContextMenu>
+																<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+																		  Command="{Binding MarkSelectedPlatformEmulatorPreferredCommand}" />
+															</ContextMenu>
+														</StackPanel.ContextMenu>
 													</StackPanel>
 												</DataTemplate>
 											</ListBox.ItemTemplate>
@@ -938,11 +842,13 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										<TextBlock Text="Platforms"
 												   Style="{StaticResource Heading1}" />
 										<ListBox x:Name="EmulatorPlatformListBox"
-												 ItemsSource="{Binding Platforms1}">
+												 ItemsSource="{Binding Platforms1}"
+												 SelectedItem="{Binding ElementName=Main_Window, Path=DataContext.SelectedEmulatorPlatform}">
 											<ListBox.ItemTemplate>
 												<DataTemplate>
 													<StackPanel Orientation="Horizontal"
-																Margin="-4,0,0,0">
+																Margin="-4,0,0,0"
+																Tag="{Binding ElementName=Main_Window, Path=DataContext}">
 
 														<TextBlock Text="• "
 																   Style="{StaticResource Normal}">
@@ -956,17 +862,13 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 														</TextBlock>
 
 														<TextBlock Text="{Binding Title}"
-																   Style="{StaticResource IncludedTextBlockStyle1}">
-															<TextBlock.ContextMenu>
-																<ContextMenu>
-																	<MenuItem Command="local:MainWindowCommands.MarkEmulatorPreferred"
-																			  Visibility="{Binding Path=IsEnabled,
-                                                                    RelativeSource={RelativeSource Self},
-                                                                    Mode=OneWay,
-                                                                    Converter={StaticResource booleanToVisibilityConverter}}" />
-																</ContextMenu>
-															</TextBlock.ContextMenu>
-														</TextBlock>
+																   Style="{StaticResource IncludedTextBlockStyle1}" />
+														<StackPanel.ContextMenu>
+															<ContextMenu>
+																<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+																		  Command="{Binding MarkSelectedEmulatorPlatformPreferredCommand}" />
+															</ContextMenu>
+														</StackPanel.ContextMenu>
 
 													</StackPanel>
 												</DataTemplate>
@@ -994,10 +896,14 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 				Grid.Column="1"
 				Grid.Row="1"
 				Style="{StaticResource CellStyle}">
+			<!--<ContentControl x:Name="MainControl">
+				
+			</ContentControl>-->
 
 			<local:BindableSelectionListView x:Name="MainList"
 											 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-											 ItemsSource="{Binding Path = FilteredCollection, UpdateSourceTrigger=PropertyChanged}"
+											 DataContext="{Binding ElementName=SelectorTreeView, Path = SelectedItem, UpdateSourceTrigger=PropertyChanged}"
+											 ItemsSource="{Binding FilteredCollection}"
 											 IsTextSearchEnabled="True"
 											 TextSearch.TextPath="Title"
 											 Background="Transparent"
@@ -1005,97 +911,55 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 											 PreviewMouseWheel="MainList_MouseWheel"
 											 MouseLeftButtonDown="MainList_MouseLeftButtonDown"
 											 SelectedItem="{Binding ElementName=Main_Window, Path=DataContext.SelectedDB, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-											 BoundSelectedItems="{Binding ElementName=Main_Window, Path=DataContext.SelectedDBs, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+											 BoundSelectedItems="{Binding ElementName=Main_Window, Path=DataContext.SelectedDBs, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+											 Tag="{Binding ElementName=Main_Window, Path=DataContext}">
 
 				<ListView.ContextMenu>
 					<ContextMenu>
-						<MenuItem Command="local:MainWindowCommands.GetAllArt"
-								  Visibility="{Binding Path=IsEnabled,
-                            	  RelativeSource={RelativeSource Self},
-                                  Mode=OneWay,
-								  Converter={StaticResource booleanToVisibilityConverter}}" />
+						<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+								  Command="{Binding GetAllArtCommand}" />
 
-						<MenuItem Command="local:MainWindowCommands.GetAllData"
-								  Visibility="{Binding Path=IsEnabled,
-                            	  RelativeSource={RelativeSource Self},
-                                  Mode=OneWay,
-								  Converter={StaticResource booleanToVisibilityConverter}}" />
+						<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+								  Command="{Binding GetAllDataCommand}" />
 					</ContextMenu>
 				</ListView.ContextMenu>
 
 				<ListView.Resources>
-					<ContextMenu x:Key="HammerContextMenu">
-						<MenuItem Command="local:MainWindowCommands.Play"
-								  Visibility="{Binding Path=IsEnabled,
-                                        RelativeSource={RelativeSource Self},
-                                        Mode=OneWay,
-                                        Converter={StaticResource booleanToVisibilityConverter}}" />
+					<ContextMenu x:Key="HammerContextMenu"
+								 DataContext="{Binding ElementName=Main_Window, Path=DataContext}">
 
-						<MenuItem Command="local:MainWindowCommands.MarkAsCrap"
-								  Visibility="{Binding Path=IsEnabled,
-                                        RelativeSource={RelativeSource Self},
-                                        Mode=OneWay,
-                                        Converter={StaticResource booleanToVisibilityConverter}}" />
+						<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+								  Command="{Binding PlayCommand}" />
 
-						<MenuItem Command="local:MainWindowCommands.MarkNotCrap"
-								  Visibility="{Binding Path=IsEnabled,
-                                        RelativeSource={RelativeSource Self},
-                                        Mode=OneWay,
-                                        Converter={StaticResource booleanToVisibilityConverter}}" />
+						<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+								  Command="{Binding MarkAsCrapCommand}" />
 
-						<MenuItem Command="local:MainWindowCommands.MarkAsBeaten"
-								  Visibility="{Binding Path=IsEnabled,
-                                        RelativeSource={RelativeSource Self},
-                                        Mode=OneWay,
-                                        Converter={StaticResource booleanToVisibilityConverter}}" />
+						<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+								  Command="{Binding MarkNotCrapCommand}" />
 
-						<MenuItem Command="local:MainWindowCommands.MarkNotBeaten"
-								  Visibility="{Binding Path=IsEnabled,
-                                        RelativeSource={RelativeSource Self},
-                                        Mode=OneWay,
-                                        Converter={StaticResource booleanToVisibilityConverter}}" />
+						<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+								  Command="{Binding MarkAsBeatenCommand}" />
 
-						<MenuItem Command="local:MainWindowCommands.MarkAsGame"
-								  Visibility="{Binding Path=IsEnabled,
-                                        RelativeSource={RelativeSource Self},
-                                        Mode=OneWay,
-                                        Converter={StaticResource booleanToVisibilityConverter}}" />
+						<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+								  Command="{Binding MarkNotBeatenCommand}" />
 
-						<MenuItem Command="local:MainWindowCommands.MarkNotGame"
-								  Visibility="{Binding Path=IsEnabled,
-                                        RelativeSource={RelativeSource Self},
-                                        Mode=OneWay,
-                                        Converter={StaticResource booleanToVisibilityConverter}}" />
+						<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+								  Command="{Binding MarkAsGameCommand}" />
 
-						<MenuItem Command="local:MainWindowCommands.MarkAsPreferred"
-								  Visibility="{Binding Path=IsEnabled,
-                                        RelativeSource={RelativeSource Self},
-                                        Mode=OneWay,
-                                        Converter={StaticResource booleanToVisibilityConverter}}" />
+						<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+								  Command="{Binding MarkNotGameCommand}" />
 
-						<MenuItem Command="local:MainWindowCommands.MarkNotPreferred"
-								  Visibility="{Binding Path=IsEnabled,
-                                        RelativeSource={RelativeSource Self},
-                                        Mode=OneWay,
-                                        Converter={StaticResource booleanToVisibilityConverter}}" />
+						<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+								  Command="{Binding MarkPreferredCommand}" />
 
-						<MenuItem Command="local:MainWindowCommands.GetSelectedArt"
-								  Visibility="{Binding Path=IsEnabled,
-                                        RelativeSource={RelativeSource Self},
-                                        Mode=OneWay,
-                                        Converter={StaticResource booleanToVisibilityConverter}}" />
+						<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+								  Command="{Binding MarkNotPreferredCommand}" />
 
-						<MenuItem Command="local:MainWindowCommands.GetAllArt"
-								  Visibility="{Binding Path=IsEnabled,
-                                        RelativeSource={RelativeSource Self},
-                                        Mode=OneWay,
-                                        Converter={StaticResource booleanToVisibilityConverter}}" />
-
-						<MenuItem Command="local:MainWindowCommands.RemoveFromCollection"
-								  Visibility="{Binding Path=IsEnabled,
-                                        RelativeSource={RelativeSource Self},
-                                        Mode=OneWay,
-                                        Converter={StaticResource booleanToVisibilityConverter}}" />
+						<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+								  Command="{Binding RemoveFromCollectionCommand}" />
+						
+						<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+								  Command="{Binding GetSelectedArtCommand}" />
 					</ContextMenu>
 
 					<Style x:Key="MainListTextBoxStyle"
@@ -1188,7 +1052,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 							<StackPanel.InputBindings>
 								<MouseBinding Gesture="LeftDoubleClick"
-											  Command="local:MainWindowCommands.Play" />
+											  Command="{Binding PlayCommand}" />
 							</StackPanel.InputBindings>
 						</StackPanel>
 					</DataTemplate>
@@ -1266,8 +1130,10 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 					</DataTemplate>
 				</ListView.Resources>
 
-				<ListView.ItemContainerStyle>
-					<Style TargetType="ListViewItem">
+				<!--<ListView.ItemContainerStyle>
+					-->
+				
+				<!--<Style TargetType="ListViewItem">
 
 						<Style.Triggers>
 							<Trigger Property="IsMouseOver"
@@ -1276,8 +1142,9 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										Value="{StaticResource Highlight_Brush}" />
 							</Trigger>
 						</Style.Triggers>
-					</Style>
-				</ListView.ItemContainerStyle>
+					</Style>-->
+				<!--
+				</ListView.ItemContainerStyle>-->
 
 				<ListView.LayoutTransform>
 					<ScaleTransform x:Name="ListViewScale" />
@@ -1289,13 +1156,14 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 													 VirtualizingPanel.ScrollUnit="Pixel"
 													 CanHorizontallyScroll="False"
 													 ContextMenu="{StaticResource HammerContextMenu}"
-													 MouseMove="MainListWrapPanel_MouseMove" />
+													 MouseMove="MainListWrapPanel_MouseMove"
+													 Tag="{Binding ElementName=Main_Window, Path=DataContext}" />
 					</ItemsPanelTemplate>
 				</ListView.ItemsPanel>
 
 				<ListView.InputBindings>
 					<KeyBinding Key="Delete"
-								Command="local:MainWindowCommands.RemoveFromCollection" />
+								Command="{Binding ElementName=Main_Window, Path=DataContext.RemoveFromCollectionCommand}" />
 				</ListView.InputBindings>
 			</local:BindableSelectionListView>
 		</Border>

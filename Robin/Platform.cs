@@ -73,13 +73,13 @@ namespace Robin
     		set { _manufacturer = value; OnPropertyChanged("Manufacturer"); } 
     	}
     
-        private bool _preferred;
-    	public bool Preferred 
-    	{ 
+        /* private bool _preferred;
+     	public bool Preferred 
+     	{ 
     		get { return _preferred; } 
     		set { _preferred = value; OnPropertyChanged("Preferred"); } 
     	}
-    
+    */
         private string _higanRomFolder;
     	public string HiganRomFolder 
     	{ 

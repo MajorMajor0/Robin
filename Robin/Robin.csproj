@@ -89,16 +89,18 @@
       <DependentUpon>ArtWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ArtWindowViewModel.cs" />
-    <Compile Include="MainWindowCommands.cs" />
+    <Compile Include="Classes\Command.cs" />
+    <Compile Include="Classes\TitledCollection.cs" />
+    <Compile Include="Collection.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\BindableSelectionTreeView.cs" />
     <Compile Include="Classes\Art.cs" />
     <Compile Include="Classes\AutoFilter.cs" />
     <Compile Include="Classes\Constants.cs" />
     <Compile Include="Classes\Filex.cs" />
     <Compile Include="Classes\Handy.cs" />
     <Compile Include="Classes\ResizeImage.cs" />
-    <Compile Include="Collection.cs">
-      <DependentUpon>RobinDataModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Controls\BindableSelectionListView.cs" />
     <Compile Include="Databases\GoodTools.cs" />
     <Compile Include="Databases\Launchbox.cs" />
@@ -113,6 +115,7 @@
     <Compile Include="Controls\BindableSelectionListBox.cs" />
     <Compile Include="Databases\MAME.cs" />
     <Compile Include="Databases\OpenVGDB.cs" />
+    <Compile Include="DatabaseWindwowViewModel.Commands.cs" />
     <Compile Include="DataEntities.Extensions\LBPlatform.Extensions.cs" />
     <Compile Include="DataEntities.Extensions\Collection.Extensions.cs" />
     <Compile Include="DataEntities.Extensions\Emulator.Extensions.cs" />
@@ -167,6 +170,7 @@
     <Compile Include="LBRelease.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="MainWindowViewModel.Commands.cs" />
     <Compile Include="MainWindowViewModel.cs" />
     <Compile Include="DatabaseWindowViewModel.cs" />
     <Compile Include="Controls\VirtualizingWrapPanel.cs" />
@@ -259,6 +263,9 @@
     <Compile Include="ReporterWindow.xaml.cs">
       <DependentUpon>ReporterWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MergeWindow.xaml.cs">
+      <DependentUpon>MergeWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="AboutBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -291,6 +298,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="MergeWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -311,8 +322,13 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <None Include="data\RobinData.db3">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Include="data\RobinData.db3" />
+    <EntityDeploy Include="RobinDataModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>RobinDataModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="RobinDataModel.edmx.diagram">
+      <DependentUpon>RobinDataModel.edmx</DependentUpon>
     </None>
     <Resource Include="Images\SNES-CART">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -332,13 +348,6 @@
     <AppDesigner Include="Properties\" />
     <None Include="README.md" />
     <None Include="RobinData.db3" />
-    <EntityDeploy Include="RobinDataModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>RobinDataModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <None Include="RobinDataModel.edmx.diagram">
-      <DependentUpon>RobinDataModel.edmx</DependentUpon>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -402,7 +411,19 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="GalaSoft.MvvmLight, Version=5.3.0.19026, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.Extras, Version=5.3.0.19032, Culture=neutral, PublicKeyToken=669f0b5e8f868abf, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.Extras.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.3.0.19032, Culture=neutral, PublicKeyToken=5f873c45e98af8a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -426,6 +447,9 @@
     <Reference Include="System.Security" />
     <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />

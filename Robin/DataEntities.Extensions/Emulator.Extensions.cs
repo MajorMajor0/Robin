@@ -62,9 +62,10 @@ namespace Robin
             throw new NotImplementedException();
         }
 
-        public void ScrapeArt()
+        public int ScrapeArt(LocalDB localDB)
         {
-            throw new NotImplementedException();
+            Reporter.Report("Scraping art not available for emulators");
+			return 0;
         }
 
         public void Add(string sourceFilePath)

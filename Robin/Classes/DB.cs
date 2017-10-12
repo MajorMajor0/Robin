@@ -31,7 +31,7 @@ namespace Robin
         
         void Play();
 
-        void ScrapeArt();
+        int ScrapeArt(LocalDB localDB);
     }
 
     public interface IDBRelease
@@ -39,37 +39,23 @@ namespace Robin
         long ID { get; }
 
         string Title { get; }
-
         string Overview { get; }
-
         string BoxFrontPath { get; }
-
         string RegionTitle { get; }
-
 
         Region Region { get; }
 
         DateTime? Date { get; }
 
-
         int ScrapeBoxFront();
-
         int ScrapeBoxBack();
-
         int ScrapeBox3D();
-
         int ScrapeScreen();
-
         int ScrapeLogo();
-
         int ScrapeBanner();
-
         int ScrapeCartFront();
-
         int ScrapeCart3D();
-
         int ScrapeMarquee();
-
         int ScrapeControlPanel();
     }
 

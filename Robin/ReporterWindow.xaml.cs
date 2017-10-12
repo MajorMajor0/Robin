@@ -10,6 +10,8 @@ namespace Robin
         public ReporterWindow()
         {
             InitializeComponent();
+            Show();
+            Activate();
         }
     }
 }

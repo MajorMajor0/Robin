@@ -22,19 +22,16 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 		Height="700"
 		Width="1200"
 		Style="{StaticResource WindowStyle1}">
+	<Window.DataContext>
+		<local:DatabaseWindowViewModel />
+	</Window.DataContext>
 
 	<!--Icon="{StaticResource RobinIcon}"-->
 	<Window.Resources>
 
-		<!--<Style TargetType="DataGridColumnHeader"
-			   x:Key="MyHeaderStyle">
-			<Setter Property="FontSize"
-					Value="14" />
-			<Setter Property="Foreground"
-					Value="Blue" />
-		</Style>-->
 		<Style x:Key="DatabaseWindowButtonStyle1"
-			   TargetType="{x:Type Button}">
+			   TargetType="{x:Type Button}"
+			   BasedOn="{StaticResource CButtonStyle}">
 			<Setter Property="Margin"
 					Value="0,0,15,0" />
 			<Setter Property="Width"
@@ -44,25 +41,12 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 		</Style>
 	</Window.Resources>
 
-	<Window.CommandBindings>
-		<CommandBinding Command="local:DBCommands.ArtWindow"
-						CanExecute="ArtWindow_CanExecute"
-						Executed="ArtWindow_Executed" />
-		<CommandBinding Command="local:DBCommands.MatchWindow"
-						CanExecute="MatchWindow_CanExecute"
-						Executed="MatchWindow_Executed" />
-		<CommandBinding Command="local:DBCommands.CacheReleases"
-						CanExecute="CacheReleases_CanExecute"
-						Executed="CacheReleases_Executed" />
-
-	</Window.CommandBindings>
-
 	<Grid x:Name="Window_Grid">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="40" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
-		
+
 		<ListView x:Name="Tabs_ListView"
 				  VerticalAlignment="Stretch"
 				  VerticalContentAlignment="Center"
@@ -102,11 +86,11 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 				  VerticalAlignment="Stretch">
 				<Grid.RowDefinitions>
 					<RowDefinition Height="1*"
-								   MinHeight="100"/>
+								   MinHeight="100" />
 					<RowDefinition Height="5*"
-								   MinHeight="150"/>
+								   MinHeight="150" />
 					<RowDefinition Height="2*"
-								   MinHeight="200"/>
+								   MinHeight="200" />
 				</Grid.RowDefinitions>
 
 				<Border x:Name="CommparisonResultsBorder"
@@ -117,7 +101,9 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 						<ListBox  x:Name="ComparisonResultsList"
 								  Background="Transparent"
-								  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+								  ScrollViewer.CanContentScroll="True"
+								  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+								  ScrollViewer.VerticalScrollBarVisibility="Hidden"
 								  ItemsSource="{Binding Path=ComparisonResults}"
 								  MouseUp="ComparisonResultsList_MouseUp"
 								  SelectedItem="{Binding SelectedComparisonResult, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
@@ -141,9 +127,9 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 							<CollectionViewSource.SortDescriptions>
 								<scm1:SortDescription PropertyName="Manufacturer" />
 								<scm1:SortDescription PropertyName="Title" />
-								
+
 							</CollectionViewSource.SortDescriptions>
-							
+
 						</CollectionViewSource>
 					</Border.Resources>
 
@@ -151,7 +137,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<TextBlock Text="Platforms"
 								   Style="{StaticResource Heading0}"
 								   DockPanel.Dock="Top" />
-						<local:BindableSelectionListBox x:Name="PlatformList"
+						<local:BindableSelectionListView x:Name="PlatformList"
 														ScrollViewer.CanContentScroll="True"
 														ScrollViewer.HorizontalScrollBarVisibility="Hidden"
 														ScrollViewer.VerticalScrollBarVisibility="Hidden"
@@ -165,18 +151,18 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 														SelectionMode="Extended"
 														SelectedItem="{Binding ElementName=Database_Window, Path=DataContext.SelectedPlatform, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
 														BoundSelectedItems="{Binding ElementName=Database_Window, Path=DataContext.SelectedPlatforms, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
-							<ListBox.ItemContainerStyle>
+							<ListView.ItemContainerStyle>
 								<Style TargetType="{x:Type ListBoxItem}">
 									<Style.Triggers>
 										<Trigger Property="IsMouseOver"
 												 Value="True">
 											<Setter Property="Background"
-													Value="{StaticResource Highlight_Brush}" />
+													Value="Blue" />
 										</Trigger>
 									</Style.Triggers>
 								</Style>
-							</ListBox.ItemContainerStyle>
-							<ListBox.Resources>
+							</ListView.ItemContainerStyle>
+							<ListView.Resources>
 								<Style x:Key="TestStyle"
 									   TargetType="TextBlock"
 									   BasedOn="{StaticResource Normal}">
@@ -188,8 +174,8 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										</DataTrigger>
 									</Style.Triggers>
 								</Style>
-							</ListBox.Resources>
-							<ListBox.ItemTemplate>
+							</ListView.Resources>
+							<ListView.ItemTemplate>
 								<DataTemplate>
 									<StackPanel Orientation="Horizontal">
 										<TextBlock Style="{StaticResource TestStyle}"
@@ -198,13 +184,24 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 												   Text=" " />
 										<TextBlock Style="{StaticResource TestStyle}"
 												   Text="{Binding Title}" />
-										
-										
 									</StackPanel>
-									
+
 								</DataTemplate>
-							</ListBox.ItemTemplate>
-						</local:BindableSelectionListBox>
+							</ListView.ItemTemplate>
+
+							<ListBox.GroupStyle>
+								<GroupStyle>
+									<GroupStyle.HeaderTemplate>
+									<DataTemplate>
+											<TextBlock Style="{StaticResource Heading1}"
+													   Text="{Binding Name}" />
+
+										</DataTemplate>
+								</GroupStyle.HeaderTemplate>
+								</GroupStyle>
+								
+							</ListBox.GroupStyle>
+						</local:BindableSelectionListView>
 					</DockPanel>
 				</Border>
 
@@ -221,78 +218,74 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 							<TextBlock Text=" " />
 
 							<TextBlock Text="{Binding Title}"
-								   Style="{StaticResource Heading0}" />
+									   Style="{StaticResource Heading0}" />
 						</StackPanel>
 						<StackPanel Margin="10,0,0,0">
 							<StackPanel Orientation="Horizontal"
-										DockPanel.Dock="Top" >
-							<TextBlock Text="Total Releases: "
-									   Style="{StaticResource Heading1}"
-									   DockPanel.Dock="Top" />
-							<TextBlock Text="{Binding Releases.Count}"
-									   Style="{StaticResource Normal}"
-									   DockPanel.Dock="Top" />
-						</StackPanel>
-						<StackPanel Orientation="Horizontal"
-									DockPanel.Dock="Top" >
-							<TextBlock Text="Matched to GDB: "
-									   Style="{StaticResource Heading1}"
-									   DockPanel.Dock="Top" />
-							<TextBlock Text="{Binding MatchedToGamesDB}"
-									   Style="{StaticResource Normal}"
-									   DockPanel.Dock="Top" />
-						</StackPanel>
-						<StackPanel Orientation="Horizontal"
-									DockPanel.Dock="Top" >
-							<TextBlock Text="Matched to GB: "
-									   Style="{StaticResource Heading1}"
-									   DockPanel.Dock="Top" />
-							<TextBlock Text="{Binding MatchedToGiantBomb}"
-									   Style="{StaticResource Normal}"
-									   DockPanel.Dock="Top" />
-						</StackPanel>
-						<StackPanel Orientation="Horizontal"
-									DockPanel.Dock="Top" >
-							<TextBlock Text="Matched to OVG: "
-									   Style="{StaticResource Heading1}"
-									   DockPanel.Dock="Top" />
-							<TextBlock Text="{Binding MatchedToOpenVG}"
-									   Style="{StaticResource Normal}"
-									   DockPanel.Dock="Top" />
-						</StackPanel>
-						<StackPanel Orientation="Horizontal"
-									DockPanel.Dock="Top" >
-							<TextBlock Text="Matched to LB: "
-									   Style="{StaticResource Heading1}"
-									   DockPanel.Dock="Top" />
-							<TextBlock Text="{Binding MatchedToLaunchBox}"
-									   Style="{StaticResource Normal}"
-									   DockPanel.Dock="Top" />
-						</StackPanel>
-						<StackPanel Orientation="Horizontal"
-									DockPanel.Dock="Top" >
-							<TextBlock Text="Date cached: "
-									   Style="{StaticResource Heading1}"
-									   DockPanel.Dock="Top" />
-							<TextBlock Text="{Binding CacheDate}"
-									   Style="{StaticResource Normal}"
-									   DockPanel.Dock="Top" />
-						</StackPanel>
+										DockPanel.Dock="Top">
+								<TextBlock Text="Total Releases: "
+										   Style="{StaticResource Heading1}"
+										   DockPanel.Dock="Top" />
+								<TextBlock Text="{Binding Releases.Count}"
+										   Style="{StaticResource Normal}"
+										   DockPanel.Dock="Top" />
+							</StackPanel>
+							<StackPanel Orientation="Horizontal"
+										DockPanel.Dock="Top">
+								<TextBlock Text="Matched to GDB: "
+										   Style="{StaticResource Heading1}"
+										   DockPanel.Dock="Top" />
+								<TextBlock Text="{Binding MatchedToGamesDB}"
+										   Style="{StaticResource Normal}"
+										   DockPanel.Dock="Top" />
+							</StackPanel>
+							<StackPanel Orientation="Horizontal"
+										DockPanel.Dock="Top">
+								<TextBlock Text="Matched to GB: "
+										   Style="{StaticResource Heading1}"
+										   DockPanel.Dock="Top" />
+								<TextBlock Text="{Binding MatchedToGiantBomb}"
+										   Style="{StaticResource Normal}"
+										   DockPanel.Dock="Top" />
+							</StackPanel>
+							<StackPanel Orientation="Horizontal"
+										DockPanel.Dock="Top">
+								<TextBlock Text="Matched to OVG: "
+										   Style="{StaticResource Heading1}"
+										   DockPanel.Dock="Top" />
+								<TextBlock Text="{Binding MatchedToOpenVG}"
+										   Style="{StaticResource Normal}"
+										   DockPanel.Dock="Top" />
+							</StackPanel>
+							<StackPanel Orientation="Horizontal"
+										DockPanel.Dock="Top">
+								<TextBlock Text="Matched to LB: "
+										   Style="{StaticResource Heading1}"
+										   DockPanel.Dock="Top" />
+								<TextBlock Text="{Binding MatchedToLaunchBox}"
+										   Style="{StaticResource Normal}"
+										   DockPanel.Dock="Top" />
+							</StackPanel>
+							<StackPanel Orientation="Horizontal"
+										DockPanel.Dock="Top">
+								<TextBlock Text="Date cached: "
+										   Style="{StaticResource Heading1}"
+										   DockPanel.Dock="Top" />
+								<TextBlock Text="{Binding CacheDate}"
+										   Style="{StaticResource Normal}"
+										   DockPanel.Dock="Top" />
+							</StackPanel>
 
-						<StackPanel Orientation="Horizontal"
-									DockPanel.Dock="Top" >
-							<TextBlock Text="Matched to Something: "
-									   Style="{StaticResource Heading1}"
-									   DockPanel.Dock="Top" />
-							<TextBlock Text="{Binding MatchedToSomething}"
-									   Style="{StaticResource Normal}"
-									   DockPanel.Dock="Top" />
+							<StackPanel Orientation="Horizontal"
+										DockPanel.Dock="Top">
+								<TextBlock Text="Matched to Something: "
+										   Style="{StaticResource Heading1}"
+										   DockPanel.Dock="Top" />
+								<TextBlock Text="{Binding MatchedToSomething}"
+										   Style="{StaticResource Normal}"
+										   DockPanel.Dock="Top" />
+							</StackPanel>
 						</StackPanel>
-						</StackPanel>
-						
-
-
-
 
 					</StackPanel>
 
@@ -311,7 +304,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 				<Grid.RowDefinitions>
 					<RowDefinition Height="*" />
 					<RowDefinition Height="130"
-								   MinHeight="130"/>
+								   MinHeight="130" />
 				</Grid.RowDefinitions>
 
 				<Border x:Name="DataGridBorder"
@@ -325,8 +318,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<ContentControl Name="DatabaseGrid"
 										Background="Transparent"
 										BorderBrush="Transparent"
-										Content="{Binding}"
-										Margin="0,9,0,-9">
+										Content="{Binding}">
 							<ContentControl.LayoutTransform>
 								<ScaleTransform x:Name="DataGridScale"
 												CenterX="1"
@@ -358,20 +350,6 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 											Value="Transparent" />
 								</Style>
 
-								<!--<Style x:Key="DataGridColumnHeaderStyle1"
-									   TargetType="{x:Type DataGridColumnHeader}">
-									<Setter Property="Background"
-											Value="Transparent" />
-									<Setter Property="Foreground"
-											Value="{StaticResource Heading1_Brush}" />
-									<Setter Property="FontSize"
-											Value="{StaticResource NormalFontSize}" />
-									<Setter Property="FontFamily"
-											Value="{StaticResource NormalFontFamily}" />
-									<Setter Property="Padding"
-											Value="10,3,10,3" />
-								</Style>-->
-
 								<DataTemplate x:Name="ComparesTemplate"
 											  DataType="{x:Type local:Compares}">
 									<DataGrid Style="{StaticResource DataGridStyle1}"
@@ -386,7 +364,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 											<DataGridTextColumn Header="Distance"
 																Binding="{Binding Path=Distance}" />
 											<DataGridCheckBoxColumn Header="Accept"
-																Binding="{Binding Path=AcceptMatch}" />
+																	Binding="{Binding Path=AcceptMatch}" />
 											<DataGridTextColumn Header="Robin Title"
 																Binding="{Binding Path=RTitle}" />
 											<DataGridTextColumn Header="DB Title"
@@ -399,35 +377,32 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										</DataGrid.Columns>
 									</DataGrid>
 								</DataTemplate>
-								
+
 								<DataTemplate x:Name="PlatformTemplate"
 											  DataType="{x:Type local:Platform}">
 									<DataGrid Style="{StaticResource DataGridStyle1}"
-											  ItemsSource="{Binding Path=(local:Platform.Releases), Mode=OneWay}"
-											  PreviewMouseWheel="DataGrid_MouseWheel">
+											  ItemsSource="{Binding Path=(local:Platform.Releases),Mode=OneWay}"
+											  SelectionUnit="FullRow"
+											  SelectedItem="{Binding ElementName=Database_Window, Path=DataContext.SelectedRelease}"
+											  PreviewMouseWheel="DataGrid_MouseWheel"
+											  Tag="{Binding ElementName=Main_Window, Path=DataContext}">
 										<DataGrid.ContextMenu>
 											<ContextMenu>
-												<MenuItem Command="local:DBCommands.ArtWindow"
-														  Visibility="{Binding Path=IsEnabled,
-												RelativeSource={RelativeSource Self},
-												Mode=OneWay,
-												Converter={StaticResource booleanToVisibilityConverter}}" />
-												<MenuItem Command="local:DBCommands.MatchWindow"
-														  Visibility="{Binding Path=IsEnabled,
-												RelativeSource={RelativeSource Self},
-												Mode=OneWay,
-												Converter={StaticResource booleanToVisibilityConverter}}" />
+												<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+														  Command="{Binding ArtWindowCommand}" />
+												<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+														  Command="{Binding MatchWindowCommand}" />
 											</ContextMenu>
 										</DataGrid.ContextMenu>
 										<DataGrid.Columns>
 											<DataGridTextColumn Header="ID"
-																Binding="{Binding Path=(local:IDBRelease.ID)}" />
+																Binding="{Binding Path=ID}" />
 											<DataGridTextColumn Header="Title"
-																Binding="{Binding Path=(local:IDBRelease.Title)}" />
+																Binding="{Binding Path=Title}" />
 											<DataGridTextColumn Header="Region"
-																Binding="{Binding Path=(local:IDBRelease.RegionTitle), TargetNullValue=-}" />
+																Binding="{Binding Path=RegionTitle, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Date"
-																Binding="{Binding Path=(local:IDBRelease.Date), TargetNullValue=-, StringFormat='yyyy-mm'}" />
+																Binding="{Binding Path=Date, TargetNullValue=-, StringFormat='yyyy-mm'}" />
 											<DataGridTextColumn Header="Players"
 																Binding="{Binding Players, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Developer"
@@ -457,17 +432,19 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 								<DataTemplate x:Name="GDBTemplate"
 											  DataType="{x:Type local:GDBPlatform}">
 									<DataGrid Style="{StaticResource DataGridStyle1}"
-											  ItemsSource="{Binding Path=(local:IDBPlatform.Releases), Mode=OneWay}"
-											  PreviewMouseWheel="DataGrid_MouseWheel">
+											  ItemsSource="{Binding Path=Releases, Mode=OneWay}"
+											  PreviewMouseWheel="DataGrid_MouseWheel"
+											  SelectionUnit="FullRow"
+											  SelectedItem="{Binding ElementName=Database_Window, Path=DataContext.SelectedRelease ,Mode=TwoWay}">
 										<DataGrid.Columns>
 											<DataGridTextColumn Header="ID"
-																Binding="{Binding Path=(local:IDBRelease.ID)}" />
+																Binding="{Binding Path=ID}" />
 											<DataGridTextColumn Header="Title"
-																Binding="{Binding Path=(local:IDBRelease.Title)}" />
+																Binding="{Binding Path=Title}" />
 											<DataGridTextColumn Header="Region"
-																Binding="{Binding Path=(local:IDBRelease.RegionTitle), TargetNullValue=-}" />
+																Binding="{Binding Path=RegionTitle, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Date"
-																Binding="{Binding Path=(local:IDBRelease.Date), TargetNullValue=-, StringFormat='yyyy-mm'}" />
+																Binding="{Binding Path=Date, TargetNullValue=-, StringFormat='yyyy-mm'}" />
 											<DataGridTextColumn Header="Players"
 																Binding="{Binding Players, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Developer"
@@ -495,21 +472,22 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										</DataGrid.Columns>
 									</DataGrid>
 								</DataTemplate>
-								
+
 								<DataTemplate x:Name="GBTemplate"
 											  DataType="{x:Type local:GBPlatform}">
 									<DataGrid Style="{StaticResource DataGridStyle1}"
 											  ItemsSource="{Binding Path=(local:IDBPlatform.Releases), Mode=OneWay}"
-											  PreviewMouseWheel="DataGrid_MouseWheel">
+											  PreviewMouseWheel="DataGrid_MouseWheel"
+											  SelectedItem="{Binding ElementName=Database_Window, Path=DataContext.SelectedRelease}">
 										<DataGrid.Columns>
 											<DataGridTextColumn Header="ID"
-																Binding="{Binding Path=(local:IDBRelease.ID)}" />
+																Binding="{Binding Path=ID}" />
 											<DataGridTextColumn Header="Title"
-																Binding="{Binding Path=(local:IDBRelease.Title)}" />
+																Binding="{Binding Path=Title}" />
 											<DataGridTextColumn Header="Region"
-																Binding="{Binding Path=(local:IDBRelease.RegionTitle), TargetNullValue=-}" />
+																Binding="{Binding Path=RegionTitle, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Date"
-																Binding="{Binding Path=(local:IDBRelease.Date), TargetNullValue=-, StringFormat='yyyy-mm'}" />
+																Binding="{Binding Path=Date, TargetNullValue=-, StringFormat='yyyy-mm'}" />
 											<DataGridTextColumn Header="Players"
 																Binding="{Binding Players, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Box Front URL"
@@ -521,21 +499,22 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										</DataGrid.Columns>
 									</DataGrid>
 								</DataTemplate>
-								
+
 								<DataTemplate x:Name="LBTemplate"
 											  DataType="{x:Type local:LBPlatform}">
 									<DataGrid Style="{StaticResource DataGridStyle1}"
 											  ItemsSource="{Binding Path=(local:IDBPlatform.Releases), Mode=OneWay}"
-											  PreviewMouseWheel="DataGrid_MouseWheel">
+											  PreviewMouseWheel="DataGrid_MouseWheel"
+											  SelectedItem="{Binding ElementName=Database_Window, Path=DataContext.SelectedRelease}">
 										<DataGrid.Columns>
 											<DataGridTextColumn Header="ID"
-																Binding="{Binding Path=(local:IDBRelease.ID)}" />
+																Binding="{Binding Path=ID}" />
 											<DataGridTextColumn Header="Title"
-																Binding="{Binding Path=(local:IDBRelease.Title)}" />
+																Binding="{Binding Path=Title}" />
 											<DataGridTextColumn Header="Region"
-																Binding="{Binding Path=(local:IDBRelease.RegionTitle), TargetNullValue=-}" />
+																Binding="{Binding Path=RegionTitle, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Date"
-																Binding="{Binding Path=(local:IDBRelease.Date), TargetNullValue=-, StringFormat='yyyy-mm'}" />
+																Binding="{Binding Path=Date, TargetNullValue=-, StringFormat='yyyy-mm'}" />
 											<DataGridTextColumn Header="Genres"
 																Binding="{Binding Genres, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Players"
@@ -555,21 +534,22 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										</DataGrid.Columns>
 									</DataGrid>
 								</DataTemplate>
-								
+
 								<DataTemplate x:Name="OVGTemplate"
 											  DataType="{x:Type local:OVGPlatform}">
 									<DataGrid Style="{StaticResource DataGridStyle1}"
 											  ItemsSource="{Binding Path=(local:IDBPlatform.Releases), Mode=OneWay}"
-											  PreviewMouseWheel="DataGrid_MouseWheel">
+											  PreviewMouseWheel="DataGrid_MouseWheel"
+											  SelectedItem="{Binding ElementName=Database_Window, Path=DataContext.SelectedRelease}">
 										<DataGrid.Columns>
 											<DataGridTextColumn Header="ID"
-																Binding="{Binding Path=(local:IDBRelease.ID)}" />
+																Binding="{Binding Path=ID}" />
 											<DataGridTextColumn Header="Title"
-																Binding="{Binding Path=(local:IDBRelease.Title)}" />
+																Binding="{Binding Path=Title}" />
 											<DataGridTextColumn Header="Region"
-																Binding="{Binding Path=(local:IDBRelease.RegionTitle), TargetNullValue=-}" />
+																Binding="{Binding Path=RegionTitle, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Date"
-																Binding="{Binding Path=(local:IDBRelease.Date), TargetNullValue=-, StringFormat='yyyy-mm'}" />
+																Binding="{Binding Path=Date, TargetNullValue=-, StringFormat='yyyy-mm'}" />
 											<DataGridTextColumn Header="Developer"
 																Binding="{Binding Developer, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Publisher"
@@ -589,21 +569,6 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 								</DataTemplate>
 
 							</ContentControl.Resources>
-							<!--<ContentControl.ContentTemplate>
-							<DataTemplate x:Name="IDBTemplate" DataType="{x:Type local:IDBPlatform}">
-								<DataGrid x:Name="GridMaster"
-										 Style="{StaticResource DataGridStyle1}"
-										  ItemsSource="{Binding Path=(local:IDBPlatform.Releases)}"
-										  AutoGenerateColumns="False"
-										  PreviewMouseWheel="DataGrid_MouseWheel">
-									<DataGrid.Columns>
-										<DataGridTextColumn Header="ID" Binding="{Binding Path=(local:IDBRelease.ID)}" />
-										<DataGridTextColumn Header="Title" Binding="{Binding Path=(local:IDBRelease.Title)}" />
-										<DataGridTextColumn Header="Region" Binding="{Binding Path=(local:IDBRelease.RegionTitle), TargetNullValue=-}"/>
-									</DataGrid.Columns>
-								</DataGrid>
-							</DataTemplate>
-						</ContentControl.ContentTemplate>-->
 
 						</ContentControl>
 					</Grid>
@@ -613,7 +578,8 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						Style="{StaticResource CellStyle}"
 						Grid.Row="1">
 					<Grid x:Name="ButtonsGrid">
-						<DockPanel x:Name="ButtonsDockPanel" VerticalAlignment="Stretch">
+						<DockPanel x:Name="ButtonsDockPanel"
+								   VerticalAlignment="Stretch">
 							<StackPanel x:Name="Buttons_StackPanel"
 										DockPanel.Dock="Top"
 										HorizontalAlignment="Stretch"
@@ -621,33 +587,17 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 								<StackPanel.Resources>
 
 								</StackPanel.Resources>
-								<Button x:Name="Compare_Button"
-										Content="Compare"
-										ToolTip="Compare releases to robin"
-										Style="{StaticResource DatabaseWindowButtonStyle1}"
-										Click="Compare_Click" />
-								
-								<Button x:Name="Cache_button"
-										Content="Cache Releases"
-										ToolTip="Update cache of selected platform."
-										Style="{StaticResource DatabaseWindowButtonStyle1}"
-										Command="local:DBCommands.CacheReleases" />
+								<Button Style="{StaticResource DatabaseWindowButtonStyle1}"
+										Command="{Binding CompareCommand}" />
 
-								<!--<Button x:Name="BONUS_button"
-										Content="BONUS"
-										Style="{StaticResource DatabaseWindowButtonStyle1}"
-										Click="BONUS_button_Click" />-->
-								
-								<Button x:Name="Accept_button"
-										Content="Accept Changes"
-										ToolTip="Accept current changes to database."
-										Style="{StaticResource DatabaseWindowButtonStyle1}"
-										Click="AcceptClick" />
-								
-								<Button Content="Write DB Changes"
-										ToolTip="Write the selected database to file"
-										Style="{StaticResource DatabaseWindowButtonStyle1}"
-										Click="WriteDB_Click" />
+								<Button Style="{StaticResource DatabaseWindowButtonStyle1}"
+										Command="{Binding CachePlatformsCommand}" />
+
+								<Button Style="{StaticResource DatabaseWindowButtonStyle1}"
+										Command="{Binding AcceptCommand}" />
+
+								<Button Style="{StaticResource DatabaseWindowButtonStyle1}"
+										Command="{Binding WriteDBCommand}" />
 
 							</StackPanel>
 
@@ -657,25 +607,6 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										Orientation="Horizontal"
 										DockPanel.Dock="Top">
 
-								<!--<CheckBox x:Name="Consider_Regions_checkbox"
-										  Margin="0,0,20,0"
-										  VerticalAlignment="Center"
-										  HorizontalAlignment="Left"
-										  VerticalContentAlignment="Center"
-										  IsChecked="{Binding ConsiderRegions, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-									<TextBlock Text="Consider regions"
-											   Style="{StaticResource Heading1}" />
-								</CheckBox>
-
-								<CheckBox x:Name="Subdir_ckbx"
-										  Margin="0,0,20,0"
-										  VerticalAlignment="Center"
-										  HorizontalAlignment="Left"
-										  VerticalContentAlignment="Center">
-									<TextBlock Text="Search subdirectories"
-											   Style="{StaticResource Heading1}" />
-								</CheckBox>-->
-								
 								<StackPanel VerticalAlignment="Center"
 											Margin="0,0,20,0"
 											Orientation="Horizontal">
@@ -683,8 +614,8 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 											 Text="{Binding Threshold, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 											 VerticalAlignment="Stretch"
 											 Width="17"
-											 Margin="0,0,5,0" 
-											 HorizontalContentAlignment="Center"/>
+											 Margin="0,0,5,0"
+											 HorizontalContentAlignment="Center" />
 									<TextBlock Text="Threshold"
 											   Style="{StaticResource Heading1}"
 											   VerticalAlignment="Center" />
@@ -693,9 +624,9 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 
 							</StackPanel>
-							
+
 							<Grid x:Name="StatusGrid"
-								Height="20"
+								  Height="20"
 								  VerticalAlignment="Bottom">
 								<Grid.ColumnDefinitions>
 									<ColumnDefinition Width="*" />
@@ -731,15 +662,11 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 				<GridSplitter Grid.Row="1"
 							  VerticalAlignment="Top"
 							  Style="{StaticResource HorizontalGridSplitterStyle1}" />
-
 			</Grid>
 
 			<GridSplitter Grid.Column="0"
 						  HorizontalAlignment="Right"
 						  Style="{StaticResource HorizontalGridSplitterStyle1}" />
 		</Grid>
-
-
-
 	</Grid>
 </Window>

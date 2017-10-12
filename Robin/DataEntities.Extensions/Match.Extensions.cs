@@ -28,7 +28,7 @@ namespace Robin
 			match.ID_GB = release.ID_GB;
 			match.ID_GDB = release.ID_GDB;
 			match.ID_OVG = release.ID_OVG;
-			match.SHA1 = release.SHA1;
+			match.SHA1 = release.Rom.SHA1;
 			match.Region_ID = release.Region_ID;
 
 			return match;
@@ -42,7 +42,7 @@ namespace Robin
 			int i = 0;
 			foreach (Release release in R.Data.Releases)
 			{
-				if (release.SHA1 != null && (release.ID_GB != null || release.ID_GDB != null || release.ID_OVG != null))
+				if (release.Rom.SHA1 != null && (release.ID_GB != null || release.ID_GDB != null || release.ID_OVG != null))
 				{
 					R.Data.Matches.Add(release);
 				}

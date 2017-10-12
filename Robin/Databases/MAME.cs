@@ -183,12 +183,12 @@ namespace Robin
                             Reporter.Report("Working " + j + " / " + orphanCount + " orphans.");
                         }
 
-                        string[] clonePair = cloneList.FirstOrDefault(x => x[0] + @".zip" == orphanRelease.FileName);
+                        string[] clonePair = cloneList.FirstOrDefault(x => x[0] + @".zip" == orphanRelease.Rom.FileName);
 
                         // First look through arcadePlatform to see if the parent is there
-                        if (arcadePlatform.Releases.Any(x => x.FileName == clonePair[1] + @".zip"))
+                        if (arcadePlatform.Releases.Any(x => x.Rom.FileName == clonePair[1] + @".zip"))
                         {
-                            Release parentRelease = arcadePlatform.Releases.FirstOrDefault(x => x.FileName == clonePair[1] + @".zip");
+                            Release parentRelease = arcadePlatform.Releases.FirstOrDefault(x => x.Rom.FileName == clonePair[1] + @".zip");
                             orphanRelease.Game = parentRelease.Game;
                         }
 

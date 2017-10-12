@@ -51,6 +51,13 @@ namespace Robin
     		set { _lBPlatform_ID = value; OnPropertyChanged("LBPlatform_ID"); } 
     	}
     
+        private string _title;
+    	public string Title 
+    	{ 
+    		get { return _title; } 
+    		set { _title = value; OnPropertyChanged("Title"); } 
+    	}
+    
     
         public virtual LBGame LBGame { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

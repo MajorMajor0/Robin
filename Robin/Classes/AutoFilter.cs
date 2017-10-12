@@ -24,6 +24,8 @@ namespace Robin
     // Base class for view model
     class AutoFilterCollection<T> : INotifyPropertyChanged where T : IDBobject
     {
+        public string Title { get; }
+
         public Type Type
         {
             get { return typeof(T); }
@@ -32,10 +34,7 @@ namespace Robin
 #if DEBUG
         Stopwatch[] Watch = new Stopwatch[10];
 #endif
-
-
         public List<StringFilter> StringFilters { get; set; }
-
 
         public List<BoolFilter> BoolFilters { get; set; }
 
@@ -57,25 +56,6 @@ namespace Robin
             }
         }
 
-        public AutoFilterCollection(List<T> sourceCollection)
-        {
-#if DEBUG
-            for (int i = 0; i < Watch.Length; i++)
-            {
-                Watch[i] = new Stopwatch();
-                Watch[i].Start();
-            }
-#endif
-
-            BoolFilters = new List<BoolFilter>();
-            StringFilters = new List<StringFilter>();
-            FilteredCollection = new List<T>();
-            SourceCollection = sourceCollection;
-            Update();
-            Debug.WriteLine("New AutoFilterCollection");
-        }
-
-        // The data to be put into the viewmodel--releases, games, platforms
         List<T> sourceCollection;
         public List<T> SourceCollection
         {
@@ -98,6 +78,26 @@ namespace Robin
         {
             get { return FilteredCollection.Count(x => x.HasArt); }
         }
+
+        public AutoFilterCollection(List<T> sourceCollection, string title)
+        {
+#if DEBUG
+            for (int i = 0; i < Watch.Length; i++)
+            {
+                Watch[i] = new Stopwatch();
+                Watch[i].Start();
+            }
+#endif
+            Title = title;
+
+            BoolFilters = new List<BoolFilter>();
+            StringFilters = new List<StringFilter>();
+            FilteredCollection = new List<T>();
+            SourceCollection = sourceCollection;
+            Update();
+            Debug.WriteLine("New AutoFilterCollection");
+        }
+
 
         // Determine list of string filter columns--one time only
         void CalculateStringFilters()

@@ -80,7 +80,7 @@ foreach (var entity in typeMapper.GetItemsToGenerate<EntityType>(itemCollection)
         foreach (var edmProperty in simpleProperties)
         {
 #>
-    <#=codeStringGenerator.Property(edmProperty)#>
+    <#=codeStringGenerator.Property(edmProperty, entity.Name)#>
 <#
         }
     }
@@ -93,7 +93,7 @@ foreach (var entity in typeMapper.GetItemsToGenerate<EntityType>(itemCollection)
         foreach(var complexProperty in complexProperties)
         {
 #>
-    <#=codeStringGenerator.Property(complexProperty)#>
+    <#=codeStringGenerator.Property(complexProperty, entity.Name)#>
 <#
         }
     }
@@ -310,7 +310,7 @@ public class CodeStringGenerator
         _ef = ef;
     }
 
-public string Property(EdmProperty edmProperty)
+public string Property(EdmProperty edmProperty, string entityName=null)
 {
     if(edmProperty.Name.ToString() == "FileName")
 	{
@@ -329,6 +329,25 @@ public string Property(EdmProperty edmProperty)
         _code.SpaceAfter(Accessibility.ForGetter(edmProperty)),
         _code.SpaceAfter(Accessibility.ForSetter(edmProperty)));
 	}
+
+
+	if(edmProperty.Name.ToString() == "Preferred")
+	{
+		return string.Format(
+        CultureInfo.InvariantCulture,
+        "/* private {1} {3};\r\n"+
+        " \t{0} {1} {2} \r\n" +
+        " \t{{ \r\n" +
+            "\t\t{4}get {{ return {3}; }} \r\n" +
+            "\t\t{5}set {{ {3} = value; OnPropertyChanged(\"{2}\"); }} \r\n" + 
+        "\t}}\r\n",
+        Accessibility.ForProperty(edmProperty),
+        _typeMapper.GetTypeName(edmProperty.TypeUsage),
+        _code.Escape(edmProperty),
+        "_" + Char.ToLowerInvariant(_code.Escape(edmProperty)[0]) + _code.Escape(edmProperty).Substring(1),
+        _code.SpaceAfter(Accessibility.ForGetter(edmProperty)),
+        _code.SpaceAfter(Accessibility.ForSetter(edmProperty))) +"*/";
+	}  
 	else
 	{
 		return string.Format(

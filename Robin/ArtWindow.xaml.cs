@@ -25,6 +25,8 @@ namespace Robin
 		{
 			InitializeComponent();
 			DataContext = release;
+			Show();
+			Activate();
 		}
 	}
 }

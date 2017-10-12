@@ -8,7 +8,8 @@
 		Title="Reporter"
 		Height="300"
 		Width="300"
-		Style="{StaticResource WindowStyle1}">
+		Style="{StaticResource WindowStyle1}"
+		SizeToContent="WidthAndHeight">
 	<Grid>
 		<Border Style="{StaticResource CellStyle}">
 			<ListBox ItemsSource="{Binding Path=(local:Reporter.Messages)}"

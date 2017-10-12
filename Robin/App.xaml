@@ -82,16 +82,16 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 							 Color="#323232" />
 			<SolidColorBrush x:Key="BackDrop_Brush"
 							 Color="Black" />
-			<SolidColorBrush x:Key="Selected_Brush"
+			<!--<SolidColorBrush x:Key="Selected_Brush"
 							 Color="{StaticResource Selected_Color}" />
 			<SolidColorBrush x:Key="Highlight_Brush"
 							 Color="{StaticResource Selected_Color}"
-							 Opacity=".3" />
-			<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"
+							 Opacity=".3" />-->
+			<!--<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"
 							 Color="{StaticResource Selected_Color}"
 							 Opacity=".3" />
 			<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
-							 Color="{StaticResource Selected_Color}" />
+							 Color="{StaticResource Selected_Color}" />-->
 
 			<FontFamily x:Key="NormalFontFamily">Calibri</FontFamily>
 
@@ -107,8 +107,6 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 				<Setter Property="ScrollViewer.HorizontalScrollBarVisibility"
 						Value="Disabled" />
 			</Style>
-
-
 			<Style x:Key="WindowStyle1"
 				   TargetType="{x:Type Window}">
 				<Setter Property="Background"
@@ -214,7 +212,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						Value="Center" />
 				<Setter Property="Margin"
 						Value="3,0,3,0" />
-				
+
 				<Setter Property="Template">
 					<Setter.Value>
 						<ControlTemplate TargetType="ToggleButton">
@@ -227,7 +225,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 								<ContentPresenter HorizontalAlignment="Center"
 												  VerticalAlignment="Center" />
 							</Border>
-							<ControlTemplate.Triggers>
+							<!--<ControlTemplate.Triggers>
 								<Trigger Property="IsMouseOver"
 										 Value="True">
 									<Setter TargetName="border"
@@ -244,11 +242,12 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 											Value="Yellow" />
 									
 								</Trigger>
-							</ControlTemplate.Triggers>
+							</ControlTemplate.Triggers>-->
 						</ControlTemplate>
 					</Setter.Value>
 				</Setter>
 			</Style>
+
 
 			<Style x:Key="SelectorButtonTextStyle"
 				   TargetType="TextBlock"
@@ -299,6 +298,93 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 				<Setter Property="Visibility"
 						Value="{Binding IsBeaten, Converter={StaticResource booleanToVisibilityConverter}}" />
 			</Style>
+
+			<!--<Style x:Key="TreeViewItemFocusVisual">
+				<Setter Property="Control.Template">
+					<Setter.Value>
+						<ControlTemplate>
+							<Rectangle />
+						</ControlTemplate>
+					</Setter.Value>
+				</Setter>
+			</Style>
+			<Style x:Key="ExpandCollapseToggleStyle"
+				   TargetType="{x:Type ToggleButton}">
+				<Setter Property="Focusable"
+						Value="False" />
+				<Setter Property="Width"
+						Value="19" />
+				<Setter Property="Height"
+						Value="13" />
+				<Setter Property="Template">
+					<Setter.Value>
+						<ControlTemplate TargetType="{x:Type ToggleButton}">
+							<Border Width="19"
+									Height="13"
+									Background="Transparent">
+								<Border SnapsToDevicePixels="true"
+										Width="9"
+										Height="9"
+										BorderBrush="#FF7898B5"
+										BorderThickness="1"
+										CornerRadius="1">
+									<Border.Background>
+										<LinearGradientBrush EndPoint="1,1"
+															 StartPoint="0,0">
+											<GradientStop Color="White"
+														  Offset=".2" />
+											<GradientStop Color="#FFC0B7A6"
+														  Offset="1" />
+										</LinearGradientBrush>
+									</Border.Background>
+									<Path x:Name="ExpandPath"
+										  Margin="1,1,1,1"
+										  Fill="Black"
+										  Data="M 0 2 L 0 3 L 2 3 L 2 5 L 3 5 L 3 3 L 5 3 L 5 2 L 3 2 L 3 0 L 2 0 L 2 2 Z" />
+								</Border>
+							</Border>
+							<ControlTemplate.Triggers>
+								<Trigger Property="IsChecked"
+										 Value="True">
+									<Setter Property="Data"
+											TargetName="ExpandPath"
+											Value="M 0 2 L 0 3 L 5 3 L 5 2 Z" />
+								</Trigger>
+							</ControlTemplate.Triggers>
+						</ControlTemplate>
+					</Setter.Value>
+				</Setter>
+			</Style>-->
+
+			<Style x:Key="CButtonStyle"
+				   TargetType="Button">
+				<Setter Property="Content"
+						Value="{Binding Command.Content, RelativeSource={RelativeSource Self}}" />
+				<Setter Property="ToolTip"
+						Value="{Binding Command.ToolTip, RelativeSource={RelativeSource Self}}" />
+			</Style>
+
+			<Style x:Key="CMenuItemStyle"
+				   TargetType="MenuItem">
+				<Setter Property="Header"
+						Value="{Binding Command.Content, RelativeSource={RelativeSource Self}}" />
+				<Setter Property="ToolTip"
+						Value="{Binding Command.ToolTip, RelativeSource={RelativeSource Self}}" />
+				<Setter Property="Visibility"
+						Value="{Binding IsEnabled,
+                                        RelativeSource={RelativeSource Self},
+                                        Mode=OneWay,
+                                        Converter={StaticResource booleanToVisibilityConverter}}" />
+			</Style>
+
+			<Style x:Key="CContextMenuItemStyle"
+				   TargetType="MenuItem"
+				   BasedOn="{StaticResource CMenuItemStyle}">
+				<Setter Property="DataContext"
+						Value="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+			</Style>
+
 		</ResourceDictionary>
+
 	</Application.Resources>
 </Application>
