@@ -104,7 +104,7 @@ namespace Robin
 					string tempTitle = platformElement.SafeGetA("Name");
 
 					// Fuck Gamewave
-					if (Regex.IsMatch(tempTitle, @"Game*.Wave", RegexOptions.IgnoreCase)) ;
+					if (Regex.IsMatch(tempTitle, @"Game*.Wave", RegexOptions.IgnoreCase)) 
 					{
 						continue;
 					}

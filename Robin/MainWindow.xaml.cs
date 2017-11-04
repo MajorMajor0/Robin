@@ -12,17 +12,15 @@
  * You should have received a copy of the GNU General internal License
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
 
+using GalaSoft.MvvmLight.CommandWpf;
 using System;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Diagnostics;
-using System.Collections.Generic;
-using System.Linq;
-using System.ComponentModel;
-using System.Threading.Tasks;
-using System.IO;
-using GalaSoft.MvvmLight.Command;
 using System.Windows.Media;
 
 namespace Robin
@@ -36,13 +34,18 @@ namespace Robin
 	{
 		public MainWindow()
 		{
+			//if (Properties.Settings.Default.User == null)
+			//{
+			//	Properties.Settings.Default.User = new UserSettings();
+			//}
+
 			InitializeComponent();
 			QuitFocusCommand = new RelayCommand(QuitFocus);
 			ListViewScale.ScaleX = .8;
 			ListViewScale.ScaleY = .8;
 			Activate();
 #if DEBUG
-			DebugStuff();
+			MainWindowDebugStuff();
 #endif
 		}
 
@@ -128,7 +131,9 @@ namespace Robin
 
 		private void Main_Window_Closing(object sender, CancelEventArgs e)
 		{
-			R.Data.Save();
+			(DataContext as MainWindowViewModel).SaveSettings();
+			R.Data.Save(true);
+			
 		}
 
 		private void Exit_Click(object sender, RoutedEventArgs e)
@@ -145,27 +150,35 @@ namespace Robin
 		}
 
 #if DEBUG
-		private void DebugStuff()
+		private void MainWindowDebugStuff()
 		{
+			var debugItemBrush = new SolidColorBrush(Colors.Blue);
+			PresentationTraceSources.DataBindingSource.Switch.Level = SourceLevels.Critical;
+
 			Button bonusButton = new Button();
 			bonusButton.Content = "BONUS!";
 			bonusButton.Width = 50;
 			bonusButton.Height = 30;
 			bonusButton.Click += BonusButton_Click;
-			bonusButton.Foreground = new SolidColorBrush(Colors.Blue);
+			bonusButton.Foreground = debugItemBrush;
 			DockPanel.SetDock(bonusButton, Dock.Right);
 			SearchBox_DockPanel.Children.Add(bonusButton);
-			PresentationTraceSources.DataBindingSource.Switch.Level = SourceLevels.Critical;
 
 			CreateThumbnailsCommand = new RelayCommand(CreateThumbnails);
 			MenuItem createThumbs = new MenuItem();
 			createThumbs.Header = "Create thumbnails";
 			createThumbs.ToolTip = "Create a thumbnail for every release that doesn't have one.";
 			createThumbs.Command = CreateThumbnailsCommand;
-			createThumbs.Foreground = new SolidColorBrush(Colors.Blue);
-
+			createThumbs.Foreground = debugItemBrush;
 			ArtMenuItem.Items.Add(createThumbs);
 
+			SetFactoryDBCommand = new RelayCommand(SetFactoryDB);
+			MenuItem setFactoryDB = new MenuItem();
+			setFactoryDB.Header = "Set factory database";
+			setFactoryDB.ToolTip = "Erase all custom settings from database.";
+			setFactoryDB.Command = SetFactoryDBCommand;
+			setFactoryDB.Foreground = debugItemBrush;
+			FileMenuItem.Items.Add(setFactoryDB);
 		}
 
 		private async void BonusButton_Click(object sender, RoutedEventArgs e)
@@ -174,7 +187,8 @@ namespace Robin
 
 			await Task.Run(() =>
 			{
-				
+				int i = R.Data.Games.Local.Count(x => x.HasArt);
+				Reporter.Report("Games with art: " + i);
 			});
 		}
 
@@ -193,6 +207,13 @@ namespace Robin
 
 				release.CreateThumbnail();
 			}
+		}
+
+		public RelayCommand SetFactoryDBCommand { get; set; }
+
+		private void SetFactoryDB()
+		{
+			Robin.DebugStuff.SetFactoryDatabase();
 		}
 #endif
 	}

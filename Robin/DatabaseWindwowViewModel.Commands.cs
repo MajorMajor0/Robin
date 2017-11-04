@@ -200,15 +200,15 @@ namespace Robin
 			{
 				foreach (IDBPlatform idbPlatform in IDBPlatforms)
 				{
-					//SelectedIDB.CachePlatformReleases(idbPlatform.RPlatform);
+					SelectedIDB.CachePlatformReleases(idbPlatform.RPlatform);
 					SelectedIDB.CachePlatformData(idbPlatform.RPlatform);
-					//idbPlatform.CacheDate = DateTime.Now;
+					idbPlatform.CacheDate = DateTime.Now;
 				}
 
-				// ReportUpdates() calls detect changes, so not necessary in save
-				//SelectedIDB.ReportUpdates(true);
-				//IDBs[0].ReportUpdates(false);
-				//R.Data.Save(false);
+				//ReportUpdates() calls detect changes, so not necessary in save
+				SelectedIDB.ReportUpdates(true);
+				IDBs[0].ReportUpdates(false);
+				R.Data.Save(false);
 			});
 		}
 

@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="mainModel1.Store" Provider="System.Data.SQLite.EF6" ProviderManifestToken="Data Source=D:\Robin_debug\data\RobinData.db3" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="mainModel1.Store" Provider="System.Data.SQLite.EF6" ProviderManifestToken="Data Source=D:\Robin_debug\data\RobinData.db3" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Collection">
           <Key>
             <PropertyRef Name="ID" />
@@ -40,6 +40,7 @@
           <Property Name="Image" Type="nvarchar" MaxLength="2147483647" />
           <Property Name="IsCrap" Type="bit" Nullable="false" />
           <Property Name="Website" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="Rating" Type="decimal" Precision="53" Scale="0" />
         </EntityType>
         <EntityType Name="Game">
           <Key>
@@ -946,8 +947,7 @@
             <End Role="Rom" EntitySet="Rom" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="mainModel1" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -972,8 +972,9 @@
           <Property Name="Image" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="IsCrap" Type="Boolean" Nullable="false" />
           <Property Name="Website" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Platforms" Relationship="Self.FK_Platform_0_0" FromRole="Emulator" ToRole="Platform" />
-          <NavigationProperty Name="Platforms1" Relationship="Self.Platform_Emulator" FromRole="Emulator" ToRole="Platform" />
+          <NavigationProperty Name="PlatformsPreferring" Relationship="Self.FK_Platform_0_0" FromRole="Emulator" ToRole="Platform" />
+          <NavigationProperty Name="Platforms" Relationship="Self.Platform_Emulator" FromRole="Emulator" ToRole="Platform" />
+          <Property Name="Rating" Type="Decimal" Precision="53" Scale="0" />
         </EntityType>
         <EntityType Name="Game">
           <Key>
@@ -1875,6 +1876,7 @@
           <EntitySetMapping Name="Emulators">
             <EntityTypeMapping TypeName="mainModel1.Emulator">
               <MappingFragment StoreEntitySet="Emulator">
+                <ScalarProperty Name="Rating" ColumnName="Rating" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
                 <ScalarProperty Name="FileName" ColumnName="FileName" />

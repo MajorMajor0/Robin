@@ -74,7 +74,6 @@ namespace Robin
 			set
 			{ 			
 				selectedRelease = value;
-				int o = 0;
 			}
 		}
 

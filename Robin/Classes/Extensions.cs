@@ -80,7 +80,7 @@ namespace Robin
 		public static void Save(this DbContext dbContext, bool detectChanges = false)
 		{
 			int i;
-			dbContext.Backup();
+			string backupFile = dbContext.Backup();
 
 			if (detectChanges)
 			{
@@ -91,7 +91,10 @@ namespace Robin
 			{
 				i = dbContext.SaveChanges();
 				Reporter.Report(i + " Database changes saved successfully");
-
+				if (i == 0)
+				{
+					File.Delete(backupFile);
+				}
 			}
 			catch (DbEntityValidationException dbEx)
 			{
@@ -110,54 +113,52 @@ namespace Robin
 
 		}
 
-		public static void Backup(this DbContext dbcontext)
+		public static string Backup(this DbContext dbContext)
 		{
 			// Backup existing database
 			Directory.CreateDirectory(FileLocation.Backup);
 			string Date = DateTime.Now.ToString("yyyy-MM-dd-HHmmss");
 
-			string CurrentFile = dbcontext.Database.Connection.ConnectionString
+			string CurrentFile = dbContext.Database.Connection.ConnectionString
 				.Replace(@"data source=|DataDirectory|", FileLocation.Folder)
-				.Replace(@"data source=D:\Robin_debug\data\RobinData.db3", FileLocation.Folder)
+				.Replace(@"data source=D:\Robin_debug\", FileLocation.Folder)
 				.Replace(".db3\"", ".db3");
-			string BackupFile = FileLocation.Backup + Path.GetFileNameWithoutExtension(CurrentFile) + Date + Path.GetExtension(CurrentFile);
+			string backupFile = FileLocation.Backup + Path.GetFileNameWithoutExtension(CurrentFile) + Date + Path.GetExtension(CurrentFile);
 			try
 			{
-				File.Copy(CurrentFile, BackupFile);
-				Reporter.Report("DB file backed up to " + BackupFile);
+				File.Copy(CurrentFile, backupFile);
+				Reporter.Report("DB file backed up to " + backupFile);
+				return backupFile;
 			}
 			catch (Exception ex)
 			{
 				Reporter.Report("Failed to backup file.");
 				Reporter.Report(ex.Message);
+				return null;
 			}
 		}
 
-		public static void AddRange<T>(this ObservableCollection<T> OC, IEnumerable<T> OCtoADD)
+		public static void AddRange<T>(this ObservableCollection<T> OC, IEnumerable<T> listToAdd)
 		{
-			if (OCtoADD != null)
+			if (listToAdd != null)
 			{
-				foreach (T item in OCtoADD)
+				foreach (T item in listToAdd)
 				{
 					OC.Add(item);
 				}
 			}
 		}
 
-		public static string Clean(this string dirtyString)
+		public static string CleanHtml(this string dirtyString)
 		{
-
-			string ggg = Regex.Replace(dirtyString, @"(?:\r\n|\r(?!\n)|(?<!\r)\n){2,}", "\r\n")
+			string returner = Regex.Replace(dirtyString, @"(?:\r\n|\r(?!\n)|(?<!\r)\n){2,}", "\r\n")
 										.Replace(@"&lt", "<")
 										.Replace(@"&gt", ">")
 										.Replace(@"&quot", "\"")
 										.Replace(@"&apos", "'")
 										.Replace(@"&nbsp", " ");
-
-
-			return ggg;
+			return returner;
 		}
-
 
 		public static string Wash(this string title)
 		{
@@ -401,54 +402,6 @@ namespace Robin
 
 		}
 
-		//Safeget info from xml nested element
-		//public static string SafeGetBoxArt(this XDocument Xdoc, string side, string resolution = null, string type = "Game")
-		//{
-
-
-		//    try
-		//    {
-		//        if (Xdoc == null)
-		//        {
-		//            return null;
-		//        }
-
-		//        else
-		//        {
-		//            IEnumerable<XElement> descendants = Xdoc.Root.Descendants("boxart");
-
-		//            if (descendants == null)
-		//            {
-		//                return null;
-		//            }
-		//            else
-		//            {
-		//                XElement xElement = descendants.FirstOrDefault(x => x.Attribute("side").Value == side);
-
-		//                if (xElement != null)
-		//                {
-		//                    if (resolution == "thumb")
-		//                    {
-		//                        return xElement.Attribute("thumb").Value;
-		//                    }
-		//                    else
-		//                    {
-		//                        return xElement.Value;
-		//                    }
-		//                }
-
-		//            }
-		//        }
-		//    }
-
-		//    catch (InvalidOperationException)
-		//    {
-		//        return null;
-		//    }
-		//}
-
-
-
 		public static string SafeGetBoxArt(this XDocument Xdoc, string side, string resolution = null, string type = "Game")
 		{
 			if (Xdoc != null)
@@ -477,47 +430,6 @@ namespace Robin
 			}
 			return null;
 		}
-
-		//public static string SafeGetBoxArt(this XDocument Xdoc, string side, string resolution = null, string type = "Game")
-		//{
-
-		//    try
-		//    {
-		//        if (Xdoc == null) return null;
-
-		//        if (Xdoc.Root.Element(type) == null ||
-		//            Xdoc.Root.Element(type).Element("Images") == null ||
-		//            Xdoc.Root.Element(type).Element("Images").Elements("boxart") == null ||
-		//            Xdoc.Root.Element(type).Element("Images").Elements("boxart").First(x => x.Attribute("side").Value == side) == null
-		//            )
-		//        {
-		//            return null;
-		//        }
-
-		//        if (resolution == "thumb")
-		//        {
-		//            if (Xdoc.Root.Element(type).Element("Images").Elements("boxart").
-		//                First(x => x.Attribute("side").Value == side).Attribute("thumb") == null)
-		//            {
-		//                return null;
-		//            }
-		//            else
-		//            {
-		//                return Xdoc.Root.Element(type).Element("Images").Elements("boxart").
-		//                    First(x => x.Attribute("side").Value == side).Attribute("thumb").Value;
-		//            }
-		//        }
-		//        else
-		//        {
-		//            return (Xdoc.Root.Element(type).Element("Images").Elements("boxart").First(x => x.Attribute("side").Value == side)).Value;
-		//        }
-		//    }
-
-		//    catch (InvalidOperationException)
-		//    {
-		//        return null;
-		//    }
-		//}
 
 		public static void SetStandardHeaders(this WebClient webclient)
 		{

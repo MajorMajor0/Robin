@@ -17,21 +17,21 @@ using System.Linq;
 
 namespace Robin
 {
-	public partial class Collection 
+	public partial class Collection
 	{
-		public IEnumerable<IDBobject> FilteredCollection
+		public IEnumerable<IDBobject> List
 		{
 			get { return (Games as IEnumerable<IDBobject>).Union(Releases as IEnumerable<IDBobject>); }
 		}
 
 		public void Add(IDBobject idbObject)
 		{
-			if (idbObject.GetType().BaseType == typeof(Game))
+			if (idbObject is Game)
 			{
 				Games.Add(idbObject as Game);
 				OnPropertyChanged("FilteredCollection");
 			}
-			if (idbObject.GetType().BaseType == typeof(Release))
+			if (idbObject is Release)
 			{
 				Releases.Add(idbObject as Release);
 				OnPropertyChanged("FilteredCollection");
@@ -40,12 +40,12 @@ namespace Robin
 
 		public void Remove(IDBobject idbObject)
 		{
-			if (idbObject.GetType().BaseType == typeof(Game))
+			if (idbObject is Game)
 			{
 				Games.Remove(idbObject as Game);
 				OnPropertyChanged("FilteredCollection");
 			}
-			if (idbObject.GetType().BaseType == typeof(Release))
+			if (idbObject is Release)
 			{
 				Releases.Remove(idbObject as Release);
 				OnPropertyChanged("FilteredCollection");

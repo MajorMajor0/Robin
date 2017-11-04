@@ -118,7 +118,7 @@ namespace Robin
                     bitmap.UriSource = new Uri(path);
                     bitmap.EndInit();
 #if DEBUG
-                    Debug.WriteLine(path + " " + Watch.ElapsedMilliseconds);
+                    //Debug.WriteLine(path + " " + Watch.ElapsedMilliseconds);
 #endif
                     return bitmap;
                 }

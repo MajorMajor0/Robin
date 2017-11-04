@@ -11,16 +11,13 @@
  * 
  * You should have received a copy of the GNU General Public License
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
- 
-using GalaSoft.MvvmLight.CommandWpf;
-using System;
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Robin
@@ -104,17 +101,11 @@ namespace Robin
 
 		private void ClearFilters()
 		{
-			(MainBigSelection as AutoFilterCollection<Release>)?.ClearFilters();
-			(MainBigSelection as AutoFilterCollection<Game>)?.ClearFilters();
-			(MainBigSelection as AutoFilterCollection<Platform>)?.ClearFilters();
-			(MainBigSelection as AutoFilterCollection<Emulator>)?.ClearFilters();
+			(MainBigSelection as AutoFilterCollection)?.ClearFilters();
 		}
 
 		private bool ClearFiltersCanExecute()
 		{
-#if DEBUG
-			Debug.WriteLine("CFCE");
-#endif
 			return MainBigSelection != null;
 		}
 
@@ -511,7 +502,7 @@ namespace Robin
 			HelpCommand = new Command(About, "Help", "Navigate to the help website.");
 
 			PlayCommand = new Command(Play, PlayCanExecute, "Play this", "Launch the selected game or release.");
-			ClearFiltersCommand = new Command(ClearFilters, ClearFiltersCanExecute, "Clear", "Clear all filters.");
+			ClearFiltersCommand = new Command(ClearFilters, ClearFiltersCanExecute, "X", "Clear filters and display all objects.");
 
 			MarkAsCrapCommand = new Command(MarkAsCrap, MarkAsCrapCanExecute, "Mark as crap", "Mark selected items as crap.");
 			MarkNotCrapCommand = new Command(MarkNotCrap, MarkNotCrapCanExecute, "Mark not crap", "Mark selected items as not crap.");
@@ -531,8 +522,8 @@ namespace Robin
 			MarkAsBeatenCommand = new Command(MarkAsBeaten, MarkAsBeatenCanExecute, "Mark as beaten", "Mark selected item as beaten.");
 			MarkNotBeatenCommand = new Command(MarkNotBeaten, MarkNotBeatenCanExecute, "Mark not beaten", "Mark selected item as not beaten");
 
-			GetAllArtCommand = new Command(GetAllArt, GetAllArtCanExecute, "Get all art", "Downloads art for all displayed items.");
-			GetSelectedArtCommand = new Command(GetSelectedArt, GetSelectedArtCanExecute, "Get art for slected items", "Downloads art for items currently selected.");
+			GetAllArtCommand = new Command(GetAllArt, GetAllArtCanExecute, "Get all art", "Download art for all displayed items.");
+			GetSelectedArtCommand = new Command(GetSelectedArt, GetSelectedArtCanExecute, "Get art for selected items", "Downloads art for items currently selected.");
 
 			GetAllDataCommand = new Command(GetAllData, GetAllDataCanExecute, "Get all data", "Downloads metadata for all displayed items.");
 
