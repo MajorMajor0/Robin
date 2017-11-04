@@ -28,6 +28,7 @@ namespace Robin
         bool Preferred { get; set; }
         bool Unlicensed { get; }
         bool HasArt { get; }
+		string WhyCantIPlay { get; }
         
         void Play();
 
@@ -84,6 +85,13 @@ namespace Robin
         void CachePlatformData(Platform platform);
         void ReportUpdates(bool detect);
     }
+
+	public interface ICollectionItem
+	{
+string Title { get; }
+
+	}
+
 
     public enum LocalDB
     {

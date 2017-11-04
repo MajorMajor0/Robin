@@ -48,7 +48,7 @@ namespace Robin
             Collections.Include(x=>x.Games).Include(x=>x.Releases).Load();
             Reporter.Report("Collections loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
             Emulators.Include(x=>x.Platforms).Load();
-            Reporter.Report("Games loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
+            Reporter.Report("Emulators loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
 
             foreach (Game game in Games)
 			{

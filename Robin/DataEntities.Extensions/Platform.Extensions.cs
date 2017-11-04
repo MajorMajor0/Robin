@@ -48,7 +48,26 @@ namespace Robin
 		public int ReleasesIncluded => Releases.Count(x => x.Included);
 
 
-		public bool Included => Releases.Any(x => x.Included) && Emulators.Any(x => x.Included);
+		public bool Included => HasEmulator && HasRelease;
+
+		public bool HasEmulator => Emulators.Any(x => x.Included);
+
+		public bool HasRelease => Releases.Any(x => x.Included);
+
+		public string WhyCantIPlay
+		{
+			get
+			{
+				if (Included)
+				{
+					return Title + " is ready to play.";
+				}
+				string and = HasRelease || HasEmulator ? "" : " and ";
+				string emulatorTrouble = HasEmulator ? "" : "no emulator appears to be installed for it";
+				string releaseTrouble = HasRelease ? "" : "no rom files appear to be available";
+				return Title + " can't launch because " + releaseTrouble + and + emulatorTrouble + ".";
+			}
+		}
 
 		public bool HasArt => File.Exists(BoxFrontPath);
 

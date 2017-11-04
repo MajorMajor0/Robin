@@ -71,7 +71,8 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 				   Grid.ColumnSpan="2">
 			<Menu IsMainMenu="True"
 				  DockPanel.Dock="Top">
-				<MenuItem Header="File">
+				<MenuItem x:Name="FileMenuItem"
+						  Header="File">
 
 					<MenuItem Style="{StaticResource CMenuItemStyle}"
 							  Command="{Binding SaveDataBaseCommand}" />
@@ -194,17 +195,18 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 					<DockPanel x:Name="SearchBox_DockPanel"
 							   Grid.Row="0"
-							   DataContext="{Binding ElementName=MainList, Path=DataContext}">
+							   DataContext="{Binding ElementName=MainList, Path=DataContext}"
+							   LastChildFill="False">
 
 						<Grid x:Name="SearchBox_Grid"
-							  DockPanel.Dock="Left">
+							  DockPanel.Dock="Left"
+							  Width="Auto"
+							  MinWidth="200"
+							  MaxWidth="350"
+							  Height="30">
 							<TextBox x:Name="FilterBox"
 									 Template="{StaticResource SearchBoxTemplate}"
-									 Width="Auto"
-									 MinWidth="200"
-									 MaxWidth="350"
-									 Height="30"
-									 HorizontalAlignment="Left"
+									 HorizontalAlignment="Stretch"
 									 VerticalContentAlignment="Center"
 									 Padding="30,0,0,0"
 									 Foreground="{StaticResource Normal_Brush}"
@@ -219,10 +221,21 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 													  Offset="0" />
 										<GradientStop Color="#C8C8C8"
 													  Offset="1" />
+										
 									</LinearGradientBrush>
 								</TextBox.Background>
 							</TextBox>
-
+							<Button x:Name="ClearButton"
+									DataContext="{Binding ElementName=Main_Window, Path=DataContext}"
+									Style="{StaticResource CButtonStyle}"
+									Command="{Binding ClearFiltersCommand}"
+									HorizontalAlignment="Right"
+									Width="30"
+									Height="30"
+									Background="Transparent"
+									BorderBrush="Transparent"
+									Foreground="White" />
+							
 							<Image x:Name="SearchIcon"
 								   Source="{StaticResource SearchIcon}"
 								   HorizontalAlignment="Left"
@@ -231,14 +244,6 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 								   Width="25"
 								   RenderOptions.BitmapScalingMode="Fant" />
 						</Grid>
-
-						<Button x:Name="ClearButton"
-								DataContext="{Binding ElementName=Main_Window, Path=DataContext}"
-								Style="{StaticResource CButtonStyle}"
-								Command="{Binding ClearFiltersCommand}"
-								DockPanel.Dock="Right"
-								Width="50"
-								Height="30" />
 
 
 					</DockPanel>
@@ -435,6 +440,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						</Grid>
 					</DockPanel>
 
+
 					<ScrollViewer x:Name="CurrentItemScrollViewer"
 								  CanContentScroll="True"
 								  HorizontalScrollBarVisibility="Disabled"
@@ -590,7 +596,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 												DockPanel.Dock="Top">
 										<TextBlock Text="Genre: "
 												   Style="{StaticResource Heading1}" />
-										<TextBlock Text="{Binding Genres}"
+										<TextBlock Text="{Binding Genre}"
 												   Style="{StaticResource Normal}" />
 									</StackPanel>
 
@@ -816,7 +822,6 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 							<DataTemplate DataType="{x:Type local:Emulator}">
 								<DockPanel>
-									<!--<TextBlock Text="{Binding Title}" Style="{StaticResource Heading0}" DockPanel.Dock="Top"/>-->
 
 									<StackPanel x:Name="Website_Stackpanel"
 												Orientation="Horizontal"
@@ -842,7 +847,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										<TextBlock Text="Platforms"
 												   Style="{StaticResource Heading1}" />
 										<ListBox x:Name="EmulatorPlatformListBox"
-												 ItemsSource="{Binding Platforms1}"
+												 ItemsSource="{Binding Platforms}"
 												 SelectedItem="{Binding ElementName=Main_Window, Path=DataContext.SelectedEmulatorPlatform}">
 											<ListBox.ItemTemplate>
 												<DataTemplate>
@@ -879,6 +884,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 							</DataTemplate>
 						</ContentControl.Resources>
 					</ScrollViewer>
+
 				</DockPanel>
 			</Border>
 
@@ -957,7 +963,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 						<MenuItem Style="{StaticResource CContextMenuItemStyle}"
 								  Command="{Binding RemoveFromCollectionCommand}" />
-						
+
 						<MenuItem Style="{StaticResource CContextMenuItemStyle}"
 								  Command="{Binding GetSelectedArtCommand}" />
 					</ContextMenu>
@@ -1130,21 +1136,23 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 					</DataTemplate>
 				</ListView.Resources>
 
-				<!--<ListView.ItemContainerStyle>
-					-->
-				
-				<!--<Style TargetType="ListViewItem">
+				<ListView.ItemContainerStyle>
 
-						<Style.Triggers>
+
+					<Style TargetType="ListViewItem">
+						<Setter Property="ToolTip"
+								Value="{Binding WhyCantIPlay, Mode=OneWay}" />
+
+						<!--<Style.Triggers>
 							<Trigger Property="IsMouseOver"
 									 Value="True">
 								<Setter Property="Background"
 										Value="{StaticResource Highlight_Brush}" />
 							</Trigger>
-						</Style.Triggers>
-					</Style>-->
-				<!--
-				</ListView.ItemContainerStyle>-->
+						</Style.Triggers>-->
+					</Style>
+
+				</ListView.ItemContainerStyle>
 
 				<ListView.LayoutTransform>
 					<ScaleTransform x:Name="ListViewScale" />

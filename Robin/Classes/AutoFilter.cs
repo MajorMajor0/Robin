@@ -18,465 +18,598 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System;
 using System.Text.RegularExpressions;
+using System.Collections;
+using Robin.Properties;
+using System.Collections.ObjectModel;
 
 namespace Robin
 {
-    // Base class for view model
-    class AutoFilterCollection<T> : INotifyPropertyChanged where T : IDBobject
-    {
-        public string Title { get; }
+	// Base class for view model
+	public class AutoFilterCollection : INotifyPropertyChanged
+	{
+		bool freezeUpdate = false;
 
-        public Type Type
-        {
-            get { return typeof(T); }
-        }
-        const string ALL = "*All";
+		protected string title;
+		public string Title => title;
+
+		protected const string ALL = "*All";
+
+		public List<StringFilter> StringFilters { get; }
+
+		public List<BoolFilter> BoolFilters { get; }
+
+		protected string textFilter;
+		public string TextFilter
+		{
+			get { return textFilter; }
+			set
+			{
+				if (value != textFilter)
+				{
+					textFilter = value;
+					if (textFilter.Length != 1)
+					{
+						Update();
+						OnPropertyChanged("TextFilter");
+					}
+				}
+			}
+		}
+
+		public virtual IList FilteredCollection { get; }
+
+		internal Settings Settings => Properties.Settings.Default;
+
+		public AutoFilterCollection()
+		{
+			BoolFilters = new List<BoolFilter>();
+			StringFilters = new List<StringFilter>();
+			Debug.WriteLine("New AutoFilterCollection()");
+		}
+
+
+		public void Update()
+		{
 #if DEBUG
-        Stopwatch[] Watch = new Stopwatch[10];
+			Stopwatch Watch = Stopwatch.StartNew();
 #endif
-        public List<StringFilter> StringFilters { get; set; }
-
-        public List<BoolFilter> BoolFilters { get; set; }
-
-        private string textFilter;
-        public string TextFilter
-        {
-            get { return textFilter; }
-            set
-            {
-                if (value != textFilter)
-                {
-                    textFilter = value;
-                    if (textFilter.Length != 1)
-                    {
-                        Update();
-                        OnPropertyChanged("TextFilter");
-                    }
-                }
-            }
-        }
-
-        List<T> sourceCollection;
-        public List<T> SourceCollection
-        {
-            get { return sourceCollection; }
-            set
-            {
-                Debug.WriteLine("Set SourceCollection");
-                if (sourceCollection != value)
-                {
-                    sourceCollection = value;
-                    CalculateStringFilters();
-                    CalculateBoolFilters();
-                }
-            }
-        }
-
-        public List<T> FilteredCollection { get; set; }
-
-        public int HasArtCount
-        {
-            get { return FilteredCollection.Count(x => x.HasArt); }
-        }
-
-        public AutoFilterCollection(List<T> sourceCollection, string title)
-        {
+			if (!freezeUpdate)
+			{
+				CalculateFilteredCollection();
+				GetDistinctValuesForFilter();
+			}
 #if DEBUG
-            for (int i = 0; i < Watch.Length; i++)
-            {
-                Watch[i] = new Stopwatch();
-                Watch[i].Start();
-            }
+			Debug.WriteLine("Update: " + Watch.ElapsedMilliseconds);
 #endif
-            Title = title;
+		}
 
-            BoolFilters = new List<BoolFilter>();
-            StringFilters = new List<StringFilter>();
-            FilteredCollection = new List<T>();
-            SourceCollection = sourceCollection;
-            Update();
-            Debug.WriteLine("New AutoFilterCollection");
-        }
+		public void ClearFilters()
+		{
+			freezeUpdate = true;
+
+			TextFilter = "";
+
+			foreach (StringFilter stringFilter in StringFilters)
+			{
+				stringFilter.Value = null;
+			}
+
+			foreach (BoolFilter boolFilter in BoolFilters)
+			{
+				boolFilter.Value = null;
+			}
+
+			freezeUpdate = false;
+			Update();
+		}
+
+		public virtual void SaveSettings()
+		{
+
+		}
+
+		protected virtual void GetDistinctValuesForFilter()
+		{
+		}
+
+		protected virtual void CalculateFilteredCollection()
+		{
+		}
 
 
-        // Determine list of string filter columns--one time only
-        void CalculateStringFilters()
-        {
+		public event PropertyChangedEventHandler PropertyChanged;
+		protected void OnPropertyChanged(string prop)
+		{
 #if DEBUG
-            Watch[0].Restart();
+			Stopwatch Watch = Stopwatch.StartNew();
 #endif
-            switch (Type.Name)
-            {
-                case "Game":
-                    StringFilters.Add(new StringFilter("Publisher", () => Update()));
-                    StringFilters.Add(new StringFilter("Genres", () => Update()));
-                    StringFilters.Add(new StringFilter("Players", () => Update()));
-                    StringFilters.Add(new StringFilter("PlatformTitle", () => Update(), "Platform"));
-                    StringFilters.Add(new StringFilter("Regions", () => Update()));
-                    StringFilters.Add(new StringFilter("Year", () => Update()));
-                    break;
-
-                case "Release":
-                    StringFilters.Add(new StringFilter("PlatformTitle", () => Update(), "Platform"));
-                    StringFilters.Add(new StringFilter("RegionTitle", () => Update(), "Region"));
-                    StringFilters.Add(new StringFilter("Year", () => Update()));
-                    break;
-
-                case "Platform":
-                    StringFilters.Add(new StringFilter("Type", () => Update()));
-                    StringFilters.Add(new StringFilter("Generation", () => Update()));
-                    StringFilters.Add(new StringFilter("Developer", () => Update()));
-                    StringFilters.Add(new StringFilter("Manufacturer", () => Update()));
-                    StringFilters.Add(new StringFilter("Media", () => Update()));
-                    break;
-
-            }
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
 #if DEBUG
-            Debug.WriteLine("CalculateStringFilters (1x): " + Watch[0].ElapsedMilliseconds);
+			Debug.WriteLine("OnPropertyChanged " + prop + ": " + Watch.ElapsedMilliseconds + "\n");
 #endif
-        }
+		}
+	}
 
-        // Determine list of bool filters--one time only
-        void CalculateBoolFilters()
-        {
+	public class AutoFilterReleases : AutoFilterCollection
+	{
+		List<Release> sourceCollection;
+
+		List<Release> filteredCollection;
+
+		public override IList FilteredCollection => filteredCollection;
+
+		public StringFilter PublisherFilter { get; }
+		public StringFilter GenreFilter { get; }
+		public StringFilter PlayersFilter { get; }
+		public StringFilter PlatformFilter { get; }
+		public StringFilter RegionsFilter { get; }
+		public StringFilter YearFilter { get; }
+
+		public BoolFilter CrapFilter { get; }
+		public BoolFilter IncludedFilter { get; }
+		public BoolFilter UnlicensedFilter { get; }
+
+		public AutoFilterReleases(List<Release> _sourceCollection, string _title)
+		{
+
+			title = _title;
+			sourceCollection = _sourceCollection;
+
+			StringFilters.Add(PublisherFilter = new StringFilter("Publisher", () => Update(), Settings.ReleaseFilterPublisher));
+			StringFilters.Add(GenreFilter = new StringFilter("Genre", () => Update(), Settings.ReleaseFilterGenre));
+			StringFilters.Add(PlayersFilter = new StringFilter("Players", () => Update(), Settings.ReleaseFilterPlayers));
+			StringFilters.Add(PlatformFilter = new StringFilter("Platform", () => Update(), Settings.ReleaseFilterPlatform));
+			StringFilters.Add(RegionsFilter = new StringFilter("Regions", () => Update(), Settings.ReleaseFilterRegions));
+			StringFilters.Add(YearFilter = new StringFilter("Year", () => Update(), Settings.ReleaseFilterYear));
+
+			BoolFilters.Add(CrapFilter = new BoolFilter("Crap", () => Update(), Settings.ReleaseFilterIsCrap));
+			BoolFilters.Add(IncludedFilter = new BoolFilter("Playable", () => Update(), Settings.ReleaseFilterIncluded));
+			BoolFilters.Add(UnlicensedFilter = new BoolFilter("Unlicensed", () => Update(), Settings.ReleaseFilterUnlicensed));
+
+			Update();
+		}
+
+		protected override void CalculateFilteredCollection()
+		{
+			IEnumerable<Release> _filteredCollection = sourceCollection;
+
 #if DEBUG
-            Watch[1].Restart();
-#endif
-            switch (Type.Name)
-            {
-                case "Game":
-                    BoolFilters.Add(new BoolFilter("IsCrap", () => Update(), "Crap"));
-                    BoolFilters.Add(new BoolFilter("Included", () => Update(), "Playable"));
-                    BoolFilters.Add(new BoolFilter("Unlicensed", () => Update()));
-                    break;
-
-                case "Release":
-                    BoolFilters.Add(new BoolFilter("IsCrap", () => Update(), "Crap"));
-                    BoolFilters.Add(new BoolFilter("Included", () => Update(), "Playable"));
-                    BoolFilters.Add(new BoolFilter("Unlicensed", () => Update()));
-                    BoolFilters.Add(new BoolFilter("HasArt", () => Update()));
-                    break;
-
-                case "Platform":
-                    BoolFilters.Add(new BoolFilter("Included", () => Update(), "Playable"));
-                    BoolFilters.Add(new BoolFilter("Preferred", () => Update()));
-                    break;
-
-            }
-#if DEBUG
-            Debug.WriteLine("CalculateBoolFilters: " + Watch[1].ElapsedMilliseconds);
-#endif
-        }
-
-        // Populate stringfilters
-        public void Update(bool freeze = false)
-        {
-#if DEBUG
-            Watch[3].Restart();
-            Watch[1].Restart();
-#endif
-            CalculateFilteredCollection();
-#if DEBUG
-            Debug.WriteLine("CalculateFilteredCollection: " + Watch[1].ElapsedMilliseconds); Watch[1].Restart();
+			Stopwatch Watch = Stopwatch.StartNew();
 #endif
 
-            foreach (var stringFilter in StringFilters)
-            {
+			//// Filter items based on text
+			if (!string.IsNullOrEmpty(TextFilter))
+			{
+				_filteredCollection = _filteredCollection.Where(x => Regex.IsMatch(x.Title, TextFilter.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
+			}
+
+			filteredCollection = _filteredCollection
+				.Where(x => PublisherFilter.Skip || x.Publisher == PublisherFilter.Value)
+				.Where(x => GenreFilter.Skip || (x.Genre != null && x.Genre.Contains(GenreFilter.Value)))
+				.Where(x => PlayersFilter.Skip || x.Players == PlayersFilter.Value)
+				.Where(x => PlatformFilter.Skip || x.PlatformTitle == PlatformFilter.Value)
+				.Where(x => RegionsFilter.Skip || x.Region.Title.Contains(RegionsFilter.Value))
+				.Where(x => YearFilter.Skip || x.Year == YearFilter.Value)
+
+				.Where(x => CrapFilter.Skip || x.IsCrap == CrapFilter.Value)
+				.Where(x => IncludedFilter.Skip || x.Included == IncludedFilter.Value)
+				.Where(x => UnlicensedFilter.Skip || x.Unlicensed == UnlicensedFilter.Value)
+
+				.ToList();
+
 #if DEBUG
-                Watch[0].Restart();
+			Debug.WriteLine("Calculate filtered collection: " + Watch.ElapsedMilliseconds);
 #endif
-                GetDistinctValuesForFilter(stringFilter);
+			OnPropertyChanged("FilteredCollection");
+		}
+
+		protected override void GetDistinctValuesForFilter()
+		{
 #if DEBUG
-                Debug.WriteLine("Distinct values for " + stringFilter.Property + ": " + Watch[0].ElapsedMilliseconds); Watch[0].Restart();
+			Stopwatch Watch = Stopwatch.StartNew();
 #endif
-            }
-
-            OnPropertyChanged("FilteredCollection");
+			PublisherFilter.DistinctValues = filteredCollection.Select(x => x.Publisher);
+			GenreFilter.DistinctValues = filteredCollection.SelectMany(x => x.GenreList);
+			PlayersFilter.DistinctValues = filteredCollection.Select(x => x.Players);
+			PlatformFilter.DistinctValues = filteredCollection.Select(x => x.PlatformTitle);
+			RegionsFilter.DistinctValues = filteredCollection.Select(x => x.RegionTitle);
+			YearFilter.DistinctValues = filteredCollection.Select(x => x.Year).Distinct();
 #if DEBUG
-            Debug.WriteLine("Update " + typeof(T).Name + ": " + Watch[3].ElapsedMilliseconds + "\n\n");
+			Debug.WriteLine("Get distinct values: " + Watch.ElapsedMilliseconds);
 #endif
-        }
+		}
 
-        // Figure out distinct values for an AutoFilteredColumn--many times
-        public void GetDistinctValuesForFilter(StringFilter stringFilter)
-        {
+		public override void SaveSettings()
+		{
+			Settings.ReleaseFilterPublisher = PublisherFilter.Value;
+			Settings.ReleaseFilterGenre = GenreFilter.Value;
+			Settings.ReleaseFilterPlayers = PlayersFilter.Value;
+			Settings.ReleaseFilterPlatform = PlatformFilter.Value;
+			Settings.ReleaseFilterRegions = RegionsFilter.Value;
+			Settings.ReleaseFilterYear = YearFilter.Value;
+
+			Settings.ReleaseFilterIsCrap = CrapFilter.Value;
+			Settings.ReleaseFilterIncluded = IncludedFilter.Value;
+			Settings.ReleaseFilterUnlicensed = UnlicensedFilter.Value;
+		}
+	}
+
+	public class AutoFilterGames : AutoFilterCollection
+	{
+		List<Game> sourceCollection;
+
+		List<Game> filteredCollection;
+
+		public override IList FilteredCollection => filteredCollection;
+
+		public StringFilter PublisherFilter { get; }
+		public StringFilter GenreFilter { get; }
+		public StringFilter PlayersFilter { get; }
+		public StringFilter PlatformFilter { get; }
+		public StringFilter RegionsFilter { get; }
+		public StringFilter YearFilter { get; }
+
+		public BoolFilter CrapFilter { get; }
+		public BoolFilter IncludedFilter { get; }
+		public BoolFilter UnlicensedFilter { get; }
+
+		public AutoFilterGames(List<Game> _sourceCollection, string _title)
+		{
+			title = _title;
+			sourceCollection = _sourceCollection;
+
+			StringFilters.Add(PublisherFilter = new StringFilter("Publisher", () => Update(), Settings.GameFilterPublisher));
+			StringFilters.Add(GenreFilter = new StringFilter("Genre", () => Update(), Settings.GameFilterGenre));
+			StringFilters.Add(PlayersFilter = new StringFilter("Players", () => Update(), Settings.GameFilterPlayers));
+			StringFilters.Add(PlatformFilter = new StringFilter("Platform", () => Update(), Settings.GameFilterPlatform));
+			StringFilters.Add(RegionsFilter = new StringFilter("Regions", () => Update(), Settings.GameFilterRegions));
+			StringFilters.Add(YearFilter = new StringFilter("Year", () => Update(), Settings.GameFilterYear));
+
+			BoolFilters.Add(CrapFilter = new BoolFilter("Crap", () => Update(), Settings.GameFilterIsCrap));
+			BoolFilters.Add(IncludedFilter = new BoolFilter("Playable", () => Update(), Settings.GameFilterIncluded));
+			BoolFilters.Add(UnlicensedFilter = new BoolFilter("Unlicensed", () => Update(), Settings.GameFilterUnlicensed));
+
+			Update();
+		}
+
+		protected override void CalculateFilteredCollection()
+		{
+			IEnumerable<Game> _filteredCollection = sourceCollection;
+
 #if DEBUG
-            Watch[2].Restart();
+			Stopwatch Watch = Stopwatch.StartNew();
 #endif
-            switch (stringFilter.Property)
-            {
-                case "Regions":
-                    stringFilter.DistinctValues = (FilteredCollection as IEnumerable<Game>).SelectMany(x => x.RegionsList).Distinct().Concat(new List<string>() { ALL }).OrderBy(x => x);
-                    break;
-                case "Genres":
-                    stringFilter.DistinctValues = (FilteredCollection as IEnumerable<Game>).SelectMany(x => x.GenreList).Distinct().Concat(new List<string>() { ALL }).OrderBy(x => x);
-                    break;
-                case "Publisher":
-                    stringFilter.DistinctValues = (FilteredCollection as IEnumerable<Game>).Select(x => x.Publisher).Distinct().Concat(new List<string>() { ALL }).OrderBy(x => x);
-                    break;
-                case "Players":
-                    stringFilter.DistinctValues = (FilteredCollection as IEnumerable<Game>).Select(x => x.Players).Distinct().Concat(new List<string>() { ALL }).OrderBy(x => x);
-                    break;
 
-                case "RegionTitle":
-                    stringFilter.DistinctValues = (FilteredCollection as IEnumerable<Release>).Select(x => x.RegionTitle).Distinct().Concat(new List<string>() { ALL }).OrderBy(x => x);
-                    break;
+			//// Filter items based on text
+			if (!string.IsNullOrEmpty(TextFilter))
+			{
+				_filteredCollection = _filteredCollection.Where(x => Regex.IsMatch(x.Title, TextFilter.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
+			}
 
-                case "PlatformTitle":
-                    switch (Type.Name)
-                    {
-                        case "Game":
-                            stringFilter.DistinctValues = (FilteredCollection as IEnumerable<Game>).Select(x => x.PlatformTitle).Distinct().Concat(new List<string>() { ALL }).OrderBy(x => x);
-                            break;
-                        case "Release":
-                            stringFilter.DistinctValues = (FilteredCollection as IEnumerable<Release>).Select(x => x.PlatformTitle).Distinct().Concat(new List<string>() { ALL }).OrderBy(x => x);
-                            break;
-                    }
-                    break;
-                case "Year":
-                    switch (Type.Name)
-                    {
-                        case "Game":
-                            stringFilter.DistinctValues = (FilteredCollection as IEnumerable<Game>).Select(x => x.Year).Distinct().Concat(new List<string>() { ALL }).OrderBy(x => x);
-                            break;
-                        case "Release":
-                            stringFilter.DistinctValues = (FilteredCollection as IEnumerable<Release>).Select(x => x.Year).Distinct().Concat(new List<string>() { ALL }).OrderBy(x => x);
-                            break;
-                    }
-                    break;
+			filteredCollection = _filteredCollection
+				.Where(x => PublisherFilter.Skip || x.Publisher == PublisherFilter.Value)
+				.Where(x => GenreFilter.Skip || x.Genre.Contains(GenreFilter.Value))
+				.Where(x => PlayersFilter.Skip || x.Players == PlayersFilter.Value)
+				.Where(x => PlatformFilter.Skip || x.PlatformTitle == PlatformFilter.Value)
+				.Where(x => RegionsFilter.Skip || x.RegionsList.Contains(RegionsFilter.Value))
+				.Where(x => YearFilter.Skip || x.Year == YearFilter.Value)
 
-                case "Type":
-                    stringFilter.DistinctValues = (FilteredCollection as IEnumerable<Platform>).Select(x => x.Type).Distinct().Concat(new List<string>() { ALL }).OrderBy(x => x);
-                    break;
-                case "Generation":
-                    stringFilter.DistinctValues = (FilteredCollection as IEnumerable<Platform>).Select(x => x.Generation).Distinct().Concat(new List<string>() { ALL }).OrderBy(x => x);
-                    break;
-                case "Developer":
-                    stringFilter.DistinctValues = (FilteredCollection as IEnumerable<Platform>).Select(x => x.Developer).Distinct().Concat(new List<string>() { ALL }).OrderBy(x => x);
-                    break;
-                case "Manufacturer":
-                    stringFilter.DistinctValues = (FilteredCollection as IEnumerable<Platform>).Select(x => x.Manufacturer).Distinct().Concat(new List<string>() { ALL }).OrderBy(x => x);
-                    break;
-                case "Media":
-                    stringFilter.DistinctValues = (FilteredCollection as IEnumerable<Platform>).Select(x => x.Media).Distinct().Concat(new List<string>() { ALL }).OrderBy(x => x);
-                    break;
+				.Where(x => CrapFilter.Skip || x.IsCrap == CrapFilter.Value)
+				.Where(x => IncludedFilter.Skip || x.Included == IncludedFilter.Value)
+				.Where(x => UnlicensedFilter.Skip || x.Unlicensed == UnlicensedFilter.Value)
 
-            }
+				.ToList();
+
 #if DEBUG
-            Debug.WriteLine(stringFilter.Property + "DistinctValues: " + Watch[2].ElapsedMilliseconds);
+			Debug.WriteLine("Calculate filtered collection: " + Watch.ElapsedMilliseconds);
 #endif
-        }
+			OnPropertyChanged("FilteredCollection");
+		}
 
-        internal void ClearFilters()
-        {
-            foreach (StringFilter stringFilter in StringFilters)
-            {
-                stringFilter.Value = null;
-            }
-
-            foreach (BoolFilter boolFilter in BoolFilters)
-            {
-                boolFilter.Value = null;
-            }
-
-            TextFilter = "";
-
-            FilteredCollection = sourceCollection;
-
-            OnPropertyChanged("FilteredCollection");
-        }
-
-        public void CalculateFilteredCollection()
-        {
-            //// Start with all of the games
-            //FilteredCollection = SourceCollection;
-
-            IEnumerable<T> filteredCollection = SourceCollection;
-
-            //// Filter items based on text
-            if (!string.IsNullOrEmpty(TextFilter))
-            {
-                filteredCollection = filteredCollection.Where(x => Regex.IsMatch(x.Title, TextFilter.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
-                //filteredCollection = filteredCollection.Where(x => x.Title.ToLower().Contains(TextFilter.ToLower()));
-            }
-
-            // Run over string filters 
-            foreach (StringFilter stringfilter in StringFilters)
-            {
-                if (stringfilter.Value != null && !stringfilter.Value.Equals(ALL))
-                {
-                    var prop = Type.GetProperty(stringfilter.Property);
-                    if (stringfilter.Property == "Regions" || stringfilter.Property == "Genres")
-                    {
-                        filteredCollection = filteredCollection.Where(x => (prop.GetValue(x, null) != null && prop.GetValue(x, null).ToString().Contains(stringfilter.Value.ToString())));
-                    }
-                    else
-                    {
-                        filteredCollection = filteredCollection.Where(x => (prop.GetValue(x, null) != null && prop.GetValue(x, null).ToString().Equals(stringfilter.Value.ToString())));
-                    }
-                }
-            }
-
-            // Run over bool filters 
-            foreach (var boolFilter in BoolFilters)
-            {
-                if (boolFilter.Value != null)
-                {
-                    switch (boolFilter.Property)
-                    {
-                        case "IsCrap":
-                            filteredCollection = filteredCollection.Where(x => x.IsCrap == boolFilter.Value);
-                            break;
-                        case "Included":
-                            filteredCollection = filteredCollection.Where(x => x.Included == boolFilter.Value);
-                            break;
-                        case "Unlicensed":
-                            filteredCollection = filteredCollection.Where(x => x.Unlicensed == boolFilter.Value);
-                            break;
-                        case "HasArt":
-                            filteredCollection = filteredCollection.Where(x => x.HasArt == boolFilter.Value);
-                            break;
-                        case "Preferred":
-                            filteredCollection = filteredCollection.Where(x => x.Preferred == boolFilter.Value);
-                            break;
-                    }
-                }
-            }
-            FilteredCollection = filteredCollection.ToList();
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string prop)
-        {
+		protected override void GetDistinctValuesForFilter()
+		{
 #if DEBUG
-            Watch[9].Restart();
+			Stopwatch Watch = Stopwatch.StartNew();
 #endif
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+			PublisherFilter.DistinctValues = filteredCollection.Select(x => x.Publisher);
+			GenreFilter.DistinctValues = filteredCollection.SelectMany(x => x.GenreList);
+			PlayersFilter.DistinctValues = filteredCollection.Select(x => x.Players);
+			PlatformFilter.DistinctValues = filteredCollection.Select(x => x.PlatformTitle);
+			RegionsFilter.DistinctValues = filteredCollection.SelectMany(x => x.RegionsList);
+			YearFilter.DistinctValues = filteredCollection.Select(x => x.Year).Distinct();
 #if DEBUG
-            Debug.WriteLine("OnPropertyChanged " + prop + ": " + Watch[9].ElapsedMilliseconds + "\n");
+			Debug.WriteLine("Get distinct values: " + Watch.ElapsedMilliseconds);
 #endif
-        }
-    }
+		}
+
+		public override void SaveSettings()
+		{
+			Settings.GameFilterPublisher = PublisherFilter.Value;
+			Settings.GameFilterGenre = GenreFilter.Value;
+			Settings.GameFilterPlayers = PlayersFilter.Value;
+			Settings.GameFilterPlatform = PlatformFilter.Value;
+			Settings.GameFilterRegions = RegionsFilter.Value;
+			Settings.GameFilterYear = YearFilter.Value;
+
+			Settings.GameFilterIsCrap = CrapFilter.Value;
+			Settings.GameFilterIncluded = IncludedFilter.Value;
+			Settings.GameFilterUnlicensed = UnlicensedFilter.Value;
+		}
+	}
+
+	public class AutoFilterPlatforms : AutoFilterCollection
+	{
+		List<Platform> sourceCollection;
+
+		List<Platform> filteredCollection;
+
+		public override IList FilteredCollection => filteredCollection;
+
+		public StringFilter TypeFilter { get; }
+		public StringFilter GenerationFilter { get; }
+		public StringFilter DeveloperFilter { get; }
+		public StringFilter ManufacturerFilter { get; }
+		public StringFilter MediaFilter { get; }
+
+		public BoolFilter IncludedFilter { get; }
+		public BoolFilter PreferreddFilter { get; }
+
+		public AutoFilterPlatforms(List<Platform> _sourceCollection, string _title)
+		{
+			title = _title;
+			sourceCollection = _sourceCollection;
+
+			StringFilters.Add(TypeFilter = new StringFilter("Type", () => Update(), Settings.PlatformFilterType));
+			StringFilters.Add(GenerationFilter = new StringFilter("Generation", () => Update(), Settings.PlatformFilterGeneration));
+			StringFilters.Add(DeveloperFilter = new StringFilter("Developer", () => Update(), Settings.PlatformFilterDeveloper));
+			StringFilters.Add(ManufacturerFilter = new StringFilter("Manufacturer", () => Update(), Settings.PlatformFilterManufacturer));
+			StringFilters.Add(MediaFilter = new StringFilter("Media", () => Update(), Settings.PlatformFilterMedia));
+
+			BoolFilters.Add(IncludedFilter = new BoolFilter("Playable", () => Update(), Settings.PlatformFilterIncluded));
+			BoolFilters.Add(PreferreddFilter = new BoolFilter("Preferred", () => Update(), Settings.PlatformFilterPreferred));
+
+			Update();
+		}
+
+		protected override void CalculateFilteredCollection()
+		{
+			IEnumerable<Platform> _filteredCollection = sourceCollection;
+
+#if DEBUG
+			Stopwatch Watch = Stopwatch.StartNew();
+#endif
+
+			//// Filter items based on text
+			if (!string.IsNullOrEmpty(TextFilter))
+			{
+				_filteredCollection = _filteredCollection.Where(x => Regex.IsMatch(x.Title, TextFilter.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
+			}
+
+			filteredCollection = _filteredCollection
+				.Where(x => TypeFilter.Skip || x.Type == TypeFilter.Value)
+				.Where(x => GenerationFilter.Skip || x.Generation == GenerationFilter.Value)
+				.Where(x => DeveloperFilter.Skip || x.Developer != null && x.Developer.Contains(DeveloperFilter.Value))
+				.Where(x => ManufacturerFilter.Skip || x.Manufacturer != null && x.Manufacturer.Contains(ManufacturerFilter.Value))
+				.Where(x => MediaFilter.Skip || x.Media != null && x.Media.Contains(MediaFilter.Value))
+
+				.Where(x => IncludedFilter.Skip || x.Included == IncludedFilter.Value)
+				.Where(x => PreferreddFilter.Skip || x.Unlicensed == PreferreddFilter.Value)
+
+				.ToList();
+
+#if DEBUG
+			Debug.WriteLine("Calculate filtered collection: " + Watch.ElapsedMilliseconds);
+#endif
+			OnPropertyChanged("FilteredCollection");
+		}
+
+		protected override void GetDistinctValuesForFilter()
+		{
+#if DEBUG
+			Stopwatch Watch = Stopwatch.StartNew();
+#endif
+			TypeFilter.DistinctValues = filteredCollection.Select(x => x.Type);
+			GenerationFilter.DistinctValues = filteredCollection.Select(x => x.Generation);
+			DeveloperFilter.DistinctValues = filteredCollection.Select(x => x.Developer);
+			ManufacturerFilter.DistinctValues = filteredCollection.Select(x => x.Manufacturer);
+			MediaFilter.DistinctValues = filteredCollection.Select(x => x.Media);
+#if DEBUG
+			Debug.WriteLine("Get distinct values: " + Watch.ElapsedMilliseconds);
+#endif
+		}
+
+		public override void SaveSettings()
+		{
+			Settings.PlatformFilterType = TypeFilter.Value;
+			Settings.PlatformFilterGeneration = GenerationFilter.Value;
+			Settings.PlatformFilterDeveloper = DeveloperFilter.Value;
+			Settings.PlatformFilterManufacturer = ManufacturerFilter.Value;
+			Settings.PlatformFilterMedia = MediaFilter.Value;
+
+			Settings.PlatformFilterIncluded = IncludedFilter.Value;
+			Settings.PlatformFilterPreferred = PreferreddFilter.Value;
+		}
+	}
+
+	public class AutoFilterEmulators : AutoFilterCollection
+	{
+		List<Emulator> sourceCollection;
+
+		List<Emulator> filteredCollection;
+
+		public override IList FilteredCollection => filteredCollection;
+
+		public StringFilter PlatformFilter { get; }
+
+		public BoolFilter IncludedFilter { get; }
+
+		public BoolFilter CrapFilter { get; }
+
+		public AutoFilterEmulators(List<Emulator> _sourceCollection, string _title)
+		{
+			title = _title;
+			sourceCollection = _sourceCollection;
+
+			StringFilters.Add(PlatformFilter = new StringFilter("Platform", () => Update(), Settings.EmulatorFilterPlatform));
+
+			BoolFilters.Add(IncludedFilter = new BoolFilter("Included", () => Update(), Settings.EmulatorFilterIncluded));
+			BoolFilters.Add(CrapFilter = new BoolFilter("Crap", () => Update(), Settings.EmulatorFilterIsCrap));
+
+			Update();
+		}
+
+		protected override void CalculateFilteredCollection()
+		{
+			IEnumerable<Emulator> _filteredCollection = sourceCollection;
+
+#if DEBUG
+			Stopwatch Watch = Stopwatch.StartNew();
+#endif
+
+			//// Filter items based on text
+			if (!string.IsNullOrEmpty(TextFilter))
+			{
+				_filteredCollection = _filteredCollection.Where(x => Regex.IsMatch(x.Title, TextFilter.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
+			}
+
+			filteredCollection = _filteredCollection
+				.Where(x => PlatformFilter.Skip || x.Platforms.Select(y => y.Title).Contains(PlatformFilter.Value))
+				.Where(x => IncludedFilter.Skip || x.Included == IncludedFilter.Value)
+
+				.ToList();
+
+#if DEBUG
+			Debug.WriteLine("Calculate filtered collection: " + Watch.ElapsedMilliseconds);
+#endif
+			OnPropertyChanged("FilteredCollection");
+		}
+
+		protected override void GetDistinctValuesForFilter()
+		{
+#if DEBUG
+			Stopwatch Watch = Stopwatch.StartNew();
+#endif
+			PlatformFilter.DistinctValues = filteredCollection.SelectMany(x => x.Platforms).Select(x => x.Title);
+#if DEBUG
+			Debug.WriteLine("Get distinct values: " + Watch.ElapsedMilliseconds);
+#endif
+		}
+
+		public override void SaveSettings()
+		{
+			Settings.EmulatorFilterPlatform = PlatformFilter.Value;
+			Settings.EmulatorFilterIncluded = IncludedFilter.Value;
+			Settings.EmulatorFilterIsCrap = CrapFilter.Value;
+		}
+	}
+
+
+	// This is one filter and all of it's distinct values, e.g., Region, containing Japan, USA etc.
+	public class StringFilter : INotifyPropertyChanged
+	{
+		const string ALL = "*All";
+
+		Action Callback;
+
+		public string Name { get; set; }
+
+		string _value;
+		public string Value
+		{
+			get { return _value; }
+			set
+			{
+				if (_value != value)
+				{
+					_value = value;
+					Callback();
+					OnPropertyChanged("Value");
+				}
+			}
+		}
+
+		public bool Skip => _value == ALL || string.IsNullOrEmpty(_value);
+
+		private IEnumerable<string> distinctValues;
+		public IEnumerable<string> DistinctValues
+		{
+			get { return distinctValues.Distinct().Concat(new List<string>() { ALL }).OrderBy(x => x); }
+			set
+			{
+				if (distinctValues != value)
+				{
+					distinctValues = value;
+					OnPropertyChanged("DistinctValues");
+				}
+			}
+		}
+
+		public StringFilter(string name, Action callback, string value = null)
+		{
+			DistinctValues = new List<string>();
+			Callback = callback;
+			Name = name;
+			_value = value;
+		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
+		public void OnPropertyChanged(string prop)
+		{
+#if DEBUG
+			Stopwatch Watch = Stopwatch.StartNew();
+#endif
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+#if DEBUG
+			Debug.WriteLine("OnPropertyChanged " + Name + " " + prop + ": " + Watch.ElapsedMilliseconds + "\n");
+#endif
+		}
+	}
+
+	// This is one filter and all of it's distinct values, e.g., Region, containing Japan, USA etc.
+	public class BoolFilter : INotifyPropertyChanged
+	{
+		// The parent is the autofilter collection, roms, games, platforms
+		public string Name { get; set; }
+
+		Action Callback;
+
+		public bool Skip => _value == null;
+
+		bool? _value;
+
+		public bool? Value
+		{
+			get { return _value; }
+			set
+			{
+				if (_value != value)
+				{
+					_value = value;
+					Callback();
+					OnPropertyChanged("Value");
+				}
+			}
+		}
+
+		public BoolFilter(string name, Action callback, bool? _value)
+		{
+			this._value = _value;
+			Name = name;
+			Callback = callback;
+		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
+		public void OnPropertyChanged(string prop)
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+#if DEBUG
+			Debug.WriteLine("OnPropertyChanged " + Name + " " + prop + "\n");
+#endif
+		}
+	}
 }
 
-// This is one filter and all of it's distinct values, e.g., Region, containing Japan, USA etc.
-class StringFilter : INotifyPropertyChanged
-{
-    const string ALL = "*All";
-#if DEBUG
-    Stopwatch[] Watch = new Stopwatch[10];
-#endif
 
-    Action Callback;
 
-    public string Name { get; set; }
-    public string Property { get; set; }
 
-    string _value;
-    public string Value
-    {
-        get { return _value; }
-        set
-        {
-            if (_value != value)
-            {
-                _value = value;
-                Callback();
-                OnPropertyChanged("Value");
-            }
-        }
-    }
-
-    private IEnumerable<string> distinctValues;
-    public IEnumerable<string> DistinctValues
-    {
-        get { return distinctValues; }
-        set
-        {
-            if (distinctValues != value)
-            {
-                distinctValues = value;
-                OnPropertyChanged("DistinctValues");
-            }
-        }
-    }
-
-    public StringFilter(string property, Action callback, string name = null)
-    {
-#if DEBUG
-        for (int i = 0; i < Watch.Length; i++)
-        {
-            Watch[i] = new Stopwatch();
-            Watch[i].Start();
-        }
-#endif
-        DistinctValues = new List<string>();
-        Property = property;
-        Name = name ?? property;
-        Value = null;
-        Callback = callback;
-    }
-
-    public event PropertyChangedEventHandler PropertyChanged;
-    public void OnPropertyChanged(string prop)
-    {
-#if DEBUG
-        Watch[0].Restart();
-#endif
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-#if DEBUG
-        Debug.WriteLine("OnPropertyChanged " + Property + " " + prop + ": " + Watch[0].ElapsedMilliseconds + "\n");
-#endif
-    }
-}
-
-// This is one filter and all of it's distinct values, e.g., Region, containing Japan, USA etc.
-class BoolFilter : INotifyPropertyChanged
-{
-    // The parent is the autofilter collection, roms, games, platforms
-    public string Name { get; set; }
-    public string Property { get; set; }
-    Action Callback;
-
-    bool? _value;
-    public bool? Value
-    {
-        get { return _value; }
-        set
-        {
-            if (_value != value)
-            {
-                _value = value;
-                Callback();
-                OnPropertyChanged("Value");
-            }
-        }
-    }
-
-    public BoolFilter(string property, Action callback, string name = null)
-    {
-        Property = property;
-        Name = name ?? property;
-
-        Callback = callback;
-        if (property == "Included")
-        {
-            Value = true;
-        }
-
-        if (property == "IsCrap")
-        {
-            Value = false;
-        }
-    }
-
-    public event PropertyChangedEventHandler PropertyChanged;
-    public void OnPropertyChanged(string prop)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-#if DEBUG
-        Debug.WriteLine("OnPropertyChanged " + Property + " " + prop + "\n");
-#endif
-    }
-}
 

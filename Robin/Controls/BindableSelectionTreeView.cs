@@ -12,14 +12,12 @@
  * You should have received a copy of the GNU General Public License
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
 
-using System.Collections;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Interactivity;
 
 namespace Robin
 {
-    public class BindableSelectionTreeView : TreeView
+	public class BindableSelectionTreeView : TreeView
     {
         public BindableSelectionTreeView()
             : base()

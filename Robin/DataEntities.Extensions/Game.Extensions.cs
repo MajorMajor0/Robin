@@ -10,7 +10,7 @@
  * General Public License for more details. 
  * 
  * You should have received a copy of the GNU General Public License
- *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
+ * along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
 
 using System;
 using System.Collections.Generic;
@@ -44,14 +44,31 @@ namespace Robin
 			{
 				return Releases[0].Rating;
 			}
+
 			set
 			{
-				foreach (Release release in Releases)
+
+				if (value != null)
 				{
-					release.Rating = value;
+					decimal d = Math.Min((decimal)value, 5);
+							d = Math.Max(d, 0);
+
+					foreach (Release release in Releases)
+					{
+						release.Rating = d;
+					}
+				}
+
+				else
+				{
+					foreach (Release release in Releases)
+					{
+						release.Rating = null;
+					}
 				}
 				OnPropertyChanged("Rating");
 			}
+
 		}
 
 		public string Year => Releases[0].Year;
@@ -62,20 +79,9 @@ namespace Robin
 
 		public string Publisher => Releases[0].Publisher;
 
-		public string Genres => Releases[0].Genre ?? "Unknown";
+		public string Genre => Releases[0].Genre ?? "Unknown";
 
-		List<string> genreList;
-		public List<string> GenreList
-		{
-			get
-			{
-				if (genreList == null)
-				{
-					genreList = Genres.Split(',').Select(x => x.Trim()).ToList();
-				}
-				return genreList;
-			}
-		}
+		public List<string> GenreList => Releases[0].GenreList;
 
 		public string Players => Releases[0].Players;
 
@@ -113,22 +119,31 @@ namespace Robin
 
 		public DateTime? Date => Releases[0].Date;
 
-		//public long? ID_GDB
-		//{
-		//    get
-		//    { return Releases[0].ID_GDB; }
-		//}
-
-		//public long? ID_OVG
-		//{
-		//    get { return Releases[0].ID_OVG; }
-		//}
-
 
 		public long PlayCount => Releases.Sum(x => x.PlayCount);
 
 
 		public bool Included => Releases.Any(x => x.Included);
+
+		public bool HasEmulator => Platform.Emulators.Any(x => x.Included);
+
+		public bool HasRelease => Releases.Any(x => x.Included);
+
+		public string WhyCantIPlay
+		{
+			get
+			{
+				if (Included)
+				{
+					return Title + " is ready to play.";
+				}
+				string and = HasRelease || HasEmulator ? "" : " and ";
+				string emulatorTrouble = HasEmulator ? "" : "no emulator appears to be installed for " + Platform.Title + ".";
+				string releaseTrouble = HasRelease ? "" : "no rom files appear to be available";
+				return Title + " can't launch because " + releaseTrouble + and + emulatorTrouble + ".";
+			}
+		}
+
 
 		public bool IsCrap
 		{
@@ -175,6 +190,7 @@ namespace Robin
 		public bool Unlicensed => Releases[0].Unlicensed;
 
 		public bool HasArt => Releases.Any(x => x.HasArt);
+
 
 		public int BorderThickness { get; set; } = 1;
 

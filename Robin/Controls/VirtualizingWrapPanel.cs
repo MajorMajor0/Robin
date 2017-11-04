@@ -446,7 +446,6 @@ namespace Robin
 
 		protected override Size MeasureOverride(Size availableSize)
 		{
-			Debug.WriteLine("M O");
 			if (_itemsControl == null || _itemsControl.Items.Count == 0)
 				return availableSize;
 			if (_abstractPanel == null)

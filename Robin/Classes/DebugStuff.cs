@@ -12,44 +12,33 @@
  * You should have received a copy of the GNU General Public License
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
 
+#if DEBUG
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 
 namespace Robin
 {
-	public partial class Collection
+	class DebugStuff
 	{
-		public IEnumerable<IDBobject> List
+		public static void SetFactoryDatabase()
 		{
-			get { return (Games as IEnumerable<IDBobject>).Union(Releases as IEnumerable<IDBobject>); }
-		}
+			foreach (Release release in R.Data.Releases)
+			{
+				release.IsBeaten = false;
+				release.Rating = null;
+				release.PlayCount = 0;
+			}
 
-		public void Add(IDBobject idbObject)
-		{
-			if (idbObject is Game)
+			foreach (Collection collection in R.Data.Collections)
 			{
-				Games.Add(idbObject as Game);
-				OnPropertyChanged("FilteredCollection");
-			}
-			if (idbObject is Release)
-			{
-				Releases.Add(idbObject as Release);
-				OnPropertyChanged("FilteredCollection");
-			}
-		}
-
-		public void Remove(IDBobject idbObject)
-		{
-			if (idbObject is Game)
-			{
-				Games.Remove(idbObject as Game);
-				OnPropertyChanged("FilteredCollection");
-			}
-			if (idbObject is Release)
-			{
-				Releases.Remove(idbObject as Release);
-				OnPropertyChanged("FilteredCollection");
+				collection.Releases.Clear();
+				collection.Games.Clear();
 			}
 		}
 	}
 }
+#endif

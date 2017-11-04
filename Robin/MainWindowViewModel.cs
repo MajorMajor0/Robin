@@ -32,8 +32,8 @@ namespace Robin
 	{
 		public ObservableCollection<object> MainBigList { get; }
 
-		AutoFilterCollection<Game> gameCollection;
-		public AutoFilterCollection<Game> GameCollection
+		AutoFilterGames gameCollection;
+		public AutoFilterGames GameCollection
 		{
 			get { return gameCollection; }
 			set
@@ -46,8 +46,8 @@ namespace Robin
 			}
 		}
 
-		public AutoFilterCollection<Release> releaseCollection;
-		public AutoFilterCollection<Release> ReleaseCollection
+		public AutoFilterReleases releaseCollection;
+		public AutoFilterReleases ReleaseCollection
 		{
 			get { return releaseCollection; }
 			set
@@ -60,8 +60,8 @@ namespace Robin
 			}
 		}
 
-		AutoFilterCollection<Platform> platformCollection;
-		public AutoFilterCollection<Platform> PlatformCollection
+		AutoFilterPlatforms platformCollection;
+		public AutoFilterPlatforms PlatformCollection
 		{
 			get { return platformCollection; }
 			set
@@ -74,8 +74,8 @@ namespace Robin
 			}
 		}
 
-		AutoFilterCollection<Emulator> emulatorCollection;
-		public AutoFilterCollection<Emulator> EmulatorCollection
+		AutoFilterEmulators emulatorCollection;
+		public AutoFilterEmulators EmulatorCollection
 		{
 			get { return emulatorCollection; }
 			set
@@ -126,25 +126,62 @@ namespace Robin
 
 		public Platform SelectedEmulatorPlatform { get; set; }
 
+		//private string SelectedDBNote()
+		//{
+		//	string plusText;
+		//	string firstReason;
+		//	string secondReason;
+		//	string and = "and";
+
+		//	if (SelectedDB.Included)
+		//	{
+		//		return selectedDB.Title + " is ready to play.";
+		//	}
+
+		//	switch (SelectedDB.GetType().BaseType.Name)
+		//	{
+
+		//		case "Release":
+		//			if ((selectedDB as Release).Platform.HasEmulator)
+		//				firstReason = "None of it's platform emulators have been installed ";
+		//			break;
+		//		case "Game":
+
+		//			break;
+		//		case "Platform":
+
+		//			break;
+		//		case "Emulator":
+
+		//			break;
+		//	}
+
+		//	return SelectedDB.Title + " is not playable beacause ";
+
+		//}
+
 
 		public MainWindowViewModel()
 		{
 			R.Data = new RobinDataEntities(this);
-			ReleaseCollection = new AutoFilterCollection<Release>(R.Data.Releases.Local.Where(x => x.IsGame).ToList(), "Releases");
-			GameCollection = new AutoFilterCollection<Game>(R.Data.Games.Local.Where(x => x.IsGame).ToList(), "Games");
-			PlatformCollection = new AutoFilterCollection<Platform>(R.Data.Platforms.Local.ToList(), "Platforms");
-			EmulatorCollection = new AutoFilterCollection<Emulator>(R.Data.Emulators.Local.ToList(), "Emulators");
-
-			CollectionList = new CollectionList("Collections");
 
 			MainBigList = new ObservableCollection<object>();
-			MainBigList.Add(ReleaseCollection);
-			MainBigList.Add(GameCollection);
-			MainBigList.Add(PlatformCollection);
-			MainBigList.Add(EmulatorCollection);
-			MainBigList.Add(CollectionList);
+			MainBigList.Add(ReleaseCollection = new AutoFilterReleases(R.Data.Releases.Local.Where(x => x.IsGame).ToList(), "Releases"));
+			MainBigList.Add(GameCollection = new AutoFilterGames(R.Data.Games.Local.Where(x => x.IsGame).ToList(), "Games"));
+			MainBigList.Add(PlatformCollection = new AutoFilterPlatforms(R.Data.Platforms.Local.ToList(), "Platforms"));
+			MainBigList.Add(EmulatorCollection = new AutoFilterEmulators(R.Data.Emulators.Local.ToList(), "Emulators"));
+			MainBigList.Add(CollectionList = new CollectionList("Collections"));
 
 			InitializeCommands();
+		}
+
+		public void SaveSettings()
+		{
+			foreach (AutoFilterCollection AFC in MainBigList.Where(x => x is AutoFilterCollection))
+			{
+				AFC.SaveSettings();
+			}
+			Properties.Settings.Default.Save();
 		}
 
 

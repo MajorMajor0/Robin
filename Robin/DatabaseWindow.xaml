@@ -125,6 +125,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<CollectionViewSource x:Key="SortedItems"
 											  Source="{Binding Platforms.Local}">
 							<CollectionViewSource.SortDescriptions>
+								<scm1:SortDescription PropertyName="Preferred" Direction="Descending"/>
 								<scm1:SortDescription PropertyName="Manufacturer" />
 								<scm1:SortDescription PropertyName="Title" />
 
