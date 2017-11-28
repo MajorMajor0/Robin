@@ -25,7 +25,7 @@ namespace Robin
 
 		public Command CompareCommand { get; set; }
 
-		private async void CompareAsync()
+		 async void CompareAsync()
 		{
 			if (SelectedPlatforms != null && SelectedPlatforms.Count > 0)
 			{
@@ -66,12 +66,12 @@ namespace Robin
 			}
 		}
 
-		private bool CompareCanExecute()
+		 bool CompareCanExecute()
 		{
 			return SelectedIDB != null && !(SelectedIDB is Datomatic) && SelectedPlatform != null;
 		}
 
-		private void CompareToOVGDB(IDBPlatform idbPlatform)
+		 void CompareToOVGDB(IDBPlatform idbPlatform)
 		{
 			// There are no results in OVGDB for arcade, so skip it
 			if (idbPlatform.Title.Contains("Arcade"))
@@ -146,7 +146,7 @@ namespace Robin
 			}
 		}
 
-		private bool AcceptCanExecute()
+		 bool AcceptCanExecute()
 		{
 			return true;
 			//return DatabaseGrid.Content != null && DatabaseGrid.Content.GetType() == typeof(Compares);
@@ -155,12 +155,12 @@ namespace Robin
 
 		public Command ArtWindowCommand { get; set; }
 
-		private void ArtWindow()
+		 void ArtWindow()
 		{
 			ArtWindow artWindow = new ArtWindow(SelectedRelease as Release);
 		}
 
-		private bool ArtWindowCanExecute()
+		 bool ArtWindowCanExecute()
 		{
 			return SelectedIDB is Datomatic && SelectedRelease != null;
 		}
@@ -168,24 +168,22 @@ namespace Robin
 
 		public Command MatchWindowCommand { get; set; }
 
-		private void MatchWindow()
+		 void MatchWindow()
 		{
 
 			MatchWindow matchWindow = new MatchWindow(SelectedRelease as Release);
 		}
 
-		private bool MatchWindowCanExecute()
+		 bool MatchWindowCanExecute()
 		{
 			return SelectedIDB is Datomatic && SelectedRelease != null;
 		}
 
 
-		public Command CachePlatformsCommand { get; set; }
+		public Command CacheReleasesCommand { get; set; }
 
-		private async void CachePlatforms()
+		 async void CacheReleases()
 		{
-			//LocalDB localDB = SelectedIDB.DB;
-
 			// Cache platforms to cache in case selection changes during operation
 			List<IDBPlatform> IDBPlatforms = new List<IDBPlatform>();
 
@@ -206,13 +204,14 @@ namespace Robin
 				}
 
 				//ReportUpdates() calls detect changes, so not necessary in save
-				SelectedIDB.ReportUpdates(true);
-				IDBs[0].ReportUpdates(false);
-				R.Data.Save(false);
 			});
+
+			SelectedIDB.ReportUpdates(true);
+			IDBs[0].ReportUpdates(false);
+			R.Data.Save(false);
 		}
 
-		private bool CachePlatformsCanExecute()
+		 bool CacheReleasesCanExecute()
 		{
 			return SelectedPlatform != null;
 		}
@@ -220,19 +219,19 @@ namespace Robin
 
 		public Command WriteDBCommand { get; set; }
 
-		private void WriteDB()
+		 void WriteDB()
 		{
 			R.Data.Save(true);
 		}
 
 
-		private void IntializeCommands()
+		 void IntializeCommands()
 		{
 			CompareCommand = new Command(CompareAsync, CompareCanExecute, "Compare", "Compare title of releases in selected platforms to Robin database.");
 			AcceptCommand = new Command(Accept, AcceptCanExecute, "Accept Changes", "Push all matches to the database");
 			ArtWindowCommand = new Command(ArtWindow, ArtWindowCanExecute, "Art Window", "Open a window to choose artwork");
 			MatchWindowCommand = new Command(MatchWindow, MatchWindowCanExecute, "Match Window", "Open a window to match release to databases");
-			CachePlatformsCommand = new Command(CachePlatforms, CachePlatformsCanExecute, "Cache Releases", "Cache releases from " + SelectedIDB?.Title + " for selected platforms.");
+			CacheReleasesCommand = new Command(CacheReleases, CacheReleasesCanExecute, "Cache Releases", "Cache releases from Datomatic or MAME for selected platforms.");
 			WriteDBCommand = new Command(WriteDB, "Write Database", "Write all database changes to disk");
 		}
 	}

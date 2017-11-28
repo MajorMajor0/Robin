@@ -58,13 +58,15 @@ namespace Robin
 
 		public virtual IList FilteredCollection { get; }
 
+		public virtual int SourceCount { get; }
+
 		internal Settings Settings => Properties.Settings.Default;
 
 		public AutoFilterCollection()
 		{
 			BoolFilters = new List<BoolFilter>();
 			StringFilters = new List<StringFilter>();
-			Debug.WriteLine("New AutoFilterCollection()");
+			ClearTextFilterCommand = new Command(ClearTextFilter, ClearTextFilterCanExecute, "X", "Clear filter text.");
 		}
 
 
@@ -117,6 +119,19 @@ namespace Robin
 		}
 
 
+		public Command ClearTextFilterCommand { get; set; }
+
+		private void ClearTextFilter()
+		{
+			TextFilter = "";
+		}
+
+		private bool ClearTextFilterCanExecute()
+		{
+			return !string.IsNullOrEmpty(TextFilter);
+		}
+
+
 		public event PropertyChangedEventHandler PropertyChanged;
 		protected void OnPropertyChanged(string prop)
 		{
@@ -136,6 +151,8 @@ namespace Robin
 
 		List<Release> filteredCollection;
 
+		public override int SourceCount => sourceCollection.Count;
+
 		public override IList FilteredCollection => filteredCollection;
 
 		public StringFilter PublisherFilter { get; }
@@ -145,13 +162,14 @@ namespace Robin
 		public StringFilter RegionsFilter { get; }
 		public StringFilter YearFilter { get; }
 
+		public BoolFilter UnlicensedFilter { get; }
 		public BoolFilter CrapFilter { get; }
 		public BoolFilter IncludedFilter { get; }
-		public BoolFilter UnlicensedFilter { get; }
+		public BoolFilter IsGameFilter { get; }
+		public BoolFilter AdultFilter { get; }
 
 		public AutoFilterReleases(List<Release> _sourceCollection, string _title)
 		{
-
 			title = _title;
 			sourceCollection = _sourceCollection;
 
@@ -162,9 +180,43 @@ namespace Robin
 			StringFilters.Add(RegionsFilter = new StringFilter("Regions", () => Update(), Settings.ReleaseFilterRegions));
 			StringFilters.Add(YearFilter = new StringFilter("Year", () => Update(), Settings.ReleaseFilterYear));
 
-			BoolFilters.Add(CrapFilter = new BoolFilter("Crap", () => Update(), Settings.ReleaseFilterIsCrap));
-			BoolFilters.Add(IncludedFilter = new BoolFilter("Playable", () => Update(), Settings.ReleaseFilterIncluded));
 			BoolFilters.Add(UnlicensedFilter = new BoolFilter("Unlicensed", () => Update(), Settings.ReleaseFilterUnlicensed));
+
+			if (Settings.DisplayCrap)
+			{
+				BoolFilters.Add(CrapFilter = new BoolFilter("Crap", () => Update(), Settings.ReleaseFilterIsCrap));
+			}
+			else
+			{
+				sourceCollection = sourceCollection.Where(x => !x.IsCrap).ToList();
+			}
+
+			if (Settings.DisplayNotIncluded)
+			{
+				BoolFilters.Add(IncludedFilter = new BoolFilter("Playable", () => Update(), Settings.ReleaseFilterIncluded));
+			}
+			else
+			{
+				sourceCollection = sourceCollection.Where(x => x.Included).ToList();
+			}
+
+			if (Settings.DisplayNonGames)
+			{
+				BoolFilters.Add(IsGameFilter = new BoolFilter("Is Game", () => Update(), Settings.ReleaseFilterIsGame));
+			}
+			else
+			{
+				sourceCollection = sourceCollection.Where(x => x.IsGame).ToList();
+			}
+
+			if (Settings.DisplayAdult)
+			{
+				BoolFilters.Add(AdultFilter = new BoolFilter("Adult", () => Update(), Settings.ReleaseFilterAdult));
+			}
+			else
+			{
+				sourceCollection = sourceCollection.Where(x => !x.IsAdult).ToList();
+			}
 
 			Update();
 		}
@@ -172,30 +224,71 @@ namespace Robin
 		protected override void CalculateFilteredCollection()
 		{
 			IEnumerable<Release> _filteredCollection = sourceCollection;
-
 #if DEBUG
 			Stopwatch Watch = Stopwatch.StartNew();
 #endif
-
 			//// Filter items based on text
 			if (!string.IsNullOrEmpty(TextFilter))
 			{
 				_filteredCollection = _filteredCollection.Where(x => Regex.IsMatch(x.Title, TextFilter.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
 			}
 
-			filteredCollection = _filteredCollection
-				.Where(x => PublisherFilter.Skip || x.Publisher == PublisherFilter.Value)
-				.Where(x => GenreFilter.Skip || (x.Genre != null && x.Genre.Contains(GenreFilter.Value)))
-				.Where(x => PlayersFilter.Skip || x.Players == PlayersFilter.Value)
-				.Where(x => PlatformFilter.Skip || x.PlatformTitle == PlatformFilter.Value)
-				.Where(x => RegionsFilter.Skip || x.Region.Title.Contains(RegionsFilter.Value))
-				.Where(x => YearFilter.Skip || x.Year == YearFilter.Value)
+			if (PublisherFilter.IsSet)
+			{
+				_filteredCollection = _filteredCollection.Where(x => x.Publisher == PublisherFilter.Value);
+			}
 
-				.Where(x => CrapFilter.Skip || x.IsCrap == CrapFilter.Value)
-				.Where(x => IncludedFilter.Skip || x.Included == IncludedFilter.Value)
-				.Where(x => UnlicensedFilter.Skip || x.Unlicensed == UnlicensedFilter.Value)
+			if (GenreFilter.IsSet)
+			{
+				_filteredCollection = _filteredCollection.Where(x => x.Genre != null && x.Genre.Contains(GenreFilter.Value));
+			}
 
-				.ToList();
+			if (PlayersFilter.IsSet)
+			{
+				_filteredCollection = _filteredCollection.Where(x => x.Players == PlayersFilter.Value);
+			}
+
+			if (PlatformFilter.IsSet)
+			{
+				_filteredCollection = _filteredCollection.Where(x => x.PlatformTitle == PlatformFilter.Value);
+			}
+
+			if (RegionsFilter.IsSet)
+			{
+				_filteredCollection = _filteredCollection.Where(x => x.Region.Title.Contains(RegionsFilter.Value));
+			}
+
+			if (YearFilter.IsSet)
+			{
+				_filteredCollection = _filteredCollection.Where(x => x.Year == YearFilter.Value);
+			}
+
+			if (UnlicensedFilter.IsSet)
+			{
+				_filteredCollection = _filteredCollection.Where(x => x.Unlicensed == UnlicensedFilter.Value);
+			}
+
+			if (Settings.DisplayCrap && CrapFilter.IsSet)
+			{
+				_filteredCollection = _filteredCollection.Where(x => x.IsCrap == CrapFilter.Value);
+			}
+
+			if (Settings.DisplayNotIncluded && IncludedFilter.IsSet)
+			{
+				_filteredCollection = _filteredCollection.Where(x => x.Included == IncludedFilter.Value);
+			}
+
+			if (Settings.DisplayNonGames && IsGameFilter.IsSet)
+			{
+				_filteredCollection = _filteredCollection.Where(x => x.IsGame == IsGameFilter.Value);
+			}
+
+			if (Settings.DisplayAdult && AdultFilter.IsSet)
+			{
+				_filteredCollection = _filteredCollection.Where(x => x.IsAdult == AdultFilter.Value);
+			}
+
+			filteredCollection = _filteredCollection.ToList();
 
 #if DEBUG
 			Debug.WriteLine("Calculate filtered collection: " + Watch.ElapsedMilliseconds);
@@ -228,9 +321,11 @@ namespace Robin
 			Settings.ReleaseFilterRegions = RegionsFilter.Value;
 			Settings.ReleaseFilterYear = YearFilter.Value;
 
-			Settings.ReleaseFilterIsCrap = CrapFilter.Value;
-			Settings.ReleaseFilterIncluded = IncludedFilter.Value;
+			Settings.ReleaseFilterIncluded = IncludedFilter?.Value;
+			Settings.ReleaseFilterIsCrap = CrapFilter?.Value;
 			Settings.ReleaseFilterUnlicensed = UnlicensedFilter.Value;
+			Settings.ReleaseFilterAdult = AdultFilter?.Value;
+			Settings.ReleaseFilterIsGame = IsGameFilter?.Value;
 		}
 	}
 
@@ -239,6 +334,8 @@ namespace Robin
 		List<Game> sourceCollection;
 
 		List<Game> filteredCollection;
+
+		public override int SourceCount => sourceCollection.Count;
 
 		public override IList FilteredCollection => filteredCollection;
 
@@ -249,9 +346,11 @@ namespace Robin
 		public StringFilter RegionsFilter { get; }
 		public StringFilter YearFilter { get; }
 
+		public BoolFilter UnlicensedFilter { get; }
 		public BoolFilter CrapFilter { get; }
 		public BoolFilter IncludedFilter { get; }
-		public BoolFilter UnlicensedFilter { get; }
+		public BoolFilter IsGameFilter { get; }
+		public BoolFilter AdultFilter { get; }
 
 		public AutoFilterGames(List<Game> _sourceCollection, string _title)
 		{
@@ -265,10 +364,43 @@ namespace Robin
 			StringFilters.Add(RegionsFilter = new StringFilter("Regions", () => Update(), Settings.GameFilterRegions));
 			StringFilters.Add(YearFilter = new StringFilter("Year", () => Update(), Settings.GameFilterYear));
 
-			BoolFilters.Add(CrapFilter = new BoolFilter("Crap", () => Update(), Settings.GameFilterIsCrap));
-			BoolFilters.Add(IncludedFilter = new BoolFilter("Playable", () => Update(), Settings.GameFilterIncluded));
-			BoolFilters.Add(UnlicensedFilter = new BoolFilter("Unlicensed", () => Update(), Settings.GameFilterUnlicensed));
+			BoolFilters.Add(UnlicensedFilter = new BoolFilter("Unlicensed", () => Update(), Settings.ReleaseFilterUnlicensed));
 
+			if (Settings.DisplayCrap)
+			{
+				BoolFilters.Add(CrapFilter = new BoolFilter("Crap", () => Update(), Settings.GameFilterIsCrap));
+			}
+			else
+			{
+				sourceCollection = sourceCollection.Where(x => !x.IsCrap).ToList();
+			}
+
+			if (Settings.DisplayNotIncluded)
+			{
+				BoolFilters.Add(IncludedFilter = new BoolFilter("Playable", () => Update(), Settings.GameFilterIncluded));
+			}
+			else
+			{
+				sourceCollection = sourceCollection.Where(x => x.Included).ToList();
+			}
+
+			if (Settings.DisplayNonGames)
+			{
+				BoolFilters.Add(IsGameFilter = new BoolFilter("Is Game", () => Update(), Settings.GameFilterIsGame));
+			}
+			else
+			{
+				sourceCollection = sourceCollection.Where(x => x.IsGame).ToList();
+			}
+
+			if (Settings.DisplayAdult)
+			{
+				BoolFilters.Add(AdultFilter = new BoolFilter("Adult", () => Update(), Settings.GameFilterAdult));
+			}
+			else
+			{
+				sourceCollection = sourceCollection.Where(x => !x.IsAdult).ToList();
+			}
 			Update();
 		}
 
@@ -286,19 +418,62 @@ namespace Robin
 				_filteredCollection = _filteredCollection.Where(x => Regex.IsMatch(x.Title, TextFilter.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
 			}
 
-			filteredCollection = _filteredCollection
-				.Where(x => PublisherFilter.Skip || x.Publisher == PublisherFilter.Value)
-				.Where(x => GenreFilter.Skip || x.Genre.Contains(GenreFilter.Value))
-				.Where(x => PlayersFilter.Skip || x.Players == PlayersFilter.Value)
-				.Where(x => PlatformFilter.Skip || x.PlatformTitle == PlatformFilter.Value)
-				.Where(x => RegionsFilter.Skip || x.RegionsList.Contains(RegionsFilter.Value))
-				.Where(x => YearFilter.Skip || x.Year == YearFilter.Value)
+			if (PublisherFilter.IsSet)
+			{
+				_filteredCollection = _filteredCollection.Where(x => x.Publisher == PublisherFilter.Value);
+			}
 
-				.Where(x => CrapFilter.Skip || x.IsCrap == CrapFilter.Value)
-				.Where(x => IncludedFilter.Skip || x.Included == IncludedFilter.Value)
-				.Where(x => UnlicensedFilter.Skip || x.Unlicensed == UnlicensedFilter.Value)
+			if (GenreFilter.IsSet)
+			{
+				_filteredCollection = _filteredCollection.Where(x => x.Genre != null && x.Genre.Contains(GenreFilter.Value));
+			}
 
-				.ToList();
+			if (PlayersFilter.IsSet)
+			{
+				_filteredCollection = _filteredCollection.Where(x => x.Players == PlayersFilter.Value);
+			}
+
+			if (PlatformFilter.IsSet)
+			{
+				_filteredCollection = _filteredCollection.Where(x => x.PlatformTitle == PlatformFilter.Value);
+			}
+
+			if (RegionsFilter.IsSet)
+			{
+				_filteredCollection = _filteredCollection.Where(x => x.RegionsList.Contains(RegionsFilter.Value));
+			}
+
+			if (YearFilter.IsSet)
+			{
+				_filteredCollection = _filteredCollection.Where(x => x.Year == YearFilter.Value);
+			}
+
+			if (UnlicensedFilter.IsSet)
+			{
+				_filteredCollection = _filteredCollection.Where(x => x.Unlicensed == UnlicensedFilter.Value);
+			}
+
+			if (Settings.DisplayAdult && CrapFilter.IsSet)
+			{
+				_filteredCollection = _filteredCollection.Where(x => x.IsCrap == CrapFilter.Value);
+			}
+
+			if (Settings.DisplayNotIncluded && IncludedFilter.IsSet)
+			{
+				_filteredCollection = _filteredCollection.Where(x => x.Included == IncludedFilter.Value);
+			}
+
+			if (Settings.DisplayNonGames && IsGameFilter.IsSet)
+			{
+				_filteredCollection = _filteredCollection.Where(x => x.IsGame == IsGameFilter.Value);
+			}
+
+			if (Settings.DisplayAdult && AdultFilter.IsSet)
+			{
+				_filteredCollection = _filteredCollection.Where(x => x.IsAdult == AdultFilter.Value);
+			}
+
+			filteredCollection = _filteredCollection.ToList();
 
 #if DEBUG
 			Debug.WriteLine("Calculate filtered collection: " + Watch.ElapsedMilliseconds);
@@ -331,9 +506,11 @@ namespace Robin
 			Settings.GameFilterRegions = RegionsFilter.Value;
 			Settings.GameFilterYear = YearFilter.Value;
 
-			Settings.GameFilterIsCrap = CrapFilter.Value;
-			Settings.GameFilterIncluded = IncludedFilter.Value;
+			Settings.GameFilterIncluded = IncludedFilter?.Value;
+			Settings.GameFilterIsCrap = CrapFilter?.Value;
 			Settings.GameFilterUnlicensed = UnlicensedFilter.Value;
+			Settings.GameFilterAdult = AdultFilter?.Value;
+			Settings.GameFilterIsGame = IsGameFilter?.Value;
 		}
 	}
 
@@ -342,6 +519,8 @@ namespace Robin
 		List<Platform> sourceCollection;
 
 		List<Platform> filteredCollection;
+
+		public override int SourceCount => sourceCollection.Count;
 
 		public override IList FilteredCollection => filteredCollection;
 
@@ -386,14 +565,14 @@ namespace Robin
 			}
 
 			filteredCollection = _filteredCollection
-				.Where(x => TypeFilter.Skip || x.Type == TypeFilter.Value)
-				.Where(x => GenerationFilter.Skip || x.Generation == GenerationFilter.Value)
-				.Where(x => DeveloperFilter.Skip || x.Developer != null && x.Developer.Contains(DeveloperFilter.Value))
-				.Where(x => ManufacturerFilter.Skip || x.Manufacturer != null && x.Manufacturer.Contains(ManufacturerFilter.Value))
-				.Where(x => MediaFilter.Skip || x.Media != null && x.Media.Contains(MediaFilter.Value))
+				.Where(x => !TypeFilter.IsSet || x.Type == TypeFilter.Value)
+				.Where(x => !GenerationFilter.IsSet || x.Generation == GenerationFilter.Value)
+				.Where(x => !DeveloperFilter.IsSet || x.Developer != null && x.Developer.Contains(DeveloperFilter.Value))
+				.Where(x => !ManufacturerFilter.IsSet || x.Manufacturer != null && x.Manufacturer.Contains(ManufacturerFilter.Value))
+				.Where(x => !MediaFilter.IsSet || x.Media != null && x.Media.Contains(MediaFilter.Value))
 
-				.Where(x => IncludedFilter.Skip || x.Included == IncludedFilter.Value)
-				.Where(x => PreferreddFilter.Skip || x.Unlicensed == PreferreddFilter.Value)
+				.Where(x => !IncludedFilter.IsSet || x.Included == IncludedFilter.Value)
+				.Where(x => !PreferreddFilter.IsSet || x.Unlicensed == PreferreddFilter.Value)
 
 				.ToList();
 
@@ -437,6 +616,8 @@ namespace Robin
 
 		List<Emulator> filteredCollection;
 
+		public override int SourceCount => sourceCollection.Count;
+
 		public override IList FilteredCollection => filteredCollection;
 
 		public StringFilter PlatformFilter { get; }
@@ -473,8 +654,8 @@ namespace Robin
 			}
 
 			filteredCollection = _filteredCollection
-				.Where(x => PlatformFilter.Skip || x.Platforms.Select(y => y.Title).Contains(PlatformFilter.Value))
-				.Where(x => IncludedFilter.Skip || x.Included == IncludedFilter.Value)
+				.Where(x => !PlatformFilter.IsSet || x.Platforms.Select(y => y.Title).Contains(PlatformFilter.Value))
+				.Where(x => !IncludedFilter.IsSet || x.Included == IncludedFilter.Value)
 
 				.ToList();
 
@@ -507,8 +688,6 @@ namespace Robin
 	// This is one filter and all of it's distinct values, e.g., Region, containing Japan, USA etc.
 	public class StringFilter : INotifyPropertyChanged
 	{
-		const string ALL = "*All";
-
 		Action Callback;
 
 		public string Name { get; set; }
@@ -524,16 +703,17 @@ namespace Robin
 					_value = value;
 					Callback();
 					OnPropertyChanged("Value");
+					OnPropertyChanged("IsSet");
 				}
 			}
 		}
 
-		public bool Skip => _value == ALL || string.IsNullOrEmpty(_value);
+		public bool IsSet => !string.IsNullOrEmpty(_value);
 
-		private IEnumerable<string> distinctValues;
+		IEnumerable<string> distinctValues;
 		public IEnumerable<string> DistinctValues
 		{
-			get { return distinctValues.Distinct().Concat(new List<string>() { ALL }).OrderBy(x => x); }
+			get { return distinctValues.Distinct().OrderBy(x => x); }
 			set
 			{
 				if (distinctValues != value)
@@ -550,6 +730,20 @@ namespace Robin
 			Callback = callback;
 			Name = name;
 			_value = value;
+
+			ClearCommand = new Command(Clear, ClearCanExecute, "X", "Clear " + " filter.");
+		}
+
+		public Command ClearCommand { get; set; }
+
+		private void Clear()
+		{
+			Value = null;
+		}
+
+		private bool ClearCanExecute()
+		{
+			return IsSet;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -573,7 +767,7 @@ namespace Robin
 
 		Action Callback;
 
-		public bool Skip => _value == null;
+		public bool IsSet => _value != null;
 
 		bool? _value;
 

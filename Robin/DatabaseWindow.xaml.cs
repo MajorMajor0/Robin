@@ -31,7 +31,7 @@ namespace Robin
 #endif
 		}
 
-		private void AcceptClick(object sender, RoutedEventArgs e)
+		 void AcceptClick(object sender, RoutedEventArgs e)
 		{
 			if (DatabaseGrid.Content != null &&
 				DatabaseGrid.Content.GetType() == typeof(Compares))
@@ -40,7 +40,7 @@ namespace Robin
 			}
 		}
 
-		private void PlatformList_MouseUp(object sender, MouseButtonEventArgs e)
+		 void PlatformList_MouseUp(object sender, MouseButtonEventArgs e)
 		{
 			if (PlatformList.SelectedItems.Count > 0)
 			{
@@ -49,7 +49,7 @@ namespace Robin
 			}
 		}
 
-		private void ComparisonResultsList_MouseUp(object sender, MouseButtonEventArgs e)
+		 void ComparisonResultsList_MouseUp(object sender, MouseButtonEventArgs e)
 		{
 			DatabaseGrid.DataContext = ComparisonResultsList.SelectedItem;
 			if (ComparisonResultsList.SelectedItem != null)
@@ -58,7 +58,7 @@ namespace Robin
 			}
 		}
 
-		private void DataGrid_MouseWheel(object sender, MouseWheelEventArgs e)
+		 void DataGrid_MouseWheel(object sender, MouseWheelEventArgs e)
 		{
 			if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
 			{
@@ -68,7 +68,7 @@ namespace Robin
 		}
 
 #if DEBUG
-		private void DebugStuff()
+		 void DebugStuff()
 		{
 			Button BonusButton = new Button();
 			BonusButton.Content = "BONUS!";
@@ -78,13 +78,11 @@ namespace Robin
 			Buttons_StackPanel.Children.Add(BonusButton);
 		}
 
-		private async void BonusButton_Click(object sender, RoutedEventArgs e)
+		 async void BonusButton_Click(object sender, RoutedEventArgs e)
 		{
 			Reporter.Report("BONUS!");
 
-			await Task.Run(() =>
-			{
-			});
+			await Robin.DebugStuff.DatabaseWindowBonusAsync();
 		}
 #endif
 	}

@@ -34,22 +34,22 @@ namespace Robin
 			Activate();
 		}
 
-		private void Match_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		 void Match_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			e.CanExecute = true;
 		}
 
-		private void Match_Executed(object sender, ExecutedRoutedEventArgs e)
+		 void Match_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
 			MWVM.Match((e.OriginalSource as Control).DataContext as IDBRelease);
 		}
 
-		private void ShowBox_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		 void ShowBox_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			e.CanExecute = true;
 		}
 
-		private void ShowBox_Executed(object sender, ExecutedRoutedEventArgs e)
+		 void ShowBox_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
 			MWVM.ShowBox((e.OriginalSource as Control).DataContext as IDBRelease);
 		}

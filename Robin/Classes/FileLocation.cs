@@ -22,7 +22,7 @@ namespace Robin
 		public static string Folder = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 		public static class Art
 		{
-		    public static string Folder = FileLocation.Folder + @"\Art\";
+			public static string Folder = FileLocation.Folder + @"\Art\";
 			public static string BoxFront = Folder + @"BoxFront\";
 			public static string BoxFrontThumbs = Folder + @"BoxFront\Thumbs\";
 			public static string BoxBack = Folder + @"BoxBack\";
@@ -55,9 +55,13 @@ namespace Robin
 
 		public static string Data = Folder + @"\Data\";
 
+		public static string RobinData = Data + @"RobinData.db3";
+
 		public static string Temp = Folder + @"\Temp\";
 
 		public static string HandyConverter = Emulators + @"Handy\make_lnx.exe";
+
+		public static string Flags = Images + @"Flags\";
 
 	}
 }

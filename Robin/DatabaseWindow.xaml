@@ -125,7 +125,8 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<CollectionViewSource x:Key="SortedItems"
 											  Source="{Binding Platforms.Local}">
 							<CollectionViewSource.SortDescriptions>
-								<scm1:SortDescription PropertyName="Preferred" Direction="Descending"/>
+								<scm1:SortDescription PropertyName="Preferred"
+													  Direction="Descending" />
 								<scm1:SortDescription PropertyName="Manufacturer" />
 								<scm1:SortDescription PropertyName="Title" />
 
@@ -139,19 +140,19 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 								   Style="{StaticResource Heading0}"
 								   DockPanel.Dock="Top" />
 						<local:BindableSelectionListView x:Name="PlatformList"
-														ScrollViewer.CanContentScroll="True"
-														ScrollViewer.HorizontalScrollBarVisibility="Hidden"
-														ScrollViewer.VerticalScrollBarVisibility="Hidden"
-														ItemsSource="{Binding Source={StaticResource SortedItems}}"
-														DockPanel.Dock="Top"
-														IsTextSearchEnabled="True"
-														TextSearch.TextPath="Title"
-														MouseUp="PlatformList_MouseUp"
-														Background="Transparent"
-														BorderBrush="Transparent"
-														SelectionMode="Extended"
-														SelectedItem="{Binding ElementName=Database_Window, Path=DataContext.SelectedPlatform, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-														BoundSelectedItems="{Binding ElementName=Database_Window, Path=DataContext.SelectedPlatforms, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+														 ScrollViewer.CanContentScroll="True"
+														 ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+														 ScrollViewer.VerticalScrollBarVisibility="Hidden"
+														 ItemsSource="{Binding Source={StaticResource SortedItems}}"
+														 DockPanel.Dock="Top"
+														 IsTextSearchEnabled="True"
+														 TextSearch.TextPath="Title"
+														 MouseUp="PlatformList_MouseUp"
+														 Background="Transparent"
+														 BorderBrush="Transparent"
+														 SelectionMode="Extended"
+														 SelectedItem="{Binding ElementName=Database_Window, Path=DataContext.SelectedPlatform, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+														 BoundSelectedItems="{Binding ElementName=Database_Window, Path=DataContext.SelectedPlatforms, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
 							<ListView.ItemContainerStyle>
 								<Style TargetType="{x:Type ListBoxItem}">
 									<Style.Triggers>
@@ -193,14 +194,14 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 							<ListBox.GroupStyle>
 								<GroupStyle>
 									<GroupStyle.HeaderTemplate>
-									<DataTemplate>
+										<DataTemplate>
 											<TextBlock Style="{StaticResource Heading1}"
 													   Text="{Binding Name}" />
 
 										</DataTemplate>
-								</GroupStyle.HeaderTemplate>
+									</GroupStyle.HeaderTemplate>
 								</GroupStyle>
-								
+
 							</ListBox.GroupStyle>
 						</local:BindableSelectionListView>
 					</DockPanel>
@@ -221,7 +222,17 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 							<TextBlock Text="{Binding Title}"
 									   Style="{StaticResource Heading0}" />
 						</StackPanel>
+						
 						<StackPanel Margin="10,0,0,0">
+							<StackPanel Orientation="Horizontal"
+										DockPanel.Dock="Top">
+								<TextBlock Text="Date cached: "
+										   Style="{StaticResource Heading1}"
+										   DockPanel.Dock="Top" />
+								<TextBlock Text="{Binding CacheDate}"
+										   Style="{StaticResource Normal}"
+										   DockPanel.Dock="Top" />
+							</StackPanel>
 							<StackPanel Orientation="Horizontal"
 										DockPanel.Dock="Top">
 								<TextBlock Text="Total Releases: "
@@ -231,6 +242,18 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										   Style="{StaticResource Normal}"
 										   DockPanel.Dock="Top" />
 							</StackPanel>
+							<StackPanel Orientation="Horizontal"
+										DockPanel.Dock="Top">
+								<TextBlock Text="Matched to Something: "
+										   Style="{StaticResource Heading1}"
+										   DockPanel.Dock="Top" />
+								<TextBlock Text="{Binding MatchedReleaseCount}"
+										   Style="{StaticResource Normal}"
+										   DockPanel.Dock="Top" />
+							</StackPanel>
+
+						</StackPanel>
+						<StackPanel Margin="10,0,0,0" Visibility="{Binding Converter={StaticResource PlatformToVisibilityConverter}}">
 							<StackPanel Orientation="Horizontal"
 										DockPanel.Dock="Top">
 								<TextBlock Text="Matched to GDB: "
@@ -267,25 +290,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										   Style="{StaticResource Normal}"
 										   DockPanel.Dock="Top" />
 							</StackPanel>
-							<StackPanel Orientation="Horizontal"
-										DockPanel.Dock="Top">
-								<TextBlock Text="Date cached: "
-										   Style="{StaticResource Heading1}"
-										   DockPanel.Dock="Top" />
-								<TextBlock Text="{Binding CacheDate}"
-										   Style="{StaticResource Normal}"
-										   DockPanel.Dock="Top" />
-							</StackPanel>
-
-							<StackPanel Orientation="Horizontal"
-										DockPanel.Dock="Top">
-								<TextBlock Text="Matched to Something: "
-										   Style="{StaticResource Heading1}"
-										   DockPanel.Dock="Top" />
-								<TextBlock Text="{Binding MatchedToSomething}"
-										   Style="{StaticResource Normal}"
-										   DockPanel.Dock="Top" />
-							</StackPanel>
+							
 						</StackPanel>
 
 					</StackPanel>
@@ -592,7 +597,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										Command="{Binding CompareCommand}" />
 
 								<Button Style="{StaticResource DatabaseWindowButtonStyle1}"
-										Command="{Binding CachePlatformsCommand}" />
+										Command="{Binding CacheReleasesCommand}" />
 
 								<Button Style="{StaticResource DatabaseWindowButtonStyle1}"
 										Command="{Binding AcceptCommand}" />

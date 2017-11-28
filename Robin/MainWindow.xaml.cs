@@ -49,7 +49,7 @@ namespace Robin
 #endif
 		}
 
-		private void MainList_MouseWheel(object sender, MouseWheelEventArgs e)
+		 void MainList_MouseWheel(object sender, MouseWheelEventArgs e)
 		{
 			if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
 			{
@@ -72,12 +72,12 @@ namespace Robin
 			}
 		}
 
-		private void Database_Click(object sender, RoutedEventArgs e)
+		 void Database_Click(object sender, RoutedEventArgs e)
 		{
 			var DatabaseWindow = new DatabaseWindow();
 		}
 
-		private void MainListPlatform_Drop(object sender, DragEventArgs e)
+		 void MainListPlatform_Drop(object sender, DragEventArgs e)
 		{
 			Platform platform = (sender as StackPanel).DataContext as Platform;
 			if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -86,7 +86,7 @@ namespace Robin
 			}
 		}
 
-		private void EmulatorStackPanel_Drop(object sender, DragEventArgs e)
+		 void EmulatorStackPanel_Drop(object sender, DragEventArgs e)
 		{
 			Emulator emulator = (sender as StackPanel).DataContext as Emulator;
 			if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -103,12 +103,12 @@ namespace Robin
 			}
 		}
 
-		private void MainList_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+		 void MainList_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 		{
 			MainList.UnselectAll();
 		}
 
-		private void MainListWrapPanel_MouseMove(object sender, MouseEventArgs e)
+		 void MainListWrapPanel_MouseMove(object sender, MouseEventArgs e)
 		{
 			if (sender is VirtualizingWrapPanel panel && MainList.SelectedItems != null && e.LeftButton == MouseButtonState.Pressed)
 			{
@@ -116,7 +116,7 @@ namespace Robin
 			}
 		}
 
-		private void TreeTextBlock_Drop(object sender, DragEventArgs e)
+		 void TreeTextBlock_Drop(object sender, DragEventArgs e)
 		{
 			if ((e.OriginalSource as TextBlock).DataContext is Collection collection)
 			{
@@ -129,14 +129,14 @@ namespace Robin
 			}
 		}
 
-		private void Main_Window_Closing(object sender, CancelEventArgs e)
+		 void Main_Window_Closing(object sender, CancelEventArgs e)
 		{
 			(DataContext as MainWindowViewModel).SaveSettings();
 			R.Data.Save(true);
 			
 		}
 
-		private void Exit_Click(object sender, RoutedEventArgs e)
+		 void Exit_Click(object sender, RoutedEventArgs e)
 		{
 			this.Close();
 		}
@@ -150,7 +150,7 @@ namespace Robin
 		}
 
 #if DEBUG
-		private void MainWindowDebugStuff()
+		 void MainWindowDebugStuff()
 		{
 			var debugItemBrush = new SolidColorBrush(Colors.Blue);
 			PresentationTraceSources.DataBindingSource.Switch.Level = SourceLevels.Critical;
@@ -181,20 +181,14 @@ namespace Robin
 			FileMenuItem.Items.Add(setFactoryDB);
 		}
 
-		private async void BonusButton_Click(object sender, RoutedEventArgs e)
+		 async void BonusButton_Click(object sender, RoutedEventArgs e)
 		{
-			Reporter.Report("BONUS!");
-
-			await Task.Run(() =>
-			{
-				int i = R.Data.Games.Local.Count(x => x.HasArt);
-				Reporter.Report("Games with art: " + i);
-			});
+				await DebugStuff.MainWindowBonusAsync();
 		}
 
 		public RelayCommand CreateThumbnailsCommand { get; set; }
 
-		private void CreateThumbnails()
+		 void CreateThumbnails()
 		{
 			Stopwatch Watch = new Stopwatch();
 			Watch.Start();
@@ -211,10 +205,11 @@ namespace Robin
 
 		public RelayCommand SetFactoryDBCommand { get; set; }
 
-		private void SetFactoryDB()
+		 void SetFactoryDB()
 		{
 			Robin.DebugStuff.SetFactoryDatabase();
 		}
+
 #endif
 	}
 }

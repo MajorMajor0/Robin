@@ -25,10 +25,11 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
+using System.Threading;
 
 namespace Robin
 {
-	partial class MainWindowViewModel
+	public partial class MainWindowViewModel
 	{
 		public ObservableCollection<object> MainBigList { get; }
 
@@ -118,6 +119,25 @@ namespace Robin
 			}
 		}
 
+		CancellationTokenSource tokenSource;
+
+		bool taskInProgress;
+		public bool TaskInProgress
+		{
+			get
+			{
+				return taskInProgress;
+			}
+			set
+			{
+				if (value != taskInProgress)
+				{
+					taskInProgress = value;
+					OnPropertyChanged("TaskInProgress");
+				}
+			}
+		}
+
 		public object MainBigSelection { get; set; }
 
 		public Release SelectedGameRelease { get; set; }
@@ -126,39 +146,13 @@ namespace Robin
 
 		public Platform SelectedEmulatorPlatform { get; set; }
 
-		//private string SelectedDBNote()
-		//{
-		//	string plusText;
-		//	string firstReason;
-		//	string secondReason;
-		//	string and = "and";
+		public bool DisplayNonGames => Properties.Settings.Default.DisplayNonGames;
 
-		//	if (SelectedDB.Included)
-		//	{
-		//		return selectedDB.Title + " is ready to play.";
-		//	}
+		public bool DisplayAdult => Properties.Settings.Default.DisplayAdult;
 
-		//	switch (SelectedDB.GetType().BaseType.Name)
-		//	{
+		public bool DisplayCrap => Properties.Settings.Default.DisplayCrap;
 
-		//		case "Release":
-		//			if ((selectedDB as Release).Platform.HasEmulator)
-		//				firstReason = "None of it's platform emulators have been installed ";
-		//			break;
-		//		case "Game":
-
-		//			break;
-		//		case "Platform":
-
-		//			break;
-		//		case "Emulator":
-
-		//			break;
-		//	}
-
-		//	return SelectedDB.Title + " is not playable beacause ";
-
-		//}
+		public bool DisplayNotIncluded => Properties.Settings.Default.DisplayNotIncluded;
 
 
 		public MainWindowViewModel()
@@ -166,10 +160,10 @@ namespace Robin
 			R.Data = new RobinDataEntities(this);
 
 			MainBigList = new ObservableCollection<object>();
-			MainBigList.Add(ReleaseCollection = new AutoFilterReleases(R.Data.Releases.Local.Where(x => x.IsGame).ToList(), "Releases"));
-			MainBigList.Add(GameCollection = new AutoFilterGames(R.Data.Games.Local.Where(x => x.IsGame).ToList(), "Games"));
-			MainBigList.Add(PlatformCollection = new AutoFilterPlatforms(R.Data.Platforms.Local.ToList(), "Platforms"));
-			MainBigList.Add(EmulatorCollection = new AutoFilterEmulators(R.Data.Emulators.Local.ToList(), "Emulators"));
+			MainBigList.Add(releaseCollection = new AutoFilterReleases(R.Data.Releases.Local.ToList(), "Releases"));
+			MainBigList.Add(gameCollection = new AutoFilterGames(R.Data.Games.Local.ToList(), "Games"));
+			MainBigList.Add(platformCollection = new AutoFilterPlatforms(R.Data.Platforms.Local.ToList(), "Platforms"));
+			MainBigList.Add(emulatorCollection = new AutoFilterEmulators(R.Data.Emulators.Local.ToList(), "Emulators"));
 			MainBigList.Add(CollectionList = new CollectionList("Collections"));
 
 			InitializeCommands();
@@ -182,6 +176,14 @@ namespace Robin
 				AFC.SaveSettings();
 			}
 			Properties.Settings.Default.Save();
+		}
+
+		 void OptionsWindowClosed(object sender, EventArgs e)
+		{
+			releaseCollection = new AutoFilterReleases(R.Data.Releases.Local.ToList(), "Releases");
+			MainBigList[0] = releaseCollection;
+			gameCollection = new AutoFilterGames(R.Data.Games.Local.ToList(), "Games");
+			MainBigList[1] = gameCollection;
 		}
 
 

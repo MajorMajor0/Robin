@@ -19,8 +19,8 @@ namespace Robin
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Emulator()
         {
-    		PlatformsPreferring = new List<Platform>();
     		Platforms = new List<Platform>();
+    		Platforms1 = new List<Platform>();
         }
     
         private long _iD;
@@ -86,9 +86,9 @@ namespace Robin
     
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual List<Platform> PlatformsPreferring { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual List<Platform> Platforms { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual List<Platform> Platforms1 { get; set; }
      
         public event PropertyChangedEventHandler PropertyChanged;
     

@@ -99,7 +99,7 @@ namespace Robin
 			Close();
 		}
 
-		private bool MergeCanExecute()
+		 bool MergeCanExecute()
 		{
 			return SelectedLBPlatform != null;
 		}

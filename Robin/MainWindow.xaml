@@ -95,6 +95,16 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 					<MenuItem Style="{StaticResource CMenuItemStyle}"
 							  Command="{Binding ReporterWindowCommand}" />
+
+					<MenuItem Style="{StaticResource CMenuItemStyle}"
+							  Command="{Binding HawkWindowCommand}" />
+
+				</MenuItem>
+				<MenuItem Header="Tools">
+
+					<MenuItem Style="{StaticResource CMenuItemStyle}"
+							  Command="{Binding OptionsWindowCommand}" />
+
 				</MenuItem>
 				<MenuItem Header="Help">
 
@@ -221,21 +231,20 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 													  Offset="0" />
 										<GradientStop Color="#C8C8C8"
 													  Offset="1" />
-										
+
 									</LinearGradientBrush>
 								</TextBox.Background>
 							</TextBox>
-							<Button x:Name="ClearButton"
-									DataContext="{Binding ElementName=Main_Window, Path=DataContext}"
-									Style="{StaticResource CButtonStyle}"
-									Command="{Binding ClearFiltersCommand}"
+							<Button x:Name="ClearTextFilterButton"
+									Style="{StaticResource DissapearingCButtonStyle}"
+									Command="{Binding ClearTextFilterCommand}"
 									HorizontalAlignment="Right"
 									Width="30"
 									Height="30"
 									Background="Transparent"
 									BorderBrush="Transparent"
 									Foreground="White" />
-							
+
 							<Image x:Name="SearchIcon"
 								   Source="{StaticResource SearchIcon}"
 								   HorizontalAlignment="Left"
@@ -244,7 +253,6 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 								   Width="25"
 								   RenderOptions.BitmapScalingMode="Fant" />
 						</Grid>
-
 
 					</DockPanel>
 
@@ -273,27 +281,40 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 									<StackPanel Margin="0,3,0,0">
 										<TextBlock Text="{Binding Name}"
 												   Style="{StaticResource Heading1}" />
-										<ComboBox ItemsSource="{Binding DistinctValues}"
-												  SelectedItem="{Binding Value}"
-												  Foreground="{StaticResource Heading0_Brush}"
-												  FontFamily="{StaticResource NormalFontFamily}"
-												  FontSize="{StaticResource NormalFontSize}"
-												  Background="Transparent"
-												  Width="150">
-											<ComboBox.ItemsPanel>
-												<ItemsPanelTemplate>
-													<VirtualizingStackPanel Orientation="Vertical"
-																			VirtualizingPanel.IsVirtualizing="True" />
-												</ItemsPanelTemplate>
-											</ComboBox.ItemsPanel>
+										<StackPanel Orientation="Horizontal"
+													Background="Transparent">
+											<ComboBox ItemsSource="{Binding DistinctValues}"
+													  SelectedItem="{Binding Value}"
+													  Foreground="{StaticResource Heading0_Brush}"
+													  FontFamily="{StaticResource NormalFontFamily}"
+													  FontSize="{StaticResource NormalFontSize}"
+													  Background="Transparent"
+													  Width="150">
+												<ComboBox.ItemsPanel>
+													<ItemsPanelTemplate>
+														<VirtualizingStackPanel Orientation="Vertical"
+																				VirtualizingPanel.IsVirtualizing="True" />
+													</ItemsPanelTemplate>
+												</ComboBox.ItemsPanel>
 
-											<ComboBox.Resources>
-												<SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}"
-																 Color="Black" />
-												<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
-																 Color="{StaticResource Selected_Color}" />
-											</ComboBox.Resources>
-										</ComboBox>
+												<ComboBox.Resources>
+													<SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}"
+																	 Color="Black" />
+													<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+																	 Color="{StaticResource Selected_Color}" />
+												</ComboBox.Resources>
+											</ComboBox>
+											<Button x:Name="ClearStringFilterButton"
+													Style="{StaticResource DissapearingCButtonStyle}"
+													HorizontalAlignment="Right"
+													Width="30"
+													Height="30"
+													Background="Transparent"
+													BorderBrush="Transparent"
+													Foreground="White"
+													Command="{Binding ClearCommand}" />
+										</StackPanel>
+
 									</StackPanel>
 								</DataTemplate>
 							</ListView.ItemTemplate>
@@ -937,29 +958,37 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<MenuItem Style="{StaticResource CContextMenuItemStyle}"
 								  Command="{Binding PlayCommand}" />
 
-						<MenuItem Style="{StaticResource CContextMenuItemStyle}"
-								  Command="{Binding MarkAsCrapCommand}" />
+						<MenuItem Header="Mark As...">
+							<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+									  Command="{Binding MarkAsCrapCommand}" />
 
-						<MenuItem Style="{StaticResource CContextMenuItemStyle}"
-								  Command="{Binding MarkNotCrapCommand}" />
+							<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+									  Command="{Binding MarkNotCrapCommand}" />
 
-						<MenuItem Style="{StaticResource CContextMenuItemStyle}"
-								  Command="{Binding MarkAsBeatenCommand}" />
+							<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+									  Command="{Binding MarkAsBeatenCommand}" />
 
-						<MenuItem Style="{StaticResource CContextMenuItemStyle}"
-								  Command="{Binding MarkNotBeatenCommand}" />
+							<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+									  Command="{Binding MarkNotBeatenCommand}" />
 
-						<MenuItem Style="{StaticResource CContextMenuItemStyle}"
-								  Command="{Binding MarkAsGameCommand}" />
+							<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+									  Command="{Binding MarkAsGameCommand}" />
 
-						<MenuItem Style="{StaticResource CContextMenuItemStyle}"
-								  Command="{Binding MarkNotGameCommand}" />
+							<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+									  Command="{Binding MarkNotGameCommand}" />
 
-						<MenuItem Style="{StaticResource CContextMenuItemStyle}"
-								  Command="{Binding MarkPreferredCommand}" />
+							<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+									  Command="{Binding MarkPreferredCommand}" />
 
-						<MenuItem Style="{StaticResource CContextMenuItemStyle}"
-								  Command="{Binding MarkNotPreferredCommand}" />
+							<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+									  Command="{Binding MarkNotPreferredCommand}" />
+
+							<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+									  Command="{Binding MarkAsAdultCommand}" />
+
+							<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+									  Command="{Binding MarkNotAdultCommand}" />
+						</MenuItem>
 
 						<MenuItem Style="{StaticResource CContextMenuItemStyle}"
 								  Command="{Binding RemoveFromCollectionCommand}" />
@@ -1089,28 +1118,38 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 							</Border>
 							<StackPanel HorizontalAlignment="Center"
 										Width="{Binding ElementName=ReleaseImageBorder, Path=ActualWidth}">
-								<Grid>
+								<Grid Height="25">
+									<Image Source="{Binding Flag, Mode=OneTime, IsAsync=True,
+                                    Converter={StaticResource ImageConverter}}"
+										   HorizontalAlignment="Left"
+										   VerticalAlignment="Stretch"
+										   RenderOptions.BitmapScalingMode="Linear" />
 									<TextBlock Style="{StaticResource StarTextBlock}"
-											   HorizontalAlignment="Center" />
+											   HorizontalAlignment="Center"
+											   VerticalAlignment="Center"
+ />
 									<TextBlock Style="{StaticResource BeatenTextBlock}"
-											   HorizontalAlignment="Right" />
+											   HorizontalAlignment="Right"
+											   VerticalAlignment="Center" />
 								</Grid>
 
 								<TextBlock Style="{StaticResource MainListTextBoxStyle}">
 									<TextBlock.Text>
-										<MultiBinding StringFormat="{}{0} {1} ({2})">
+										<MultiBinding StringFormat="{}{0} {1}">
 											<Binding Path="Title" />
 											<Binding Path="Version" />
-											<Binding Path="Region.Title" />
 										</MultiBinding>
 									</TextBlock.Text>
 								</TextBlock>
 
 								<StackPanel Orientation="Horizontal"
 											HorizontalAlignment="Center">
+	
 									<TextBlock Style="{StaticResource MainListTextBoxStyle}"
-											   Text="{Binding Platform.Title}" />
-									<TextBlock Style="{StaticResource MainListTextBoxStyle}">
+											   Text="{Binding Platform.Title}"
+											   VerticalAlignment="Center" />
+									<TextBlock Style="{StaticResource MainListTextBoxStyle}"
+											   VerticalAlignment="Center">
 										<TextBlock.Text>
 											<Binding Path="Date"
 													 StringFormat=" - yyyy" />
@@ -1182,16 +1221,31 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 				Style="{StaticResource CellStyle}">
 			<Grid>
 				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="20" />
 					<ColumnDefinition Width="*" />
 					<ColumnDefinition Width="Auto" />
 				</Grid.ColumnDefinitions>
+				<Button Style="{StaticResource CButtonStyle}"
+						Width="20"
+						Height="20"
+						VerticalAlignment="Stretch"
+						Foreground="{StaticResource Normal_Brush}"
+						Background="Transparent"
+						Content="X"
+						Command="{Binding CancelTaskCommand}"
+						Visibility="{Binding IsEnabled,
+                                        RelativeSource={RelativeSource Self},
+                                        Mode=OneWay,
+                                        Converter={StaticResource booleanToVisibilityConverter}}" />
 				<TextBlock x:Name="StatusBlock"
-						   Text="{Binding Path=(local:Reporter.NewsFeed)}"
+						   Grid.Column="1"
+						   Text="{Binding Path=(local:Reporter.NewsFeed), FallbackValue=Hey Jude }"
+						   Margin="10,0,0,0"
 						   Style="{StaticResource Normal}" />
 				<StackPanel Orientation="Horizontal"
 							Visibility="{Binding ElementName=MainList, Path=DataContext.SelectedDBs, TargetNullValue=Hidden}"
 							DataContext="{Binding ElementName=MainList, Path=DataContext}"
-							Grid.Column="1">
+							Grid.Column="2">
 					<TextBlock Text="Showing: "
 							   Style="{StaticResource Normal}" />
 					<TextBlock x:Name="CountBlock"
@@ -1199,7 +1253,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 							   Style="{StaticResource Normal}" />
 					<TextBlock Text="/"
 							   Style="{StaticResource Normal}" />
-					<TextBlock Text="{Binding SourceCollection.Count, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}"
+					<TextBlock Text="{Binding SourceCount, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}"
 							   Style="{StaticResource Normal}" />
 				</StackPanel>
 

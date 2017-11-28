@@ -51,7 +51,7 @@ namespace Robin
         public AboutBox()
         {
             InitializeComponent();
-            List<string> files = Directory.GetFiles(FileLocation.Folder).Where(x => x.EndsWith(".dll") || x.EndsWith(".exe")).ToList();
+            List<string> files = Directory.GetFiles(FileLocation.Folder, "*", searchOption: SearchOption.AllDirectories).Where(x => x.EndsWith(".dll") || x.EndsWith(".exe")).ToList();
 
             references = files.Select(x => FileVersionInfo.GetVersionInfo(x).ProductName + " " + FileVersionInfo.GetVersionInfo(x).ProductVersion + " " + FileVersionInfo.GetVersionInfo(x).LegalCopyright).Distinct().Where(x => !String.IsNullOrEmpty(x)).ToList();
 

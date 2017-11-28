@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Robin</RootNamespace>
     <AssemblyName>Robin</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -126,7 +126,9 @@
     <Compile Include="ArtWindow.xaml.cs">
       <DependentUpon>ArtWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ArtWindowViewModel.cs" />
+    <Compile Include="ArtWindowViewModel.cs">
+      <DependentUpon>ArtWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Classes\Command.cs" />
     <Compile Include="Classes\DebugStuff.cs" />
     <Compile Include="Classes\TitledCollection.cs" />
@@ -150,7 +152,12 @@
     <Compile Include="Controls\BindableSelectionListBox.cs" />
     <Compile Include="Databases\MAME.cs" />
     <Compile Include="Databases\OpenVGDB.cs" />
-    <Compile Include="DatabaseWindwowViewModel.Commands.cs" />
+    <Compile Include="DatabaseWindowViewModel.cs">
+      <DependentUpon>DatabaseWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DatabaseWindwowViewModel.Commands.cs">
+      <DependentUpon>DatabaseWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DataEntities.Extensions\LBPlatform.Extensions.cs" />
     <Compile Include="DataEntities.Extensions\Collection.Extensions.cs" />
     <Compile Include="DataEntities.Extensions\Emulator.Extensions.cs" />
@@ -164,6 +171,7 @@
     <Compile Include="DataEntities.Extensions\OVGPlatform.Extensions.cs" />
     <Compile Include="DataEntities.Extensions\OVGRelease.Extensions.cs" />
     <Compile Include="DataEntities.Extensions\Platform.Extensions.cs" />
+    <Compile Include="DataEntities.Extensions\Region.Extensions.cs" />
     <Compile Include="DataEntities.Extensions\Release.Extensions.cs" />
     <Compile Include="DataEntities.Extensions\RobinDataEntities.Extensions.cs" />
     <Compile Include="DataEntities.Extensions\Rom.Extensions.cs" />
@@ -208,9 +216,9 @@
     <Compile Include="LBRelease.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="MainWindowViewModel.Commands.cs" />
-    <Compile Include="MainWindowViewModel.cs" />
-    <Compile Include="DatabaseWindowViewModel.cs" />
+    <Compile Include="MainWindowViewModel.Commands.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\VirtualizingWrapPanel.cs" />
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -226,13 +234,18 @@
     </Compile>
     <Compile Include="Classes\LevenshteinDistance.cs" />
     <Compile Include="Classes\DateTimeRoutines.cs" />
+    <Compile Include="MainWindowViewModel.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Match.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="MatchWindow.xaml.cs">
       <DependentUpon>MatchWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MatchWindowViewModel.cs" />
+    <Compile Include="MatchWindowViewModel.cs">
+      <DependentUpon>MatchWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="OpenVGDBModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -304,6 +317,9 @@
     <Compile Include="MergeWindow.xaml.cs">
       <DependentUpon>MergeWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="OptionsWindow.xaml.cs">
+      <DependentUpon>OptionsWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="AboutBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -337,6 +353,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MergeWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="OptionsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -386,7 +406,6 @@
     </None>
     <AppDesigner Include="Properties\" />
     <None Include="README.md" />
-    <None Include="RobinData.db3" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -442,30 +461,26 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.SQLite, Version=1.0.105.2, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Data.SQLite.Core.1.0.105.2\lib\net46\System.Data.SQLite.dll</HintPath>
+    <Reference Include="System.Data.SQLite, Version=1.0.106.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Core.1.0.106.0\lib\net46\System.Data.SQLite.dll</HintPath>
     </Reference>
-    <Reference Include="System.Data.SQLite.EF6, Version=1.0.105.2, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Data.SQLite.EF6.1.0.105.2\lib\net46\System.Data.SQLite.EF6.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="System.Data.SQLite.EF6, Version=1.0.106.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.EF6.1.0.106.0\lib\net46\System.Data.SQLite.EF6.dll</HintPath>
     </Reference>
-    <Reference Include="System.Data.SQLite.Linq, Version=1.0.105.2, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Data.SQLite.Linq.1.0.105.2\lib\net46\System.Data.SQLite.Linq.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="System.Data.SQLite.Linq, Version=1.0.106.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Linq.1.0.106.0\lib\net46\System.Data.SQLite.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
@@ -545,12 +560,12 @@
     <PreBuildEvent>
     </PreBuildEvent>
   </PropertyGroup>
-  <Import Project="..\packages\System.Data.SQLite.Core.1.0.105.2\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.105.2\build\net46\System.Data.SQLite.Core.targets')" />
+  <Import Project="..\packages\System.Data.SQLite.Core.1.0.106.0\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.106.0\build\net46\System.Data.SQLite.Core.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\System.Data.SQLite.Core.1.0.105.2\build\net46\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Data.SQLite.Core.1.0.105.2\build\net46\System.Data.SQLite.Core.targets'))" />
+    <Error Condition="!Exists('..\packages\System.Data.SQLite.Core.1.0.106.0\build\net46\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Data.SQLite.Core.1.0.106.0\build\net46\System.Data.SQLite.Core.targets'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

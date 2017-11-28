@@ -25,7 +25,7 @@ namespace Robin
 	{
 		//Stopwatch Watch = new Stopwatch();
 
-		private string _title;
+		 string _title;
 		public string Title
 		{
 			get
@@ -122,7 +122,6 @@ namespace Robin
 
 		public long PlayCount => Releases.Sum(x => x.PlayCount);
 
-
 		public bool Included => Releases.Any(x => x.Included);
 
 		public bool HasEmulator => Platform.Emulators.Any(x => x.Included);
@@ -156,6 +155,21 @@ namespace Robin
 					release.IsCrap = value;
 				}
 				OnPropertyChanged("IsCrap");
+			}
+
+		}
+
+		public bool IsAdult
+		{
+			get => Releases[0].IsAdult;
+
+			set
+			{
+				foreach (Release release in Releases)
+				{
+					release.IsAdult = value;
+				}
+				OnPropertyChanged("IsAdult");
 			}
 
 		}
@@ -223,7 +237,7 @@ namespace Robin
 			}
 		}
 
-		private string _boxFrontPath;
+		 string _boxFrontPath;
 		public string BoxFrontPath
 		{
 			get
@@ -244,7 +258,7 @@ namespace Robin
 			}
 		}
 
-		private string _boxFrontThumbPath;
+		 string _boxFrontThumbPath;
 		public string BoxFrontThumbPath
 		{
 			get
@@ -294,7 +308,7 @@ namespace Robin
 			get { return Releases[0].MarqueePath; }
 		}
 
-		private Release _preferredRelease;
+		 Release _preferredRelease;
 		public Release PreferredRelease
 		{
 			get

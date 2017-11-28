@@ -29,11 +29,11 @@ namespace Robin
 {
 	class Launchbox : IDB
 	{
-		private bool platformsCached;
+		 bool platformsCached;
 
-		public string Title { get { return "LaunchBox"; } }
+		public string Title => "LaunchBox";
 
-		public LocalDB DB { get { return LocalDB.LaunchBox; } }
+		public LocalDB DB => LocalDB.LaunchBox;
 
 		public DbSet Platforms => R.Data.LBPlatforms;
 
@@ -104,7 +104,7 @@ namespace Robin
 					string tempTitle = platformElement.SafeGetA("Name");
 
 					// Fuck Gamewave
-					if (Regex.IsMatch(tempTitle, @"Game*.Wave", RegexOptions.IgnoreCase)) 
+					if (Regex.IsMatch(tempTitle, @"Game*.Wave", RegexOptions.IgnoreCase))
 					{
 						continue;
 					}
@@ -161,6 +161,7 @@ namespace Robin
 
 		public void CachePlatformReleases(Platform platform)
 		{
+
 			LBPlatform lbPlatform = platform.LBPlatform;
 
 			if (launchboxFile == null)
@@ -300,15 +301,13 @@ namespace Robin
 		}
 
 #if DEBUG
-		public async void CreateReleases()
+		public async Task CreateReleasesAsync()
 		{
 			await Task.Run(() =>
 			{
-				int i = 0;
 				foreach (LBGame lbGame in R.Data.LBGames)
 				{
 					lbGame.CreateReleases();
-					Reporter.Report(i++.ToString());
 				}
 			});
 		}

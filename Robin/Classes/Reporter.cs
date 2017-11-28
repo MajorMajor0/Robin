@@ -24,15 +24,15 @@ namespace Robin
 {
 	public static class Reporter
 	{
-		//private static ObservableCollection<Message> messages;
+		// static ObservableCollection<Message> messages;
 
-		private static object messagesLock = new object();
+		 static object messagesLock = new object();
 
 		public static ObservableCollection<Message> Messages { get; set; }
 
 		static Stopwatch watch;
 
-		private static string _newsFeed;
+		 static string _newsFeed;
 		public static string NewsFeed
 		{
 			get
@@ -88,8 +88,7 @@ namespace Robin
 
 		public static void Toc(string message = null)
 		{
-			watch.Stop();
-			watch.Reset();
+			watch.Stop();		
 			if (message == null)
 			{
 				ReportInline(watch.Elapsed.ToString(@"ss") + " s");
@@ -98,6 +97,7 @@ namespace Robin
 			{
 				ReportInline(message);
 			}
+			watch.Reset();
 		}
 
 		public class Message
