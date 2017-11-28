@@ -225,6 +225,13 @@ namespace Robin
     		set { _playCount = value; OnPropertyChanged("PlayCount"); } 
     	}
     
+        private bool _isAdult;
+    	public bool IsAdult 
+    	{ 
+    		get { return _isAdult; } 
+    		set { _isAdult = value; OnPropertyChanged("IsAdult"); } 
+    	}
+    
     
         public virtual Game Game { get; set; }
         public virtual GBRelease GBRelease { get; set; }

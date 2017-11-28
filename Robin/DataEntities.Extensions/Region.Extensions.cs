@@ -12,40 +12,16 @@
  * You should have received a copy of the GNU General Public License
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
 
-using System.Collections;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Robin
 {
-	public partial class GBPlatform : IDBPlatform
+	public partial class Region
 	{
-		public IList Releases => GBReleases;
-
-		public Platform RPlatform
-		{
-			get
-			{
-				return R.Data.Platforms.FirstOrDefault(x => x.ID_GB == ID);
-			}
-		}
-
-		public int MatchedReleaseCount => RPlatform.MatchedToGiantBomb;
-
-		public bool Preferred
-		{
-			get
-			{
-				if (RPlatform != null)
-				{
-					return RPlatform.Preferred;
-				}
-				return false;
-			}
-		}
-
-		public string Manufacturer
-		{
-			get { return null; }
-		}
+		public string Flag => FileLocation.Flags + UNCode + ".ico";
 	}
 }

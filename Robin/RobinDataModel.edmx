@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="mainModel1.Store" Provider="System.Data.SQLite.EF6" ProviderManifestToken="Data Source=D:\Robin_debug\data\RobinData.db3" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="RobinDataModel.Store" Provider="System.Data.SQLite.EF6" ProviderManifestToken="Data Source=D:\Robin_debug\data\RobinData.db3" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Collection">
           <Key>
             <PropertyRef Name="ID" />
@@ -311,7 +311,7 @@
           <Property Name="URL_ID" Type="integer" />
           <Property Name="Rom_ID" Type="integer" />
           <Property Name="Special" Type="nvarchar" MaxLength="2147483647" />
-          <Property Name="Title" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="Title" Type="nvarchar" MaxLength="2147483647" Nullable="false" />
           <Property Name="IsGame" Type="bit" Nullable="false" />
           <Property Name="Overview" Type="nvarchar" MaxLength="2147483647" />
           <Property Name="Developer" Type="nvarchar" MaxLength="2147483647" />
@@ -328,6 +328,7 @@
           <Property Name="Preferred" Type="bit" Nullable="false" />
           <Property Name="IsBeaten" Type="bit" Nullable="false" />
           <Property Name="PlayCount" Type="integer" Nullable="false" />
+          <Property Name="IsAdult" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Rom">
           <Key>
@@ -781,7 +782,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="mainModel1StoreContainer">
+        <EntityContainer Name="RobinDataModelStoreContainer">
           <EntitySet Name="Collection" EntityType="Self.Collection" store:Type="Tables" />
           <EntitySet Name="Collection_Game" EntityType="Self.Collection_Game" store:Type="Tables" />
           <EntitySet Name="Collection_Release" EntityType="Self.Collection_Release" store:Type="Tables" />
@@ -947,10 +948,11 @@
             <End Role="Rom" EntitySet="Rom" />
           </AssociationSet>
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="mainModel1" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="RobinDataModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityType Name="Collection">
           <Key>
             <PropertyRef Name="ID" />
@@ -972,9 +974,9 @@
           <Property Name="Image" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="IsCrap" Type="Boolean" Nullable="false" />
           <Property Name="Website" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="PlatformsPreferring" Relationship="Self.FK_Platform_0_0" FromRole="Emulator" ToRole="Platform" />
-          <NavigationProperty Name="Platforms" Relationship="Self.Platform_Emulator" FromRole="Emulator" ToRole="Platform" />
           <Property Name="Rating" Type="Decimal" Precision="53" Scale="0" />
+          <NavigationProperty Name="Platforms" Relationship="Self.FK_Platform_0_0" FromRole="Emulator" ToRole="Platform" />
+          <NavigationProperty Name="Platforms1" Relationship="Self.Platform_Emulator" FromRole="Emulator" ToRole="Platform" />
         </EntityType>
         <EntityType Name="Game">
           <Key>
@@ -1283,7 +1285,7 @@
           <Property Name="URL_ID" Type="Int64" />
           <Property Name="Rom_ID" Type="Int64" />
           <Property Name="Special" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
-          <Property Name="Title" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Title" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="IsGame" Type="Boolean" Nullable="false" />
           <Property Name="Overview" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="Developer" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
@@ -1300,6 +1302,7 @@
           <Property Name="Preferred" Type="Boolean" Nullable="false" />
           <Property Name="IsBeaten" Type="Boolean" Nullable="false" />
           <Property Name="PlayCount" Type="Int64" Nullable="false" />
+          <Property Name="IsAdult" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Game" Relationship="Self.FK_Release_4_0" FromRole="Release" ToRole="Game" />
           <NavigationProperty Name="GBRelease" Relationship="Self.FK_Release_9_0" FromRole="Release" ToRole="GBRelease" />
           <NavigationProperty Name="GDBRelease" Relationship="Self.FK_Release_8_0" FromRole="Release" ToRole="GDBRelease" />
@@ -1863,9 +1866,9 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="mainModel1StoreContainer" CdmEntityContainer="RobinDataEntities">
+        <EntityContainerMapping StorageEntityContainer="RobinDataModelStoreContainer" CdmEntityContainer="RobinDataEntities">
           <EntitySetMapping Name="Collections">
-            <EntityTypeMapping TypeName="mainModel1.Collection">
+            <EntityTypeMapping TypeName="RobinDataModel.Collection">
               <MappingFragment StoreEntitySet="Collection">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
@@ -1874,9 +1877,8 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Emulators">
-            <EntityTypeMapping TypeName="mainModel1.Emulator">
+            <EntityTypeMapping TypeName="RobinDataModel.Emulator">
               <MappingFragment StoreEntitySet="Emulator">
-                <ScalarProperty Name="Rating" ColumnName="Rating" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
                 <ScalarProperty Name="FileName" ColumnName="FileName" />
@@ -1884,18 +1886,19 @@
                 <ScalarProperty Name="Image" ColumnName="Image" />
                 <ScalarProperty Name="IsCrap" ColumnName="IsCrap" />
                 <ScalarProperty Name="Website" ColumnName="Website" />
+                <ScalarProperty Name="Rating" ColumnName="Rating" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Games">
-            <EntityTypeMapping TypeName="mainModel1.Game">
+            <EntityTypeMapping TypeName="RobinDataModel.Game">
               <MappingFragment StoreEntitySet="Game">
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="GBGames">
-            <EntityTypeMapping TypeName="mainModel1.GBGame">
+            <EntityTypeMapping TypeName="RobinDataModel.GBGame">
               <MappingFragment StoreEntitySet="GBGame">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="GBPlatform_ID" ColumnName="GBPlatform_ID" />
@@ -1911,7 +1914,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="GBPlatforms">
-            <EntityTypeMapping TypeName="mainModel1.GBPlatform">
+            <EntityTypeMapping TypeName="RobinDataModel.GBPlatform">
               <MappingFragment StoreEntitySet="GBPlatform">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
@@ -1925,7 +1928,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="GBReleases">
-            <EntityTypeMapping TypeName="mainModel1.GBRelease">
+            <EntityTypeMapping TypeName="RobinDataModel.GBRelease">
               <MappingFragment StoreEntitySet="GBRelease">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
@@ -1941,7 +1944,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="GDBPlatforms">
-            <EntityTypeMapping TypeName="mainModel1.GDBPlatform">
+            <EntityTypeMapping TypeName="RobinDataModel.GDBPlatform">
               <MappingFragment StoreEntitySet="GDBPlatform">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
@@ -1965,7 +1968,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="GDBReleases">
-            <EntityTypeMapping TypeName="mainModel1.GDBRelease">
+            <EntityTypeMapping TypeName="RobinDataModel.GDBRelease">
               <MappingFragment StoreEntitySet="GDBRelease">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
@@ -1987,7 +1990,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Languages">
-            <EntityTypeMapping TypeName="mainModel1.Language">
+            <EntityTypeMapping TypeName="RobinDataModel.Language">
               <MappingFragment StoreEntitySet="Language">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
@@ -1996,7 +1999,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="LBGames">
-            <EntityTypeMapping TypeName="mainModel1.LBGame">
+            <EntityTypeMapping TypeName="RobinDataModel.LBGame">
               <MappingFragment StoreEntitySet="LBGame">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
@@ -2013,7 +2016,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="LBImages">
-            <EntityTypeMapping TypeName="mainModel1.LBImage">
+            <EntityTypeMapping TypeName="RobinDataModel.LBImage">
               <MappingFragment StoreEntitySet="LBImages">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Type" ColumnName="Type" />
@@ -2025,7 +2028,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="LBPlatforms">
-            <EntityTypeMapping TypeName="mainModel1.LBPlatform">
+            <EntityTypeMapping TypeName="RobinDataModel.LBPlatform">
               <MappingFragment StoreEntitySet="LBPlatform">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
@@ -2045,7 +2048,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="LBReleases">
-            <EntityTypeMapping TypeName="mainModel1.LBRelease">
+            <EntityTypeMapping TypeName="RobinDataModel.LBRelease">
               <MappingFragment StoreEntitySet="LBRelease">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="LBGame_ID" ColumnName="LBGame_ID" />
@@ -2056,7 +2059,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Matches">
-            <EntityTypeMapping TypeName="mainModel1.Match">
+            <EntityTypeMapping TypeName="RobinDataModel.Match">
               <MappingFragment StoreEntitySet="Match">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ID_GB" ColumnName="ID_GB" />
@@ -2068,7 +2071,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="OVGPlatforms">
-            <EntityTypeMapping TypeName="mainModel1.OVGPlatform">
+            <EntityTypeMapping TypeName="RobinDataModel.OVGPlatform">
               <MappingFragment StoreEntitySet="OVGPlatform">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
@@ -2076,7 +2079,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="OVGReleases">
-            <EntityTypeMapping TypeName="mainModel1.OVGRelease">
+            <EntityTypeMapping TypeName="RobinDataModel.OVGRelease">
               <MappingFragment StoreEntitySet="OVGRelease">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Region_ID" ColumnName="Region_ID" />
@@ -2103,7 +2106,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Platforms">
-            <EntityTypeMapping TypeName="mainModel1.Platform">
+            <EntityTypeMapping TypeName="RobinDataModel.Platform">
               <MappingFragment StoreEntitySet="Platform">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
@@ -2134,7 +2137,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Regions">
-            <EntityTypeMapping TypeName="mainModel1.Region">
+            <EntityTypeMapping TypeName="RobinDataModel.Region">
               <MappingFragment StoreEntitySet="Region">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
@@ -2149,7 +2152,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Releases">
-            <EntityTypeMapping TypeName="mainModel1.Release">
+            <EntityTypeMapping TypeName="RobinDataModel.Release">
               <MappingFragment StoreEntitySet="Release">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ID_GB" ColumnName="ID_GB" />
@@ -2180,11 +2183,12 @@
                 <ScalarProperty Name="Preferred" ColumnName="Preferred" />
                 <ScalarProperty Name="IsBeaten" ColumnName="IsBeaten" />
                 <ScalarProperty Name="PlayCount" ColumnName="PlayCount" />
+                <ScalarProperty Name="IsAdult" ColumnName="IsAdult" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Roms">
-            <EntityTypeMapping TypeName="mainModel1.Rom">
+            <EntityTypeMapping TypeName="RobinDataModel.Rom">
               <MappingFragment StoreEntitySet="Rom">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Platform_ID" ColumnName="Platform_ID" />
@@ -2199,7 +2203,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="URLs">
-            <EntityTypeMapping TypeName="mainModel1.URL">
+            <EntityTypeMapping TypeName="RobinDataModel.URL">
               <MappingFragment StoreEntitySet="URL">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="BoxFront" ColumnName="BoxFront" />
@@ -2217,7 +2221,7 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <AssociationSetMapping Name="Collection_Game" TypeName="mainModel1.Collection_Game" StoreEntitySet="Collection_Game">
+          <AssociationSetMapping Name="Collection_Game" TypeName="RobinDataModel.Collection_Game" StoreEntitySet="Collection_Game">
             <EndProperty Name="Game">
               <ScalarProperty Name="ID" ColumnName="Game_ID" />
             </EndProperty>
@@ -2225,7 +2229,7 @@
               <ScalarProperty Name="ID" ColumnName="Collection_ID" />
             </EndProperty>
           </AssociationSetMapping>
-          <AssociationSetMapping Name="Collection_Release" TypeName="mainModel1.Collection_Release" StoreEntitySet="Collection_Release">
+          <AssociationSetMapping Name="Collection_Release" TypeName="RobinDataModel.Collection_Release" StoreEntitySet="Collection_Release">
             <EndProperty Name="Release">
               <ScalarProperty Name="ID" ColumnName="Release_ID" />
             </EndProperty>
@@ -2233,7 +2237,7 @@
               <ScalarProperty Name="ID" ColumnName="Collection_ID" />
             </EndProperty>
           </AssociationSetMapping>
-          <AssociationSetMapping Name="Platform_Emulator" TypeName="mainModel1.Platform_Emulator" StoreEntitySet="Platform_Emulator">
+          <AssociationSetMapping Name="Platform_Emulator" TypeName="RobinDataModel.Platform_Emulator" StoreEntitySet="Platform_Emulator">
             <EndProperty Name="Platform">
               <ScalarProperty Name="ID" ColumnName="Platform_ID" />
             </EndProperty>

@@ -41,7 +41,7 @@ namespace Robin
 
 		public int MatchedToLaunchBox => Releases.Count(x => x.ID_LB != null);
 
-		public int MatchedToSomething => Releases.Count(x => x.ID_GB != null || x.ID_GDB != null || x.ID_OVG != null || x.ID_LB != null);
+		public int MatchedReleaseCount => Releases.Count(x => x.ID_GB != null || x.ID_GDB != null || x.ID_OVG != null || x.ID_LB != null);
 
 		public int ReleasesWithArt => Releases.Count(x => x.HasArt);
 

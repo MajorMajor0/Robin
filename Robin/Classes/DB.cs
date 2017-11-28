@@ -70,6 +70,7 @@ namespace Robin
         IList Releases { get; }
         bool Preferred { get; }
         Platform RPlatform { get;}
+		int MatchedReleaseCount { get; }
     }
 
     public interface IDB : IDisposable

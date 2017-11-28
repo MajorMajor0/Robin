@@ -11,38 +11,40 @@
  * 
  * You should have received a copy of the GNU General Public License
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
- 
+
 using System.Collections;
 using System.Linq;
 
 namespace Robin
 {
-    public partial class LBPlatform : IDBPlatform
-    {
-        public IList Releases => LBReleases;
+	public partial class LBPlatform : IDBPlatform
+	{
+		public IList Releases => LBReleases;
 
-        public IList Games => LBGames;
+		public IList Games => LBGames;
 
-        public Platform RPlatform
-        {
-            get
-            {
-                return R.Data.Platforms.FirstOrDefault(x => x.ID_LB == ID);
-            }
-        }
+		public Platform RPlatform
+		{
+			get
+			{
+				return R.Data.Platforms.FirstOrDefault(x => x.ID_LB == ID);
+			}
+		}
 
-        public bool Preferred
-        {
-            get
-            {
-                if (RPlatform != null)
-                {
-                    return RPlatform.Preferred;
-                }
-                return false;
-            }
-        }
-    }
+		public int MatchedReleaseCount => RPlatform.MatchedToLaunchBox;
+
+		public bool Preferred
+		{
+			get
+			{
+				if (RPlatform != null)
+				{
+					return RPlatform.Preferred;
+				}
+				return false;
+			}
+		}
+	}
 }
 
 

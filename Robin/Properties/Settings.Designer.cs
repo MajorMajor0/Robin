@@ -371,5 +371,97 @@ namespace Robin.Properties {
                 this["EmulatorFilterIsCrap"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool DisplayNonGames {
+            get {
+                return ((bool)(this["DisplayNonGames"]));
+            }
+            set {
+                this["DisplayNonGames"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool DisplayAdult {
+            get {
+                return ((bool)(this["DisplayAdult"]));
+            }
+            set {
+                this["DisplayAdult"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool DisplayCrap {
+            get {
+                return ((bool)(this["DisplayCrap"]));
+            }
+            set {
+                this["DisplayCrap"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool DisplayNotIncluded {
+            get {
+                return ((bool)(this["DisplayNotIncluded"]));
+            }
+            set {
+                this["DisplayNotIncluded"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Nullable<System.Boolean> ReleaseFilterIsGame {
+            get {
+                return ((global::System.Nullable<System.Boolean>)(this["ReleaseFilterIsGame"]));
+            }
+            set {
+                this["ReleaseFilterIsGame"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Nullable<System.Boolean> ReleaseFilterAdult {
+            get {
+                return ((global::System.Nullable<System.Boolean>)(this["ReleaseFilterAdult"]));
+            }
+            set {
+                this["ReleaseFilterAdult"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Nullable<System.Boolean> GameFilterIsGame {
+            get {
+                return ((global::System.Nullable<System.Boolean>)(this["GameFilterIsGame"]));
+            }
+            set {
+                this["GameFilterIsGame"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Nullable<System.Boolean> GameFilterAdult {
+            get {
+                return ((global::System.Nullable<System.Boolean>)(this["GameFilterAdult"]));
+            }
+            set {
+                this["GameFilterAdult"] = value;
+            }
+        }
     }
 }

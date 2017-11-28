@@ -26,36 +26,41 @@ namespace Robin
 
 	public partial class RobinDataEntities
 	{
+		string connectionString = "data source = " + Robin.FileLocation.RobinData;
+
+		public string FileLocation => Robin.FileLocation.RobinData;
+
 		public RobinDataEntities(object sender)
 		{
+			this.Database.Connection.ConnectionString = connectionString;
 
 			Configuration.LazyLoadingEnabled = false;
 			Configuration.AutoDetectChangesEnabled = false;
 
-            Stopwatch Watch = Stopwatch.StartNew();
+			Stopwatch Watch = Stopwatch.StartNew();
 
-			Platforms.Include(x=>x.Emulators).Load();
+			Platforms.Include(x => x.Emulators).Load();
 
-            Reporter.Report("Platforms loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
+			Reporter.Report("Platforms loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
 			Roms.LoadAsync();
-            Reporter.Report("Roms loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
-            Releases.LoadAsync();
-            Reporter.Report("Releases loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
-            Games.LoadAsync();
-            Reporter.Report("Games loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
-            Regions.LoadAsync();
-            Reporter.Report("Regions loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
-            Collections.Include(x=>x.Games).Include(x=>x.Releases).Load();
-            Reporter.Report("Collections loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
-            Emulators.Include(x=>x.Platforms).Load();
-            Reporter.Report("Emulators loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
+			Reporter.Report("Roms loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
+			Releases.LoadAsync();
+			Reporter.Report("Releases loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
+			Games.LoadAsync();
+			Reporter.Report("Games loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
+			Regions.LoadAsync();
+			Reporter.Report("Regions loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
+			Collections.Include(x => x.Games).Include(x => x.Releases).Load();
+			Reporter.Report("Collections loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
+			Emulators.Include(x => x.Platforms).Load();
+			Reporter.Report("Emulators loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
 
-            foreach (Game game in Games)
+			foreach (Game game in Games)
 			{
-				game.Releases = game.Releases.OrderBy(x => x.Region.Priority).ThenByDescending(x=>x.Version).ToList();
+				game.Releases = game.Releases.OrderBy(x => x.Region.Priority).ThenByDescending(x => x.Version).ToList();
 			}
-            Reporter.Report("Games ordered " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
-        }
+			Reporter.Report("Games ordered " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
+		}
 
 		//		public void LoadAll()
 		//		{

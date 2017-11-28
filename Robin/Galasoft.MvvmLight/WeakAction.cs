@@ -33,9 +33,9 @@ namespace GalaSoft.MvvmLight.Helpers
     public class WeakAction
     {
 #if SILVERLIGHT
-        private Action _action;
+         Action _action;
 #endif
-        private Action _staticAction;
+         Action _staticAction;
 
         /// <summary>
         /// Gets or sets the <see cref="MethodInfo" /> corresponding to this WeakAction's

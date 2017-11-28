@@ -36,7 +36,7 @@ namespace Robin
 			Region = region;
 		}
 
-		private bool _preferred;
+		 bool _preferred;
 
 		public bool Preferred
 		{
@@ -415,6 +415,8 @@ namespace Robin
 		public string LogoPath => FileLocation.Art.Logo + ID + "R-LGO.jpg";
 
 		public string MarqueePath => Platform_ID == 1 ? FileLocation.Marquee + Rom.FileName.Replace(".zip", ".png") : null;
+
+		public string Flag => Region.Flag;
 
 
 		public int BorderThickness { get; set; } = 1;

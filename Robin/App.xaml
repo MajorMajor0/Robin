@@ -20,13 +20,16 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 			 StartupUri="MainWindow.xaml"
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 d1p1:Ignorable="d"
-			 xmlns:d1p1="http://schemas.openxmlformats.org/markup-compatibility/2006">
+			 xmlns:d1p1="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 ShutdownMode="OnMainWindowClose">
 	<Application.Resources>
 		<ResourceDictionary>
 
 			<BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" />
 
 			<local:IntToVisibilityConverter x:Key="intToVisibilityConverter" />
+
+			<local:PlatformToVisibilityConverter x:Key="PlatformToVisibilityConverter" />
 
 			<local:BooleanToHiddenConverter x:Key="boolToHiddenConverter" />
 
@@ -290,7 +293,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 				<Setter Property="FontFamily"
 						Value="Wingdings" />
 				<Setter Property="FontSize"
-						Value="{StaticResource NormalFontSize}" />
+						Value="22" />
 				<Setter Property="Foreground"
 						Value="{StaticResource Heading0_Brush}" />
 				<Setter Property="FontWeight"
@@ -362,6 +365,13 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						Value="{Binding Command.Content, RelativeSource={RelativeSource Self}}" />
 				<Setter Property="ToolTip"
 						Value="{Binding Command.ToolTip, RelativeSource={RelativeSource Self}}" />
+			</Style>
+
+			<Style x:Key="DissapearingCButtonStyle"
+				   TargetType="Button"
+				   BasedOn="{StaticResource CButtonStyle}">
+				<Setter Property="Visibility"
+						Value="{Binding IsEnabled, RelativeSource={RelativeSource Self}, Converter={StaticResource booleanToVisibilityConverter}}"  />
 			</Style>
 
 			<Style x:Key="CMenuItemStyle"

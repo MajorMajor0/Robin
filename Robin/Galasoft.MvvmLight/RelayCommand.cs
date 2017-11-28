@@ -50,9 +50,9 @@ namespace GalaSoft.MvvmLight.Command
     ////  Email = "laurent@galasoft.ch")]
     public class RelayCommand : ICommand
     {
-        private readonly WeakAction _execute;
+         readonly WeakAction _execute;
 
-        private readonly WeakFunc<bool> _canExecute;
+         readonly WeakFunc<bool> _canExecute;
 
         /// <summary>
         /// Initializes a new instance of the RelayCommand class that 
@@ -102,7 +102,7 @@ namespace GalaSoft.MvvmLight.Command
         /// </summary>
         public event EventHandler CanExecuteChanged;
 #else
-        private EventHandler _requerySuggestedLocal;
+         EventHandler _requerySuggestedLocal;
         
         /// <summary>
         /// Occurs when changes occur that affect whether the command should execute.

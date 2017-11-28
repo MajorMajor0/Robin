@@ -77,7 +77,7 @@ namespace Robin
 			}
 		}
 
-		public static void Save(this DbContext dbContext, bool detectChanges = false)
+		public static void Save(this RobinDataEntities dbContext, bool detectChanges = false)
 		{
 			int i;
 			string backupFile = dbContext.Backup();
@@ -113,16 +113,14 @@ namespace Robin
 
 		}
 
-		public static string Backup(this DbContext dbContext)
+		public static string Backup(this RobinDataEntities dbContext)
 		{
 			// Backup existing database
 			Directory.CreateDirectory(FileLocation.Backup);
 			string Date = DateTime.Now.ToString("yyyy-MM-dd-HHmmss");
 
-			string CurrentFile = dbContext.Database.Connection.ConnectionString
-				.Replace(@"data source=|DataDirectory|", FileLocation.Folder)
-				.Replace(@"data source=D:\Robin_debug\", FileLocation.Folder)
-				.Replace(".db3\"", ".db3");
+			string CurrentFile = dbContext.FileLocation;
+
 			string backupFile = FileLocation.Backup + Path.GetFileNameWithoutExtension(CurrentFile) + Date + Path.GetExtension(CurrentFile);
 			try
 			{

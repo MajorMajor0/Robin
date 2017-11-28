@@ -29,9 +29,9 @@ namespace GalaSoft.MvvmLight.Helpers
     public class WeakFunc<TResult>
     {
 #if SILVERLIGHT
-        private Func<TResult> _func;
+         Func<TResult> _func;
 #endif
-        private Func<TResult> _staticFunc;
+         Func<TResult> _staticFunc;
 
         /// <summary>
         /// Gets or sets the <see cref="MethodInfo" /> corresponding to this WeakFunc's

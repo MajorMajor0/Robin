@@ -43,7 +43,8 @@ namespace Robin
 				if (value != selectedIDB)
 				{
 					selectedIDB = value;
-					OnPropertyChanged("SelectedIDB");}
+					OnPropertyChanged("SelectedIDB");
+				}
 			}
 		}
 
@@ -72,7 +73,7 @@ namespace Robin
 			}
 
 			set
-			{ 			
+			{
 				selectedRelease = value;
 			}
 		}
@@ -96,28 +97,36 @@ namespace Robin
 		}
 
 
-		public async void InitializeDBs()
+		 async void InitializeDBs()
 		{
-
-			var uiContext = SynchronizationContext.Current;
-
-			await Task.Run(() =>
+			if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(new DependencyObject()))
 			{
-				if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(new DependencyObject()))
-				{
-					//TODO: put some dummy components here for design time
-				}
+				//TODO: put some dummy components here for design time
+			}
 
-				// Trying to load this stuff at design time will throw an exception and crash the designer
-				else
-				{
-					uiContext.Send(x => IDBs.Add(new Datomatic()), null);
-					uiContext.Send(x => IDBs.Add(new GamesDB()), null);
-					uiContext.Send(x => IDBs.Add(new GiantBomb()), null);
-					uiContext.Send(x => IDBs.Add(new OpenVGDB()), null);
-					uiContext.Send(x => IDBs.Add(new Launchbox()), null);
-				}
-			});
+			// Trying to load this stuff at design time will throw an exception and crash the designer
+			else
+			{
+				Datomatic datomatic = null;
+				await Task.Run(() => { datomatic = new Datomatic(); });
+				IDBs.Add(datomatic);
+
+				GamesDB gamesDB = null;
+				await Task.Run(() => { gamesDB = new GamesDB(); });
+				IDBs.Add(gamesDB);
+
+				GiantBomb giantBomb = null;
+				await Task.Run(() => { giantBomb = new GiantBomb(); });
+				IDBs.Add(giantBomb);
+
+				OpenVGDB openVGDB = null;
+				await Task.Run(() => { openVGDB = new OpenVGDB(); });
+				IDBs.Add(openVGDB);
+
+				Launchbox launchBox = null;
+				await Task.Run(() => { launchBox = new Launchbox(); });
+				IDBs.Add(launchBox);
+			}
 		}
 
 		public void CopyData()

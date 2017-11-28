@@ -1,0 +1,82 @@
+﻿<Window x:Class="Robin.OptionsWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:local="clr-namespace:Robin"
+		mc:Ignorable="d"
+		Title="Options"
+		Height="300"
+		Width="400">
+	<Window.Resources>
+		<Style TargetType="TextBlock">
+			<Setter Property="VerticalAlignment"
+					Value="Center" />
+
+		</Style>
+		
+		<Style TargetType="CheckBox">
+			<Setter Property="Margin"
+					Value="0,0,10,0" />
+			<Setter Property="VerticalAlignment"
+					Value="Center" />
+		</Style>
+
+		<Style TargetType="Button" BasedOn="{StaticResource CButtonStyle}">
+			<Setter Property="Width"
+					Value="90" />
+			<Setter Property="Height"
+					Value="30" />
+			<Setter Property="VerticalAlignment"
+					Value="Bottom" />
+			<Setter Property="Margin"
+					Value="15" />
+		</Style>
+
+		<Style x:Key="StackPanelStyle1"
+			   TargetType="StackPanel">
+			<Setter Property="Height"
+					Value="25" />
+			<Setter Property="Orientation"
+					Value="Horizontal" />
+		</Style>
+	</Window.Resources>
+
+	<Grid>
+		<GroupBox Header="Types to Load"
+				  Padding="5"
+				  Margin="10"
+				  VerticalAlignment="Top"
+				  HorizontalAlignment="Left">
+			<StackPanel Orientation="Vertical">
+				<StackPanel Style="{StaticResource StackPanelStyle1}">
+					<CheckBox  IsChecked="{Binding DisplayCrap}" />
+					<TextBlock Text="Show games marked as crap"
+							   ToolTip="Crap games are Releases marked by Robin or you as crap because they are very low quality or broken." />
+				</StackPanel>
+				<StackPanel Style="{StaticResource StackPanelStyle1}">
+					<CheckBox  IsChecked="{Binding DisplayNonGames}" />
+					<TextBlock Text="Show games marked as not games"
+							   ToolTip="Non games are Releases marked by RObin or you, such as test carts or MAME computer images." />
+				</StackPanel>
+				<StackPanel Style="{StaticResource StackPanelStyle1}">
+					<CheckBox  IsChecked="{Binding DisplayNotIncluded}" />
+					<TextBlock Text="Show games marked as not playable"
+							   ToolTip="Games in the database may not be playable because Robin cannot find a ROM or appropriate emulator." />
+				</StackPanel>
+				<StackPanel Style="{StaticResource StackPanelStyle1}">
+					<CheckBox  IsChecked="{Binding DisplayAdult}" />
+					<TextBlock Text="Show games marked as adult" />
+				</StackPanel>
+			</StackPanel>
+		</GroupBox>
+
+		<Button	HorizontalAlignment="Left"
+				Command="{Binding CancelCommand}" />
+
+		<Button	HorizontalAlignment="Right"
+				Command="{Binding OKCommand}" />
+
+
+	</Grid>
+</Window>

@@ -18,34 +18,35 @@ using System.Linq;
 
 namespace Robin
 {
-    public partial class OVGPlatform : IDBPlatform
-    {
-        public IList Releases => OVGReleases;
+	public partial class OVGPlatform : IDBPlatform
+	{
+		public IList Releases => OVGReleases;
 
-        public string Manufacturer => null;
+		public Platform RPlatform
+		{
+			get
+			{
+				return R.Data.Platforms.FirstOrDefault(x => x.ID == ID);
+			}
+		}
 
-        public DateTime? Date => null;
+		public int MatchedReleaseCount => RPlatform.MatchedToOpenVG;
 
-        public Platform RPlatform
-        {
-            get
-            {
-                return R.Data.Platforms.FirstOrDefault(x => x.ID == ID);
-            }
-        }
+		public bool Preferred
+		{
+			get
+			{
+				if (RPlatform != null)
+				{
+					return RPlatform.Preferred;
+				}
+				return false;
+			}
+		}
+		public string Manufacturer => null;
 
-        public bool Preferred
-        {
-            get
-            {
-                if (RPlatform != null)
-                {
-                    return RPlatform.Preferred;
-                }
-                return false;
-            }
-        }
+		public DateTime? Date => null;
 
-        public DateTime CacheDate { get; set; }
-    }
+		public DateTime CacheDate { get; set; }
+	}
 }

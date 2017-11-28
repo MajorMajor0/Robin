@@ -21,24 +21,26 @@ namespace Robin
 	{
 		public IList Releases => GDBReleases;
 
-        public Platform RPlatform
-        {
-            get
-            {
-                return R.Data.Platforms.FirstOrDefault(x => x.ID_GDB == ID);
-            }
-        }
+		public Platform RPlatform
+		{
+			get
+			{
+				return R.Data.Platforms.FirstOrDefault(x => x.ID_GDB == ID);
+			}
+		}
 
-        public bool Preferred
-        {
-            get
-            {
-                if (RPlatform != null)
-                {
-                    return RPlatform.Preferred;
-                }
-                return false;
-            }
-        }
-    }
+		public int MatchedReleaseCount => RPlatform.MatchedToGamesDB;
+
+		public bool Preferred
+		{
+			get
+			{
+				if (RPlatform != null)
+				{
+					return RPlatform.Preferred;
+				}
+				return false;
+			}
+		}
+	}
 }

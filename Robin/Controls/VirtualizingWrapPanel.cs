@@ -26,12 +26,12 @@ namespace Robin
 		UIElementCollection _children;
 		ItemsControl _itemsControl;
 		IItemContainerGenerator _generator;
-		private Point _offset = new Point(0, 0);
-		private Size _extent = new Size(0, 0);
-		private Size _viewport = new Size(0, 0);
-		private int firstIndex = 0;
-		private Size childSize;
-		private Size _pixelMeasuredViewport = new Size(0, 0);
+		 Point _offset = new Point(0, 0);
+		 Size _extent = new Size(0, 0);
+		 Size _viewport = new Size(0, 0);
+		 int firstIndex = 0;
+		 Size childSize;
+		 Size _pixelMeasuredViewport = new Size(0, 0);
 		Dictionary<UIElement, Rect> _realizedChildLayout = new Dictionary<UIElement, Rect>();
 		WrapPanelAbstraction _abstractPanel;
 
@@ -40,7 +40,7 @@ namespace Robin
 
 		#region Properties
 
-		private Size ChildSlotSize
+		 Size ChildSlotSize
 		{
 			get
 			{
@@ -92,7 +92,7 @@ namespace Robin
 
 		#region Methods
 
-		private void SetFirstRowViewItemIndex(int index)
+		 void SetFirstRowViewItemIndex(int index)
 		{
 			SetVerticalOffset((index) / Math.Floor((_viewport.Width) / childSize.Width));
 			SetHorizontalOffset((index) / Math.Floor((_viewport.Height) / childSize.Height));
@@ -158,7 +158,7 @@ namespace Robin
 			}
 		}
 
-		private void ComputeExtentAndViewport(Size pixelMeasuredViewportSize, int visibleSections)
+		 void ComputeExtentAndViewport(Size pixelMeasuredViewportSize, int visibleSections)
 		{
 			if (Orientation == Orientation.Horizontal)
 			{
@@ -183,13 +183,13 @@ namespace Robin
 			_owner.InvalidateScrollInfo();
 		}
 
-		private void ResetScrollInfo()
+		 void ResetScrollInfo()
 		{
 			_offset.X = 0;
 			_offset.Y = 0;
 		}
 
-		private int GetNextSectionClosestIndex(int itemIndex)
+		 int GetNextSectionClosestIndex(int itemIndex)
 		{
 			var abstractItem = _abstractPanel[itemIndex];
 			if (abstractItem.Section < _abstractPanel.SectionCount - 1)
@@ -204,7 +204,7 @@ namespace Robin
 				return itemIndex;
 		}
 
-		private int GetLastSectionClosestIndex(int itemIndex)
+		 int GetLastSectionClosestIndex(int itemIndex)
 		{
 			var abstractItem = _abstractPanel[itemIndex];
 			if (abstractItem.Section > 0)
@@ -219,7 +219,7 @@ namespace Robin
 				return itemIndex;
 		}
 
-		private void NavigateDown()
+		 void NavigateDown()
 		{
 			var gen = _generator.GetItemContainerGeneratorForPanel(this);
 			UIElement selected = (UIElement)Keyboard.FocusedElement;
@@ -263,7 +263,7 @@ namespace Robin
 			(next as UIElement).Focus();
 		}
 
-		private void NavigateLeft()
+		 void NavigateLeft()
 		{
 			var gen = _generator.GetItemContainerGeneratorForPanel(this);
 
@@ -308,7 +308,7 @@ namespace Robin
 			(next as UIElement).Focus();
 		}
 
-		private void NavigateRight()
+		 void NavigateRight()
 		{
 			var gen = _generator.GetItemContainerGeneratorForPanel(this);
 			UIElement selected = (UIElement)Keyboard.FocusedElement;
@@ -352,7 +352,7 @@ namespace Robin
 			(next as UIElement).Focus();
 		}
 
-		private void NavigateUp()
+		 void NavigateUp()
 		{
 			var gen = _generator.GetItemContainerGeneratorForPanel(this);
 			UIElement selected = (UIElement)Keyboard.FocusedElement;
@@ -566,14 +566,14 @@ namespace Robin
 
 		#region IScrollInfo Members
 
-		private bool _canHScroll = false;
+		 bool _canHScroll = false;
 		public bool CanHorizontallyScroll
 		{
 			get { return _canHScroll; }
 			set { _canHScroll = value; }
 		}
 
-		private bool _canVScroll = false;
+		 bool _canVScroll = false;
 		public bool CanVerticallyScroll
 		{
 			get { return _canVScroll; }
@@ -704,7 +704,7 @@ namespace Robin
 			SetVerticalOffset(VerticalOffset - _viewport.Height * 0.8);
 		}
 
-		private ScrollViewer _owner;
+		 ScrollViewer _owner;
 		public ScrollViewer ScrollOwner
 		{
 			get { return _owner; }
@@ -840,10 +840,10 @@ namespace Robin
 
 			public readonly int _itemCount;
 			public int _averageItemsPerSection;
-			private int _currentSetSection = -1;
-			private int _currentSetItemIndex = -1;
-			private int _itemsInCurrentSecction = 0;
-			private object _syncRoot = new object();
+			 int _currentSetSection = -1;
+			 int _currentSetItemIndex = -1;
+			 int _itemsInCurrentSecction = 0;
+			 object _syncRoot = new object();
 
 			public int SectionCount
 			{
@@ -859,7 +859,7 @@ namespace Robin
 				}
 			}
 
-			private ReadOnlyCollection<ItemAbstraction> Items { get; set; }
+			 ReadOnlyCollection<ItemAbstraction> Items { get; set; }
 
 			public void SetItemSection(int index, int section)
 			{
