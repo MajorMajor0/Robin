@@ -56,42 +56,50 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 		</ContextMenu>
 	</Window.Resources>
 
-	<Grid>
+	<Grid x:Name="WindowGrid">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*" />
 			<RowDefinition Height="50" />
 		</Grid.RowDefinitions>
-		<Grid>
+		<Grid x:Name="ContentGrid">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition />
 				<ColumnDefinition />
 			</Grid.ColumnDefinitions>
-			<Border Style="{StaticResource CellStyle}">
+			<Border x:Name="LeftBorder"
+					Style="{StaticResource CellStyle}">
 				<StackPanel>
-					<StackPanel x:Name="LB_StackPanel"
-								Margin="0,10,0,0">
-						<TextBlock Style="{StaticResource Heading0}">
+					<StackPanel x:Name="LB_StackPanel">
+						<TextBlock x:Name="LBTitleBlock"
+								   Style="{StaticResource Heading0}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} LaunchBox ({0})">
 									<Binding Path="ID_LB"
-											 TargetNullValue="-" />
+											 TargetNullValue="-"
+											 FallbackValue="10" />
 								</MultiBinding>
 							</TextBlock.Text>
-							
+
 						</TextBlock>
-						
-						<TextBlock Style="{StaticResource Normal}">
-							<TextBlock.Text>
-								<MultiBinding StringFormat="{} Box art front: {0}">
-									<Binding Path="LBRelease.BoxFrontURL"
-											 TargetNullValue="-" />
-								</MultiBinding>
-							</TextBlock.Text>
-						</TextBlock>
+
+						<ListView DataContext="{Binding LBArt}"
+								  Background="Transparent">
+							<ListView.Resources>
+								<DataTemplate DataType="Art">
+
+									<TextBlock Style="{StaticResource Normal}"
+											   Text="{Binding Title}" />
+								</DataTemplate>
+							</ListView.Resources>
+
+
+						</ListView>
+
+
 						<Image Style="{StaticResource ImageStyle1}"
 							   Source="{Binding LBRelease.BoxFrontPath, Converter={StaticResource ImageConverter}}"
 							   Visibility="{Binding LBRelease.BoxFrontPath, Converter={StaticResource fileToVisibilityConverter}}" />
-						
+
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Box art back: {0}">
@@ -288,7 +296,8 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 					</StackPanel>
 				</StackPanel>
 			</Border>
-			<Border Style="{StaticResource CellStyle}"
+			<Border x:Name="RightBorder"
+					Style="{StaticResource CellStyle}"
 					Grid.Column="1">
 				<StackPanel>
 					<StackPanel x:Name="R_StackPanel"

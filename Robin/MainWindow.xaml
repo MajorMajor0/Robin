@@ -995,6 +995,9 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 						<MenuItem Style="{StaticResource CContextMenuItemStyle}"
 								  Command="{Binding GetSelectedArtCommand}" />
+
+						<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+								  Command="{Binding ArtWindowCommand}" />
 					</ContextMenu>
 
 					<Style x:Key="MainListTextBoxStyle"
