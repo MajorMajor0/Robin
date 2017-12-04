@@ -21,10 +21,13 @@ namespace Robin
 	/// </summary>
 	public partial class ArtWindow : Window
 	{
+		ArtWindowViewModel AWVM;
+
 		public ArtWindow(Release release)
 		{
+			AWVM = new ArtWindowViewModel(release);
 			InitializeComponent();
-			DataContext = release;
+			DataContext = AWVM;
 			Show();
 			Activate();
 		}
