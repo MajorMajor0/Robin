@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Entity;
 
@@ -43,50 +44,22 @@ namespace Robin
 		string Overview { get; }
 		string RegionTitle { get; }
 
-
-		string BannerURL { get; }
-		string Box3DURL { get; }
-		string BoxBackURL { get; }
-		string BoxFrontURL { get; }
-		string Cart3DURL { get; }
-		string CartBackURL { get; }
-		string CartFrontURL { get; }
-		string ControlInformationURL { get; }
-		string ControlPanelURL { get; }
-		string LogoURL { get; }
-		string MarqueeURL { get; }
-		string ScreenURL { get; }
-
-
-		string BannerPath { get; }
-		string Box3DPath { get; }
-		string BoxBackPath { get; }
-		string BoxFrontPath { get; }
-		string Cart3DPath { get; }
-		string CartBackPath { get; }
-		string CartFrontPath { get; }
-		string COntrolInformationPath { get; }
-		string ControlPanelPath { get; }
-		string LogoPath { get; }
-		string MarqueePath { get; }
-		string ScreenPath { get; }
+		Art Banner { get; }
+		Art Box3D { get; }
+		Art BoxBack { get; }
+		Art BoxFront { get; }
+		Art Cart3D { get; }
+		Art CartBack { get; }
+		Art CartFront { get; }
+		Art ControlInformation { get; }
+		Art ControlPanel { get; }
+		Art Logo { get; }
+		Art Marquee { get; }
+		Art Screen { get; }
 
 		Region Region { get; }
 
 		DateTime? Date { get; }
-
-		int ScrapeBanner();
-		int ScrapeBox3D();
-		int ScrapeBoxBack();
-		int ScrapeBoxFront();
-		int ScrapeCart3D();
-		int ScrapeCartBack();
-		int ScrapeCartFront();
-		int ControlInformation();
-		int ScrapeControlPanel();
-		int ScrapeLogo();
-		int ScrapeMarquee();
-		int ScrapeScreen();
 
 	}
 
@@ -141,6 +114,41 @@ namespace Robin
 		[Description("Robin")]
 		Robin = 6
 	}
+
+	public static class Abbreviations
+	{
+		public static Dictionary<LocalDB, string> Release = new Dictionary<LocalDB, string>
+		{
+			{ "Asia", 1 },
+			{ "Australia", 2 },
+			{ "Brazil", 3 },
+			{ "Canada", 4 },
+			{ "China", 5 },
+			{ "Denmark", 6 },
+			{ "Europe", 7 },
+			{ "Finland", 8 },
+			{ "France", 9 },
+			{ "Germany", 10 },
+			{ "Hong Kong", 11 },
+			{ "Italy", 12 },
+			{ "Japan", 13 },
+			{ "Korea", 14 },
+			{ "The Netherlands", 15 },
+			{ "Russia", 16 },
+			{ "Spain", 17 },
+			{ "Sweden", 18 },
+			{ "United States", 21 },
+			{ "World", 22 },
+			{ "Norway", 25 },
+			{ "United Kingdom", 28 },
+			{ "North America", 21 },
+			{ "Oceania", 2 },
+			{ "South America", 3 }
+
+		};
+	}
+
+	
 
 }
 

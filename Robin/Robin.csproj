@@ -123,7 +123,7 @@
     <Compile Include="AboutBox.xaml.cs">
       <DependentUpon>AboutBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Art.cs" />
+    <Compile Include="Classes\Art.cs" />
     <Compile Include="ArtWindow.xaml.cs">
       <DependentUpon>ArtWindow.xaml</DependentUpon>
     </Compile>

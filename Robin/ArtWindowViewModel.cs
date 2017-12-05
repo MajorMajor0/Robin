@@ -117,7 +117,7 @@ namespace Robin
 					GDBArt.Add(new Art("Clear Logo", GDBRelease.LogoURL, GDBRelease.LogoPath));
 				}
 
-				if (!String.IsNullOrEmpty(GDBRelease.))
+				if (!String.IsNullOrEmpty(GDBRelease.Marquee))
 				{
 					GDBArt.Add(new Art("Marquee", GDBRelease.MarqueeURL, GDBRelease.MarqueePath));
 				}

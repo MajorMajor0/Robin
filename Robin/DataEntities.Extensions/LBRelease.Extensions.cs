@@ -21,7 +21,6 @@ namespace Robin
 {
 	public partial class LBRelease : IDBRelease
 	{
-
 		public string RegionTitle => Region.Title;
 
 		public string Overview => LBGame.Overview;
@@ -34,18 +33,135 @@ namespace Robin
 
 		public string Players => LBGame.Players;
 
+		string typeString => "LBR";
 
-		public string BannerPath => FileLocation.Temp + "LBR-" + ID + "-BNR.jpg";
-		public string Box3DPath => FileLocation.Temp + "LBR-" + ID + "-BX3.jpg";
-		public string BoxBackPath => FileLocation.Temp + "LBR-" + ID + "-BXB.jpg";
-		public string BoxFrontPath => FileLocation.Temp + "LBR-" + ID + "-BXF.jpg";
-		public string Cart3DPath => FileLocation.Temp + "LBR-" + ID + "-C3D.jpg";
-		public string CartBackPath => FileLocation.Temp + "LBR-" + ID + "-CB.jpg";
-		public string CartFrontPath => FileLocation.Temp + "LBR-" + ID + "-CF.jpg";
-		public string ControlPanelPath => FileLocation.Temp + "LBR-" + ID + "-BXF.jpg";
-		public string LogoPath => FileLocation.Temp + "LBR-" + ID + "-LGO.jpg";
-		public string MarqueePath => FileLocation.Temp + "LBR-" + ID + "-MAR.jpg";
-		public string ScreenPath => FileLocation.Temp + "LBR-" + ID + "-SCR.jpg";
+		BannerArt banner;
+		public BannerArt Banner
+		{
+			get
+			{
+				if (banner == null && GetURL("Banner") != null)
+				{
+					banner = new BannerArt(GetURL("Banner"), typeString, ID);
+				}
+				return banner;
+			}
+		}
+
+		Box3DArt box3D;
+		public Box3DArt Box3D
+		{
+			get
+			{
+				if (box3D == null && GetURL("Box - 3D") != null)
+				{
+					box3D = new Box3DArt(GetURL("Box - 3D"), typeString, ID);
+				}
+				return box3D;
+			}
+		}
+
+		BoxBackArt boxBack;
+		public BoxBackArt BoxBack
+		{
+			get
+			{
+				if (boxBack == null && GetURL("Box - Back") != null)
+				{
+					boxBack = new BoxBackArt(GetURL("Box - Back"), typeString, ID);
+				}
+				return boxBack;
+			}
+		}
+
+		BoxFrontArt boxFront;
+		public BoxFrontArt BoxFront
+		{
+			get
+			{
+				if (boxFront == null && GetURL("Box - Front") != null)
+				{
+					boxFront = new BoxFrontArt(GetURL("Box - Front"), typeString, ID);
+				}
+				return boxFront;
+			}
+		}
+
+		Cart3DArt cart3D;
+		public Cart3DArt Cart3D
+		{
+			get
+			{
+				if (cart3D == null && GetURL("Cart - 3D") != null)
+				{
+					cart3D = new Cart3DArt(GetURL("Cart - 3D"), typeString, ID);
+				}
+				return cart3D;
+			}
+		}
+
+		CartBackArt cartBack;
+		public CartBackArt CartBack
+		{
+			get
+			{
+				if (cartBack == null && GetURL("Cart - Back") != null)
+				{
+					cartBack = new CartBackArt(GetURL("Cart - Back"), typeString, ID);
+				}
+				return cartBack;
+			}
+		}
+
+		CartFrontArt cartFront;
+		public CartFrontArt CartFront
+		{
+			get
+			{
+				if (cartFront == null && GetURL("Cart - Front") != null)
+				{
+					cartFront = new CartFrontArt(GetURL("Cart - Front"), typeString, ID);
+				}
+				return cartFront;
+			}
+		}
+
+		ControlInformationArt controlInformation;
+		public ControlInformationArt ControlInformation
+		{
+			get
+			{
+				if (controlInformation == null && GetURL("Arcade - Control Information") != null)
+				{
+					controlInformation = new ControlInformationArt(GetURL("Arcade - Control Information"), typeString, ID);
+				}
+				return controlInformation;
+			}
+		}
+
+
+		ControlPanelArt controlPanel;
+		public ControlPanelArt ControlPanel
+		{
+			get
+			{
+				if (controlPanel == null && GetURL("Arcade - Control Panel") != null)
+				{
+					controlPanel = new ControlPanelArt(GetURL("Arcade - Control Panel"), typeString, ID);
+				}
+				return controlPanel;
+			}
+		}
+
+
+
+		public Art ControlPanelArt => FileLocation.Temp + "LBR-" + ID + "-BXF.jpg";
+		public Art LogoArt => FileLocation.Temp + "LBR-" + ID + "-LGO.jpg";
+		public Art MarqueeArt => FileLocation.Temp + "LBR-" + ID + "-MAR.jpg";
+		public Art ScreenArt => FileLocation.Temp + "LBR-" + ID + "-SCR.jpg";
+
+
+
 
 
 		public string BannerURL => GetURL("Banner");
@@ -76,370 +192,5 @@ namespace Robin
 				return null;
 			}
 		}
-
-
-		public int ScrapeBanner()
-		{
-			using (WebClient webclient = new WebClient())
-			{
-				if (!File.Exists(BannerPath))
-				{
-					if (BannerURL != null)
-					{
-						Reporter.Report("Getting banner for LB Release " + Title + "...");
-
-						if (webclient.DownloadFileFromDB(BannerURL, BannerPath))
-						{
-							Reporter.ReportInline("success!");
-							OnPropertyChanged("BannerPath");
-						}
-						else
-						{
-							Reporter.ReportInline("dammit!");
-							return -1;
-						}
-					}
-
-					else
-					{
-						Reporter.Report("No banner URL exists for LB release" + Title);
-					}
-				}
-
-				else
-				{
-					Reporter.Report("File already exists.");
-				}
-			}
-			return 0;
-		}
-
-		public int ScrapeBox3D()
-		{
-			using (WebClient webclient = new WebClient())
-			{
-				if (!File.Exists(Box3DPath))
-				{
-					if (Box3DURL != null)
-					{
-						Reporter.Report("Getting 3D box art for LB Release " + Title + "...");
-
-						if (webclient.DownloadFileFromDB(Box3DURL, Box3DPath))
-						{
-							Reporter.ReportInline("success!");
-							OnPropertyChanged("Box3DPath");
-						}
-						else
-						{
-							Reporter.ReportInline("dammit!");
-							return -1;
-						}
-					}
-
-					else
-					{
-						Reporter.Report("No 3D box art URL exists for LB release" + Title);
-					}
-				}
-
-				else
-				{
-					Reporter.Report("File already exists.");
-				}
-			}
-			return 0;
-		}
-
-		public int ScrapeBoxBack()
-		{
-			using (WebClient webclient = new WebClient())
-			{
-				if (!File.Exists(BoxBackPath))
-				{
-					if (BoxBackURL != null)
-					{
-						Reporter.Report("Getting back box art for LB Release " + Title + "...");
-
-						if (webclient.DownloadFileFromDB(BoxBackURL, BoxBackPath))
-						{
-							Reporter.ReportInline("success!");
-							OnPropertyChanged("BoxBackPath");
-						}
-						else
-						{
-							Reporter.ReportInline("dammit!");
-							return -1;
-						}
-					}
-
-					else
-					{
-						Reporter.Report("No back box art URL exists.");
-					}
-				}
-
-				else
-				{
-					Reporter.Report("File already exists.");
-				}
-			}
-			return 0;
-		}
-
-		public int ScrapeBoxFront()
-		{
-			using (WebClient webclient = new WebClient())
-			{
-				if (!File.Exists(BoxFrontPath))
-				{
-					if (BoxFrontURL != null)
-					{
-						Reporter.Report("Getting front box art for LB Release " + Title + "...");
-
-						if (webclient.DownloadFileFromDB(BoxFrontURL, BoxFrontPath))
-						{
-							Reporter.ReportInline("success!");
-							OnPropertyChanged("BoxFrontPath");
-						}
-						else
-						{
-							Reporter.ReportInline("dammit!");
-							return -1;
-						}
-					}
-
-					else
-					{
-						Reporter.Report("No front box art URL exists for LB release" + Title);
-					}
-				}
-
-				else
-				{
-					Reporter.Report("File already exists.");
-				}
-			}
-			return 0;
-		}
-
-		public int ScrapeCart3D()
-		{
-			using (WebClient webclient = new WebClient())
-			{
-				if (!File.Exists(Cart3DPath))
-				{
-					if (BoxFrontURL != null)
-					{
-						Reporter.Report("Getting 3D cartridge art for LB Release " + Title + "...");
-
-						if (webclient.DownloadFileFromDB(Cart3DURL, Cart3DPath))
-						{
-							Reporter.ReportInline("success!");
-							OnPropertyChanged("Cart3DPath");
-						}
-						else
-						{
-							Reporter.ReportInline("dammit!");
-							return -1;
-						}
-					}
-
-					else
-					{
-						Reporter.Report("No 3D cartridge art URL exists for LB release" + Title);
-					}
-				}
-
-				else
-				{
-					Reporter.Report("File already exists.");
-				}
-			}
-			return 0;
-		}
-
-
-		public int ScrapeCartFront()
-		{
-			using (WebClient webclient = new WebClient())
-			{
-				if (!File.Exists(CartFrontPath))
-				{
-					if (CartFrontURL != null)
-					{
-						Reporter.Report("Getting front cartridge art for LB Release " + Title + "...");
-
-						if (webclient.DownloadFileFromDB(CartFrontURL, CartFrontPath))
-						{
-							Reporter.ReportInline("success!");
-							OnPropertyChanged("CartFrontPath");
-						}
-						else
-						{
-							Reporter.ReportInline("dammit!");
-							return -1;
-						}
-					}
-
-					else
-					{
-						Reporter.Report("No front cartridge art URL exists.");
-					}
-				}
-
-				else
-				{
-					Reporter.Report("File already exists for LB release" + Title);
-				}
-			}
-			return 0;
-		}
-
-
-
-		public int ScrapeControlPanel()
-		{
-			using (WebClient webclient = new WebClient())
-			{
-				if (!File.Exists(ControlPanelPath))
-				{
-					if (ControlPanelURL != null)
-					{
-						Reporter.Report("Getting control panel art for LB Release " + Title + "...");
-
-						if (webclient.DownloadFileFromDB(ControlPanelURL, ControlPanelPath))
-						{
-							Reporter.ReportInline("success!");
-							OnPropertyChanged("ControlPanelPath");
-						}
-						else
-						{
-							Reporter.ReportInline("dammit!");
-							return -1;
-						}
-					}
-
-					else
-					{
-						Reporter.Report("No control panel art URL exists for LB release" + Title);
-					}
-				}
-
-				else
-				{
-					Reporter.Report("File already exists.");
-				}
-			}
-			return 0;
-		}
-
-		public int ScrapeLogo()
-		{
-			using (WebClient webclient = new WebClient())
-			{
-				if (!File.Exists(LogoPath))
-				{
-					if (BoxFrontURL != null)
-					{
-						Reporter.Report("Getting clear logo for LB Release " + Title + "...");
-
-						if (webclient.DownloadFileFromDB(LogoURL, LogoPath))
-						{
-							Reporter.ReportInline("success!");
-							OnPropertyChanged("LogoPath");
-						}
-						else
-						{
-							Reporter.ReportInline("dammit!");
-							return -1;
-						}
-					}
-
-					else
-					{
-						Reporter.Report("No clear logo URL exists for LB release" + Title);
-					}
-				}
-
-				else
-				{
-					Reporter.Report("File already exists.");
-				}
-			}
-			return 0;
-		}
-
-		public int ScrapeMarquee()
-		{
-			using (WebClient webclient = new WebClient())
-			{
-				if (!File.Exists(MarqueePath))
-				{
-					if (MarqueeURL != null)
-					{
-						Reporter.Report("Getting marquee art for LB Release " + Title + "...");
-
-						if (webclient.DownloadFileFromDB(MarqueeURL, MarqueePath))
-						{
-							Reporter.ReportInline("success!");
-							OnPropertyChanged("MarqueePath");
-						}
-						else
-						{
-							Reporter.ReportInline("dammit!");
-							return -1;
-						}
-					}
-
-					else
-					{
-						Reporter.Report("No marquee art URL exists for LB release" + Title);
-					}
-				}
-
-				else
-				{
-					Reporter.Report("File already exists.");
-				}
-			}
-			return 0;
-		}
-
-		public int ScrapeScreen()
-		{
-			using (WebClient webclient = new WebClient())
-			{
-				if (!File.Exists(ScreenPath))
-				{
-					if (ScreenURL != null)
-					{
-						Reporter.Report("Getting screen shot for LB Release " + Title + "...");
-
-						if (webclient.DownloadFileFromDB(ScreenURL, ScreenPath))
-						{
-							Reporter.ReportInline("success!");
-							OnPropertyChanged("ScreenPath");
-						}
-						else
-						{
-							Reporter.ReportInline("dammit!");
-							return -1;
-						}
-					}
-
-					else
-					{
-						Reporter.Report("No screen shot URL exists for LB release" + Title);
-					}
-				}
-
-				else
-				{
-					Reporter.Report("File already exists.");
-				}
-			}
-			return 0;
-		}
-
 	}
 }
