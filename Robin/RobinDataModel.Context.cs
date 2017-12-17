@@ -25,7 +25,16 @@ namespace Robin
             throw new UnintentionalCodeFirstException();
         }
     
+        public virtual DbSet<Banner> Banners { get; set; }
+        public virtual DbSet<Box3D> Box3D { get; set; }
+        public virtual DbSet<BoxBack> BoxBacks { get; set; }
+        public virtual DbSet<BoxFront> BoxFronts { get; set; }
+        public virtual DbSet<Cart3D> Cart3D { get; set; }
+        public virtual DbSet<CartBack> CartBacks { get; set; }
+        public virtual DbSet<CartFront> CartFronts { get; set; }
         public virtual DbSet<Collection> Collections { get; set; }
+        public virtual DbSet<ControlInformation> ControlInformations { get; set; }
+        public virtual DbSet<ControlPanel> ControlPanels { get; set; }
         public virtual DbSet<Emulator> Emulators { get; set; }
         public virtual DbSet<Game> Games { get; set; }
         public virtual DbSet<GBGame> GBGames { get; set; }
@@ -38,6 +47,8 @@ namespace Robin
         public virtual DbSet<LBImage> LBImages { get; set; }
         public virtual DbSet<LBPlatform> LBPlatforms { get; set; }
         public virtual DbSet<LBRelease> LBReleases { get; set; }
+        public virtual DbSet<Logo> Logoes { get; set; }
+        public virtual DbSet<Marquee> Marquees { get; set; }
         public virtual DbSet<Match> Matches { get; set; }
         public virtual DbSet<OVGPlatform> OVGPlatforms { get; set; }
         public virtual DbSet<OVGRelease> OVGReleases { get; set; }
@@ -45,6 +56,7 @@ namespace Robin
         public virtual DbSet<Region> Regions { get; set; }
         public virtual DbSet<Release> Releases { get; set; }
         public virtual DbSet<Rom> Roms { get; set; }
+        public virtual DbSet<Screen> Screens { get; set; }
         public virtual DbSet<URL> URLs { get; set; }
     }
 }

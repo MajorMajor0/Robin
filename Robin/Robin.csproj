@@ -123,6 +123,27 @@
     <Compile Include="AboutBox.xaml.cs">
       <DependentUpon>AboutBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Banner.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Box3D.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BoxBack.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BoxFront.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Cart3D.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CartBack.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CartFront.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Classes\Art.cs" />
     <Compile Include="ArtWindow.xaml.cs">
       <DependentUpon>ArtWindow.xaml</DependentUpon>
@@ -134,6 +155,12 @@
     <Compile Include="Classes\DebugStuff.cs" />
     <Compile Include="Classes\TitledCollection.cs" />
     <Compile Include="Collection.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ControlInformation.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ControlPanel.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Controls\BindableSelectionTreeView.cs" />
@@ -217,6 +244,9 @@
     <Compile Include="LBRelease.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Logo.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="MainWindowViewModel.Commands.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -237,6 +267,9 @@
     <Compile Include="Classes\DateTimeRoutines.cs" />
     <Compile Include="MainWindowViewModel.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Marquee.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Match.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
@@ -293,6 +326,9 @@
       <DependentUpon>RobinDataModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="Rom.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Screen.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Settings.cs" />
@@ -381,6 +417,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <Compile Include="DataEntities.Extensions\LBImage.Extensions.cs" />
     <None Include="data\RobinData.db3" />
     <EntityDeploy Include="RobinDataModel.edmx">
       <Generator>EntityModelCodeGenerator</Generator>

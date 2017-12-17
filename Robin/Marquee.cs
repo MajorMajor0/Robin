@@ -14,7 +14,7 @@ namespace Robin
     using System.ComponentModel;
     using System.Collections.ObjectModel;
     
-    public partial class LBImage : INotifyPropertyChanged
+    public partial class Marquee : INotifyPropertyChanged
     {
         private long _iD;
     	public long ID 
@@ -23,48 +23,13 @@ namespace Robin
     		set { _iD = value; OnPropertyChanged("ID"); } 
     	}
     
-        private string _type;
-    	public string Type 
+        private string _uRL;
+    	public string URL 
     	{ 
-    		get { return _type; } 
-    		set { _type = value; OnPropertyChanged("Type"); } 
+    		get { return _uRL; } 
+    		set { _uRL = value; OnPropertyChanged("URL"); } 
     	}
     
-        private string _fileName;
-    	public string FileName 
-    	{ 
-    		get { return _fileName; } 
-    		set 
-    		{
-    			_fileName = value;
-    			OnPropertyChanged("FileName");
-    			OnPropertyChanged("FilePath");
-    		} 
-    	}
-    
-        private string _lBRegion;
-    	public string LBRegion 
-    	{ 
-    		get { return _lBRegion; } 
-    		set { _lBRegion = value; OnPropertyChanged("LBRegion"); } 
-    	}
-    
-        private long _region_ID;
-    	public long Region_ID 
-    	{ 
-    		get { return _region_ID; } 
-    		set { _region_ID = value; OnPropertyChanged("Region_ID"); } 
-    	}
-    
-        private Nullable<long> _lBRelease_ID;
-    	public Nullable<long> LBRelease_ID 
-    	{ 
-    		get { return _lBRelease_ID; } 
-    		set { _lBRelease_ID = value; OnPropertyChanged("LBRelease_ID"); } 
-    	}
-    
-    
-        public virtual LBRelease LBRelease { get; set; }
      
         public event PropertyChangedEventHandler PropertyChanged;
     

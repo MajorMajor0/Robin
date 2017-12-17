@@ -14,13 +14,12 @@ namespace Robin
     using System.ComponentModel;
     using System.Collections.ObjectModel;
     
-    public partial class LBRelease : INotifyPropertyChanged
+    public partial class BoxFront : INotifyPropertyChanged
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public LBRelease()
+        public BoxFront()
         {
-    		LBImages = new List<LBImage>();
-    		Releases = new List<Release>();
+    		GBReleases = new List<GBRelease>();
         }
     
         private long _iD;
@@ -30,40 +29,16 @@ namespace Robin
     		set { _iD = value; OnPropertyChanged("ID"); } 
     	}
     
-        private long _lBGame_ID;
-    	public long LBGame_ID 
+        private string _uRL;
+    	public string URL 
     	{ 
-    		get { return _lBGame_ID; } 
-    		set { _lBGame_ID = value; OnPropertyChanged("LBGame_ID"); } 
-    	}
-    
-        private long _region_ID;
-    	public long Region_ID 
-    	{ 
-    		get { return _region_ID; } 
-    		set { _region_ID = value; OnPropertyChanged("Region_ID"); } 
-    	}
-    
-        private long _lBPlatform_ID;
-    	public long LBPlatform_ID 
-    	{ 
-    		get { return _lBPlatform_ID; } 
-    		set { _lBPlatform_ID = value; OnPropertyChanged("LBPlatform_ID"); } 
-    	}
-    
-        private string _title;
-    	public string Title 
-    	{ 
-    		get { return _title; } 
-    		set { _title = value; OnPropertyChanged("Title"); } 
+    		get { return _uRL; } 
+    		set { _uRL = value; OnPropertyChanged("URL"); } 
     	}
     
     
-        public virtual LBGame LBGame { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual List<LBImage> LBImages { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual List<Release> Releases { get; set; }
+        public virtual List<GBRelease> GBReleases { get; set; }
      
         public event PropertyChangedEventHandler PropertyChanged;
     

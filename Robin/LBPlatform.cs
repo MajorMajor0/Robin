@@ -20,7 +20,6 @@ namespace Robin
         public LBPlatform()
         {
     		LBGames = new List<LBGame>();
-    		LBReleases = new List<LBRelease>();
     		Platforms = new List<Platform>();
         }
     
@@ -125,8 +124,6 @@ namespace Robin
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual List<LBGame> LBGames { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual List<LBRelease> LBReleases { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual List<Platform> Platforms { get; set; }
      

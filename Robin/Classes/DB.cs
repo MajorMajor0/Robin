@@ -20,135 +20,114 @@ using System.Data.Entity;
 
 namespace Robin
 {
-	public interface IDBobject
-	{
-		string Title { get; }
-		string MainDisplay { get; }
-		bool Included { get; }
-		bool IsCrap { get; set; }
-		bool Preferred { get; set; }
-		bool Unlicensed { get; }
-		bool HasArt { get; }
-		string WhyCantIPlay { get; }
+    public interface IDBobject
+    {
+        string Title { get; }
+        string MainDisplay { get; }
+        bool Included { get; }
+        bool IsCrap { get; set; }
+        bool Preferred { get; set; }
+        bool Unlicensed { get; }
+        bool HasArt { get; }
+        string WhyCantIPlay { get; }
 
-		void Play();
+        void Play();
 
-		int ScrapeArt(LocalDB localDB);
-	}
+        int ScrapeArt(LocalDB localDB);
+    }
 
-	public interface IDBRelease
-	{
-		long ID { get; }
+    public interface IDBRelease
+    {
+        long ID { get; }
 
-		string Title { get; }
-		string Overview { get; }
-		string RegionTitle { get; }
+        string Title { get; }
+        string Overview { get; }
+        string RegionTitle { get; }
+        
+        Banner Banner { get; }
+        Box3D Box3D { get; }
+        BoxBack BoxBack { get; }
+        BoxFront BoxFront { get; }
+        Cart3D Cart3D { get; }
+        CartBack CartBack { get; }
+        CartFront CartFront { get; }
+        ControlInformation ControlInformation { get; }
+        ControlPanel ControlPanel { get; }
+        Logo Logo { get; }
+        Screen Screen { get; }
 
-		Art Banner { get; }
-		Art Box3D { get; }
-		Art BoxBack { get; }
-		Art BoxFront { get; }
-		Art Cart3D { get; }
-		Art CartBack { get; }
-		Art CartFront { get; }
-		Art ControlInformation { get; }
-		Art ControlPanel { get; }
-		Art Logo { get; }
-		Art Marquee { get; }
-		Art Screen { get; }
+        Region Region { get; }
 
-		Region Region { get; }
+        DateTime? Date { get; }
 
-		DateTime? Date { get; }
+    }
 
-	}
+    public interface IDBPlatform
+    {
+        long ID { get; }
+        string Title { get; }
+        string Manufacturer { get; }
+        DateTime? Date { get; }
+        DateTime CacheDate { get; set; }
+        IList Releases { get; }
+        bool Preferred { get; }
+        Platform RPlatform { get; }
+        int MatchedReleaseCount { get; }
+    }
 
-	public interface IDBPlatform
-	{
-		long ID { get; }
-		string Title { get; }
-		string Manufacturer { get; }
-		DateTime? Date { get; }
-		DateTime CacheDate { get; set; }
-		IList Releases { get; }
-		bool Preferred { get; }
-		Platform RPlatform { get; }
-		int MatchedReleaseCount { get; }
-	}
+    public interface IDB : IDisposable
+    {
+        LocalDB DB { get; }
+        string Title { get; }
+        DbSet Platforms { get; }
+        DbSet Releases { get; }
+        bool HasRegions { get; }
+        void CachePlatforms();
+        void CachePlatformReleases(Platform platform);
+        void CachePlatformGames(Platform platform);
+        void CachePlatformData(Platform platform);
+        void ReportUpdates(bool detect);
+    }
 
-	public interface IDB : IDisposable
-	{
-		LocalDB DB { get; }
-		string Title { get; }
-		DbSet Platforms { get; }
-		DbSet Releases { get; }
-		bool HasRegions { get; }
-		void CachePlatforms();
-		void CachePlatformReleases(Platform platform);
-		void CachePlatformGames(Platform platform);
-		void CachePlatformData(Platform platform);
-		void ReportUpdates(bool detect);
-	}
+    public interface ICollectionItem
+    {
+        string Title { get; }
 
-	public interface ICollectionItem
-	{
-		string Title { get; }
-
-	}
+    }
 
 
-	public enum LocalDB
-	{
-		[Description("Unknown")]
-		Unknown = 0,
-		[Description("GamesDB")]
-		GamesDB = 1,
-		[Description("GiantBomb")]
-		GiantBomb = 2,
-		[Description("OpenVGDB")]
-		OpenVGDB = 3,
-		[Description("LaunchBox")]
-		LaunchBox = 4,
-		[Description("Datomatic")]
-		Datomatic = 5,
-		[Description("Robin")]
-		Robin = 6
-	}
+    public enum LocalDB
+    {
+        [Description("Unknown")]
+        Unknown = 0,
+        [Description("GamesDB")]
+        GamesDB = 1,
+        [Description("GiantBomb")]
+        GiantBomb = 2,
+        [Description("OpenVGDB")]
+        OpenVGDB = 3,
+        [Description("LaunchBox")]
+        LaunchBox = 4,
+        [Description("Datomatic")]
+        Datomatic = 5,
+        [Description("Robin")]
+        Robin = 6
+    }
 
-	public static class Abbreviations
-	{
-		public static Dictionary<LocalDB, string> Release = new Dictionary<LocalDB, string>
-		{
-			{ "Asia", 1 },
-			{ "Australia", 2 },
-			{ "Brazil", 3 },
-			{ "Canada", 4 },
-			{ "China", 5 },
-			{ "Denmark", 6 },
-			{ "Europe", 7 },
-			{ "Finland", 8 },
-			{ "France", 9 },
-			{ "Germany", 10 },
-			{ "Hong Kong", 11 },
-			{ "Italy", 12 },
-			{ "Japan", 13 },
-			{ "Korea", 14 },
-			{ "The Netherlands", 15 },
-			{ "Russia", 16 },
-			{ "Spain", 17 },
-			{ "Sweden", 18 },
-			{ "United States", 21 },
-			{ "World", 22 },
-			{ "Norway", 25 },
-			{ "United Kingdom", 28 },
-			{ "North America", 21 },
-			{ "Oceania", 2 },
-			{ "South America", 3 }
+    //public static class Abbreviations
+    //{
+    //    public static Dictionary<LocalDB, string> Release = new Dictionary<LocalDB, string>
+    //    {
+    //        { LocalDB.Unknown, "UNK" },
+    //        { LocalDB.GamesDB, "GDBR"},
+    //        { LocalDB.GiantBomb, "GBR" },
+    //        { LocalDB.LaunchBox, "LBR" },
+    //         { LocalDB.OpenVGDB, "OVGR" }
 
-		};
-	}
+    //    };
+    //}
 
-	
+
 
 }
 

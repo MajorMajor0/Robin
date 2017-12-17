@@ -65,235 +65,85 @@ namespace Robin
             get { return null; }
         }
 
+        const string typeString = "GDBR";
 
-        public string BoxFrontPath
+        Banner banner;
+        public Banner Banner
         {
-            get { return FileLocation.Temp + "GDBR-" + ID + "-BXF.jpg"; }
-        }
-
-        public string BoxBackPath
-        {
-            get { return FileLocation.Temp + "GDBR-" + ID + "-BXB.jpg"; }
-        }
-
-        public string ScreenPath
-        {
-            get { return FileLocation.Temp + "GDBR-" + ID + "-SCR.jpg"; }
-        }
-
-        public string BannerPath
-        {
-            get { return FileLocation.Temp + "GDBR-" + ID + "-BNR.jpg"; }
-        }
-        public string LogoPath
-        {
-            get { return FileLocation.Temp + "GDBR-" + ID + "-LGO.jpg"; }
-        }
-
-
-        public int ScrapeBox3D()
-        {
-            throw new NotImplementedException();
-        }
-
-        public int ScrapeBoxFront()
-        {
-            using (WebClient webclient = new WebClient())
+            get
             {
-                if (!File.Exists(BoxFrontPath))
+                if (banner == null && BannerURL != null)
                 {
-                    if (BoxFrontURL != null)
-                    {
-                        Reporter.Report("Getting front box art for GDBRelease " + Title + "...");
-
-                        if (webclient.DownloadFileFromDB(BoxFrontURL, BoxFrontPath))
-                        {
-                            Reporter.ReportInline("success!");
-                            OnPropertyChanged("BoxFrontPath");
-                        }
-                        else
-                        {
-                            Reporter.ReportInline("dammit!");
-                            return -1;
-                        }
-                    }
-
-                    else
-                    {
-                        Reporter.Report("No front box art URL exists.");
-                    }
+                    banner = new Banner(BannerURL);
                 }
-
-                else
-                {
-                    Reporter.Report("File already exists.");
-                }
+                return banner;
             }
-            return 0;
         }
 
-        public int ScrapeBoxBack()
+        public Box3D Box3D => null;
+
+        BoxBack boxBack;
+        public BoxBack BoxBack
         {
-            using (WebClient webclient = new WebClient())
+            get
             {
-                if (!File.Exists(BoxBackPath))
+                if (boxBack == null && BoxBackURL != null)
                 {
-                    if (BoxBackURL != null)
-                    {
-                        Reporter.Report("Getting back box art for GDBRelease " + Title + "...");
-
-                        if (webclient.DownloadFileFromDB(BoxBackURL, BoxBackPath))
-                        {
-                            Reporter.ReportInline("success!");
-                            OnPropertyChanged("BoxBackPath");
-                        }
-                        else
-                        {
-                            Reporter.ReportInline("dammit!");
-                            return -1;
-                        }
-                    }
-
-                    else
-                    {
-                        Reporter.Report("No back box art URL exists.");
-                    }
+                    boxBack = new BoxBack(BoxBackURL);
                 }
-
-                else
-                {
-                    Reporter.Report("File already exists.");
-                }
+                return boxBack;
             }
-            return 0;
         }
 
-        public int ScrapeBanner()
+        BoxFront boxFront;
+        public BoxFront BoxFront
         {
-            using (WebClient webclient = new WebClient())
+            get
             {
-                if (!File.Exists(BannerPath))
+                if (boxFront == null && BoxFrontURL != null)
                 {
-                    if (BannerURL != null)
-                    {
-                        Reporter.Report("Getting banner for GDBRelease " + Title + "...");
-
-                        if (webclient.DownloadFileFromDB(BannerURL, BannerPath))
-                        {
-                            Reporter.ReportInline("success!");
-                            OnPropertyChanged("BannerPath");
-                        }
-                        else
-                        {
-                            Reporter.ReportInline("dammit!");
-                            return -1;
-                        }
-                    }
-
-                    else
-                    {
-                        Reporter.Report("No banner URL exists.");
-                    }
+                    boxFront = new BoxFront(BoxFrontURL);
                 }
-
-                else
-                {
-                    Reporter.Report("File already exists.");
-                }
+                return boxFront;
             }
-            return 0;
         }
 
-        public int ScrapeScreen()
+        public Cart3D Cart3D => null;
+
+        public CartBack CartBack => null;
+
+        public CartFront CartFront => null;
+
+        public ControlInformation ControlInformation => null;
+
+        public ControlPanel ControlPanel => null;
+
+        Logo logo;
+        public Logo Logo
         {
-            using (WebClient webclient = new WebClient())
+            get
             {
-                if (!File.Exists(ScreenPath))
+                if (logo == null && LogoURL != null)
                 {
-                    if (ScreenURL != null)
-                    {
-                        Reporter.Report("Getting screen shot for GDBRelease " + Title + "...");
-
-                        if (webclient.DownloadFileFromDB(ScreenURL, ScreenPath))
-                        {
-                            Reporter.ReportInline("success!");
-                            OnPropertyChanged("ScreenPath");
-                        }
-                        else
-                        {
-                            Reporter.ReportInline("dammit!");
-                            return -1;
-                        }
-                    }
-
-                    else
-                    {
-                        Reporter.Report("No screen shot URL exists.");
-                    }
+                    logo = new Logo(LogoURL);
                 }
-
-                else
-                {
-                    Reporter.Report("File already exists.");
-                }
+                return logo;
             }
-            return 0;
         }
 
-        public int ScrapeLogo()
+        public Marquee Marquee => null;
+
+        Screen screen;
+        public Screen Screen
         {
-            using (WebClient webclient = new WebClient())
+            get
             {
-                if (!File.Exists(LogoPath))
+                if (screen == null && ScreenURL != null)
                 {
-                    if (LogoURL != null)
-                    {
-                        Reporter.Report("Getting clear logo for GDBRelease " + Title + "...");
-
-                        if (webclient.DownloadFileFromDB(BoxFrontURL, BoxFrontPath))
-                        {
-                            Reporter.ReportInline("success!");
-                            OnPropertyChanged("LogoPath");
-                        }
-                        else
-                        {
-                            Reporter.ReportInline("dammit!");
-                            return -1;
-                        }
-                    }
-
-                    else
-                    {
-                        Reporter.Report("No clear logo URL exists.");
-                    }
+                    screen = new Screen(ScreenURL);
                 }
-
-                else
-                {
-                    Reporter.Report("File already exists.");
-                }
+                return screen;
             }
-            return 0;
-        }
-
-        public int ScrapeCartFront()
-        {
-            throw new NotImplementedException();
-        }
-
-        public int ScrapeCart3D()
-        {
-            throw new NotImplementedException();
-        }
-
-        public int ScrapeControlPanel()
-        {
-            throw new NotImplementedException();
-        }
-
-        public int ScrapeMarquee()
-        {
-            throw new NotImplementedException();
         }
 
 

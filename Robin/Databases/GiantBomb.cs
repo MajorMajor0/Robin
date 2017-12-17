@@ -45,7 +45,7 @@ namespace Robin
             Reporter.Tic("Opening GiantBomb cache...");
 
             R.Data.GBPlatforms.Load();
-            R.Data.GBReleases.Load();
+            R.Data.GBReleases.Include(x => x.BoxFront).Include(x => x.Screen).Load();
             R.Data.GBGames.Load();
             Reporter.Toc();
         }
@@ -156,8 +156,8 @@ namespace Robin
                                     }
 
                                     gbRelease.Date = DateTimeRoutines.SafeGetDate(element.SafeGetA("release_date"));
-                                    gbRelease.BoxURL = element.SafeGetA("image", "medium_url");
-                                    gbRelease.ScreenURL = element.SafeGetA("image", "screen_url");
+                                    //gbRelease.BoxURL = element.SafeGetA("image", "medium_url"); TODO: these should not be commented
+                                    //gbRelease.ScreenURL = element.SafeGetA("image", "screen_url");
                                 }
                             }
                         }

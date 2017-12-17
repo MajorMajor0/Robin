@@ -35,126 +35,57 @@ namespace Robin
 			get { return Region.Title; }
 		}
 
-		public string BoxFrontPath
-		{
-			get { return FileLocation.Temp + ID + "GBR-BXF.jpg"; }
-		}
+        const string typeString = "GBR";
 
-        public string ScreenPath
-        {
-            get { return FileLocation.Temp + ID + "GBR-SCR.jpg"; }
-        }
+        public Banner Banner => null;
 
-        public int ScrapeBoxFront()
-		{
-			using (WebClient webclient = new WebClient())
-			{
-				if (!File.Exists(BoxFrontPath))
-				{
-					if (BoxURL != null)
-					{
-						Reporter.Report("Getting front box art for GBRelease " + Title + "...");
+        public Box3D Box3D => null;
 
-						if (webclient.DownloadFileFromDB(BoxURL, BoxFrontPath))
-						{
-							Reporter.ReportInline("success!");
-							OnPropertyChanged("BoxFrontPath");
-						}
-						else
-						{
-							Reporter.ReportInline("dammit!");
-                            return -1;
-						}
-					}
+        public BoxBack BoxBack => null;
 
-					else
-					{
-						Reporter.Report("No box art URL exists.");
-					}
-				}
+        //BoxFront boxFront;
+        //public BoxFront BoxFront
+        //{
+        //    get
+        //    {
+        //        if (boxFront == null && BoxURL != null)
+        //        {
+        //            boxFront = new BoxFront(BoxURL, typeString, ID);
+        //        }
+        //        return boxFront;
+        //    }
+        //}
 
-				else
-				{
-					Reporter.Report("File already exists.");
-				}
-			}
-            return 0;
-		}
+        public Cart3D Cart3D => null;
 
-        public int ScrapeBoxBack()
-        {
-            throw new NotImplementedException();
-        }
+        public CartBack CartBack => null;
 
-        public int ScrapeBox3D()
-        {
-            throw new NotImplementedException();
-        }
+        public CartFront CartFront => null;
 
-        public int ScrapeScreen()
-        {
-            using (WebClient webclient = new WebClient())
-            {
-                if (!File.Exists(ScreenPath))
-                {
-                    if (ScreenURL != null)
-                    {
-                        Reporter.Report("Getting screen shot for GBRelease " + Title + "...");
+        public ControlInformation ControlInformation => null;
 
-                        if (webclient.DownloadFileFromDB(ScreenURL, ScreenPath))
-                        {
-                            Reporter.ReportInline("success!");
-                            OnPropertyChanged("ScreenPath");
-                        }
-                        else
-                        {
-                            Reporter.ReportInline("dammit!");
-                            return -1;
-                        }
-                    }
+        public ControlPanel ControlPanel => null;
 
-                    else
-                    {
-                        Reporter.Report("No screen shot URL exists.");
-                    }
-                }
 
-                else
-                {
-                    Reporter.Report("File already exists.");
-                }
-            }
-            return 0;
-        }
+        public Logo Logo => null;
 
-        public int ScrapeLogo()
-        {
-            throw new NotImplementedException();
-        }
+        public Marquee Marquee => null;
 
-        public int ScrapeBanner()
-        {
-            throw new NotImplementedException();
-        }
+        public string BoxURL => BoxFront?.URL;
 
-        public int ScrapeCartFront()
-        {
-            throw new NotImplementedException();
-        }
+        public string ScreenURL => Screen?.URL;
 
-        public int ScrapeCart3D()
-        {
-            throw new NotImplementedException();
-        }
-
-        public int ScrapeMarquee()
-        {
-            throw new NotImplementedException();
-        }
-
-        public int ScrapeControlPanel()
-        {
-            throw new NotImplementedException();
-        }
+        //Screen screen;
+        //public Screen Screen
+        //{
+        //    get
+        //    {
+        //        if (screen == null && ScreenURL != null)
+        //        {
+        //            screen = new Screen(ScreenURL, typeString, ID);
+        //        }
+        //        return screen;
+        //    }
+        //}
     }
 }

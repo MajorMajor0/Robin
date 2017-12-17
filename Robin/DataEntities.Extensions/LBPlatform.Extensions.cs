@@ -13,12 +13,15 @@
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Robin
 {
 	public partial class LBPlatform : IDBPlatform
 	{
+		public List<LBRelease> LBReleases => LBGames.SelectMany(x => x.LBReleases).ToList();
+
 		public IList Releases => LBReleases;
 
 		public IList Games => LBGames;

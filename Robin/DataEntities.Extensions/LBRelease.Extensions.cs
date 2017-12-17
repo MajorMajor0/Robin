@@ -21,6 +21,10 @@ namespace Robin
 {
 	public partial class LBRelease : IDBRelease
 	{
+		public Region Region => R.Data.Regions.Local.FirstOrDefault(x => x.ID == Region_ID);
+
+		public LBPlatform LBPlatform => R.Data.LBPlatforms.FirstOrDefault(x => x.ID == LBPlatform_ID);
+
 		public string RegionTitle => Region.Title;
 
 		public string Overview => LBGame.Overview;
@@ -35,135 +39,6 @@ namespace Robin
 
 		string typeString => "LBR";
 
-		BannerArt banner;
-		public BannerArt Banner
-		{
-			get
-			{
-				if (banner == null && GetURL("Banner") != null)
-				{
-					banner = new BannerArt(GetURL("Banner"), typeString, ID);
-				}
-				return banner;
-			}
-		}
-
-		Box3DArt box3D;
-		public Box3DArt Box3D
-		{
-			get
-			{
-				if (box3D == null && GetURL("Box - 3D") != null)
-				{
-					box3D = new Box3DArt(GetURL("Box - 3D"), typeString, ID);
-				}
-				return box3D;
-			}
-		}
-
-		BoxBackArt boxBack;
-		public BoxBackArt BoxBack
-		{
-			get
-			{
-				if (boxBack == null && GetURL("Box - Back") != null)
-				{
-					boxBack = new BoxBackArt(GetURL("Box - Back"), typeString, ID);
-				}
-				return boxBack;
-			}
-		}
-
-		BoxFrontArt boxFront;
-		public BoxFrontArt BoxFront
-		{
-			get
-			{
-				if (boxFront == null && GetURL("Box - Front") != null)
-				{
-					boxFront = new BoxFrontArt(GetURL("Box - Front"), typeString, ID);
-				}
-				return boxFront;
-			}
-		}
-
-		Cart3DArt cart3D;
-		public Cart3DArt Cart3D
-		{
-			get
-			{
-				if (cart3D == null && GetURL("Cart - 3D") != null)
-				{
-					cart3D = new Cart3DArt(GetURL("Cart - 3D"), typeString, ID);
-				}
-				return cart3D;
-			}
-		}
-
-		CartBackArt cartBack;
-		public CartBackArt CartBack
-		{
-			get
-			{
-				if (cartBack == null && GetURL("Cart - Back") != null)
-				{
-					cartBack = new CartBackArt(GetURL("Cart - Back"), typeString, ID);
-				}
-				return cartBack;
-			}
-		}
-
-		CartFrontArt cartFront;
-		public CartFrontArt CartFront
-		{
-			get
-			{
-				if (cartFront == null && GetURL("Cart - Front") != null)
-				{
-					cartFront = new CartFrontArt(GetURL("Cart - Front"), typeString, ID);
-				}
-				return cartFront;
-			}
-		}
-
-		ControlInformationArt controlInformation;
-		public ControlInformationArt ControlInformation
-		{
-			get
-			{
-				if (controlInformation == null && GetURL("Arcade - Control Information") != null)
-				{
-					controlInformation = new ControlInformationArt(GetURL("Arcade - Control Information"), typeString, ID);
-				}
-				return controlInformation;
-			}
-		}
-
-
-		ControlPanelArt controlPanel;
-		public ControlPanelArt ControlPanel
-		{
-			get
-			{
-				if (controlPanel == null && GetURL("Arcade - Control Panel") != null)
-				{
-					controlPanel = new ControlPanelArt(GetURL("Arcade - Control Panel"), typeString, ID);
-				}
-				return controlPanel;
-			}
-		}
-
-
-
-		public Art ControlPanelArt => FileLocation.Temp + "LBR-" + ID + "-BXF.jpg";
-		public Art LogoArt => FileLocation.Temp + "LBR-" + ID + "-LGO.jpg";
-		public Art MarqueeArt => FileLocation.Temp + "LBR-" + ID + "-MAR.jpg";
-		public Art ScreenArt => FileLocation.Temp + "LBR-" + ID + "-SCR.jpg";
-
-
-
-
-
 		public string BannerURL => GetURL("Banner");
 		public string Box3DURL => GetURL("Box - 3D");
 		public string BoxBackURL => GetURL("Box - Back");
@@ -177,8 +52,164 @@ namespace Robin
 		public string MarqueeURL => GetURL("Arcade - Marquee");
 		public string ScreenURL => GetURL("Screenshot - Gameplay");
 
+        Banner banner;
+        public Banner Banner
+        {
+            get
+            {
+                if (banner == null && BannerURL != null)
+                {
+                    banner = new Banner(BannerURL);
+                }
+                return banner;
+            }
+        }
 
-		string GetURL(string type)
+        Box3D box3D;
+        public Box3D Box3D
+        {
+            get
+            {
+                if (box3D == null && Box3DURL != null)
+                {
+                    box3D = new Box3D(Box3DURL);
+                }
+                return box3D;
+            }
+        }
+
+        BoxBack boxBack;
+        public BoxBack BoxBack
+        {
+            get
+            {
+                if (boxBack == null && BoxBackURL != null)
+                {
+                    boxBack = new BoxBack(BoxBackURL);
+                }
+                return boxBack;
+            }
+        }
+
+        BoxFront boxFront;
+        public BoxFront BoxFront
+        {
+            get
+            {
+                if (boxFront == null && BoxFrontURL != null)
+                {
+                    boxFront = new BoxFront(BoxFrontURL);
+                }
+                return boxFront;
+            }
+        }
+
+        Cart3D cart3D;
+        public Cart3D Cart3D
+        {
+            get
+            {
+                if (cart3D == null && Cart3DURL != null)
+                {
+                    cart3D = new Cart3D(Cart3DURL);
+                }
+                return cart3D;
+            }
+        }
+
+        CartBack cartBack;
+        public CartBack CartBack
+        {
+            get
+            {
+                if (cartBack == null && CartBackURL != null)
+                {
+                    cartBack = new CartBack(CartBackURL);
+                }
+                return cartBack;
+            }
+        }
+
+        CartFront cartFront;
+        public CartFront CartFront
+        {
+            get
+            {
+                if (cartFront == null && CartFrontURL != null)
+                {
+                    cartFront = new CartFront(CartFrontURL);
+                }
+                return cartFront;
+            }
+        }
+
+        ControlInformation controlInformation;
+        public ControlInformation ControlInformation
+        {
+            get
+            {
+                if (controlInformation == null && ControlInformationURL != null)
+                {
+                    controlInformation = new ControlInformation(ControlInformationURL);
+                }
+                return controlInformation;
+            }
+        }
+
+        ControlPanel controlPanel;
+        public ControlPanel ControlPanel
+        {
+            get
+            {
+                if (controlPanel == null && ControlPanelURL != null)
+                {
+                    controlPanel = new ControlPanel(ControlPanelURL);
+                }
+                return controlPanel;
+            }
+        }
+
+        Logo logo;
+        public Logo Logo
+        {
+            get
+            {
+                if (logo == null && LogoURL != null)
+                {
+                    logo = new Logo(LogoURL);
+                }
+                return logo;
+            }
+        }
+
+        Marquee marquee;
+        public Marquee Marquee
+        {
+            get
+            {
+                if (marquee == null && MarqueeURL != null)
+                {
+                    marquee = new Marquee(MarqueeURL);
+                }
+                return marquee;
+            }
+        }
+
+        Screen screen;
+        public Screen Screen
+        {
+            get
+            {
+                if (screen == null && ScreenURL != null)
+                {
+                    screen = new Screen(ScreenURL);
+                }
+                return screen;
+            }
+        }
+
+
+        string GetURL(string type)
 		{
 			LBImage lbImage = LBImages.FirstOrDefault(x => x.Type == type);
 

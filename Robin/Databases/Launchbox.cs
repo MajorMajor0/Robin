@@ -29,7 +29,7 @@ namespace Robin
 {
 	class Launchbox : IDB
 	{
-		 bool platformsCached;
+		bool platformsCached;
 
 		public string Title => "LaunchBox";
 
@@ -51,10 +51,25 @@ namespace Robin
 		{
 			Reporter.Tic("Loading LaunchBox local cache...");
 
+#if DEBUG
+			Stopwatch Watch = Stopwatch.StartNew();
+#endif
 			R.Data.LBPlatforms.Load();
-			R.Data.LBImages.Load();
-			R.Data.LBReleases.Load();
+#if DEBUG
+			Debug.WriteLine("LBPlatforms: " + Watch.ElapsedMilliseconds); Watch.Restart();
+#endif
+			//            R.Data.LBImages.Load();
+			//#if DEBUG
+			//            Debug.WriteLine("LBImages: " + Watch.ElapsedMilliseconds); Watch.Restart();
+			//#endif
+			R.Data.LBReleases.Include(x => x.LBImages).Load();
+#if DEBUG
+			Debug.WriteLine("LBReleases: " + Watch.ElapsedMilliseconds); Watch.Restart();
+#endif
 			R.Data.LBGames.Load();
+#if DEBUG
+			Debug.WriteLine("LBGames: " + Watch.ElapsedMilliseconds); Watch.Restart();
+#endif
 
 			platformsCached = false;
 
@@ -249,12 +264,12 @@ namespace Robin
 
 					if (RegionDictionary.TryGetValue(lbImage.LBRegion, out int regionID))
 					{
-						lbImage.Region = R.Data.Regions.FirstOrDefault(x => x.ID == regionID);
+						lbImage.Region_ID = regionID;
 					}
 
 					else
 					{
-						lbImage.Region = R.Data.Regions.FirstOrDefault(x => x.ID == 0);
+						lbImage.Region_ID = 0;
 						Reporter.Report("Couldn't find " + lbImage.LBRegion + " in LB image dictionary.");
 					}
 				}
@@ -268,9 +283,21 @@ namespace Robin
 				foreach (XElement releaseElement in gameReleaseElements)
 				{
 					string releaseElementRegionText = releaseElement.Element("Region").Value;
-					Region releaseElementRegion = R.Data.Regions.FirstOrDefault(x => x.Launchbox == releaseElementRegionText);
 
-					LBRelease lbRelease = lbGame.LBReleases.FirstOrDefault(x => x.Region == releaseElementRegion);
+					long releaseElementRegion = 0;
+
+					try
+					{
+						releaseElementRegion = R.Data.Regions.FirstOrDefault(x => x.Launchbox == releaseElementRegionText).ID;
+					}
+					catch (System.NullReferenceException)
+					{
+						Reporter.Report("Launchbox Region " + releaseElementRegionText + " not found in database. Consider adding it.");
+					}
+
+
+
+					LBRelease lbRelease = lbGame.LBReleases.FirstOrDefault(x => x.Region_ID == releaseElementRegion);
 
 					if (lbRelease == null)
 					{

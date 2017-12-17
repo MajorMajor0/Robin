@@ -22,6 +22,8 @@ namespace Robin
     {
         public string RegionTitle { get { return Region.Title; } }
 
+        const string typeString = "OVGR";
+
         public static implicit operator OVGRelease(VGDBRELEAS vgdbrelease)
         {
             OVGRelease ovgrelease = new OVGRelease()
@@ -50,127 +52,51 @@ namespace Robin
             return ovgrelease;
         }
 
-        public string BoxFrontPath
-        {
-            get { return FileLocation.Temp + "OVGR-" + ID + "-BXF.jpg"; }
-        }
+        public Banner Banner => null;
 
-        public string BoxBackPath
-        {
-            get { return FileLocation.Temp + "OVGR-" + ID + "-BXB.jpg"; }
-        }
+        public Box3D Box3D => null;
 
-        public int ScrapeBoxFront()
+        BoxBack boxBack;
+        public BoxBack BoxBack
         {
-            using (WebClient webclient = new WebClient())
+            get
             {
-                if (!File.Exists(BoxFrontPath))
+                if (boxBack == null && BoxBackURL != null)
                 {
-                    if (BoxFrontURL != null)
-                    {
-                        Reporter.Report("Getting front box art for OVGRelease " + Title + "...");
-
-                        if (webclient.DownloadFileFromDB(BoxFrontURL, BoxFrontPath))
-                        {
-                            Reporter.ReportInline("success!");
-                            OnPropertyChanged("BoxFrontPath");
-                        }
-                        else
-                        {
-                            Reporter.ReportInline("dammit!");
-                            return -1;
-                        }
-                    }
-
-                    else
-                    {
-                        Reporter.Report("No front box art URL exists.");
-                    }
+                    boxBack = new BoxBack(BoxBackURL);
                 }
-
-                else
-                {
-                    Reporter.Report("File already exists.");
-                }
+                return boxBack;
             }
-            return 0;
         }
 
-        public int ScrapeBoxBack()
+        BoxFront boxFront;
+        public BoxFront BoxFront
         {
-            using (WebClient webclient = new WebClient())
+            get
             {
-                if (!File.Exists(BoxBackPath))
+                if (boxFront == null && BoxFrontURL != null)
                 {
-                    if (BoxFrontURL != null)
-                    {
-                        Reporter.Report("Getting front box art for OVGRelease " + Title + "...");
-
-                        if (webclient.DownloadFileFromDB(BoxBackURL, BoxBackPath))
-                        {
-                            Reporter.ReportInline("success!");
-                            OnPropertyChanged("BoxBackPath");
-                        }
-                        else
-                        {
-                            Reporter.ReportInline("dammit!");
-                            return -1;
-                        }
-                    }
-
-                    else
-                    {
-                        Reporter.Report("No back box art URL exists.");
-                    }
+                    boxFront = new BoxFront(BoxFrontURL);
                 }
-
-                else
-                {
-                    Reporter.Report("File already exists.");
-                }
+                return boxFront;
             }
-            return 0;
         }
 
-        public int ScrapeBox3D()
-        {
-            throw new NotImplementedException();
-        }
+        public Cart3D Cart3D => null;
 
-        public int ScrapeScreen()
-        {
-            throw new NotImplementedException();
-        }
+        public CartBack CartBack => null;
 
-        public int ScrapeLogo()
-        {
-            throw new NotImplementedException();
-        }
+        public CartFront CartFront => null;
 
-        public int ScrapeBanner()
-        {
-            throw new NotImplementedException();
-        }
+        public ControlInformation ControlInformation => null;
 
-        public int ScrapeCartFront()
-        {
-            throw new NotImplementedException();
-        }
+        public ControlPanel ControlPanel => null;
 
-        public int ScrapeCart3D()
-        {
-            throw new NotImplementedException();
-        }
+        public Logo Logo => null;
 
-        public int ScrapeMarquee()
-        {
-            throw new NotImplementedException();
-        }
+        public Marquee Marquee => null;
 
-        public int ScrapeControlPanel()
-        {
-            throw new NotImplementedException();
-        }
+        public Screen Screen => null;
     }
 
 }

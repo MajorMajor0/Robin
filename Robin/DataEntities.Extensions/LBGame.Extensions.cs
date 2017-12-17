@@ -56,7 +56,7 @@ namespace Robin
 		{
 			foreach (LBRelease lbRelease in LBReleases)
 			{
-				lbRelease.LBPlatform = LBPlatform;
+				lbRelease.LBPlatform_ID = LBPlatform.ID;
 			}
 		}
 
@@ -72,8 +72,8 @@ namespace Robin
 				{
 					lbRelease = new LBRelease();
 					LBReleases.Add(lbRelease);
-					lbRelease.Region = lbImages[i].Region;
-					lbRelease.LBPlatform = LBPlatform;
+					lbRelease.Region_ID = lbImages[i].Region_ID;
+					lbRelease.LBPlatform_ID = LBPlatform_ID;
 				}
 
 				lbRelease.LBImages.Add(lbImages[i]);

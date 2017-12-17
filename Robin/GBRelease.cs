@@ -71,20 +71,6 @@ namespace Robin
     		set { _gBPlatform_ID = value; OnPropertyChanged("GBPlatform_ID"); } 
     	}
     
-        private string _boxURL;
-    	public string BoxURL 
-    	{ 
-    		get { return _boxURL; } 
-    		set { _boxURL = value; OnPropertyChanged("BoxURL"); } 
-    	}
-    
-        private string _screenURL;
-    	public string ScreenURL 
-    	{ 
-    		get { return _screenURL; } 
-    		set { _screenURL = value; OnPropertyChanged("ScreenURL"); } 
-    	}
-    
         private Nullable<System.DateTime> _date;
     	public Nullable<System.DateTime> Date 
     	{ 
@@ -92,9 +78,25 @@ namespace Robin
     		set { _date = value; OnPropertyChanged("Date"); } 
     	}
     
+        private Nullable<long> _boxFront_ID;
+    	public Nullable<long> BoxFront_ID 
+    	{ 
+    		get { return _boxFront_ID; } 
+    		set { _boxFront_ID = value; OnPropertyChanged("BoxFront_ID"); } 
+    	}
     
+        private Nullable<long> _screen_ID;
+    	public Nullable<long> Screen_ID 
+    	{ 
+    		get { return _screen_ID; } 
+    		set { _screen_ID = value; OnPropertyChanged("Screen_ID"); } 
+    	}
+    
+    
+        public virtual BoxFront BoxFront { get; set; }
         public virtual GBGame GBGame { get; set; }
         public virtual GBPlatform GBPlatform { get; set; }
+        public virtual Screen Screen { get; set; }
         public virtual Region Region { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual List<Release> Releases { get; set; }

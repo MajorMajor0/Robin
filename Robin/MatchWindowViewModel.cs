@@ -146,7 +146,7 @@ namespace Robin
 
 		public async void ShowBox(IDBRelease idbRelease)
 		{
-			await Task.Run(() => { idbRelease.ScrapeBoxFront(); });
+			//await Task.Run(() => { idbRelease.ScrapeBoxFront(); });
 		}
 
 

@@ -9,21 +9,15 @@ using System.Threading.Tasks;
 
 namespace Robin
 {
-	public class Art : INotifyPropertyChanged
+	public abstract class Art : INotifyPropertyChanged
 	{
-		public string URL { get; }
+		public virtual string URL { get; set; }
+
 		public virtual string Title { get; }
-		public string FileName { get; protected set; }
-		public string Path => string.Concat(FileLocation.Temp, FileName);
 
-		public LocalDB LocalDB { get; }
+        public virtual string Abbreviation { get; }
 
-		public Art(string url, string type, long id)
-		{
-			URL = url;
-		}
-
-		public bool Scrape()
+		public bool Scrape(string Path)
 		{
 			using (WebClient webclient = new WebClient())
 			{
@@ -31,7 +25,7 @@ namespace Robin
 				{
 					if (URL != null)
 					{
-						Reporter.Report("Attempting scrape for " + FileName);
+						Reporter.Report("Attempting scrape from " + URL);
 
 						if (webclient.DownloadFileFromDB(URL, Path))
 						{
@@ -59,6 +53,9 @@ namespace Robin
 			return true;
 		}
 
+        public abstract string Path(string type, long id);
+
+
 		public event PropertyChangedEventHandler PropertyChanged;
 		protected void OnPropertyChanged(string prop)
 		{
@@ -66,95 +63,184 @@ namespace Robin
 		}
 	}
 
-	public class BannerArt : Art
+	public partial class Banner : Art
 	{
 		public override string Title => "Banner";
 
-		public BannerArt(string url, string type, long id) : base(url, type, id)
-		{
-			FileName = string.Concat(type, "-", id, "-BNR");
-		}
-	}
+		public Banner(string url)
+        {
+            URL = url;
+        }
 
-	public class Box3DArt : Art
+        public override string Path(string type, long id)
+        {
+            return string.Concat(type, "-", id, "-BNR");
+        }
+
+    }
+
+	public partial class Box3D : Art
 	{
 		public override string Title => "Box 3D";
 
-		public Box3DArt(string url, string type, long id) : base(url, type, id)
-		{
-			FileName = string.Concat(type, "-", id, "-BX3");
-		}
-	}
+		public Box3D(string url)
+        {
+            URL = url;
+        }
 
-	public class BoxBackArt : Art
+        public override string Path(string type, long id)
+        {
+            return string.Concat(type, "-", id, "-B3D");
+        }
+    }
+
+	public partial class BoxBack : Art
 	{
 		public override string Title => "Box Back";
 
-		public BoxBackArt(string url, string type, long id) : base(url, type, id)
-		{
-			FileName = string.Concat(type, "-", id, "-BXB");
-		}
-	}
+		public BoxBack(string url)
+        {
+            URL = url;
+        }
 
-	public class BoxFrontArt : Art
+        public override string Path(string type, long id)
+        {
+            return string.Concat(type, "-", id, "-BXB");
+        }
+    }
+
+	public partial class BoxFront : Art
 	{
 		public override string Title => "Box Front";
 
-		public BoxFrontArt(string url, string type, long id) : base(url, type, id)
-		{
-			FileName = string.Concat(type, "-", id, "-BXF");
-		}
-	}
+		public BoxFront(string url)
+        {
+            URL = url;
+        }
 
-	public class Cart3DArt : Art
+        public override string Path(string type, long id)
+        {
+            return string.Concat(type, "-", id, "-BXF");
+        }
+    }
+
+	public partial class Cart3D : Art
 	{
 		public override string Title => "Cart 3D";
 
-		public Cart3DArt(string url, string type, long id) : base(url, type, id)
-		{
-			FileName = string.Concat(type, "-", id, "-C3D");
-		}
-	}
+		public Cart3D(string url)
+        {
+            URL = url;
+        }
 
-	public class CartBackArt : Art
+        public override string Path(string type, long id)
+        {
+            return string.Concat(type, "-", id, "-C3D");
+        }
+    }
+
+	public partial class CartBack : Art
 	{
 		public override string Title => "Cart Back";
 
-		public CartBackArt(string url, string type, long id) : base(url, type, id)
-		{
-			FileName = string.Concat(type, "-", id, "-CB");
-		}
-	}
+		public CartBack(string url)
+        {
+            URL = url;
+        }
 
-	public class CartFrontArt : Art
+        public override string Path(string type, long id)
+        {
+            return string.Concat(type, "-", id, "-CB");
+        }
+    }
+
+	public partial class CartFront : Art
 	{
 		public override string Title => "Cart Front";
 
-		public CartFrontArt(string url, string type, long id) : base(url, type, id)
-		{
-			FileName = string.Concat(type, "-", id, "-CF");
-		}
-	}
+		public CartFront(string url)
+        {
+            URL = url;
+        }
 
-	public class ControlPanelArt : Art
+        public override string Path(string type, long id)
+        {
+            return string.Concat(type, "-", id, "-CF");
+        }
+    }
+
+	public partial class ControlPanel : Art
 	{
 		public override string Title => "Control Panel";
 
-		public ControlPanelArt(string url, string type, long id) : base(url, type, id)
-		{
-			FileName = string.Concat(type, "-", id, "-CP");
-		}
-	}
+		public ControlPanel(string url)
+        {
+            URL = url;
+        }
 
-	public class ControlInformationArt : Art
+        public override string Path(string type, long id)
+        {
+            return string.Concat(type, "-", id, "-CP");
+        }
+    }
+
+	public partial class ControlInformation : Art
 	{
 		public override string Title => "Control Information";
 
-		public ControlInformationArt(string url, string type, long id) : base(url, type, id)
-		{
-			FileName = string.Concat(type, "-", id, "-CI");
-		}
-	}
+		public ControlInformation(string url)
+        {
+            URL = url;
+        }
 
+        public override string Path(string type, long id)
+        {
+            return string.Concat(type, "-", id, "-CI");
+        }
+    }
 
+    public partial class Logo : Art
+    {
+        public override string Title => "Logo";
+
+        public Logo(string url)
+        {
+            URL = url;
+        }
+
+        public override string Path(string type, long id)
+        {
+            return string.Concat(type, "-", id, "-LGO");
+        }
+    }
+
+    public partial class Marquee : Art
+    {
+        public override string Title => "Marquee";
+
+        public Marquee(string url)
+        {
+            URL = url;
+        }
+
+        public override string Path(string type, long id)
+        {
+            return string.Concat(type, "-", id, "-MAR");
+        }
+    }
+
+    public partial class Screen : Art
+    {
+        public override string Title => "Screen";
+
+        public Screen(string url)
+        {
+            URL = url;
+        }
+
+        public override string Path(string type, long id)
+        {
+            return string.Concat(type, "-", id, "-SCR");
+        }
+    }
 }
