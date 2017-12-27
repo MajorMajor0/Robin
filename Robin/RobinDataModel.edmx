@@ -984,7 +984,6 @@
           </Key>
           <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <NavigationProperty Name="Releases" Relationship="Self.FK_Release_4_0" FromRole="Game" ToRole="Release" />
-          <NavigationProperty Name="Collections" Relationship="Self.Collection_Game" FromRole="Game" ToRole="Collection" />
         </EntityType>
         <EntityType Name="GBGame">
           <Key>
@@ -1262,12 +1261,6 @@
           <Property Name="Priority" Type="Int64" />
           <Property Name="Mame" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="Launchbox" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="GBReleases" Relationship="Self.FK_GBRelease_1_0" FromRole="Region" ToRole="GBRelease" />
-          <NavigationProperty Name="LBImages" Relationship="Self.FK_LBImages_1_0" FromRole="Region" ToRole="LBImages" />
-          <NavigationProperty Name="LBReleases" Relationship="Self.FK_LBRelease_1_0" FromRole="Region" ToRole="LBRelease" />
-          <NavigationProperty Name="Matches" Relationship="Self.FK_Match_0_0" FromRole="Region" ToRole="Match" />
-          <NavigationProperty Name="OVGReleases" Relationship="Self.FK_OVGRelease_1_0" FromRole="Region" ToRole="OVGRelease" />
-          <NavigationProperty Name="Releases" Relationship="Self.FK_Release_2_0" FromRole="Region" ToRole="Release" />
         </EntityType>
         <EntityType Name="Release">
           <Key>
@@ -1312,8 +1305,6 @@
           <NavigationProperty Name="Platform" Relationship="Self.FK_Release_3_0" FromRole="Release" ToRole="Platform" />
           <NavigationProperty Name="Region" Relationship="Self.FK_Release_2_0" FromRole="Release" ToRole="Region" />
           <NavigationProperty Name="Rom" Relationship="Self.FK_Release_0_0" FromRole="Release" ToRole="Rom" />
-          <NavigationProperty Name="URL" Relationship="Self.FK_Release_1_0" FromRole="Release" ToRole="URL" />
-          <NavigationProperty Name="Collections" Relationship="Self.Collection_Release" FromRole="Release" ToRole="Collection" />
         </EntityType>
         <EntityType Name="Rom">
           <Key>

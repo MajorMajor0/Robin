@@ -41,19 +41,19 @@ namespace Robin
 
 			Platforms.Include(x => x.Emulators).Load();
 
-			Reporter.Report("Platforms loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
-			Roms.LoadAsync();
-			Reporter.Report("Roms loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
-			Releases.LoadAsync();
-			Reporter.Report("Releases loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
-			Games.LoadAsync();
-			Reporter.Report("Games loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
-			Regions.LoadAsync();
-			Reporter.Report("Regions loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
+			Reporter.Report("Platforms loaded " + Watch.Elapsed.TotalSeconds.ToString("F1") + " s."); Watch.Restart();
+			Roms.Load();
+			Reporter.Report("Roms loaded " + Watch.Elapsed.TotalSeconds.ToString("F1") + " s."); Watch.Restart();
+			//Releases.Load();
+			//Reporter.Report("Releases loaded " + Watch.Elapsed.TotalSeconds.ToString("F1") + " s."); Watch.Restart();
+			Games.Include(x => x.Releases).Load();
+			Reporter.Report("Games loaded " + Watch.Elapsed.TotalSeconds.ToString("F1") + " s."); Watch.Restart();
+			Regions.Load();
+			Reporter.Report("Regions loaded " + Watch.Elapsed.TotalSeconds.ToString("F1") + " s."); Watch.Restart();
 			Collections.Include(x => x.Games).Include(x => x.Releases).Load();
-			Reporter.Report("Collections loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
-			Emulators.Include(x => x.Platforms).Load();
-			Reporter.Report("Emulators loaded " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
+			Reporter.Report("Collections loaded " + Watch.Elapsed.TotalSeconds.ToString("F1") + " s."); Watch.Restart();
+			//Emulators.Include(x => x.Platforms).Load();
+			//Reporter.Report("Emulators loaded " + Watch.Elapsed.TotalSeconds.ToString("F1") + " s."); Watch.Restart();
 
 			foreach (Game game in Games)
 			{
