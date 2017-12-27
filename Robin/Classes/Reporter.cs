@@ -91,7 +91,7 @@ namespace Robin
 			watch.Stop();		
 			if (message == null)
 			{
-				ReportInline(watch.Elapsed.ToString(@"ss") + " s");
+				ReportInline(watch.Elapsed.TotalSeconds.ToString("F1") + " s");
 			}
 			else
 			{

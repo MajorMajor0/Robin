@@ -16,17 +16,6 @@ namespace Robin
     
     public partial class Region : INotifyPropertyChanged
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Region()
-        {
-    		GBReleases = new List<GBRelease>();
-    		LBImages = new List<LBImage>();
-    		LBReleases = new List<LBRelease>();
-    		Matches = new List<Match>();
-    		OVGReleases = new List<OVGRelease>();
-    		Releases = new List<Release>();
-        }
-    
         private long _iD;
     	public long ID 
     	{ 
@@ -90,19 +79,6 @@ namespace Robin
     		set { _launchbox = value; OnPropertyChanged("Launchbox"); } 
     	}
     
-    
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual List<GBRelease> GBReleases { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual List<LBImage> LBImages { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual List<LBRelease> LBReleases { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual List<Match> Matches { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual List<OVGRelease> OVGReleases { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual List<Release> Releases { get; set; }
      
         public event PropertyChangedEventHandler PropertyChanged;
     

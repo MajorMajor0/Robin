@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="942a7aae17e648469bcdf8b08bbbbfb4" Name="Diagram1" ZoomLevel="35">
+      <Diagram DiagramId="942a7aae17e648469bcdf8b08bbbbfb4" Name="Diagram1" ZoomLevel="59">
         <EntityTypeShape EntityType="RobinDataModel.Collection" Width="1.5" PointX="10.5" PointY="15" IsExpanded="true" />
         <EntityTypeShape EntityType="RobinDataModel.Emulator" Width="1.5" PointX="11.75" PointY="35.375" IsExpanded="true" />
         <EntityTypeShape EntityType="RobinDataModel.Game" Width="1.5" PointX="12.5" PointY="10.75" IsExpanded="true" />

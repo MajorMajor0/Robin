@@ -20,7 +20,6 @@ namespace Robin
         public Game()
         {
     		Releases = new List<Release>();
-    		Collections = new List<Collection>();
         }
     
         private long _iD;
@@ -33,8 +32,6 @@ namespace Robin
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual List<Release> Releases { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual List<Collection> Collections { get; set; }
      
         public event PropertyChangedEventHandler PropertyChanged;
     

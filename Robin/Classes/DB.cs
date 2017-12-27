@@ -44,49 +44,49 @@ namespace Robin
 		string RegionTitle { get; }
 
 
-		string BannerURL { get; }
-		string Box3DURL { get; }
-		string BoxBackURL { get; }
-		string BoxFrontURL { get; }
-		string Cart3DURL { get; }
-		string CartBackURL { get; }
-		string CartFrontURL { get; }
-		string ControlInformationURL { get; }
-		string ControlPanelURL { get; }
-		string LogoURL { get; }
-		string MarqueeURL { get; }
-		string ScreenURL { get; }
+		//string BannerURL { get; }
+		//string Box3DURL { get; }
+		//string BoxBackURL { get; }
+		//string BoxFrontURL { get; }
+		//string Cart3DURL { get; }
+		//string CartBackURL { get; }
+		//string CartFrontURL { get; }
+		//string ControlInformationURL { get; }
+		//string ControlPanelURL { get; }
+		//string LogoURL { get; }
+		//string MarqueeURL { get; }
+		//string ScreenURL { get; }
 
 
-		string BannerPath { get; }
-		string Box3DPath { get; }
-		string BoxBackPath { get; }
-		string BoxFrontPath { get; }
-		string Cart3DPath { get; }
-		string CartBackPath { get; }
-		string CartFrontPath { get; }
-		string COntrolInformationPath { get; }
-		string ControlPanelPath { get; }
-		string LogoPath { get; }
-		string MarqueePath { get; }
-		string ScreenPath { get; }
+		//string BannerPath { get; }
+		//string Box3DPath { get; }
+		//string BoxBackPath { get; }
+		//string BoxFrontPath { get; }
+		//string Cart3DPath { get; }
+		//string CartBackPath { get; }
+		//string CartFrontPath { get; }
+		//string ControlInformationPath { get; }
+		//string ControlPanelPath { get; }
+		//string LogoPath { get; }
+		//string MarqueePath { get; }
+		//string ScreenPath { get; }
 
 		Region Region { get; }
 
 		DateTime? Date { get; }
 
-		int ScrapeBanner();
-		int ScrapeBox3D();
-		int ScrapeBoxBack();
+		//int ScrapeBanner();
+		//int ScrapeBox3D();
+		//int ScrapeBoxBack();
 		int ScrapeBoxFront();
-		int ScrapeCart3D();
-		int ScrapeCartBack();
-		int ScrapeCartFront();
-		int ControlInformation();
-		int ScrapeControlPanel();
-		int ScrapeLogo();
-		int ScrapeMarquee();
-		int ScrapeScreen();
+		//int ScrapeCart3D();
+		//int ScrapeCartBack();
+		//int ScrapeCartFront();
+		//int ControlInformation();
+		//int ScrapeControlPanel();
+		//int ScrapeLogo();
+		//int ScrapeMarquee();
+		//int ScrapeScreen();
 
 	}
 

@@ -16,12 +16,6 @@ namespace Robin
     
     public partial class Release : INotifyPropertyChanged
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Release()
-        {
-    		Collections = new List<Collection>();
-        }
-    
         private long _iD;
     	public long ID 
     	{ 
@@ -242,9 +236,6 @@ namespace Robin
         public virtual Platform Platform { get; set; }
         public virtual Region Region { get; set; }
         public virtual Rom Rom { get; set; }
-        public virtual URL URL { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual List<Collection> Collections { get; set; }
      
         public event PropertyChangedEventHandler PropertyChanged;
     

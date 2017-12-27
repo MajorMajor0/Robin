@@ -24,6 +24,10 @@ namespace Robin
 {
 	public partial class Release : IDBobject, IDBRelease
 	{
+		public Release()
+		{
+
+		}
 
 		public Release(long platform, string title, long? id_gdb,
 			long? id_gb, long? game_id, Region region)
