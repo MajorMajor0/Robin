@@ -153,6 +153,7 @@
     </Compile>
     <Compile Include="Classes\Command.cs" />
     <Compile Include="Classes\DebugStuff.cs" />
+    <Compile Include="Classes\DebugStuff.GenerateViews.cs" />
     <Compile Include="Classes\TitledCollection.cs" />
     <Compile Include="Collection.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
@@ -324,6 +325,11 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>RobinDataModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="RobinDataModel.Views.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RobinDataModel.Views.tt</DependentUpon>
     </Compile>
     <Compile Include="Rom.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
@@ -584,6 +590,10 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>RobinDataModel.edmx</DependentUpon>
       <LastGenOutput>RobinDataModel.cs</LastGenOutput>
+    </Content>
+    <Content Include="RobinDataModel.Views.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>RobinDataModel.Views.cs</LastGenOutput>
     </Content>
     <SplashScreen Include="SplashScreen1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

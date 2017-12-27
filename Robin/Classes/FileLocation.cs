@@ -19,7 +19,9 @@ namespace Robin
 {
 	public static class FileLocation
 	{
-		public static string Folder = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+		//public static string Folder = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+
+		public static string Folder = @"D:\Robin_debug\";
 
 		public static class Art
 		{
