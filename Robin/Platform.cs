@@ -20,7 +20,6 @@ namespace Robin
         public Platform()
         {
     		Releases = new List<Release>();
-    		Roms = new List<Rom>();
     		Emulators = new List<Emulator>();
         }
     
@@ -211,8 +210,6 @@ namespace Robin
         public virtual LBPlatform LBPlatform { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual List<Release> Releases { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual List<Rom> Roms { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual List<Emulator> Emulators { get; set; }
      

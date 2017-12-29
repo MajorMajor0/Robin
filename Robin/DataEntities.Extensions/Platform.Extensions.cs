@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -31,8 +32,7 @@ namespace Robin
 		public Platform RPlatform => this;
 
 		public OVGPlatform OVGPlatform => R.Data.OVGPlatforms.FirstOrDefault(x => x.ID == ID);
-
-
+		
 		public int MatchedToGamesDB => Releases.Count(x => x.ID_GDB != null);
 
 		public int MatchedToGiantBomb => Releases.Count(x => x.ID_GB != null);
@@ -53,6 +53,8 @@ namespace Robin
 		public bool HasEmulator => Emulators.Any(x => x.Included);
 
 		public bool HasRelease => Releases.Any(x => x.Included);
+
+		public List<Rom> Roms => R.Data.Roms.Where(x => x.Platform_ID == ID).ToList();
 
 		public string WhyCantIPlay
 		{

@@ -29,13 +29,6 @@ namespace Robin
     		set { _iD = value; OnPropertyChanged("ID"); } 
     	}
     
-        private long _platform_ID;
-    	public long Platform_ID 
-    	{ 
-    		get { return _platform_ID; } 
-    		set { _platform_ID = value; OnPropertyChanged("Platform_ID"); } 
-    	}
-    
         private string _title;
     	public string Title 
     	{ 
@@ -91,7 +84,6 @@ namespace Robin
     	}
     
     
-        public virtual Platform Platform { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual List<Release> Releases { get; set; }
      

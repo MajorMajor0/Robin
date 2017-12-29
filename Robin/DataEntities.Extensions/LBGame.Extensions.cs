@@ -35,17 +35,17 @@ namespace Robin
 
 		public Region Region { get { return null; } }
 
-		public string Regions
-		{
-			get
-			{
-				if (LBImages != null)
-				{
-					return string.Join(", ", LBImages.Select(x => x.Region.Title).Distinct());
-				}
-				return null;
-			}
-		}
+		//public string Regions
+		//{
+		//	get
+		//	{
+		//		if (LBImages != null)
+		//		{
+		//			return string.Join(", ", LBImages.Select(x => x.Region.Title).Distinct());
+		//		}
+		//		return null;
+		//	}
+		//}
 
 		public List<LBImage> LBImages => LBReleases.SelectMany(x => x.LBImages).ToList();
 
@@ -66,13 +66,13 @@ namespace Robin
 
 			for (int i = 0; i < lbImages.Count; i++)
 			{
-				LBRelease lbRelease = LBReleases.FirstOrDefault(x => x.Region == lbImages[i].Region);
+				LBRelease lbRelease = LBReleases.FirstOrDefault(x => x.Region_ID == lbImages[i].Region_ID);
 
 				if (lbRelease == null)
 				{
 					lbRelease = new LBRelease();
 					LBReleases.Add(lbRelease);
-					lbRelease.Region = lbImages[i].Region;
+					lbRelease.Region_ID = lbImages[i].Region_ID;
 					lbRelease.LBPlatform = LBPlatform;
 				}
 

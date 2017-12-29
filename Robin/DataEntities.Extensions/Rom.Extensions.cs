@@ -22,6 +22,10 @@ namespace Robin
 
 	    public string FilePath => Platform.RomDirectory + FileName;
 
+		public decimal Platform_ID => Releases[0].Platform_ID;
+
+		public Platform Platform => Releases[0].Platform;
+
 	    public void StoreFileName(string extension)
 		{
 			if (Platform_ID != CONSTANTS.ARCADE_PLATFORM_ID)

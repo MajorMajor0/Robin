@@ -29,7 +29,7 @@ namespace Robin
 {
 	class Launchbox : IDB
 	{
-		 bool platformsCached;
+		bool platformsCached;
 
 		public string Title => "LaunchBox";
 
@@ -249,12 +249,12 @@ namespace Robin
 
 					if (RegionDictionary.TryGetValue(lbImage.LBRegion, out int regionID))
 					{
-						lbImage.Region = R.Data.Regions.FirstOrDefault(x => x.ID == regionID);
+						lbImage.Region_ID = regionID;
 					}
 
 					else
 					{
-						lbImage.Region = R.Data.Regions.FirstOrDefault(x => x.ID == 0);
+						lbImage.Region_ID = 0;
 						Reporter.Report("Couldn't find " + lbImage.LBRegion + " in LB image dictionary.");
 					}
 				}
@@ -264,7 +264,7 @@ namespace Robin
 
 				gameReleaseElements = releaseElements.Where(x => x.Element("DatabaseID").Value == lbGame.ID.ToString()).ToList();
 
-				// Cache images for this game from the launchbox file
+				// Cache releases for this game from the launchbox file
 				foreach (XElement releaseElement in gameReleaseElements)
 				{
 					string releaseElementRegionText = releaseElement.Element("Region").Value;

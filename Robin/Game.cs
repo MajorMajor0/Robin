@@ -29,6 +29,90 @@ namespace Robin
     		set { _iD = value; OnPropertyChanged("ID"); } 
     	}
     
+        private bool _isGame;
+    	public bool IsGame 
+    	{ 
+    		get { return _isGame; } 
+    		set { _isGame = value; OnPropertyChanged("IsGame"); } 
+    	}
+    
+        private bool _isCrap;
+    	public bool IsCrap 
+    	{ 
+    		get { return _isCrap; } 
+    		set { _isCrap = value; OnPropertyChanged("IsCrap"); } 
+    	}
+    
+        private bool _isAdult;
+    	public bool IsAdult 
+    	{ 
+    		get { return _isAdult; } 
+    		set { _isAdult = value; OnPropertyChanged("IsAdult"); } 
+    	}
+    
+        private bool _isBeaten;
+    	public bool IsBeaten 
+    	{ 
+    		get { return _isBeaten; } 
+    		set { _isBeaten = value; OnPropertyChanged("IsBeaten"); } 
+    	}
+    
+        private string _overview;
+    	public string Overview 
+    	{ 
+    		get { return _overview; } 
+    		set { _overview = value; OnPropertyChanged("Overview"); } 
+    	}
+    
+        private string _developer;
+    	public string Developer 
+    	{ 
+    		get { return _developer; } 
+    		set { _developer = value; OnPropertyChanged("Developer"); } 
+    	}
+    
+        private string _publisher;
+    	public string Publisher 
+    	{ 
+    		get { return _publisher; } 
+    		set { _publisher = value; OnPropertyChanged("Publisher"); } 
+    	}
+    
+        private string _genre;
+    	public string Genre 
+    	{ 
+    		get { return _genre; } 
+    		set { _genre = value; OnPropertyChanged("Genre"); } 
+    	}
+    
+        private bool _unlicensed;
+    	public bool Unlicensed 
+    	{ 
+    		get { return _unlicensed; } 
+    		set { _unlicensed = value; OnPropertyChanged("Unlicensed"); } 
+    	}
+    
+        private string _videoFormat;
+    	public string VideoFormat 
+    	{ 
+    		get { return _videoFormat; } 
+    		set { _videoFormat = value; OnPropertyChanged("VideoFormat"); } 
+    	}
+    
+        private string _players;
+    	public string Players 
+    	{ 
+    		get { return _players; } 
+    		set { _players = value; OnPropertyChanged("Players"); } 
+    	}
+    
+        private Nullable<decimal> _rating;
+    	public Nullable<decimal> Rating 
+    	{ 
+    		get { return _rating; } 
+    		set { _rating = value; OnPropertyChanged("Rating"); } 
+    	}
+    
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual List<Release> Releases { get; set; }

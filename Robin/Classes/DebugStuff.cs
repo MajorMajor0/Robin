@@ -30,7 +30,8 @@ namespace Robin
 		public async static Task MainWindowBonusAsync()
 		{
 			Reporter.Report("BONUS!");
-			await Task.Run(() => SetAdult());
+			await Task.Run(() => MoveToGame());
+			Reporter.Report("Finished");
 		}
 
 		public async static Task DatabaseWindowBonusAsync()
@@ -384,6 +385,73 @@ namespace Robin
 		"wiggie.zip",
 		"yarunara.zip",
 		"zerozone.zip" };
+
+		static void MoveToGame()
+
+		{
+			foreach (Game game in R.Data.Games.Local)
+			{
+				game.IsGame = game.Releases[0].IsGame;
+				game.IsCrap = game.Releases[0].IsCrap;
+				game.IsAdult = game.Releases[0].IsAdult;
+				game.IsBeaten = game.Releases[0].IsBeaten;
+				game.Unlicensed = game.Releases[0].Unlicensed;
+
+				int i = 0;
+				while (game.Overview == null && i < game.Releases.Count)
+				{
+					game.Overview = game.Releases[i].Overview;
+					i++;
+				}
+
+				i = 0;
+				while (game.Developer == null && i < game.Releases.Count)
+				{
+					game.Developer = game.Releases[i].Developer;
+					i++;
+				}
+
+				i = 0;
+				while (game.Publisher == null && i < game.Releases.Count)
+				{
+					game.Publisher = game.Releases[i].Publisher;
+					i++;
+				}
+
+				i = 0;
+				while (game.VideoFormat == null && i < game.Releases.Count)
+				{
+					game.VideoFormat = game.Releases[i].VideoFormat;
+					i++;
+				}
+
+				i = 0;
+				while (game.Players == null && i < game.Releases.Count)
+				{
+					game.Players = game.Releases[i].Players;
+					i++;
+				}
+
+				i = 0;
+				while (game.Rating == null && i < game.Releases.Count)
+				{
+					game.Rating = game.Releases[i].Rating;
+					i++;
+				}
+
+				List<string> genres = new List<string>();
+
+				foreach (Release release in game.Releases)
+				{
+					genres.AddRange(release.GenreList);
+				}
+
+				game.Genre = string.Join(", ", genres.Distinct().OrderBy(x => x));
+
+
+
+			}
+		}
 	}
 }
 #endif

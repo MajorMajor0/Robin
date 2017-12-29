@@ -58,8 +58,6 @@ namespace Robin
     		set { _region_ID = value; OnPropertyChanged("Region_ID"); } 
     	}
     
-    
-        public virtual Region Region { get; set; }
      
         public event PropertyChangedEventHandler PropertyChanged;
     

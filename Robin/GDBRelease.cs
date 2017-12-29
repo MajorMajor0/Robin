@@ -16,12 +16,6 @@ namespace Robin
     
     public partial class GDBRelease : INotifyPropertyChanged
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public GDBRelease()
-        {
-    		Releases = new List<Release>();
-        }
-    
         private long _iD;
     	public long ID 
     	{ 
@@ -136,8 +130,6 @@ namespace Robin
     
     
         public virtual GDBPlatform GDBPlatform { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual List<Release> Releases { get; set; }
      
         public event PropertyChangedEventHandler PropertyChanged;
     
