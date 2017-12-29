@@ -20,7 +20,6 @@ namespace Robin
         public GDBPlatform()
         {
     		GDBReleases = new List<GDBRelease>();
-    		Platforms = new List<Platform>();
         }
     
         private long _iD;
@@ -152,8 +151,6 @@ namespace Robin
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual List<GDBRelease> GDBReleases { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual List<Platform> Platforms { get; set; }
      
         public event PropertyChangedEventHandler PropertyChanged;
     

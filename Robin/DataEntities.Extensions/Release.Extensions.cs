@@ -40,7 +40,80 @@ namespace Robin
 			Region = region;
 		}
 
-		 bool _preferred;
+		bool _preferred;
+
+		public bool IsBeaten
+		{
+			get { return Game.IsBeaten; }
+			set { Game.IsBeaten = value; }
+		}
+
+		public bool IsGame
+		{
+			get { return Game.IsGame; }
+			set { Game.IsGame = value; }
+		}
+
+		public bool IsCrap
+		{
+			get { return Game.IsCrap; }
+			set { Game.IsCrap = value; }
+		}
+
+		public bool IsAdult
+		{
+			get { return Game.IsAdult; }
+			set { Game.IsAdult = value; }
+		}
+
+		public bool Unlicensed
+		{
+			get { return Game.Unlicensed; }
+			set { Game.Unlicensed = value; }
+		}
+
+		public string Overview
+		{
+			get { return Game.Overview; }
+			set { Game.Overview = value; }
+		}
+
+		public string Developer
+		{
+			get { return Game.Developer; }
+			set { Game.Developer = value; }
+		}
+
+		public string Publisher
+		{
+			get { return Game.Publisher; }
+			set { Game.Publisher = value; }
+		}
+
+		public string VideoFormat
+		{
+			get { return Game.VideoFormat; }
+			set { Game.VideoFormat = value; }
+		}
+
+		public string Players
+		{
+			get { return Game.Players; }
+			set { Game.Players = value; }
+		}
+
+		public string Genre
+		{
+			get { return Game.Genre; }
+			set { Game.Genre = value; }
+		}
+
+		public decimal? Rating
+		{
+			get { return Game.Rating; }
+			set { Game.Rating = value; }
+		}
+
 
 		public bool Preferred
 		{

@@ -27,7 +27,6 @@ namespace Robin
 	    public static implicit operator Rom(VGDBROM vgdbRom)
 		{
 			Rom rom = new Rom();
-			rom.Platform_ID = vgdbRom.systemID;
 			rom.CRC32 = vgdbRom.romHashCRC;
 			rom.MD5 = vgdbRom.romHashMD5;
 			rom.SHA1 = vgdbRom.romHashSHA1;

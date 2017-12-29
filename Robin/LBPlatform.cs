@@ -21,7 +21,6 @@ namespace Robin
         {
     		LBGames = new List<LBGame>();
     		LBReleases = new List<LBRelease>();
-    		Platforms = new List<Platform>();
         }
     
         private long _iD;
@@ -127,8 +126,6 @@ namespace Robin
         public virtual List<LBGame> LBGames { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual List<LBRelease> LBReleases { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual List<Platform> Platforms { get; set; }
      
         public event PropertyChangedEventHandler PropertyChanged;
     

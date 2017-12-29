@@ -65,7 +65,6 @@ namespace Robin
     
     
         public virtual LBRelease LBRelease { get; set; }
-        public virtual Region Region { get; set; }
      
         public event PropertyChangedEventHandler PropertyChanged;
     

@@ -57,15 +57,24 @@ namespace Robin
 #endif
 			}
 
-			var ReleaseEntries = R.Data.ChangeTracker.Entries<Release>();
+			var releaseEntries = R.Data.ChangeTracker.Entries<Release>();
+			var gameEntries = R.Data.ChangeTracker.Entries<Game>();
+			var romEntries = R.Data.ChangeTracker.Entries<Rom>();
 #if DEBUG
 			Debug.WriteLine("Get entries: " + Watch.ElapsedMilliseconds);
 #endif
-			int releaseAddCount = ReleaseEntries.Count(x => x.State == EntityState.Added);
+			int gameAddCount = gameEntries.Count(x => x.State == EntityState.Added);
+			int gameModCount = gameEntries.Count(x => x.State == EntityState.Modified);
 
-			int releaseModCount = ReleaseEntries.Count(x => x.State == EntityState.Modified);
+			int releaseAddCount = releaseEntries.Count(x => x.State == EntityState.Added);
+			int releaseModCount = releaseEntries.Count(x => x.State == EntityState.Modified);
+
+			int romAddCount = romEntries.Count(x => x.State == EntityState.Added);
+			int romModCount = romEntries.Count(x => x.State == EntityState.Modified);
 
 			Reporter.Report("Releases added: " + releaseAddCount + ", Releases updated: " + releaseModCount);
+			Reporter.Report("Games added: " + gameAddCount + ", Games updated: " + gameModCount);
+			Reporter.Report("Roms added: " + romAddCount + ", Roms updated: " + romModCount);
 		}
 
 		public void CachePlatforms()
@@ -80,7 +89,7 @@ namespace Robin
 
 		public void CachePlatformData(Platform platform)
 		{
-			// TODO make this copy data from DBs to Platforms
+			// TODO: make this copy data from DBs to Platforms
 			Reporter.Report("It is not possible to cache platform data for Robin/Datomatic");
 		}
 
@@ -101,7 +110,7 @@ namespace Robin
 			}
 		}
 
-		 void CacheDatomaticReleases(Platform platform)
+		void CacheDatomaticReleases(Platform platform)
 		{
 			//TODO: customize dialog window to explain what is going on here--i.e., that you have to find a datomatic file
 			// Configure open file dialog box
@@ -197,7 +206,6 @@ namespace Robin
 					//Extract releases from the datomatic file
 					foreach (XElement parentElement in parentElements)
 					{
-
 						// For reporting only
 						if (j++ % (parentCount / 10) == 0)
 						{
@@ -258,7 +266,7 @@ namespace Robin
 							// Not found, create a new one
 							if (rom == null)
 							{
-								rom = new Rom() { Platform_ID = platform.ID };
+								rom = new Rom();// { Platform_ID = platform.ID };
 								R.Data.Roms.Add(rom);
 							}
 #if DEBUG

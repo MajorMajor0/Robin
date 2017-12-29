@@ -20,7 +20,6 @@ namespace Robin
         public LBRelease()
         {
     		LBImages = new List<LBImage>();
-    		Releases = new List<Release>();
         }
     
         private long _iD;
@@ -64,8 +63,6 @@ namespace Robin
         public virtual List<LBImage> LBImages { get; set; }
         public virtual LBPlatform LBPlatform { get; set; }
         public virtual Region Region { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual List<Release> Releases { get; set; }
      
         public event PropertyChangedEventHandler PropertyChanged;
     

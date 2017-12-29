@@ -79,13 +79,6 @@ namespace Robin
     		set { _region_ID = value; OnPropertyChanged("Region_ID"); } 
     	}
     
-        private Nullable<long> _uRL_ID;
-    	public Nullable<long> URL_ID 
-    	{ 
-    		get { return _uRL_ID; } 
-    		set { _uRL_ID = value; OnPropertyChanged("URL_ID"); } 
-    	}
-    
         private Nullable<long> _rom_ID;
     	public Nullable<long> Rom_ID 
     	{ 
@@ -107,53 +100,11 @@ namespace Robin
     		set { _title = value; OnPropertyChanged("Title"); } 
     	}
     
-        private bool _isGame;
-    	public bool IsGame 
-    	{ 
-    		get { return _isGame; } 
-    		set { _isGame = value; OnPropertyChanged("IsGame"); } 
-    	}
-    
-        private string _overview;
-    	public string Overview 
-    	{ 
-    		get { return _overview; } 
-    		set { _overview = value; OnPropertyChanged("Overview"); } 
-    	}
-    
-        private string _developer;
-    	public string Developer 
-    	{ 
-    		get { return _developer; } 
-    		set { _developer = value; OnPropertyChanged("Developer"); } 
-    	}
-    
-        private string _publisher;
-    	public string Publisher 
-    	{ 
-    		get { return _publisher; } 
-    		set { _publisher = value; OnPropertyChanged("Publisher"); } 
-    	}
-    
-        private string _genre;
-    	public string Genre 
-    	{ 
-    		get { return _genre; } 
-    		set { _genre = value; OnPropertyChanged("Genre"); } 
-    	}
-    
         private Nullable<System.DateTime> _date;
     	public Nullable<System.DateTime> Date 
     	{ 
     		get { return _date; } 
     		set { _date = value; OnPropertyChanged("Date"); } 
-    	}
-    
-        private bool _unlicensed;
-    	public bool Unlicensed 
-    	{ 
-    		get { return _unlicensed; } 
-    		set { _unlicensed = value; OnPropertyChanged("Unlicensed"); } 
     	}
     
         private string _language;
@@ -163,39 +114,11 @@ namespace Robin
     		set { _language = value; OnPropertyChanged("Language"); } 
     	}
     
-        private string _videoFormat;
-    	public string VideoFormat 
-    	{ 
-    		get { return _videoFormat; } 
-    		set { _videoFormat = value; OnPropertyChanged("VideoFormat"); } 
-    	}
-    
         private string _version;
     	public string Version 
     	{ 
     		get { return _version; } 
     		set { _version = value; OnPropertyChanged("Version"); } 
-    	}
-    
-        private string _players;
-    	public string Players 
-    	{ 
-    		get { return _players; } 
-    		set { _players = value; OnPropertyChanged("Players"); } 
-    	}
-    
-        private Nullable<decimal> _rating;
-    	public Nullable<decimal> Rating 
-    	{ 
-    		get { return _rating; } 
-    		set { _rating = value; OnPropertyChanged("Rating"); } 
-    	}
-    
-        private bool _isCrap;
-    	public bool IsCrap 
-    	{ 
-    		get { return _isCrap; } 
-    		set { _isCrap = value; OnPropertyChanged("IsCrap"); } 
     	}
     
         /* private bool _preferred;
@@ -205,25 +128,11 @@ namespace Robin
     		set { _preferred = value; OnPropertyChanged("Preferred"); } 
     	}
     */
-        private bool _isBeaten;
-    	public bool IsBeaten 
-    	{ 
-    		get { return _isBeaten; } 
-    		set { _isBeaten = value; OnPropertyChanged("IsBeaten"); } 
-    	}
-    
         private long _playCount;
     	public long PlayCount 
     	{ 
     		get { return _playCount; } 
     		set { _playCount = value; OnPropertyChanged("PlayCount"); } 
-    	}
-    
-        private bool _isAdult;
-    	public bool IsAdult 
-    	{ 
-    		get { return _isAdult; } 
-    		set { _isAdult = value; OnPropertyChanged("IsAdult"); } 
     	}
     
     

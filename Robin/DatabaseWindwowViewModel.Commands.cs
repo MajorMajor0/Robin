@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU General Public License
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
 
- using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,7 +25,7 @@ namespace Robin
 
 		public Command CompareCommand { get; set; }
 
-		 async void CompareAsync()
+		async void CompareAsync()
 		{
 			if (SelectedPlatforms != null && SelectedPlatforms.Count > 0)
 			{
@@ -66,12 +66,12 @@ namespace Robin
 			}
 		}
 
-		 bool CompareCanExecute()
+		bool CompareCanExecute()
 		{
 			return SelectedIDB != null && !(SelectedIDB is Datomatic) && SelectedPlatform != null;
 		}
 
-		 void CompareToOVGDB(IDBPlatform idbPlatform)
+		void CompareToOVGDB(IDBPlatform idbPlatform)
 		{
 			// There are no results in OVGDB for arcade, so skip it
 			if (idbPlatform.Title.Contains("Arcade"))
@@ -146,7 +146,7 @@ namespace Robin
 			}
 		}
 
-		 bool AcceptCanExecute()
+		bool AcceptCanExecute()
 		{
 			return true;
 			//return DatabaseGrid.Content != null && DatabaseGrid.Content.GetType() == typeof(Compares);
@@ -155,12 +155,12 @@ namespace Robin
 
 		public Command ArtWindowCommand { get; set; }
 
-		 void ArtWindow()
+		void ArtWindow()
 		{
 			ArtWindow artWindow = new ArtWindow(SelectedRelease as Release);
 		}
 
-		 bool ArtWindowCanExecute()
+		bool ArtWindowCanExecute()
 		{
 			return SelectedIDB is Datomatic && SelectedRelease != null;
 		}
@@ -168,13 +168,13 @@ namespace Robin
 
 		public Command MatchWindowCommand { get; set; }
 
-		 void MatchWindow()
+		void MatchWindow()
 		{
 
 			MatchWindow matchWindow = new MatchWindow(SelectedRelease as Release);
 		}
 
-		 bool MatchWindowCanExecute()
+		bool MatchWindowCanExecute()
 		{
 			return SelectedIDB is Datomatic && SelectedRelease != null;
 		}
@@ -182,7 +182,7 @@ namespace Robin
 
 		public Command CacheReleasesCommand { get; set; }
 
-		 async void CacheReleases()
+		async void CacheReleases()
 		{
 			// Cache platforms to cache in case selection changes during operation
 			List<IDBPlatform> IDBPlatforms = new List<IDBPlatform>();
@@ -207,11 +207,15 @@ namespace Robin
 			});
 
 			SelectedIDB.ReportUpdates(true);
-			IDBs[0].ReportUpdates(false);
+			if (SelectedIDB != IDBs[0])
+			{
+				IDBs[0].ReportUpdates(false);
+			}
+
 			R.Data.Save(false);
 		}
 
-		 bool CacheReleasesCanExecute()
+		bool CacheReleasesCanExecute()
 		{
 			return SelectedPlatform != null;
 		}
@@ -219,13 +223,13 @@ namespace Robin
 
 		public Command WriteDBCommand { get; set; }
 
-		 void WriteDB()
+		void WriteDB()
 		{
 			R.Data.Save(true);
 		}
 
 
-		 void IntializeCommands()
+		void IntializeCommands()
 		{
 			CompareCommand = new Command(CompareAsync, CompareCanExecute, "Compare", "Compare title of releases in selected platforms to Robin database.");
 			AcceptCommand = new Command(Accept, AcceptCanExecute, "Accept Changes", "Push all matches to the database");
