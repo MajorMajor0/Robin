@@ -26,7 +26,7 @@ namespace Robin
 	{
 		public string Title { get; set; }
 
-		public ObservableCollection<T> List { get; set; }
+		//public ObservableCollection<T> List { get; set; }
 
 
 		public TitledCollection(string title)

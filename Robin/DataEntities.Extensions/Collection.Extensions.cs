@@ -19,7 +19,7 @@ namespace Robin
 {
 	public partial class Collection
 	{
-		public IEnumerable<IDBobject> List
+		public IEnumerable<IDBobject> FilteredCollection
 		{
 			get { return (Games as IEnumerable<IDBobject>).Union(Releases as IEnumerable<IDBobject>); }
 		}

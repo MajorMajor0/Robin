@@ -145,20 +145,8 @@ namespace Robin
 
 		public bool HasEmulator => Platform.Emulators.Any(x => x.Included);
 
-		List<string> genreList;
-		public List<string> GenreList
-		{
-			get
-			{
-				if (genreList == null)
-				{
-					genreList = (Genre ?? "Unknown").Split(',').Select(x => x.Trim()).ToList();
-				}
-				return genreList;
-			}
-		}
-
-
+		public List<string> GenreList => Game.GenreList;
+		
 		public string WhyCantIPlay
 		{
 			get

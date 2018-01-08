@@ -38,52 +38,21 @@ namespace Robin
 			}
 		}
 
-		//public decimal? Rating
-		//{
-		//	get
-		//	{
-		//		return Releases[0].Rating;
-		//	}
-
-		//	set
-		//	{
-
-		//		if (value != null)
-		//		{
-		//			decimal d = Math.Min((decimal)value, 5);
-		//					d = Math.Max(d, 0);
-
-		//			foreach (Release release in Releases)
-		//			{
-		//				release.Rating = d;
-		//			}
-		//		}
-
-		//		else
-		//		{
-		//			foreach (Release release in Releases)
-		//			{
-		//				release.Rating = null;
-		//			}
-		//		}
-		//		OnPropertyChanged("Rating");
-		//	}
-
-		//}
 
 		public string Year => Releases[0].Year;
 
-		//public string Overview => Releases[0].Overview;
-
-		//public string Developer => Releases[0].Developer;
-
-		//public string Publisher => Releases[0].Publisher;
-
-		//public string Genre => Releases[0].Genre ?? "Unknown";
-
-		public List<string> GenreList => Releases[0].GenreList;
-
-		//public string Players => Releases[0].Players;
+		List<string> genreList;
+		public List<string> GenreList
+		{
+			get
+			{
+				if (genreList == null)
+				{
+					genreList = (Genre ?? "Unknown").Split(',').Select(x => x.Trim()).ToList();
+				}
+				return genreList;
+			}
+		}
 
 		public Platform Platform => Releases[0].Platform;
 
@@ -142,66 +111,6 @@ namespace Robin
 				return Title + " can't launch because " + releaseTrouble + and + emulatorTrouble + ".";
 			}
 		}
-
-
-		//public bool IsCrap
-		//{
-		//	get => Releases[0].IsCrap;
-
-		//	set
-		//	{
-		//		foreach (Release release in Releases)
-		//		{
-		//			release.IsCrap = value;
-		//		}
-		//		OnPropertyChanged("IsCrap");
-		//	}
-
-		//}
-
-		//public bool IsAdult
-		//{
-		//	get => Releases[0].IsAdult;
-
-		//	set
-		//	{
-		//		foreach (Release release in Releases)
-		//		{
-		//			release.IsAdult = value;
-		//		}
-		//		OnPropertyChanged("IsAdult");
-		//	}
-
-		//}
-
-		//public bool IsGame
-		//{
-		//	get => Releases[0].IsGame;
-		//	set
-		//	{
-		//		foreach (Release release in Releases)
-		//		{
-		//			release.IsGame = value;
-		//		}
-		//		OnPropertyChanged("IsGame");
-		//	}
-		//}
-
-		//public bool IsBeaten
-		//{
-		//	get => Releases[0].IsBeaten;
-
-		//	set
-		//	{
-		//		foreach (Release release in Releases)
-		//		{
-		//			release.IsBeaten = value;
-		//		}
-		//		OnPropertyChanged("IsBeaten");
-		//	}
-		//}
-
-		//public bool Unlicensed => Releases[0].Unlicensed;
 
 		public bool HasArt => Releases.Any(x => x.HasArt);
 
@@ -333,14 +242,13 @@ namespace Robin
 			{
 				if (value == true)
 				{
-					//Rating = 5;
+					Rating = 5;
 				}
 			}
 
 			get
 			{
-				return true;
-				//return Rating == 5; // TODO: this is temp
+				return Rating == 5;
 			}
 		}
 
