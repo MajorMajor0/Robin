@@ -391,7 +391,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 											  SelectionUnit="FullRow"
 											  SelectedItem="{Binding ElementName=Database_Window, Path=DataContext.SelectedRelease}"
 											  PreviewMouseWheel="DataGrid_MouseWheel"
-											  Tag="{Binding ElementName=Main_Window, Path=DataContext}">
+                                              Tag="{Binding ElementName=Database_Window, Path=DataContext}">
 										<DataGrid.ContextMenu>
 											<ContextMenu>
 												<MenuItem Style="{StaticResource CContextMenuItemStyle}"
@@ -417,7 +417,9 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 																Binding="{Binding Publisher, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Rating"
 																Binding="{Binding Rating, TargetNullValue=-}" />
-											<DataGridTextColumn Header="Genre"
+                                            <DataGridTextColumn Header="Overview"
+                                                                Binding="{Binding Overview, TargetNullValue=-}" />
+                                            <DataGridTextColumn Header="Genre"
 																Binding="{Binding Genre, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Unl"
 																Binding="{Binding Unlicensed, TargetNullValue=-}" />

@@ -192,7 +192,7 @@ namespace Robin
 				IDBPlatforms.Add(idbPlatform);
 			}
 
-			Reporter.Report("Caching " + IDBPlatforms.Count + SelectedIDB.Title + " platforms.");
+			Reporter.Report("Caching " + IDBPlatforms.Count + " " + SelectedIDB.Title + " platforms.");
 
 			await Task.Run(() =>
 			{
@@ -212,7 +212,7 @@ namespace Robin
 				IDBs[0].ReportUpdates(false);
 			}
 
-			R.Data.Save(false);
+			//R.Data.Save(false); TODO: this should not be commented
 		}
 
 		bool CacheReleasesCanExecute()

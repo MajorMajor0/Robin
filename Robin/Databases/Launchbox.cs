@@ -188,14 +188,18 @@ namespace Robin
 					Reporter.Report("  Working " + j + " / " + gameCount + " " + lbPlatform.Title + " games.");
 				}
 
+				string title = gameElement.Element("Name")?.Value;
+
+				// Don't create this ganme if the title is null
+				if (string.IsNullOrEmpty(title))
+				{
+					continue;
+				}
+
 				int id = int.Parse(gameElement.SafeGetA("DatabaseID"));
-#if DEBUG
-				Stopwatch Watch1 = Stopwatch.StartNew();
-#endif
-				LBGame lbGame = R.Data.LBGames.FirstOrDefault(x => x.ID == id);
-#if DEBUG
-				Debug.WriteLine("Scrounge game : " + Watch1.ElapsedMilliseconds);
-#endif
+
+				LBGame lbGame = R.Data.LBGames.Local.FirstOrDefault(x => x.ID == id);
+
 				if (lbGame == null)
 				{
 					lbGame = new LBGame();
@@ -210,23 +214,33 @@ namespace Robin
 				{
 					//lbGame.LBPlatform_ID = lbPlatform.ID;
 					lbGame.LBPlatform = lbPlatform;
-					Release release = R.Data.Releases.FirstOrDefault(x => x.ID_LB == lbGame.ID);
+					Release release = R.Data.Releases.Local.FirstOrDefault(x => x.ID_LB == lbGame.ID); // TODO: local?
 					if (release != null)
 					{
 						release.ID_LB = null;
 					}
 				}
 
-				lbGame.Title = gameElement.SafeGetA("Name");
+				lbGame.Title = gameElement.Element("Name")?.Value;
 				lbGame.Date = DateTimeRoutines.SafeGetDateTime(gameElement.SafeGetA("ReleaseDate") ?? gameElement.SafeGetA("ReleaseYear") + @"-01-01 00:00:00");
-				lbGame.Overview = gameElement.SafeGetA("Overview");
-				lbGame.Genres = gameElement.SafeGetA("Genres");
-				lbGame.Developer = gameElement.SafeGetA("Developer");
 
-				lbGame.Publisher = gameElement.SafeGetA("Publisher");
-				lbGame.VideoURL = gameElement.SafeGetA("VideoURL");
-				lbGame.WikiURL = gameElement.SafeGetA("WikipediaURL");
-				lbGame.Players = gameElement.SafeGetA("MaxPlayers");
+				lbGame.Overview = gameElement.Element("Overview")?.Value;
+				lbGame.Genres = gameElement.Element("Genres")?.Value;
+				lbGame.Developer = gameElement.Element("Developer")?.Value;
+
+				lbGame.Publisher = gameElement.Element("Publisher")?.Value;
+				lbGame.VideoURL = gameElement.Element("VideoURL")?.Value;
+				lbGame.WikiURL = gameElement.Element("WikipediaURL")?.Value;
+				lbGame.Players = gameElement.Element("MaxPlayers")?.Value;
+
+				//lbGame.Overview = gameElement.SafeGetA("Overview");
+				//lbGame.Genres = gameElement.SafeGetA("Genres");
+				//lbGame.Developer = gameElement.SafeGetA("Developer");
+
+				//lbGame.Publisher = gameElement.SafeGetA("Publisher");
+				//lbGame.VideoURL = gameElement.SafeGetA("VideoURL");
+				//lbGame.WikiURL = gameElement.SafeGetA("WikipediaURL");
+				//lbGame.Players = gameElement.SafeGetA("MaxPlayers");
 
 				gameImageElements = imageElements.Where(x => x.Element("DatabaseID").Value == lbGame.ID.ToString()).ToList();
 
@@ -235,7 +249,7 @@ namespace Robin
 				{
 					string imageElementFileName = imageElement.Element("FileName").Value;
 
-					LBImage lbImage = R.Data.LBImages.Local.FirstOrDefault(x => x.FileName == imageElementFileName);
+					LBImage lbImage = R.Data.LBImages.Local.FirstOrDefault(x => x.FileName == imageElementFileName); // TODO: local?
 
 					if (lbImage == null)
 					{
@@ -267,8 +281,17 @@ namespace Robin
 				// Cache releases for this game from the launchbox file
 				foreach (XElement releaseElement in gameReleaseElements)
 				{
-					string releaseElementRegionText = releaseElement.Element("Region").Value;
-					Region releaseElementRegion = R.Data.Regions.FirstOrDefault(x => x.Launchbox == releaseElementRegionText);
+					Region releaseElementRegion;
+					if (releaseElement.Element("Region") != null)
+					{
+						string releaseElementRegionText = releaseElement.Element("Region").Value;
+						releaseElementRegion = R.Data.Regions.Local.FirstOrDefault(x => x.Launchbox == releaseElementRegionText);
+					}
+
+					else
+					{
+						releaseElementRegion = R.Data.Regions.Local.FirstOrDefault(x => x.ID == CONSTANTS.UNKNOWN_REGION_ID);
+					}
 
 					LBRelease lbRelease = lbGame.LBReleases.FirstOrDefault(x => x.Region == releaseElementRegion);
 
