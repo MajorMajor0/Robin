@@ -92,14 +92,10 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 					<MenuItem Style="{StaticResource CMenuItemStyle}"
 							  Command="{Binding DatabaseWindowCommand}" />
-
-					<MenuItem Style="{StaticResource CMenuItemStyle}"
-							  Command="{Binding ReporterWindowCommand}" />
-
-					<MenuItem Style="{StaticResource CMenuItemStyle}"
-							  Command="{Binding HawkWindowCommand}" />
-
-				</MenuItem>
+                    
+                    <MenuItem Style="{StaticResource CMenuItemStyle}"
+                              Command="{Binding ReporterWindowCommand}" />
+                </MenuItem>
 				<MenuItem Header="Tools">
 
 					<MenuItem Style="{StaticResource CMenuItemStyle}"

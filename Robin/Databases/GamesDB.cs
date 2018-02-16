@@ -68,6 +68,14 @@ namespace Robin
 
 						GDBRelease gdbRelease = R.Data.GDBReleases.FirstOrDefault(x => x.ID == id);
 
+						string title = element.SafeGetA("GameTitle");
+
+						// Don't create this game if the title is null
+						if (string.IsNullOrEmpty(title))
+						{
+							continue;
+						}
+
 						if (gdbRelease == null)
 						{
 							gdbRelease = new GDBRelease();
@@ -75,7 +83,9 @@ namespace Robin
 							gdbPlatform.GDBReleases.Add(gdbRelease);
 							Debug.WriteLine(id);
 						}
-						gdbRelease.Title = element.SafeGetA("GameTitle");
+
+						gdbRelease.Title = title;
+
 						gdbRelease.Date = DateTimeRoutines.SafeGetDate(element.SafeGetA("ReleaseDate") ?? "01-01-1901");
 
 						// If a release has changed platforms, catch it and zero out match
