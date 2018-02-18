@@ -62,7 +62,7 @@ namespace Robin
 	public class BooleanToHiddenConverter : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-	{
+		{
 			bool tf = (bool)value;
 			if (tf)
 			{
@@ -174,6 +174,59 @@ namespace Robin
 			{
 				return Visibility.Hidden;
 			}
+		}
+
+		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
+
+	public class MatchGroupMultiValueConverter : IMultiValueConverter
+	{
+		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+		{
+			MatchWindowViewModel MWVM = values[0] as MatchWindowViewModel;
+
+			LocalDB db = (LocalDB)values[1];
+
+			string name = Enum.GetName(typeof(LocalDB), db);
+
+			string id = "";
+
+			string sep1 = " (";
+			string sep2 = ")";
+			switch (db)
+			{
+				case LocalDB.GamesDB:
+					if (MWVM.ID_GDB != null)
+					{
+						id = sep1 + MWVM.ID_GDB + sep2;
+					}
+					break;
+				case LocalDB.GiantBomb:
+					if (MWVM.ID_GB != null)
+					{
+						id = sep1 + MWVM.ID_GB + sep2;
+					}
+					break;
+				case LocalDB.OpenVGDB:
+					if (MWVM.ID_OVG != null)
+					{
+						id = sep1 + MWVM.ID_OVG + sep2;
+					}
+					break;
+				case LocalDB.LaunchBox:
+					if (MWVM.ID_LB != null)
+					{
+						id = sep1 + MWVM.ID_LB + sep2;
+					}
+					break;
+				default:
+					break;
+			}
+
+			return name + id;
 		}
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

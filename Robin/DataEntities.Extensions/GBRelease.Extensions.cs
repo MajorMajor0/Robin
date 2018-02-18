@@ -23,6 +23,15 @@ namespace Robin
 {
 	public partial class GBRelease : IDBRelease
 	{
+		public LocalDB LocalDB => LocalDB.GiantBomb;
+
+		public string RegionTitle => Region.Title;
+
+		public string BoxFrontPath => FileLocation.Temp + ID + "GBR-BXF.jpg";
+
+		public string ScreenPath => FileLocation.Temp + ID + "GBR-SCR.jpg";
+
+
 		public static List<GBRelease> GetGames(Platform platform)
 		{
 			R.Data.GBReleases.Load();
@@ -30,22 +39,7 @@ namespace Robin
 			return R.Data.GBReleases.Where(x => x.GBPlatform_ID == platform.ID_GB).ToList();
 		}
 
-		public string RegionTitle
-		{
-			get { return Region.Title; }
-		}
-
-		public string BoxFrontPath
-		{
-			get { return FileLocation.Temp + ID + "GBR-BXF.jpg"; }
-		}
-
-        public string ScreenPath
-        {
-            get { return FileLocation.Temp + ID + "GBR-SCR.jpg"; }
-        }
-
-        public int ScrapeBoxFront()
+		public int ScrapeBoxFront()
 		{
 			using (WebClient webclient = new WebClient())
 			{
@@ -63,7 +57,7 @@ namespace Robin
 						else
 						{
 							Reporter.ReportInline("dammit!");
-                            return -1;
+							return -1;
 						}
 					}
 
@@ -78,83 +72,83 @@ namespace Robin
 					Reporter.Report("File already exists.");
 				}
 			}
-            return 0;
+			return 0;
 		}
 
-        public int ScrapeBoxBack()
-        {
-            throw new NotImplementedException();
-        }
+		public int ScrapeBoxBack()
+		{
+			throw new NotImplementedException();
+		}
 
-        public int ScrapeBox3D()
-        {
-            throw new NotImplementedException();
-        }
+		public int ScrapeBox3D()
+		{
+			throw new NotImplementedException();
+		}
 
-        public int ScrapeScreen()
-        {
-            using (WebClient webclient = new WebClient())
-            {
-                if (!File.Exists(ScreenPath))
-                {
-                    if (ScreenURL != null)
-                    {
-                        Reporter.Report("Getting screen shot for GBRelease " + Title + "...");
+		public int ScrapeScreen()
+		{
+			using (WebClient webclient = new WebClient())
+			{
+				if (!File.Exists(ScreenPath))
+				{
+					if (ScreenURL != null)
+					{
+						Reporter.Report("Getting screen shot for GBRelease " + Title + "...");
 
-                        if (webclient.DownloadFileFromDB(ScreenURL, ScreenPath))
-                        {
-                            Reporter.ReportInline("success!");
-                            OnPropertyChanged("ScreenPath");
-                        }
-                        else
-                        {
-                            Reporter.ReportInline("dammit!");
-                            return -1;
-                        }
-                    }
+						if (webclient.DownloadFileFromDB(ScreenURL, ScreenPath))
+						{
+							Reporter.ReportInline("success!");
+							OnPropertyChanged("ScreenPath");
+						}
+						else
+						{
+							Reporter.ReportInline("dammit!");
+							return -1;
+						}
+					}
 
-                    else
-                    {
-                        Reporter.Report("No screen shot URL exists.");
-                    }
-                }
+					else
+					{
+						Reporter.Report("No screen shot URL exists.");
+					}
+				}
 
-                else
-                {
-                    Reporter.Report("File already exists.");
-                }
-            }
-            return 0;
-        }
+				else
+				{
+					Reporter.Report("File already exists.");
+				}
+			}
+			return 0;
+		}
 
-        public int ScrapeLogo()
-        {
-            throw new NotImplementedException();
-        }
+		public int ScrapeLogo()
+		{
+			throw new NotImplementedException();
+		}
 
-        public int ScrapeBanner()
-        {
-            throw new NotImplementedException();
-        }
+		public int ScrapeBanner()
+		{
+			throw new NotImplementedException();
+		}
 
-        public int ScrapeCartFront()
-        {
-            throw new NotImplementedException();
-        }
+		public int ScrapeCartFront()
+		{
+			throw new NotImplementedException();
+		}
 
-        public int ScrapeCart3D()
-        {
-            throw new NotImplementedException();
-        }
+		public int ScrapeCart3D()
+		{
+			throw new NotImplementedException();
+		}
 
-        public int ScrapeMarquee()
-        {
-            throw new NotImplementedException();
-        }
+		public int ScrapeMarquee()
+		{
+			throw new NotImplementedException();
+		}
 
-        public int ScrapeControlPanel()
-        {
-            throw new NotImplementedException();
-        }
-    }
+		public int ScrapeControlPanel()
+		{
+			throw new NotImplementedException();
+		}
+	}
 }

@@ -409,6 +409,8 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 																Binding="{Binding Path=RegionTitle, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Date"
 																Binding="{Binding Path=Date, TargetNullValue=-, StringFormat='yyyy-mm'}" />
+											<DataGridTextColumn Header="Matched"
+																Binding="{Binding MatchedToSomething, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Players"
 																Binding="{Binding Players, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Developer"
@@ -417,9 +419,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 																Binding="{Binding Publisher, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Rating"
 																Binding="{Binding Rating, TargetNullValue=-}" />
-                                            <DataGridTextColumn Header="Overview"
-                                                                Binding="{Binding Overview, TargetNullValue=-}" />
-                                            <DataGridTextColumn Header="Genre"
+											<DataGridTextColumn Header="Genre"
 																Binding="{Binding Genre, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Unl"
 																Binding="{Binding Unlicensed, TargetNullValue=-}" />
@@ -429,10 +429,10 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 																Binding="{Binding VideoFormat, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Version"
 																Binding="{Binding Version, TargetNullValue=-}" />
-											<DataGridTextColumn Header="Matched"
-																Binding="{Binding MatchedToSomething, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Is Game"
 																Binding="{Binding IsGame, TargetNullValue=-}" />
+											<DataGridTextColumn Header="Overview"
+																Binding="{Binding Overview, TargetNullValue=-}" />
 										</DataGrid.Columns>
 									</DataGrid>
 								</DataTemplate>

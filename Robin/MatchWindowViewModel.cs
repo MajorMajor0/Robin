@@ -30,7 +30,42 @@ namespace Robin
 	{
 		Release release;
 
-		Platform platform => release.Platform;
+		public Release Release
+		{
+			get
+			{
+				return release;
+			}
+
+			set
+			{
+				release = value;
+				OnPropertyChanged("Release");
+				OnPropertyChanged("Index");
+			}
+		}
+
+
+		Platform platform => Release.Platform;
+
+		public List<Release> UnmatchedReleases => platform.Releases.Where(x => !x.MatchedToSomething).ToList();
+
+		int index = 0;
+		public int Index
+		{
+			get { return index; }
+
+			set
+			{
+				if (value != index)
+				{
+					index = value;
+					OnPropertyChanged("Index");
+				}
+			}
+
+		}
+
 
 		string searchTerm;
 		public string SearchTerm
@@ -45,102 +80,85 @@ namespace Robin
 				if (searchTerm != value)
 				{
 					searchTerm = value;
-					Search();
+
+					if (searchTerm.Length != 1)
+					{
+						OnPropertyChanged("IDBReleases");
+					}
+					OnPropertyChanged("SearchTerm");
 				}
 			}
 		}
 
-		public string Title => release.Title;
+		public IDBRelease SelectedIDBRelease { get; set; }
 
-		public string SHA1 => release.Rom.SHA1;
+		public IEnumerable<IDBRelease> IDBReleases => GBReleases.Concat(GDBReleases).Concat(LBReleases);
 
-		public string Region => release.RegionTitle;
-
-		public bool GBFocused { get; set; }
-		public GBRelease SelectedGBRelease { get; set; }
-		public IEnumerable<GBRelease> GBReleases
+		public IEnumerable<IDBRelease> GBReleases
 		{
 			get
 			{
-				if (platform.GBPlatform != null && searchTerm != null)
+				if (platform.GBPlatform != null && !string.IsNullOrEmpty(searchTerm))
 				{
 					return platform.GBPlatform.GBReleases.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
 				}
-				return null;
+				return Enumerable.Empty<IDBRelease>();
 			}
 		}
 
-		public bool GDBFocused { get; set; }
-		public GDBRelease SelectedGDBRelease { get; set; }
-		public IEnumerable<GDBRelease> GDBReleases
+		public IEnumerable<IDBRelease> GDBReleases
 		{
 			get
 			{
-				if (platform.GDBPlatform != null && searchTerm != null)
+				if (platform.GDBPlatform != null && !string.IsNullOrEmpty(searchTerm))
 				{
 					return platform.GDBPlatform.GDBReleases.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
 				}
-				return null;
+				return Enumerable.Empty<IDBRelease>();
 			}
 		}
 
-		public bool LBFocused { get; set; }
-		public LBRelease SelectedLBRelease { get; set; }
-		public IEnumerable<LBRelease> LBReleases
+		public IEnumerable<IDBRelease> LBReleases
 		{
 			get
 			{
-				if (platform.LBPlatform != null && searchTerm != null)
+				if (platform.LBPlatform != null && !string.IsNullOrEmpty(searchTerm))
 				{
 					return platform.LBPlatform.LBReleases.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
 				}
-				return null;
+				return Enumerable.Empty<IDBRelease>();
 			}
 		}
 
-		public bool OVGFocused { get; set; }
-		public OVGRelease SelectedOVGRelease { get; set; }
-		public IEnumerable<OVGRelease> OVGReleases
+		public IEnumerable<IDBRelease> OVGReleases
 		{
 			get
 			{
-				if (platform.OVGPlatform != null && searchTerm != null)
+				if (platform.OVGPlatform != null && !string.IsNullOrEmpty(searchTerm))
 				{
 					return platform.OVGPlatform.OVGReleases.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
 				}
-				return null;
+				return Enumerable.Empty<IDBRelease>();
 			}
 		}
 
-		public long? ID_GB => release.ID_GB;
+		public long? ID_GB => Release.ID_GB;
 
-		public long? ID_GDB => release.ID_GDB;
+		public long? ID_GDB => Release.ID_GDB;
 
-		public long? ID_LB => release.ID_LB;
+		public long? ID_LB => Release.ID_LB;
 
-		public long? ID_OVG => release.ID_OVG;
+		public long? ID_OVG => Release.ID_OVG;
+
 
 		public MatchWindowViewModel(Release release)
 		{
-			this.release = release;
-			MatchGBCommand = new Command(MatchGB, MatchGBCanExecute, "Match GB", "Match the selected GiantBomb release to " + release.Title + ".");
-			MatchGDBCommand = new Command(MatchGDB, MatchGDBCanExecute, "Match GDB", "Match the selected Games DB release to " + release.Title + ".");
-			MatchLBCommand = new Command(MatchLB, MatchLBCanExecute, "Match LB", "Match the selected Launchbox release to " + release.Title + ".");
-			MatchOVGCommand = new Command(MatchOVG, MatchOVGCanExecute, "Match OVG", "Match the selected Open VDB release to " + release.Title + ".");
-			ShowBoxCommand = new Command(ShowBox, "Show box art", "SHow box front art for this selection.");
+			this.Release = release;
+			MatchCommand = new Command(Match, MatchCanExecute, "Match", "Match the selected release to " + release.Title + ".");
+			ShowBoxCommand = new Command(ShowBox, "Show box art", "Show box front art for this selection.");
+			NextCommand = new Command(Next, NextCanExecute, @">", "Move to the next unmatched release in this platform.");
+			PreviousCommand = new Command(Previous, PreviousCanExecute, @"<", "Move to the previous unmatched release in this platform.");
 		}
-
-		public void Search()
-		{
-			if (searchTerm.Length > 1)
-			{
-				OnPropertyChanged("GBReleases");
-				OnPropertyChanged("GDBReleases");
-				OnPropertyChanged("LBReleases");
-				OnPropertyChanged("OVGReleases");
-			}
-		}
-
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
@@ -150,64 +168,92 @@ namespace Robin
 		}
 
 
-		public Command MatchGBCommand { get; set; }
+		public Command MatchCommand { get; set; }
 
-		void MatchGB()
+		void Match()
 		{
-			release.ID_GB = SelectedGBRelease?.ID;
-			Reporter.Report(release.Title + " matched to GB release" + SelectedGBRelease?.ID + ", " + SelectedGBRelease?.Title + ".");
+			LocalDB db = SelectedIDBRelease.LocalDB;
+			switch (db)
+			{
+				case LocalDB.GamesDB:
+					Release.ID_GDB = SelectedIDBRelease?.ID;
+					break;
+				case LocalDB.GiantBomb:
+					Release.ID_GB = SelectedIDBRelease?.ID;
+					break;
+				case LocalDB.OpenVGDB:
+					Release.ID_OVG = SelectedIDBRelease?.ID;
+					break;
+				case LocalDB.LaunchBox:
+					Release.ID_LB = SelectedIDBRelease?.ID;
+					break;
+				default:
+					break;
+			}
+			Reporter.Report(Release.Title + " matched to " + db.Description() + " release " + SelectedIDBRelease?.ID + ", " + SelectedIDBRelease?.Title + ".");
+			OnPropertyChanged("IDBReleases");
+			OnPropertyChanged("UnmatchedReleases");
 		}
 
-		bool MatchGBCanExecute()
+		bool MatchCanExecute()
 		{
-			return SelectedGBRelease != null && GBFocused;
-		}
-
-		public Command MatchGDBCommand { get; set; }
-
-		void MatchGDB()
-		{
-			release.ID_GDB = SelectedGDBRelease?.ID;
-			Reporter.Report(release.Title + " matched to GDB release" + SelectedGDBRelease?.ID + ", " + SelectedGDBRelease?.Title + ".");
-		}
-
-		bool MatchGDBCanExecute()
-		{
-			return SelectedGDBRelease != null && GDBFocused;
-		}
-
-		public Command MatchLBCommand { get; set; }
-
-		void MatchLB()
-		{
-			release.ID_LB = SelectedLBRelease?.ID;
-			Reporter.Report(release.Title + " matched to LB release" + SelectedLBRelease?.ID + ", " + SelectedLBRelease?.Title + ".");
-		}
-
-		bool MatchLBCanExecute()
-		{
-			return SelectedLBRelease != null && LBFocused;
-		}
-
-		public Command MatchOVGCommand { get; set; }
-
-		void MatchOVG()
-		{
-			release.ID_OVG = SelectedOVGRelease?.ID;
-			Reporter.Report(release.Title + " matched to OVG release" + SelectedOVGRelease?.ID + ", " + SelectedOVGRelease?.Title + ".");
-		}
-		bool MatchOVGCanExecute()
-		{
-			return SelectedOVGRelease != null && OVGFocused;
+			return SelectedIDBRelease != null;
 		}
 
 		public Command ShowBoxCommand { get; set; }
 
 		async void ShowBox()
 		{
-			//await Task.Run(() => { release.ScrapeBoxFront(); });
-			await Task.Run(() => { });
+			await Task.Run(() =>
+			{
+				SelectedIDBRelease.ScrapeBoxFront();
+			});
 		}
 
+		public Command NextCommand { get; set; }
+
+		bool NextCanExecute()
+		{
+			return UnmatchedReleases.Any();
+		}
+
+		void Next()
+		{
+			if (Index < UnmatchedReleases.Count - 1)
+			{
+				Index++;
+			}
+
+			else
+			{
+				Index = 0;
+			}
+
+			Release = UnmatchedReleases[Index];
+			SearchTerm = string.Empty;
+		}
+
+		void Previous()
+		{
+			if (Index > 0)
+			{
+				Index--;
+			}
+
+			else
+			{
+				Index = UnmatchedReleases.Count - 1;
+			}
+
+			Release = UnmatchedReleases[Index];
+			SearchTerm = string.Empty;
+		}
+
+		bool PreviousCanExecute()
+		{
+			return UnmatchedReleases.Any();
+		}
+
+		public Command PreviousCommand { get; set; }
 	}
 }

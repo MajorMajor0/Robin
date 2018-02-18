@@ -40,8 +40,6 @@ namespace Robin
 			Region = region;
 		}
 
-		bool _preferred;
-
 		public bool IsBeaten
 		{
 			get { return Game.IsBeaten; }
@@ -71,6 +69,8 @@ namespace Robin
 			get { return Game.Unlicensed; }
 			set { Game.Unlicensed = value; }
 		}
+
+		public LocalDB LocalDB => LocalDB.Robin;
 
 		public string Overview
 		{
@@ -108,6 +108,7 @@ namespace Robin
 			set { Game.Genre = value; }
 		}
 
+
 		public decimal? Rating
 		{
 			get { return Game.Rating; }
@@ -115,11 +116,12 @@ namespace Robin
 		}
 
 
+		bool preferred;
 		public bool Preferred
 		{
 			get
 			{
-				return _preferred;
+				return preferred;
 			}
 			set
 			{
@@ -130,7 +132,7 @@ namespace Robin
 						release.Preferred = false;
 					}
 				}
-				_preferred = value;
+				preferred = value;
 				OnPropertyChanged("Preferred");
 			}
 		}
@@ -146,7 +148,7 @@ namespace Robin
 		public bool HasEmulator => Platform.Emulators.Any(x => x.Included);
 
 		public List<string> GenreList => Game.GenreList;
-		
+
 		public string WhyCantIPlay
 		{
 			get
