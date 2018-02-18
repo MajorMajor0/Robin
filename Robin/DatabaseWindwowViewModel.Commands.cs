@@ -148,8 +148,7 @@ namespace Robin
 
 		bool AcceptCanExecute()
 		{
-			return true;
-			//return DatabaseGrid.Content != null && DatabaseGrid.Content.GetType() == typeof(Compares);
+			return SelectedComparisonResult != null;
 		}
 
 

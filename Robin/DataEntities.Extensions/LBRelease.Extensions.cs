@@ -21,6 +21,7 @@ namespace Robin
 {
 	public partial class LBRelease : IDBRelease
 	{
+		public LocalDB LocalDB => LocalDB.LaunchBox;
 
 		public string RegionTitle => Region.Title;
 
@@ -34,7 +35,6 @@ namespace Robin
 
 		public string Players => LBGame.Players;
 
-
 		public string BannerPath => FileLocation.Temp + "LBR-" + ID + "-BNR.jpg";
 		public string Box3DPath => FileLocation.Temp + "LBR-" + ID + "-BX3.jpg";
 		public string BoxBackPath => FileLocation.Temp + "LBR-" + ID + "-BXB.jpg";
@@ -46,7 +46,6 @@ namespace Robin
 		public string LogoPath => FileLocation.Temp + "LBR-" + ID + "-LGO.jpg";
 		public string MarqueePath => FileLocation.Temp + "LBR-" + ID + "-MAR.jpg";
 		public string ScreenPath => FileLocation.Temp + "LBR-" + ID + "-SCR.jpg";
-
 
 		public string BannerURL => GetURL("Banner");
 		public string Box3DURL => GetURL("Box - 3D");
@@ -60,7 +59,6 @@ namespace Robin
 		public string LogoURL => GetURL("Clear Logo");
 		public string MarqueeURL => GetURL("Arcade - Marquee");
 		public string ScreenURL => GetURL("Screenshot - Gameplay");
-
 
 		string GetURL(string type)
 		{
@@ -76,7 +74,6 @@ namespace Robin
 				return null;
 			}
 		}
-
 
 		public int ScrapeBanner()
 		{
@@ -258,7 +255,6 @@ namespace Robin
 			return 0;
 		}
 
-
 		public int ScrapeCartFront()
 		{
 			using (WebClient webclient = new WebClient())
@@ -294,8 +290,6 @@ namespace Robin
 			}
 			return 0;
 		}
-
-
 
 		public int ScrapeControlPanel()
 		{
@@ -440,6 +434,5 @@ namespace Robin
 			}
 			return 0;
 		}
-
 	}
 }

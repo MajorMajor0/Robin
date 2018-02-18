@@ -42,6 +42,7 @@ namespace Robin
 		string Title { get; }
 		string Overview { get; }
 		string RegionTitle { get; }
+		LocalDB LocalDB { get; }
 
 
 		//string BannerURL { get; }
@@ -128,11 +129,11 @@ namespace Robin
 	{
 		[Description("Unknown")]
 		Unknown = 0,
-		[Description("GamesDB")]
+		[Description("Games DB")]
 		GamesDB = 1,
 		[Description("GiantBomb")]
 		GiantBomb = 2,
-		[Description("OpenVGDB")]
+		[Description("Open VGDB")]
 		OpenVGDB = 3,
 		[Description("LaunchBox")]
 		LaunchBox = 4,

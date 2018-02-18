@@ -221,7 +221,7 @@ namespace Robin
 					}
 				}
 
-				lbGame.Title = gameElement.Element("Name")?.Value;
+				lbGame.Title = title;
 				lbGame.Date = DateTimeRoutines.SafeGetDateTime(gameElement.SafeGetA("ReleaseDate") ?? gameElement.SafeGetA("ReleaseYear") + @"-01-01 00:00:00");
 
 				lbGame.Overview = gameElement.Element("Overview")?.Value;

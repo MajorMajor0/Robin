@@ -26,6 +26,8 @@ using System.Text.RegularExpressions;
 using System.Windows.Media.Imaging;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.ComponentModel;
+using System.Reflection;
 
 namespace Robin
 {
@@ -467,6 +469,15 @@ namespace Robin
 				downloadtext = "Unknown web exception.";
 				return false;
 			}
+		}
+
+		public static string Description(this Enum enm)
+		{
+			var type = enm.GetType();
+			var memInfo = type.GetMember(enm.ToString());
+			var attribute = memInfo[0].GetCustomAttribute(typeof(DescriptionAttribute), false);
+			var description = ((DescriptionAttribute)attribute).Description;
+			return description;
 		}
 	}
 }
