@@ -95,12 +95,14 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 				<Border x:Name="CommparisonResultsBorder"
 						Style="{StaticResource CellStyle}">
-					<StackPanel Background="Transparent">
+					<DockPanel Background="Transparent" LastChildFill="True">
 						<TextBlock Text="Comparison Results"
-								   Style="{StaticResource Heading0}" />
+								   Style="{StaticResource Heading0}" 
+								   DockPanel.Dock="Top"/>
 
 						<ListBox  x:Name="ComparisonResultsList"
 								  Background="Transparent"
+								  DockPanel.Dock="Top"
 								  ScrollViewer.CanContentScroll="True"
 								  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
 								  ScrollViewer.VerticalScrollBarVisibility="Hidden"
@@ -114,7 +116,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 								</DataTemplate>
 							</ListBox.ItemTemplate>
 						</ListBox>
-					</StackPanel>
+					</DockPanel>
 				</Border>
 
 				<Border x:Name="PlatformListBorder"

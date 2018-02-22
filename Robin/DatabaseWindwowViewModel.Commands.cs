@@ -169,7 +169,6 @@ namespace Robin
 
 		void MatchWindow()
 		{
-
 			MatchWindow matchWindow = new MatchWindow(SelectedRelease as Release);
 		}
 
@@ -197,8 +196,8 @@ namespace Robin
 			{
 				foreach (IDBPlatform idbPlatform in IDBPlatforms)
 				{
-					SelectedIDB.CachePlatformReleases(idbPlatform.RPlatform);
 					SelectedIDB.CachePlatformData(idbPlatform.RPlatform);
+					SelectedIDB.CachePlatformReleases(idbPlatform.RPlatform);			
 					idbPlatform.CacheDate = DateTime.Now;
 				}
 
