@@ -16,12 +16,6 @@ namespace Robin
     
     public partial class OVGRelease : INotifyPropertyChanged
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public OVGRelease()
-        {
-    		Releases = new List<Release>();
-        }
-    
         private long _iD;
     	public long ID 
     	{ 
@@ -172,8 +166,6 @@ namespace Robin
     
         public virtual OVGPlatform OVGPlatform { get; set; }
         public virtual Region Region { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual List<Release> Releases { get; set; }
      
         public event PropertyChangedEventHandler PropertyChanged;
     

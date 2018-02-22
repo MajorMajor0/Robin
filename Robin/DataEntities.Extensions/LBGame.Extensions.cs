@@ -20,64 +20,10 @@ namespace Robin
 {
 	public partial class LBGame
 	{
-		//public static List<LBGame> GetGames(Platform platform)
-		//{
-		//    R.Data.LBGames.Load();
-		//    R.Data.LBGames.Include(x => x.LBImages).Load();
-		//    R.Data.Regions.Load();
-		//    return R.Data.LBGames.Where(x => x.LBPlatform_ID == platform.ID_LB).ToList();
-		//}
+		public string RegionTitle { get; set; }
 
-		public string RegionTitle
-		{
-			get; set;
-		}
+		public Region Region => null;
 
-		public Region Region { get { return null; } }
-
-		//public string Regions
-		//{
-		//	get
-		//	{
-		//		if (LBImages != null)
-		//		{
-		//			return string.Join(", ", LBImages.Select(x => x.Region.Title).Distinct());
-		//		}
-		//		return null;
-		//	}
-		//}
-
-		public List<LBImage> LBImages => LBReleases.SelectMany(x => x.LBImages).ToList();
-
-
-		[Conditional("DEBUG")]
-
-		public void SetLBReleasePlatform()
-		{
-			foreach (LBRelease lbRelease in LBReleases)
-			{
-				lbRelease.LBPlatform = LBPlatform;
-			}
-		}
-
-		public void CreateReleases()
-		{
-			List<LBImage> lbImages = LBImages.Where(x => x.LBRelease_ID == null).ToList();
-
-			for (int i = 0; i < lbImages.Count; i++)
-			{
-				LBRelease lbRelease = LBReleases.FirstOrDefault(x => x.Region_ID == lbImages[i].Region_ID);
-
-				if (lbRelease == null)
-				{
-					lbRelease = new LBRelease();
-					LBReleases.Add(lbRelease);
-					lbRelease.Region_ID = lbImages[i].Region_ID;
-					lbRelease.LBPlatform = LBPlatform;
-				}
-
-				lbRelease.LBImages.Add(lbImages[i]);
-			}
-		}
+		public IEnumerable<LBImage> LBImages => LBReleases.SelectMany(x => x.LBImages);
 	}
 }

@@ -203,6 +203,13 @@ namespace Robin
     		set { _cacheDate = value; OnPropertyChanged("CacheDate"); } 
     	}
     
+        private System.DateTime _lastDate;
+    	public System.DateTime LastDate 
+    	{ 
+    		get { return _lastDate; } 
+    		set { _lastDate = value; OnPropertyChanged("LastDate"); } 
+    	}
+    
     
         public virtual Emulator Emulator { get; set; }
         public virtual GBPlatform GBPlatform { get; set; }

@@ -13,13 +13,14 @@
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Robin
 {
 	public partial class LBPlatform : IDBPlatform
 	{
-		public IList Releases => LBReleases;
+		public IList Releases => LBReleases.ToList<LBRelease>();
 
 		public IList Games => LBGames;
 
@@ -30,6 +31,8 @@ namespace Robin
 				return R.Data.Platforms.FirstOrDefault(x => x.ID_LB == ID);
 			}
 		}
+
+		public IEnumerable<LBRelease> LBReleases => LBGames.SelectMany(x => x.LBReleases);
 
 		public int MatchedReleaseCount => RPlatform.MatchedToLaunchBox;
 

@@ -31,6 +31,15 @@ namespace Robin
 	{
 		bool platformsCached;
 
+		bool disposed;
+
+		List<XElement> gameElements;
+
+		List<XElement> releaseElements;
+
+		List<XElement> imageElements;
+
+
 		public string Title => "LaunchBox";
 
 		public LocalDB DB => LocalDB.LaunchBox;
@@ -45,7 +54,6 @@ namespace Robin
 
 		static string LaunchBoxDataZipFile = FileLocation.Data + "LBdata.zip";
 
-		bool disposed;
 
 		public Launchbox()
 		{
@@ -79,11 +87,26 @@ namespace Robin
 			}
 
 			Reporter.Tic("Extracting info from zip file...");
-			using (ZipArchive archive = ZipFile.Open(LaunchBoxDataZipFile, ZipArchiveMode.Read))
-			using (var dattext = archive.GetEntry("Metadata.xml").Open())
+			try
 			{
-				launchboxFile = XDocument.Load(dattext);
+				using (ZipArchive archive = ZipFile.Open(LaunchBoxDataZipFile, ZipArchiveMode.Read))
+				using (var dattext = archive.GetEntry("Metadata.xml").Open())
+				{
+					launchboxFile = XDocument.Load(dattext);
+				}
 			}
+
+			catch(System.IO.InvalidDataException)
+			{
+				Reporter.Report("Error in LaunchBox Metadata file.");
+				File.Delete(LaunchBoxDataZipFile);
+				launchboxFile = null;
+			}
+
+			gameElements = launchboxFile.Root.Elements("Game").ToList();
+			releaseElements = launchboxFile.Root.Elements("GameAlternateName").ToList();
+			imageElements = launchboxFile.Root.Elements("GameImage").ToList();
+
 			Reporter.Toc();
 		}
 
@@ -159,68 +182,59 @@ namespace Robin
 			}
 		}
 
-		public void CachePlatformReleases(Platform platform)
+
+		public void CachePlatformGames(Platform platform)
 		{
-
-			LBPlatform lbPlatform = platform.LBPlatform;
-
 			if (launchboxFile == null)
 			{
 				GetLaunchBoxFile();
 			}
 
-			Stopwatch Watch = Stopwatch.StartNew();
+			List<XElement> platformGameElements = launchboxFile.Root.Elements("Game").Where(x => x.Element("Platform").Value == platform.LBPlatform.Title).ToList();
 
-			List<XElement> gameElements = launchboxFile.Root.Elements("Game").Where(x => x.Element("Platform").Value == lbPlatform.Title).ToList();
-			List<XElement> imageElements = launchboxFile.Root.Elements("GameImage").ToList();
-			List<XElement> releaseElements = launchboxFile.Root.Elements("GameAlternateName").ToList();
-			List<XElement> gameImageElements;
-			List<XElement> gameReleaseElements;
-
-			int gameCount = gameElements.Count;
-			Reporter.Report("Found " + gameCount + " " + lbPlatform.Title + " games in LaunchBox file.");
-			Reporter.Tic("Scanning information...");
+			int gameCount = platformGameElements.Count;
+			Reporter.Report("Found " + gameCount + " " + platform.LBPlatform.Title + " games in LaunchBox file.");
 			int j = 0;
-			foreach (XElement gameElement in gameElements)
+
+			foreach (XElement gameElement in platformGameElements)
 			{
+				// Reporting only
 				if ((gameCount / 10) != 0 && ++j % (gameCount / 10) == 0)
 				{
-					Reporter.Report("  Working " + j + " / " + gameCount + " " + lbPlatform.Title + " games.");
+					Reporter.Report("  Working " + j + " / " + gameCount + " " + platform.LBPlatform.Title + " games in the LaunchBox database.");
 				}
 
 				string title = gameElement.Element("Name")?.Value;
+				int id;
 
-				// Don't create this ganme if the title is null
-				if (string.IsNullOrEmpty(title))
+				// Don't create this game if the title or database ID is null
+				if (string.IsNullOrEmpty(title) || !int.TryParse(gameElement.SafeGetA("DatabaseID"), out id))
 				{
 					continue;
 				}
 
-				int id = int.Parse(gameElement.SafeGetA("DatabaseID"));
-
+				// Check if the game alredy exists in the local cache
 				LBGame lbGame = R.Data.LBGames.Local.FirstOrDefault(x => x.ID == id);
-
 				if (lbGame == null)
 				{
 					lbGame = new LBGame();
 					lbGame.ID = id;
-					lbPlatform.LBGames.Add(lbGame);
-
+					platform.LBPlatform.LBGames.Add(lbGame);
 					Debug.WriteLine("New game: " + lbGame.Title);
 				}
 
-				// If a release has changed platforms, catch it and zero out match
-				if (lbGame.LBPlatform_ID != lbPlatform.ID)
+				// If a game has changed platforms, catch it and zero out match
+				if (lbGame.LBPlatform_ID != platform.LBPlatform.ID)
 				{
-					//lbGame.LBPlatform_ID = lbPlatform.ID;
-					lbGame.LBPlatform = lbPlatform;
-					Release release = R.Data.Releases.Local.FirstOrDefault(x => x.ID_LB == lbGame.ID); // TODO: local?
+					lbGame.LBPlatform = platform.LBPlatform;
+					Release release = R.Data.Releases.Local.FirstOrDefault(x => x.ID_LB == lbGame.ID);
 					if (release != null)
 					{
 						release.ID_LB = null;
 					}
 				}
 
+				// Set or overwrite game properties
 				lbGame.Title = title;
 				lbGame.Date = DateTimeRoutines.SafeGetDateTime(gameElement.SafeGetA("ReleaseDate") ?? gameElement.SafeGetA("ReleaseYear") + @"-01-01 00:00:00");
 
@@ -232,109 +246,143 @@ namespace Robin
 				lbGame.VideoURL = gameElement.Element("VideoURL")?.Value;
 				lbGame.WikiURL = gameElement.Element("WikipediaURL")?.Value;
 				lbGame.Players = gameElement.Element("MaxPlayers")?.Value;
+			}
+		}
 
-				//lbGame.Overview = gameElement.SafeGetA("Overview");
-				//lbGame.Genres = gameElement.SafeGetA("Genres");
-				//lbGame.Developer = gameElement.SafeGetA("Developer");
+		public void CachePlatformReleases(Platform platform)
+		{
+			CachePlatformGames(platform);
 
-				//lbGame.Publisher = gameElement.SafeGetA("Publisher");
-				//lbGame.VideoURL = gameElement.SafeGetA("VideoURL");
-				//lbGame.WikiURL = gameElement.SafeGetA("WikipediaURL");
-				//lbGame.Players = gameElement.SafeGetA("MaxPlayers");
+			if (launchboxFile == null)
+			{
+				GetLaunchBoxFile();
+			}
 
-				gameImageElements = imageElements.Where(x => x.Element("DatabaseID").Value == lbGame.ID.ToString()).ToList();
+			Reporter.Report("Caching " + platform.LBPlatform.Title + " releasses.");
 
-				// Cache images for this game from the launchbox file
-				foreach (XElement imageElement in gameImageElements)
+			List<XElement> gameReleaseElements;
+			int j = 0;
+			int gameCount = platform.LBPlatform.LBGames.Count;
+
+			foreach (LBGame lbGame in platform.LBPlatform.LBGames)
+			{
+				long regionID;
+				string regionText;
+
+				// Reporting only
+				if ((gameCount / 10) != 0 && ++j % (gameCount / 10) == 0)
 				{
-					string imageElementFileName = imageElement.Element("FileName").Value;
-
-					LBImage lbImage = R.Data.LBImages.Local.FirstOrDefault(x => x.FileName == imageElementFileName); // TODO: local?
-
-					if (lbImage == null)
-					{
-						lbImage = new LBImage();
-						lbImage.FileName = imageElement.Element("FileName").Value;
-						lbGame.LBImages.Add(lbImage);
-					}
-
-					lbImage.Type = imageElement.Element("Type").Value;
-					lbImage.LBRegion = imageElement.SafeGetA("Region") ?? "United States";
-
-					if (RegionDictionary.TryGetValue(lbImage.LBRegion, out int regionID))
-					{
-						lbImage.Region_ID = regionID;
-					}
-
-					else
-					{
-						lbImage.Region_ID = 0;
-						Reporter.Report("Couldn't find " + lbImage.LBRegion + " in LB image dictionary.");
-					}
+					Reporter.Report("  Working " + j + " / " + gameCount + " " + platform.LBPlatform.Title + " games.");
 				}
-
-				// Create any new releases from
-				lbGame.CreateReleases();
 
 				gameReleaseElements = releaseElements.Where(x => x.Element("DatabaseID").Value == lbGame.ID.ToString()).ToList();
 
 				// Cache releases for this game from the launchbox file
 				foreach (XElement releaseElement in gameReleaseElements)
 				{
-					Region releaseElementRegion;
-					if (releaseElement.Element("Region") != null)
+					regionText = releaseElement.Element("Region")?.Value;
+
+					if (regionText == null)
 					{
-						string releaseElementRegionText = releaseElement.Element("Region").Value;
-						releaseElementRegion = R.Data.Regions.Local.FirstOrDefault(x => x.Launchbox == releaseElementRegionText);
+						regionID = CONSTANTS.UNKNOWN_REGION_ID;
 					}
 
-					else
+					else if (!RegionDictionary.TryGetValue(regionText, out regionID))
 					{
-						releaseElementRegion = R.Data.Regions.Local.FirstOrDefault(x => x.ID == CONSTANTS.UNKNOWN_REGION_ID);
+						regionID = CONSTANTS.UNKNOWN_REGION_ID;
+						Reporter.Report("Couldn't find " + regionText + " in LB image dictionary.");
 					}
 
-					LBRelease lbRelease = lbGame.LBReleases.FirstOrDefault(x => x.Region == releaseElementRegion);
+					LBRelease lbRelease = lbGame.LBReleases.FirstOrDefault(x => x.Region_ID == regionID);
 
 					if (lbRelease == null)
 					{
 						lbRelease = new LBRelease();
 						lbGame.LBReleases.Add(lbRelease);
-						Debug.WriteLine("New release");
-					}
-
-					else
-					{
-						Debug.WriteLine("Old release");
+						lbRelease.Region_ID = regionID;
 					}
 
 					lbRelease.Title = releaseElement.Element("AlternateName").Value;
 				}
 			}
+			CachePlatformImages(platform);
 		}
 
-		public void CachePlatformGames(Platform platform)
+		public void CachePlatformImages(Platform platform)
 		{
-			// TODO: split up cache platform games and cache platform releases
-			throw new NotImplementedException();
+			if (launchboxFile == null)
+			{
+				GetLaunchBoxFile();
+			}
+
+			Reporter.Report("Caching " + platform.LBPlatform.Title + " images.");
+			List<XElement> gameImageElements;
+			int j = 0;
+			int gameCount = platform.LBPlatform.LBGames.Count;
+
+			foreach (LBGame lbGame in platform.LBPlatform.LBGames)
+			{
+				long regionID;
+				string regionText;
+				string fileName;
+
+				// Reporting only
+				if ((gameCount / 10) != 0 && ++j % (gameCount / 10) == 0)
+				{
+					Reporter.Report("  Working " + j + " / " + gameCount + " " + platform.LBPlatform.Title + " games in the local cache.");
+				}
+
+				gameImageElements = imageElements.Where(x => x.Element("DatabaseID")?.Value == lbGame.ID.ToString()).ToList();
+
+				// Cache images for this game from the launchbox file
+				foreach (XElement imageElement in gameImageElements)
+				{
+
+					fileName = imageElement.Element("FileName").Value;
+
+					// Check if image already exists in the local cache
+					LBImage lbImage = R.Data.LBImages.Local.FirstOrDefault(x => x.FileName == fileName);
+
+					if (lbImage == null)
+					{
+						lbImage = new LBImage();
+						lbImage.FileName = fileName;
+					}
+
+					lbImage.Type = imageElement.Element("Type")?.Value;
+
+					regionText = imageElement.Element("Region")?.Value;
+					if (regionText == null)
+					{
+						regionID = CONSTANTS.UNKNOWN_REGION_ID;
+					}
+
+					else if (!RegionDictionary.TryGetValue(regionText, out regionID))
+					{
+						regionID = CONSTANTS.UNKNOWN_REGION_ID;
+						Reporter.Report("Couldn't find " + regionText + " in LB image dictionary.");
+					}
+
+
+					// Create a release to hold the image or attach it to it
+					LBRelease lbRelease = lbGame.LBReleases.FirstOrDefault(x => x.Region_ID == regionID);
+					if (lbRelease == null)
+					{
+						lbRelease = new LBRelease();
+						lbGame.LBReleases.Add(lbRelease);
+						lbRelease.Region_ID = regionID;
+						lbRelease.Title = lbGame.Title;
+					}
+
+					lbRelease.LBImages.Add(lbImage);
+				}
+			}
 		}
 
 		public void CachePlatforms()
 		{
 			CachePlatformData(null);
 		}
-
-#if DEBUG
-		public async Task CreateReleasesAsync()
-		{
-			await Task.Run(() =>
-			{
-				foreach (LBGame lbGame in R.Data.LBGames)
-				{
-					lbGame.CreateReleases();
-				}
-			});
-		}
-#endif
 
 		public void ReportUpdates(bool detect)
 		{
@@ -369,7 +417,7 @@ namespace Robin
 			Reporter.Report("LBGames added: " + lbGameAddCount + ", LBgames updated: " + lbGameModCount);
 		}
 
-		public static Dictionary<string, int> RegionDictionary = new Dictionary<string, int>
+		public static Dictionary<string, long> RegionDictionary = new Dictionary<string, long>
 		{
 			{ "Asia", 1 },
 			{ "Australia", 2 },
