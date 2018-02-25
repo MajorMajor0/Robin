@@ -453,7 +453,7 @@ namespace Robin
 				_filteredCollection = _filteredCollection.Where(x => x.Unlicensed == UnlicensedFilter.Value);
 			}
 
-			if (Settings.DisplayAdult && CrapFilter.IsSet)
+			if (Settings.DisplayCrap && CrapFilter.IsSet)
 			{
 				_filteredCollection = _filteredCollection.Where(x => x.IsCrap == CrapFilter.Value);
 			}

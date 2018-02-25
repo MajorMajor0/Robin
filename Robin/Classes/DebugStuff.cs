@@ -16,6 +16,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -30,7 +31,15 @@ namespace Robin
 		public async static Task MainWindowBonusAsync()
 		{
 			Reporter.Report("BONUS!");
-			await Task.Run(() => MoveToGame());
+			await Task.Run(() =>
+			{
+				Directory.CreateDirectory(FileLocation.Art.BoxFrontThumbs);
+				foreach (Release release in R.Data.Releases.Local)
+				{
+					release.CreateThumbnail();
+				}
+			});
+
 			Reporter.Report("Finished");
 		}
 
