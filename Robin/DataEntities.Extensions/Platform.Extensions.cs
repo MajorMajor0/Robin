@@ -174,6 +174,7 @@ namespace Robin
 				Reporter.Report("  Console...");
 				webclient.DownloadFileFromDB(ConsoleURL, ConsolePath);
 				OnPropertyChanged("ConsolePath");
+				OnPropertyChanged("MainDisplay");
 				Reporter.ReportInline(Watch.Elapsed.ToString("ss") + " s");
 			}
 			Watch.Restart();
@@ -435,59 +436,60 @@ namespace Robin
 
 		public void Play()
 		{
+			// TODO: Launch prefered emulator
 			throw new NotImplementedException();
 		}
 
-		//public void CopyOverview()
-		//{
+		public void CopyOverview()
+		{
 
-		//	if (ID_GDB != null)
-		//	{
-		//		Overview = GDBPlatform.Overview;
-		//	}
+			if (ID_GDB != null)
+			{
+				Overview = GDBPlatform.Overview;
+			}
 
-		//	if ((Overview == null || Overview.Length < 20) && ID_GB != null)
-		//	{
-		//		Overview = GBPlatform.Deck;
-		//	}
+			if ((Overview == null || Overview.Length < 20) && ID_GB != null)
+			{
+				Overview = GBPlatform.Deck;
+			}
 
-		//}
+		}
 
-		//public void CopyDeveloper()
-		//{
-		//	if (ID_LB != null)
-		//	{
-		//		Developer = LBPlatform.Developer;
-		//	}
+		public void CopyDeveloper()
+		{
+			if (ID_LB != null)
+			{
+				Developer = LBPlatform.Developer;
+			}
 
-		//	if ((Developer == null || Developer.Length < 2) && ID_GDB != null)
-		//	{
-		//		Developer = GDBPlatform.Developer;
-		//	}
-		//}
+			if ((Developer == null || Developer.Length < 2) && ID_GDB != null)
+			{
+				Developer = GDBPlatform.Developer;
+			}
+		}
 
-		//public void CopyManufacturer()
-		//{
-		//	if (ID_LB != null)
-		//	{
-		//		Manufacturer = LBPlatform.Manufacturer;
-		//	}
+		public void CopyManufacturer()
+		{
+			if (ID_LB != null)
+			{
+				Manufacturer = LBPlatform.Manufacturer;
+			}
 
-		//	if ((Manufacturer == null || Manufacturer.Length < 2) && ID_GDB != null)
-		//	{
-		//		Manufacturer = GDBPlatform.Manufacturer;
-		//	}
-		//}
+			if ((Manufacturer == null || Manufacturer.Length < 2) && ID_GDB != null)
+			{
+				Manufacturer = GDBPlatform.Manufacturer;
+			}
+		}
 
-		//public void CopyData()
-		//{
-		//	CopyOverview();
-		//	CopyDeveloper();
-		//	CopyPublisher();
-		//	CopyGenre();
-		//	CopyDate();
-		//	CopyPlayers();
-		//}
+		public void CopyData()
+		{
+			CopyOverview();
+			CopyDeveloper();
+			//CopyPublisher();
+			//CopyGenre();
+			//CopyDate();
+			//CopyPlayers();
+		}
 
 	}
 }

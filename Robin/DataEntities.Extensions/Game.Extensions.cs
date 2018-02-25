@@ -277,9 +277,9 @@ namespace Robin
 			return returner;
 		}
 
-		public void OnPropertyChanged(string prop, string pubchoose)
+		public void OnPropertyChanged2(string prop)
 		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+			OnPropertyChanged(prop);
 		}
 
 

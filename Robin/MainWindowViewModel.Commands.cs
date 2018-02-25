@@ -416,6 +416,7 @@ namespace Robin
 			try
 			{
 				Directory.CreateDirectory(FileLocation.Art.BoxFront);
+				Directory.CreateDirectory(FileLocation.Art.BoxFrontThumbs);
 				Directory.CreateDirectory(FileLocation.Art.BoxBack);
 				Directory.CreateDirectory(FileLocation.Art.Screen);
 				Directory.CreateDirectory(FileLocation.Art.Banner);

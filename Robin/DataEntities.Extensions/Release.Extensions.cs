@@ -235,62 +235,39 @@ namespace Robin
 			switch (DB)
 			{
 				case LocalDB.Unknown:
-					if (ID_LB != null)
-					{
-						url = LBRelease?.BoxFrontURL;
-					}
-					if (string.IsNullOrEmpty(url) && ID_GB != null)
+
+					url = LBRelease?.BoxFrontURL;
+
+					if (string.IsNullOrEmpty(url))
 					{
 						url = GBRelease?.BoxURL;
 					}
-					if (string.IsNullOrEmpty(url) && ID_OVG != null)
+
+					if (string.IsNullOrEmpty(url))
 					{
 						url = OVGRelease?.BoxFrontURL;
 					}
-					if (string.IsNullOrEmpty(url) && (Game.Releases.Count == 1 || Region_ID == CONSTANTS.UNKNOWN_REGION_ID))
-					{
-						if (ID_LB != null)
-						{
-							url = LBRelease?.BoxFrontURL;
-						}
 
-						if (ID_GDB != null && !string.IsNullOrEmpty(GDBRelease?.BoxFrontURL))
-						{
-							url = GDBRelease?.BoxFrontURL.Replace(@"boxart/", @"boxart/thumb/");
-						}
-					}
-					break;
-
-				case LocalDB.GamesDB:
-					if (ID_GDB != null && !string.IsNullOrEmpty(GDBRelease?.BoxFrontURL))
+					if (string.IsNullOrEmpty(url) && (Game.Releases.Count == 1 || Region_ID == CONSTANTS.UNKNOWN_REGION_ID) && !string.IsNullOrEmpty(GDBRelease?.BoxFrontURL))
 					{
 						url = GDBRelease?.BoxFrontURL.Replace(@"boxart/", @"boxart/thumb/");
 					}
 					break;
+
+				case LocalDB.GamesDB:
+					url = GDBRelease?.BoxFrontURL?.Replace(@"boxart/", @"boxart/thumb/");
+					break;
+
 				case LocalDB.GiantBomb:
-					if (ID_GB != null)
-					{
-						url = GBRelease?.BoxURL;
-					}
+					url = GBRelease?.BoxURL;
 					break;
 
 				case LocalDB.OpenVGDB:
-					if (ID_OVG != null)
-					{
-						url = OVGRelease?.BoxFrontURL;
-					}
+					url = OVGRelease?.BoxFrontURL;
 					break;
+
 				case LocalDB.LaunchBox:
-					if (ID_LB != null)
-					{
-						url = LBRelease?.BoxFrontURL;
-
-						if (string.IsNullOrEmpty(url) && (Game.Releases.Count == 1 || Region_ID == CONSTANTS.UNKNOWN_REGION_ID))
-						{
-							url = LBRelease?.BoxFrontURL;
-						}
-
-					}
+					url = LBRelease?.BoxFrontURL;
 					break;
 			}
 
@@ -303,49 +280,33 @@ namespace Robin
 			switch (DB)
 			{
 				case LocalDB.Unknown:
-					if (ID_LB != null)
-					{
-						url = LBRelease?.BoxBackURL;
-					}
-					if (string.IsNullOrEmpty(url) && ID_OVG != null)
+
+					url = LBRelease?.BoxBackURL;
+
+					if (string.IsNullOrEmpty(url))
 					{
 						url = OVGRelease?.BoxBackURL;
 					}
 
-					if (string.IsNullOrEmpty(url) && (Game.Releases.Count == 1 || Region_ID == CONSTANTS.UNKNOWN_REGION_ID))
-					{
-						if (ID_LB != null)
-						{
-							url = LBRelease?.BoxBackURL;
-						}
-
-						if (string.IsNullOrEmpty(url) && ID_GDB != null && !string.IsNullOrEmpty(GDBRelease?.BoxBackURL))
-						{
-							url = GDBRelease?.BoxBackURL.Replace(@"boxart/", @"boxart/thumb/");
-						}
-					}
-
-					break;
-
-				case LocalDB.GamesDB:
-					if (ID_GDB != null && !string.IsNullOrEmpty(GDBRelease?.BoxBackURL))
+					if (string.IsNullOrEmpty(url) && (Game.Releases.Count == 1 || Region_ID == CONSTANTS.UNKNOWN_REGION_ID) && !string.IsNullOrEmpty(GDBRelease?.BoxBackURL))
 					{
 						url = GDBRelease?.BoxBackURL.Replace(@"boxart/", @"boxart/thumb/");
 					}
 					break;
-				case LocalDB.GiantBomb:
+
+				case LocalDB.GamesDB:
+					if (!string.IsNullOrEmpty(GDBRelease?.BoxBackURL))
+					{
+						url = GDBRelease.BoxBackURL.Replace(@"boxart/", @"boxart/thumb/");
+					}
 					break;
+
 				case LocalDB.OpenVGDB:
-					if (ID_OVG != null)
-					{
-						url = OVGRelease?.BoxBackURL;
-					}
+					url = OVGRelease?.BoxBackURL;
 					break;
+
 				case LocalDB.LaunchBox:
-					if (ID_LB != null)
-					{
-						url = LBRelease?.BoxBackURL;
-					}
+					url = LBRelease?.BoxBackURL;
 					break;
 			}
 			return string.IsNullOrEmpty(url) ? null : url;
@@ -357,40 +318,30 @@ namespace Robin
 			switch (DB)
 			{
 				case LocalDB.Unknown:
-					if (ID_LB != null)
-					{
-						url = LBRelease?.ScreenURL;
-					}
-					if (string.IsNullOrEmpty(url) && ID_GB != null)
+
+					url = LBRelease?.ScreenURL;
+
+					if (string.IsNullOrEmpty(url))
 					{
 						url = GBRelease?.ScreenURL;
 					}
 
-					if (string.IsNullOrEmpty(url) && ID_GDB != null && (Region_ID == 21 || Game.Releases.Count == 1))
+					if (string.IsNullOrEmpty(url) && (Game.Releases.Count == 1 || Region_ID == CONSTANTS.UNKNOWN_REGION_ID) && !string.IsNullOrEmpty(GDBRelease?.ScreenURL))
 					{
 						url = GDBRelease?.ScreenURL;
 					}
 					break;
 
 				case LocalDB.GamesDB:
-					if (ID_GDB != null)
-					{
-						url = GDBRelease?.ScreenURL;
-					}
+					url = GDBRelease?.ScreenURL;
 					break;
+
 				case LocalDB.GiantBomb:
-					if (ID_GB != null)
-					{
-						url = GBRelease?.ScreenURL;
-					}
+					url = GBRelease?.ScreenURL;
 					break;
-				case LocalDB.OpenVGDB:
-					break;
+
 				case LocalDB.LaunchBox:
-					if (ID_LB != null)
-					{
-						url = LBRelease?.ScreenURL;
-					}
+					url = LBRelease?.ScreenURL;
 					break;
 			}
 			return string.IsNullOrEmpty(url) ? null : url;
@@ -403,27 +354,21 @@ namespace Robin
 			switch (DB)
 			{
 				case LocalDB.Unknown:
-					if (ID_LB != null)
-					{
-						url = LBRelease?.BannerURL;
-					}
 
-					if (string.IsNullOrEmpty(url) && ID_GDB != null)
+					url = LBRelease?.BannerURL;
+
+					if (string.IsNullOrEmpty(url))
 					{
 						url = string.IsNullOrEmpty(GDBRelease?.BannerURL) ? null : GDBRelease?.BannerURL;
 					}
 					break;
+
 				case LocalDB.GamesDB:
-					if (ID_GDB != null)
-					{
-						url = string.IsNullOrEmpty(GDBRelease?.BannerURL) ? null : GDBRelease?.BannerURL;
-					}
+					url = string.IsNullOrEmpty(GDBRelease?.BannerURL) ? null : GDBRelease?.BannerURL;
 					break;
+
 				case LocalDB.LaunchBox:
-					if (ID_LB != null)
-					{
-						url = LBRelease?.BannerURL;
-					}
+					url = LBRelease?.BannerURL;
 					break;
 			}
 			return url;
@@ -437,34 +382,22 @@ namespace Robin
 			{
 				case LocalDB.Unknown:
 
-					if (ID_LB != null)
-					{
-						url = LBRelease?.LogoURL;
-					}
+					url = LBRelease?.LogoURL;
 
-					if (string.IsNullOrEmpty(url) && ID_GDB != null)
+					if (string.IsNullOrEmpty(url))
 					{
 						url = string.IsNullOrEmpty(GDBRelease?.LogoURL) ? null : GDBRelease?.LogoURL;
 					}
 					break;
+
 				case LocalDB.GamesDB:
-					if (ID_GDB != null)
-					{
-						url = string.IsNullOrEmpty(GDBRelease?.LogoURL) ? null : GDBRelease?.LogoURL;
-					}
+					url = string.IsNullOrEmpty(GDBRelease?.LogoURL) ? null : GDBRelease?.LogoURL;
 					break;
-				case LocalDB.GiantBomb:
-					break;
-				case LocalDB.OpenVGDB:
-					break;
+
 				case LocalDB.LaunchBox:
-					if (ID_LB != null)
-					{
-						url = LBRelease?.LogoURL;
-					}
+					url = LBRelease?.LogoURL;
 					break;
 			}
-
 			return url;
 		}
 
@@ -655,7 +588,8 @@ namespace Robin
 						if (webclient.DownloadFileFromDB(GetBoxFrontURL(DB), BoxFrontPath))
 						{
 							Reporter.ReportInline("success!");
-							OnPropertyChanged("BoxFrontFile");
+							CreateThumbnail();
+							OnPropertyChanged("BoxFrontPath");
 						}
 						else
 						{
@@ -665,6 +599,7 @@ namespace Robin
 					}
 				}
 			}
+
 			return 0;
 		}
 
@@ -686,7 +621,8 @@ namespace Robin
 						if (webclient.DownloadFileFromDB(GetBoxBackURL(DB), BoxBackPath))
 						{
 							Reporter.ReportInline("success!");
-							OnPropertyChanged("BoxBackFile");
+							OnPropertyChanged("BoxBackPath");
+							Game.OnPropertyChanged2("BoxBackPath");
 						}
 						else
 						{
@@ -696,6 +632,7 @@ namespace Robin
 					}
 				}
 			}
+
 			return 0;
 		}
 
@@ -716,7 +653,8 @@ namespace Robin
 						if (webclient.DownloadFileFromDB(GetScreenURL(DB), ScreenPath))
 						{
 							Reporter.ReportInline("success");
-							OnPropertyChanged("ScreenFile");
+							OnPropertyChanged("ScreenPath");
+							Game.OnPropertyChanged2("ScreenPath");
 						}
 						else
 						{
@@ -747,7 +685,8 @@ namespace Robin
 						if (webclient.DownloadFileFromDB(GetBannerURL(), BannerPath))
 						{
 							Reporter.ReportInline("success");
-							OnPropertyChanged("BannerFile");
+							OnPropertyChanged("BannerPath");
+							Game.OnPropertyChanged2("BannerPath");
 						}
 						else
 						{
@@ -778,7 +717,10 @@ namespace Robin
 						if (webclient.DownloadFileFromDB(GetLogoURL(), LogoPath))
 						{
 							Reporter.ReportInline("success");
-							OnPropertyChanged("LogoFile");
+							OnPropertyChanged("LogoPath");
+							OnPropertyChanged("MainDisplay");
+							Game.OnPropertyChanged2("LogoPath");
+							Game.OnPropertyChanged2("MainDisplay");
 						}
 						else
 						{
@@ -911,14 +853,20 @@ namespace Robin
 		{
 			await Task.Run(() =>
 			{
-				if (File.Exists(BoxFrontPath) && !File.Exists(BoxFrontThumbPath))
+				if (File.Exists(BoxFrontPath))
 				{
-
 					try
 					{
 						using (System.Drawing.Image image = System.Drawing.Image.FromFile(BoxFrontPath))
 						{
-
+#if DEBUG
+							Stopwatch Watch = Stopwatch.StartNew();
+#endif
+							File.Delete(BoxFrontThumbPath);
+#if DEBUG
+							Debug.WriteLine("Delete" + Watch.ElapsedMilliseconds);
+							Watch.Restart();
+#endif
 							if (image.Width > 255)
 							{
 								System.Drawing.Image thumb = Thumbs.ResizeImage(image, 255);
@@ -929,6 +877,10 @@ namespace Robin
 							{
 								File.Copy(BoxFrontPath, BoxFrontThumbPath);
 							}
+#if DEBUG
+							Debug.WriteLine("Create" + Watch.ElapsedMilliseconds);
+							Watch.Restart();
+#endif
 						}
 					}
 					catch (OutOfMemoryException)
@@ -937,18 +889,12 @@ namespace Robin
 						Reporter.Report("Bad image file: " + BoxFrontPath + " - " + Title + ", file deleted.");
 					}
 					OnPropertyChanged("BoxFrontThumbFile");
-					Game.OnPropertyChanged("BoxFrontThumbFile", "");
+					OnPropertyChanged("MainDisplay");
+					Game.OnPropertyChanged2("BoxFrontThumbFile");
+					Game.OnPropertyChanged2("MainDisplay");
 				}
 			});
 		}
 
-		[Conditional("DEBUG")]
-		public void SetLBReleaseMatch()
-		{
-			if (LBGame != null)
-			{
-				LBRelease = LBGame.LBReleases.FirstOrDefault(x => x.Region == Region);
-			}
-		}
 	}
 }
