@@ -95,7 +95,10 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
                     
                     <MenuItem Style="{StaticResource CMenuItemStyle}"
                               Command="{Binding ReporterWindowCommand}" />
-                </MenuItem>
+
+					<MenuItem Style="{StaticResource CMenuItemStyle}"
+							  Command="{Binding StatisticsWindowCommand}" />
+				</MenuItem>
 				<MenuItem Header="Tools">
 
 					<MenuItem Style="{StaticResource CMenuItemStyle}"
@@ -920,7 +923,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 				Grid.Row="1"
 				Style="{StaticResource CellStyle}">
 			<!--<ContentControl x:Name="MainControl">
-				
+				z
 			</ContentControl>-->
 
 			<local:BindableSelectionListView x:Name="MainList"

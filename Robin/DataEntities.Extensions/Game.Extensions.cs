@@ -97,6 +97,11 @@ namespace Robin
 
 		public bool HasRelease => Releases.Any(x => x.Included);
 
+		public bool MatchedToSomething => Releases.Any(x => x.MatchedToSomething);
+
+		public bool HasArt => File.Exists(BoxFrontThumbPath) || File.Exists(LogoPath) || File.Exists(MarqueePath);
+
+
 		public string WhyCantIPlay
 		{
 			get
@@ -111,8 +116,6 @@ namespace Robin
 				return Title + " can't launch because " + releaseTrouble + and + emulatorTrouble + ".";
 			}
 		}
-
-		public bool HasArt => Releases.Any(x => x.HasArt);
 
 
 		public int BorderThickness { get; set; } = 1;
@@ -146,7 +149,7 @@ namespace Robin
 			}
 		}
 
-		 string _boxFrontPath;
+		string _boxFrontPath;
 		public string BoxFrontPath
 		{
 			get

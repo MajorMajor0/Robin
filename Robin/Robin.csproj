@@ -297,6 +297,12 @@
     </Compile>
     <Compile Include="Settings.cs" />
     <Compile Include="DataEntities.Extensions\VGDBROM.Extensions.cs" />
+    <Compile Include="StatisticsWindow.xaml.cs">
+      <DependentUpon>StatisticsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StatisticsWindowViewModel.cs">
+      <DependentUpon>StatisticsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="URL.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
@@ -358,6 +364,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="OptionsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StatisticsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

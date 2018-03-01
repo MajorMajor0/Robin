@@ -29,10 +29,12 @@ namespace Robin
 {
 	public partial class Platform : IDBobject, IDBPlatform
 	{
+		public IEnumerable<Game> Games => R.Data.Games.Local.Where(x => x.Platform_ID == ID);
+
 		public Platform RPlatform => this;
 
 		public OVGPlatform OVGPlatform => R.Data.OVGPlatforms.FirstOrDefault(x => x.ID == ID);
-		
+
 		public int MatchedToGamesDB => Releases.Count(x => x.ID_GDB != null);
 
 		public int MatchedToGiantBomb => Releases.Count(x => x.ID_GB != null);
@@ -41,9 +43,13 @@ namespace Robin
 
 		public int MatchedToLaunchBox => Releases.Count(x => x.ID_LB != null);
 
-		public int MatchedReleaseCount => Releases.Count(x => x.ID_GB != null || x.ID_GDB != null || x.ID_OVG != null || x.ID_LB != null);
+		public int MatchedReleaseCount => Releases.Count(x => x.MatchedToSomething);
+
+		public int MatchedGameCount => Games.Count(x => x.MatchedToSomething);
 
 		public int ReleasesWithArt => Releases.Count(x => x.HasArt);
+
+		public int GamesesWithArt => Games.Count(x => x.HasArt);
 
 		public int ReleasesIncluded => Releases.Count(x => x.Included);
 

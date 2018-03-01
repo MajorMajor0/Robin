@@ -139,7 +139,7 @@ namespace Robin
 
 		public bool MatchedToSomething => ID_GB != null || ID_GDB != null || ID_LB != null || ID_OVG != null;
 
-		public bool HasArt => File.Exists(BoxFrontPath);
+		public bool HasArt => File.Exists(BoxFrontThumbPath) || File.Exists(LogoPath) || File.Exists(MarqueePath);
 
 		public bool Included => HasFile && HasEmulator;
 
@@ -168,28 +168,23 @@ namespace Robin
 		{
 			get
 			{
-				string returner;
-
 				if (Platform_ID == CONSTANTS.ARCADE_PLATFORM_ID)
 				{
-					returner = LogoPath ?? MarqueePath ?? BoxFrontThumbPath ?? Platform.ControllerPath;
+					if (File.Exists(LogoPath)) { BorderThickness = 0; OnPropertyChanged("BorderThickness"); return LogoPath; }
+					if (File.Exists(MarqueePath)) { BorderThickness = 1; OnPropertyChanged("BorderThickness"); return MarqueePath; }
+					if (File.Exists(BoxFrontThumbPath)) { BorderThickness = 1; OnPropertyChanged("BorderThickness"); return BoxFrontThumbPath; }
 				}
 
 				else
 				{
-					returner = BoxFrontThumbPath ?? LogoPath ?? MarqueePath ?? Platform.ControllerPath;
+					if (File.Exists(BoxFrontThumbPath)) { BorderThickness = 1; OnPropertyChanged("BorderThickness"); return BoxFrontThumbPath; }
+					if (File.Exists(LogoPath)) { BorderThickness = 0; OnPropertyChanged("BorderThickness"); return LogoPath; }
+					if (File.Exists(MarqueePath)) { BorderThickness = 1; OnPropertyChanged("BorderThickness"); return MarqueePath; }
 				}
 
-				if (returner == LogoPath)
-				{
-					BorderThickness = 0;
-				}
-				else
-				{
-					BorderThickness = 1;
-				}
+				BorderThickness = 0;
 				OnPropertyChanged("BorderThickness");
-				return returner;
+				return Platform.ControllerPath;
 			}
 		}
 
