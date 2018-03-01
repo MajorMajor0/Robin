@@ -29,7 +29,6 @@ namespace Robin
 	public class MatchWindowViewModel : INotifyPropertyChanged
 	{
 		Release release;
-
 		public Release Release
 		{
 			get
@@ -45,10 +44,9 @@ namespace Robin
 			}
 		}
 
-
 		Platform platform => Release.Platform;
 
-		public List<Release> UnmatchedReleases => platform.Releases.Where(x => !x.MatchedToSomething).ToList();
+		public List<Release> UnmatchedReleases => platform.Releases.Where(x => !x.HasArt && x.IsGame).ToList();
 
 		int index = 0;
 		public int Index
@@ -63,7 +61,6 @@ namespace Robin
 					OnPropertyChanged("Index");
 				}
 			}
-
 		}
 
 
@@ -130,17 +127,17 @@ namespace Robin
 			}
 		}
 
-		public IEnumerable<IDBRelease> OVGReleases
-		{
-			get
-			{
-				if (platform.OVGPlatform != null && !string.IsNullOrEmpty(searchTerm))
-				{
-					return platform.OVGPlatform.OVGReleases.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
-				}
-				return Enumerable.Empty<IDBRelease>();
-			}
-		}
+		//public IEnumerable<IDBRelease> OVGReleases
+		//{
+		//	get
+		//	{
+		//		if (platform.OVGPlatform != null && !string.IsNullOrEmpty(searchTerm))
+		//		{
+		//			return platform.OVGPlatform.OVGReleases.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
+		//		}
+		//		return Enumerable.Empty<IDBRelease>();
+		//	}
+		//}
 
 		public long? ID_GB => Release.ID_GB;
 
@@ -150,10 +147,12 @@ namespace Robin
 
 		public long? ID_OVG => Release.ID_OVG;
 
-
 		public MatchWindowViewModel(Release release)
 		{
 			this.Release = release;
+			new Launchbox();
+			new GiantBomb();
+			new GamesDB();
 			MatchCommand = new Command(Match, MatchCanExecute, "Match", "Match the selected release to " + release.Title + ".");
 			ShowBoxCommand = new Command(ShowBox, "Show box art", "Show box front art for this selection.");
 			NextCommand = new Command(Next, NextCanExecute, @">", "Move to the next unmatched release in this platform.");

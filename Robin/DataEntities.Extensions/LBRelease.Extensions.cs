@@ -83,7 +83,7 @@ namespace Robin
 				{
 					if (BannerURL != null)
 					{
-						Reporter.Report("Getting banner for LB Release " + Title + "...");
+						Reporter.Report("Getting banner for LB release " + Title + "...");
 
 						if (webclient.DownloadFileFromDB(BannerURL, BannerPath))
 						{
@@ -99,7 +99,7 @@ namespace Robin
 
 					else
 					{
-						Reporter.Report("No banner URL exists for LB release" + Title);
+						Reporter.Report("No banner URL exists for LB release " + Title);
 					}
 				}
 
@@ -119,7 +119,7 @@ namespace Robin
 				{
 					if (Box3DURL != null)
 					{
-						Reporter.Report("Getting 3D box art for LB Release " + Title + "...");
+						Reporter.Report("Getting 3D box art for LB release " + Title + "...");
 
 						if (webclient.DownloadFileFromDB(Box3DURL, Box3DPath))
 						{
@@ -135,7 +135,7 @@ namespace Robin
 
 					else
 					{
-						Reporter.Report("No 3D box art URL exists for LB release" + Title);
+						Reporter.Report("No 3D box art URL exists for LB release " + Title);
 					}
 				}
 
@@ -191,7 +191,7 @@ namespace Robin
 				{
 					if (BoxFrontURL != null)
 					{
-						Reporter.Report("Getting front box art for LB Release " + Title + "...");
+						Reporter.Report("Getting front box art for LB release " + Title + "...");
 
 						if (webclient.DownloadFileFromDB(BoxFrontURL, BoxFrontPath))
 						{
@@ -207,7 +207,7 @@ namespace Robin
 
 					else
 					{
-						Reporter.Report("No front box art URL exists for LB release" + Title);
+						Reporter.Report("No front box art URL exists for LB release " + Title);
 					}
 				}
 
@@ -227,7 +227,7 @@ namespace Robin
 				{
 					if (BoxFrontURL != null)
 					{
-						Reporter.Report("Getting 3D cartridge art for LB Release " + Title + "...");
+						Reporter.Report("Getting 3D cartridge art for LB release " + Title + "...");
 
 						if (webclient.DownloadFileFromDB(Cart3DURL, Cart3DPath))
 						{

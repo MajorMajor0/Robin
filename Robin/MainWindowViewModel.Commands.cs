@@ -110,6 +110,13 @@ namespace Robin
 			return SelectedDB is Release;
 		}
 
+		public Command StatisticsWindowCommand { get; set; }
+
+		void StatisticsWindow()
+		{
+			new StatisticsWindow();
+		}
+
 
 		public Command OptionsWindowCommand { get; set; }
 
@@ -610,6 +617,9 @@ namespace Robin
 
 			DatabaseWindowCommand = new Command(DatabaseWindow, "Database Window", "Open the database window to manage databases.");
 			ReporterWindowCommand = new Command(ReporterWindow, "Reporter Window", "Open the reporter window to view logs.");
+
+			StatisticsWindowCommand = new Command(StatisticsWindow, "Statistics Window", "View statistics.");
+
 			ArtWindowCommand = new Command(ArtWindow, ArtWindowCanExecute, "Art Window", "Open the window to select or improve available artwork.");
 
 			OptionsWindowCommand = new Command(OptionsWindow, "Options", "Choose options for the main view.");
