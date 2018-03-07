@@ -6,7 +6,7 @@
 		xmlns:local="clr-namespace:Robin"
 		mc:Ignorable="d"
 		Title="Options"
-		Height="300"
+		Height="400"
 		Width="400">
 	<Window.Resources>
 		<Style TargetType="TextBlock">
@@ -14,7 +14,7 @@
 					Value="Center" />
 
 		</Style>
-		
+
 		<Style TargetType="CheckBox">
 			<Setter Property="Margin"
 					Value="0,0,10,0" />
@@ -22,7 +22,8 @@
 					Value="Center" />
 		</Style>
 
-		<Style TargetType="Button" BasedOn="{StaticResource CButtonStyle}">
+		<Style TargetType="Button"
+			   BasedOn="{StaticResource CButtonStyle}">
 			<Setter Property="Width"
 					Value="90" />
 			<Setter Property="Height"
@@ -43,40 +44,56 @@
 	</Window.Resources>
 
 	<Grid>
-		<GroupBox Header="Types to Load"
-				  Padding="5"
-				  Margin="10"
-				  VerticalAlignment="Top"
-				  HorizontalAlignment="Left">
-			<StackPanel Orientation="Vertical">
-				<StackPanel Style="{StaticResource StackPanelStyle1}">
-					<CheckBox  IsChecked="{Binding DisplayCrap}" />
-					<TextBlock Text="Show games marked as crap"
-							   ToolTip="Crap games are Releases marked by Robin or you as crap because they are very low quality or broken." />
+		<StackPanel Orientation="Vertical">
+			<GroupBox Header="Types to Load"
+					  Padding="5"
+					  Margin="10"
+					  VerticalAlignment="Top"
+					  HorizontalAlignment="Left">
+				<StackPanel Orientation="Vertical">
+					<StackPanel Style="{StaticResource StackPanelStyle1}">
+						<CheckBox  IsChecked="{Binding DisplayCrap}" />
+						<TextBlock Text="Load games marked as crap"
+								   ToolTip="Crap games are Releases marked by Robin or you as crap because they are very low quality or broken." />
+					</StackPanel>
+					<StackPanel Style="{StaticResource StackPanelStyle1}">
+						<CheckBox  IsChecked="{Binding DisplayNonGames}" />
+						<TextBlock Text="Load games marked as not games"
+								   ToolTip="Non games are Releases marked by RObin or you, such as test carts or MAME computer images." />
+					</StackPanel>
+					<StackPanel Style="{StaticResource StackPanelStyle1}">
+						<CheckBox  IsChecked="{Binding DisplayNotIncluded}" />
+						<TextBlock Text="Load games marked as not playable"
+								   ToolTip="Games in the database may not be playable because Robin cannot find a ROM or appropriate emulator." />
+					</StackPanel>
+					<StackPanel Style="{StaticResource StackPanelStyle1}">
+						<CheckBox  IsChecked="{Binding DisplayAdult}" />
+						<TextBlock Text="Load games marked as adult" />
+					</StackPanel>
 				</StackPanel>
-				<StackPanel Style="{StaticResource StackPanelStyle1}">
-					<CheckBox  IsChecked="{Binding DisplayNonGames}" />
-					<TextBlock Text="Show games marked as not games"
-							   ToolTip="Non games are Releases marked by RObin or you, such as test carts or MAME computer images." />
+			</GroupBox>
+
+			<GroupBox Header="Options"
+					  Padding="5"
+					  Margin="10"
+					  VerticalAlignment="Top"
+					  HorizontalAlignment="Left">
+				<StackPanel Orientation="Vertical">
+					<StackPanel Style="{StaticResource StackPanelStyle1}">
+						<CheckBox  IsChecked="{Binding SortGamesRandom}" />
+						<TextBlock Text="Sort games randomly"
+								   ToolTip="Games will be ordered randomly in the main list to give you a chance to play something new." />
+					</StackPanel>
+
 				</StackPanel>
-				<StackPanel Style="{StaticResource StackPanelStyle1}">
-					<CheckBox  IsChecked="{Binding DisplayNotIncluded}" />
-					<TextBlock Text="Show games marked as not playable"
-							   ToolTip="Games in the database may not be playable because Robin cannot find a ROM or appropriate emulator." />
-				</StackPanel>
-				<StackPanel Style="{StaticResource StackPanelStyle1}">
-					<CheckBox  IsChecked="{Binding DisplayAdult}" />
-					<TextBlock Text="Show games marked as adult" />
-				</StackPanel>
-			</StackPanel>
-		</GroupBox>
+			</GroupBox>
+		</StackPanel>
 
 		<Button	HorizontalAlignment="Left"
 				Command="{Binding CancelCommand}" />
 
 		<Button	HorizontalAlignment="Right"
 				Command="{Binding OKCommand}" />
-
 
 	</Grid>
 </Window>

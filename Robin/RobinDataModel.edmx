@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="RobinDataModel.Store" Provider="System.Data.SQLite.EF6" ProviderManifestToken="data source=D:\Robin_debug\data\RobinData.db3" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="RobinDataModel.Store" Provider="System.Data.SQLite.EF6" ProviderManifestToken="data source=D:\Robin_debug\data\RobinData.db3" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Collection">
           <Key>
             <PropertyRef Name="ID" />
@@ -59,6 +59,7 @@
           <Property Name="VideoFormat" Type="nvarchar" MaxLength="2147483647" />
           <Property Name="Players" Type="nvarchar" MaxLength="2147483647" />
           <Property Name="Rating" Type="decimal" Precision="53" Scale="0" />
+          <Property Name="IsMess" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="GBGame">
           <Key>
@@ -260,6 +261,7 @@
           </Key>
           <Property Name="ID" Type="integer" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Title" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="LastDate" Type="datetime" Nullable="false" />
           <Property Name="ID_GDB" Type="integer" />
           <Property Name="ID_GB" Type="integer" />
           <Property Name="ID_LB" Type="integer" />
@@ -283,7 +285,6 @@
           <Property Name="Rating" Type="decimal" Precision="53" Scale="0" Nullable="false" />
           <Property Name="Overview" Type="nvarchar" MaxLength="2147483647" />
           <Property Name="CacheDate" Type="datetime" Nullable="false" />
-          <Property Name="LastDate" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="Platform_Emulator">
           <Key>
@@ -866,8 +867,7 @@
             <End Role="Release" EntitySet="Release" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="RobinDataModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -914,6 +914,7 @@
           <Property Name="Players" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="Rating" Type="Decimal" Precision="53" Scale="0" />
           <NavigationProperty Name="Releases" Relationship="Self.FK_Release_3_0" FromRole="Game" ToRole="Release" />
+          <Property Name="IsMess" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="GBGame">
           <Key>
@@ -1705,6 +1706,7 @@
           <EntitySetMapping Name="Games">
             <EntityTypeMapping TypeName="RobinDataModel.Game">
               <MappingFragment StoreEntitySet="Game">
+                <ScalarProperty Name="IsMess" ColumnName="IsMess" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="IsGame" ColumnName="IsGame" />
                 <ScalarProperty Name="IsCrap" ColumnName="IsCrap" />

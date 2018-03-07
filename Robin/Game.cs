@@ -113,6 +113,13 @@ namespace Robin
     		set { _rating = value; OnPropertyChanged("Rating"); } 
     	}
     
+        private bool _isMess;
+    	public bool IsMess 
+    	{ 
+    		get { return _isMess; } 
+    		set { _isMess = value; OnPropertyChanged("IsMess"); } 
+    	}
+    
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual List<Release> Releases { get; set; }

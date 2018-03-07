@@ -74,12 +74,25 @@ namespace Robin
 			}
 		}
 
+		public bool SortGamesRandom
+		{
+			get
+			{
+				return Settings.SortGamesRandom;
+			}
+			set
+			{
+				Settings.SortGamesRandom = value;
+				HasChanges = true;
+			}
+		}
+
 		bool displayCrap;
 		bool displayAdult;
 		bool displayNonGames;
 		bool displayNotIncluded;
 
-		bool HasChanges = false;
+		bool HasChanges;
 
 		public OptionsWindow()
 		{
