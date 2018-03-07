@@ -171,7 +171,7 @@ namespace Robin
 		public AutoFilterReleases(List<Release> _sourceCollection, string _title)
 		{
 			title = _title;
-			sourceCollection = _sourceCollection;
+			sourceCollection = _sourceCollection.OrderBy(x => x.Platform.ID).ThenBy(x => x.Title).ToList(); ;
 
 			StringFilters.Add(PublisherFilter = new StringFilter("Publisher", () => Update(), Settings.ReleaseFilterPublisher));
 			StringFilters.Add(GenreFilter = new StringFilter("Genre", () => Update(), Settings.ReleaseFilterGenre));
@@ -355,7 +355,17 @@ namespace Robin
 		public AutoFilterGames(List<Game> _sourceCollection, string _title)
 		{
 			title = _title;
-			sourceCollection = _sourceCollection;
+
+			if (Settings.SortGamesRandom)
+			{
+				sourceCollection = _sourceCollection;
+				sourceCollection.Shuffle();
+			}
+
+			else
+			{
+				sourceCollection = _sourceCollection.OrderBy(x=>x.Platform_ID).ThenBy(x=>x.Title).ToList();
+			}
 
 			StringFilters.Add(PublisherFilter = new StringFilter("Publisher", () => Update(), Settings.GameFilterPublisher));
 			StringFilters.Add(GenreFilter = new StringFilter("Genre", () => Update(), Settings.GameFilterGenre));

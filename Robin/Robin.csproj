@@ -271,6 +271,7 @@
     <Compile Include="Platform.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Classes\Randomizer.cs" />
     <Compile Include="Region.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
