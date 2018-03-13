@@ -122,6 +122,7 @@ namespace Robin
 
 		void OptionsWindow()
 		{
+			SaveSettings();
 			OptionsWindow optionsWindow = new OptionsWindow();
 			optionsWindow.Closed += new System.EventHandler(OptionsWindowClosed);
 		}
@@ -174,6 +175,7 @@ namespace Robin
 				idbObject.IsCrap = value;
 			}
 		}
+
 
 
 		public Command MarkPreferredCommand { get; set; }
@@ -338,6 +340,56 @@ namespace Robin
 				foreach (Release release in idbList)
 				{
 					release.Game.IsAdult = value;
+				}
+			}
+		}
+
+
+		public Command MarkAsMessCommand { get; set; }
+
+		public Command MarkNotMessCommand { get; set; }
+
+		void MarkAsMess()
+		{
+			MarkMess(true);
+		}
+
+		bool MarkAsMessCanExecute()
+		{
+			return
+				((SelectedDB is Game && !(SelectedDB as Game).IsMess)
+				||
+				(SelectedDB is Release && !(SelectedDB as Release).IsMess));
+		}
+
+		bool MarkNotMessCanExecute()
+		{
+			return ((SelectedDB is Game && (SelectedDB as Game).IsMess)
+				   ||
+				   (SelectedDB is Release && (SelectedDB as Release).IsMess));
+		}
+
+		void MarkNotMess()
+		{
+			MarkMess(false);
+		}
+
+		void MarkMess(bool value)
+		{
+			IList idbList = SelectedDBs;
+			if (SelectedDB is Game)
+			{
+				foreach (Game game in idbList)
+				{
+					game.IsMess = value;
+				}
+			}
+
+			if (SelectedDB is Release)
+			{
+				foreach (Release release in idbList)
+				{
+					release.Game.IsMess = value;
 				}
 			}
 		}
@@ -646,7 +698,10 @@ namespace Robin
 			MarkAsAdultCommand = new Command(MarkAsAdult, MarkAsAdultCanExecute, "Adult", "Mark selected item as adult.");
 			MarkNotAdultCommand = new Command(MarkNotAdult, MarkNotAdultCanExecute, "Not adult", "Mark selected item as not adult");
 
-			MarkSelectedGameReleasePreferredCommand = new Command(MarkSelectedGameReleasePreferred, MarkSelectedGameReleasePreferredCanExecute, "Mark preferred", "Mark selected release as preferred. Only one item can be marked at a time. The preferred release wil be launched by default");
+			MarkAsMessCommand = new Command(MarkAsMess, MarkAsMessCanExecute, "Mess", "Mark selected item as an MESS machine.");
+			MarkNotMessCommand = new Command(MarkNotMess, MarkNotMessCanExecute, "Not Mess", "Mark selected item as not an MESS machine.");
+
+			MarkSelectedGameReleasePreferredCommand = new Command(MarkSelectedGameReleasePreferred, MarkSelectedGameReleasePreferredCanExecute, "Mark preferred", "Mark selected release as preferred. Only one item can be marked at a time. The preferred release will be launched by default");
 
 			MarkSelectedPlatformEmulatorPreferredCommand = new Command(MarkSelectedPlatformEmulatorPreferred, MarkSelectedPlatformEmulatorPreferredCanExecute, "Mark preferred", "Mark selected emulator as preferred. Only one item can be marked at a time. The preferred emulator will be used to play games on this platform by default");
 

@@ -987,6 +987,12 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 							<MenuItem Style="{StaticResource CContextMenuItemStyle}"
 									  Command="{Binding MarkNotAdultCommand}" />
+
+							<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+									  Command="{Binding MarkAsMessCommand}" />
+
+							<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+									  Command="{Binding MarkNotMessCommand}" />
 						</MenuItem>
 
 						<MenuItem Style="{StaticResource CContextMenuItemStyle}"

@@ -51,24 +51,33 @@
 					  VerticalAlignment="Top"
 					  HorizontalAlignment="Left">
 				<StackPanel Orientation="Vertical">
-					<StackPanel Style="{StaticResource StackPanelStyle1}">
+					<StackPanel x:Name="CrapPanel"
+								Style="{StaticResource StackPanelStyle1}">
 						<CheckBox  IsChecked="{Binding DisplayCrap}" />
 						<TextBlock Text="Load games marked as crap"
 								   ToolTip="Crap games are Releases marked by Robin or you as crap because they are very low quality or broken." />
 					</StackPanel>
-					<StackPanel Style="{StaticResource StackPanelStyle1}">
+					<StackPanel x:Name="NotGamesPanel"
+								Style="{StaticResource StackPanelStyle1}">
 						<CheckBox  IsChecked="{Binding DisplayNonGames}" />
 						<TextBlock Text="Load games marked as not games"
 								   ToolTip="Non games are Releases marked by RObin or you, such as test carts or MAME computer images." />
 					</StackPanel>
-					<StackPanel Style="{StaticResource StackPanelStyle1}">
+					<StackPanel x:Name="IncludedPanel"
+								Style="{StaticResource StackPanelStyle1}">
 						<CheckBox  IsChecked="{Binding DisplayNotIncluded}" />
 						<TextBlock Text="Load games marked as not playable"
 								   ToolTip="Games in the database may not be playable because Robin cannot find a ROM or appropriate emulator." />
 					</StackPanel>
-					<StackPanel Style="{StaticResource StackPanelStyle1}">
+					<StackPanel x:Name="AdultPanel"
+								Style="{StaticResource StackPanelStyle1}">
 						<CheckBox  IsChecked="{Binding DisplayAdult}" />
 						<TextBlock Text="Load games marked as adult" />
+					</StackPanel>
+					<StackPanel x:Name="MessPanel"
+								Style="{StaticResource StackPanelStyle1}">
+						<CheckBox  IsChecked="{Binding DisplayMess}" />
+						<TextBlock Text="Load MESS machines" />
 					</StackPanel>
 				</StackPanel>
 			</GroupBox>

@@ -64,6 +64,12 @@ namespace Robin
 			set { Game.IsAdult = value; }
 		}
 
+		public bool IsMess
+		{
+			get { return Game.IsMess; }
+			set { Game.IsMess = value; }
+		}
+
 		public bool Unlicensed
 		{
 			get { return Game.Unlicensed; }

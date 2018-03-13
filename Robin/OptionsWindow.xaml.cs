@@ -74,6 +74,19 @@ namespace Robin
 			}
 		}
 
+		public bool DisplayMess
+		{
+			get
+			{
+				return Settings.DisplayMess;
+			}
+			set
+			{
+				Settings.DisplayMess = value;
+				HasChanges = true;
+			}
+		}
+
 		public bool SortGamesRandom
 		{
 			get
@@ -91,6 +104,8 @@ namespace Robin
 		bool displayAdult;
 		bool displayNonGames;
 		bool displayNotIncluded;
+		bool displayMess;
+		bool sortGamesRandom;
 
 		bool HasChanges;
 
@@ -109,12 +124,12 @@ namespace Robin
 
 		public Command OKCommand { get; set; }
 
-		 void OK()
+		void OK()
 		{
 			Close();
 		}
 
-		 bool OKCanExecute()
+		bool OKCanExecute()
 		{
 			return HasChanges;
 		}
@@ -122,26 +137,30 @@ namespace Robin
 
 		public Command CancelCommand { get; set; }
 
-		 void Cancel()
+		void Cancel()
 		{
 			RestoreSettings();
 			Close();
 		}
 
-		 void StoreSettings()
+		void StoreSettings()
 		{
 			displayCrap = DisplayCrap;
 			displayAdult = DisplayAdult;
 			displayNonGames = DisplayNonGames;
 			displayNotIncluded = DisplayNotIncluded;
+			displayMess = DisplayMess;
+			sortGamesRandom = SortGamesRandom;
 		}
 
-		 void RestoreSettings()
+		void RestoreSettings()
 		{
 			DisplayCrap = displayCrap;
 			DisplayAdult = displayAdult;
 			DisplayNonGames = displayNonGames;
 			DisplayNotIncluded = displayNotIncluded;
+			DisplayMess = displayMess;
+			SortGamesRandom = sortGamesRandom;
 		}
 
 	}
