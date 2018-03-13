@@ -33,7 +33,7 @@ namespace Robin
 			Reporter.Report("BONUS!");
 			await Task.Run(() =>
 			{
-				Reporter.Report("Nothing here.");
+				SetMessMachines();
 			});
 
 			Reporter.Report("Finished");
@@ -44,13 +44,11 @@ namespace Robin
 			int i = 0;
 			foreach (string messMachine in messMachines)
 			{
-				Release release = R.Data.Releases.Local.FirstOrDefault(x => x.Rom.FileName != null && x.Rom.FileName.StartsWith(messMachine));
+				Release release = R.Data.Releases.Local.FirstOrDefault(x => x.Rom.FileName != null && x.Rom.FileName.Split('.')[0] == messMachine);
 
 				if (release != null)
 				{
 					release.Game.IsMess = true;
-					release.Game.IsGame = false;
-					release.Game.IsCrap = false;
 					Debug.WriteLine(i++);
 				}
 			}

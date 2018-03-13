@@ -475,5 +475,29 @@ namespace Robin.Properties {
                 this["SortGamesRandom"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public global::System.Nullable<System.Boolean> GameFilterIsMess {
+            get {
+                return ((global::System.Nullable<System.Boolean>)(this["GameFilterIsMess"]));
+            }
+            set {
+                this["GameFilterIsMess"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool DisplayMess {
+            get {
+                return ((bool)(this["DisplayMess"]));
+            }
+            set {
+                this["DisplayMess"] = value;
+            }
+        }
     }
 }

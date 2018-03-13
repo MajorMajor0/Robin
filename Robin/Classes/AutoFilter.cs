@@ -351,6 +351,7 @@ namespace Robin
 		public BoolFilter IncludedFilter { get; }
 		public BoolFilter IsGameFilter { get; }
 		public BoolFilter AdultFilter { get; }
+		public BoolFilter MessFilter { get; }
 
 		public AutoFilterGames(List<Game> _sourceCollection, string _title)
 		{
@@ -411,6 +412,15 @@ namespace Robin
 			{
 				sourceCollection = sourceCollection.Where(x => !x.IsAdult).ToList();
 			}
+
+			if (Settings.DisplayMess)
+			{
+				BoolFilters.Add(MessFilter = new BoolFilter("Mess", () => Update(), Settings.GameFilterIsMess));
+			}
+			else
+			{
+				sourceCollection = sourceCollection.Where(x => !x.IsAdult).ToList();
+			}
 			Update();
 		}
 
@@ -422,7 +432,7 @@ namespace Robin
 			Stopwatch Watch = Stopwatch.StartNew();
 #endif
 
-			//// Filter items based on text
+			// String filters
 			if (!string.IsNullOrEmpty(TextFilter))
 			{
 				_filteredCollection = _filteredCollection.Where(x => Regex.IsMatch(x.Title, TextFilter.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
@@ -458,6 +468,7 @@ namespace Robin
 				_filteredCollection = _filteredCollection.Where(x => x.Year == YearFilter.Value);
 			}
 
+			// Bool filters
 			if (UnlicensedFilter.IsSet)
 			{
 				_filteredCollection = _filteredCollection.Where(x => x.Unlicensed == UnlicensedFilter.Value);
@@ -481,6 +492,11 @@ namespace Robin
 			if (Settings.DisplayAdult && AdultFilter.IsSet)
 			{
 				_filteredCollection = _filteredCollection.Where(x => x.IsAdult == AdultFilter.Value);
+			}
+
+			if (Settings.DisplayMess && MessFilter.IsSet)
+			{
+				_filteredCollection = _filteredCollection.Where(x => x.IsMess == MessFilter.Value);
 			}
 
 			filteredCollection = _filteredCollection.ToList();
@@ -521,6 +537,7 @@ namespace Robin
 			Settings.GameFilterUnlicensed = UnlicensedFilter.Value;
 			Settings.GameFilterAdult = AdultFilter?.Value;
 			Settings.GameFilterIsGame = IsGameFilter?.Value;
+			Settings.GameFilterIsMess = MessFilter?.Value;
 		}
 	}
 
