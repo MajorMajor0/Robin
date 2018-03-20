@@ -103,6 +103,8 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 					<MenuItem Style="{StaticResource CMenuItemStyle}"
 							  Command="{Binding OptionsWindowCommand}" />
+					<MenuItem Style="{StaticResource CMenuItemStyle}"
+							  Command="{Binding AuditRomsCommand}" />
 
 				</MenuItem>
 				<MenuItem Header="Help">
