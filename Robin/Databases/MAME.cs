@@ -18,6 +18,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
@@ -322,6 +323,130 @@ namespace Robin
 			#endregion
 
 		}
+
+
+		/// <summary>
+		/// Audit MAME ROMs currently used by Robin using MAME verifyroms command line switch
+		/// </summary>
+		public static List<AuditResult> AuditRoms()
+		{
+			Reporter.Report("Auditing MAME ROMs");
+			Emulator mame = R.Data.Emulators.Local.FirstOrDefault(x => x.ID == CONSTANTS.MAME_ID);
+
+			List<string> arguments = GetListOfCurrentRoms();
+
+			List<string> resultStrings = new List<string>();
+
+			int k = 0;
+			int N = arguments.Count;
+			foreach (string argument in arguments)
+			{
+				using (Process emulatorProcess = new Process())
+				{
+					emulatorProcess.StartInfo.CreateNoWindow = false;
+					emulatorProcess.StartInfo.UseShellExecute = false;
+					emulatorProcess.StartInfo.RedirectStandardOutput = true;
+					emulatorProcess.StartInfo.RedirectStandardError = true;
+					emulatorProcess.StartInfo.WorkingDirectory = Path.GetDirectoryName(mame.FilePath);
+
+					emulatorProcess.StartInfo.FileName = mame.FilePath;
+					emulatorProcess.StartInfo.Arguments = argument;
+
+					try
+					{
+						emulatorProcess.Start();
+						Reporter.Tic("Getting batch " + ++k + " / " + N + " from MAME...");
+					}
+					catch (Exception)
+					{
+						// TODO: report something usefull here if the process fails to start
+					}
+
+					string output = emulatorProcess.StandardOutput.ReadToEnd();
+					Reporter.Toc();
+					string error = emulatorProcess.StandardError.ReadToEnd();
+
+					Reporter.Tic("Listing results...");
+					List<string> lines = output.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Replace("romset ", "").Replace(" is", "").Replace(" available", "")).ToList();
+					resultStrings.AddRange(lines);
+					Reporter.Toc();
+				}
+			}
+
+			//List<string> goodResults = resultStrings.Where(x => x.Contains("is good")).ToList();
+			//List<string> badResults = resultStrings.Where(x => x.Contains("is bad")).ToList();
+			//List<string> bestAvailableResults = resultStrings.Where(x => x.Contains("is best available")).ToList();
+
+			List<AuditResult> auditResults = new List<AuditResult>();
+			foreach (string line in resultStrings)
+			{
+				if (!line.Contains(": "))
+				{
+					auditResults.Add(new AuditResult(line));
+				}
+			}
+
+			return auditResults;
+		}
+
+
+		/// <summary>
+		/// Return a list of roms currently in Robin and return them formatted for use in MAME verify ROMs
+		/// Arguments are broke up into 32k long chunks for use in command line
+		/// </summary>
+		/// <returns></returns>
+		static List<string> GetListOfCurrentRoms()
+		{
+			Reporter.Report("Getting roms from Robin...");
+			List<string> returner = new List<string>();
+			Platform arcadePlatform = R.Data.Platforms.Local.FirstOrDefault(x => x.ID == CONSTANTS.ARCADE_PLATFORM_ID);
+			string[] arcadeRoms = arcadePlatform.Releases.Select(x => x.Rom.FileName.Replace(@".zip", "")).OrderBy(x => x).ToArray();
+
+			int i = 0;
+			int j = 0;
+			while (j < arcadeRoms.Length)
+			{
+				StringBuilder argument = new StringBuilder("-verifyroms ");
+
+				// Arguments have to be less than about 32k or windows bonks the command line
+				while (argument.Length < 32000 && j < arcadeRoms.Length)
+				{
+					argument.Append(' ').Append(arcadeRoms[j++]);
+				}
+				returner.Add(argument.ToString());
+
+				Reporter.ReportInline(i++ + " ");
+			}
+			Reporter.Report("Finished getting ROMs from Robin.");
+			return returner;
+
+		}
+
+		public class AuditResult
+		{
+			public Rom Rom { get; set; }
+			public Rom Parent { get; set; }
+			public string Result { get; set; }
+
+			public AuditResult(string line)
+			{
+				string[] liner = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+				if (liner.Length == 2)
+				{
+					Rom = R.Data.Roms.Local.FirstOrDefault(x => x.FileName == liner[0] + ".zip");
+					Result = liner[1];
+				}
+
+				if (liner.Length == 3)
+				{
+					Rom = R.Data.Roms.Local.FirstOrDefault(x => x.FileName == liner[0] + ".zip");
+					Parent = R.Data.Roms.Local.FirstOrDefault(x => x.FileName == liner[1].Replace("[", "").Replace("]", "") + ".zip");
+					Result = liner[2];
+				}
+			}
+		}
+
 	}
 }
 

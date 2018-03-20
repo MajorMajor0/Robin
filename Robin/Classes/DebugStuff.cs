@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -33,7 +34,7 @@ namespace Robin
 			Reporter.Report("BONUS!");
 			await Task.Run(() =>
 			{
-				SetMessMachines();
+				ScrapeCHD();
 			});
 
 			Reporter.Report("Finished");
@@ -62,18 +63,18 @@ namespace Robin
 
 		public static void SetFactoryDatabase()
 		{
-			foreach (Release release in R.Data.Releases)
-			{
-				release.IsBeaten = false;
-				release.Rating = null;
-				release.PlayCount = 0;
-			}
+			//foreach (Release release in R.Data.Releases)
+			//{
+			//	release.IsBeaten = false;
+			//	release.Rating = null;
+			//	release.PlayCount = 0;
+			//}
 
-			foreach (Collection collection in R.Data.Collections)
-			{
-				collection.Releases.Clear();
-				collection.Games.Clear();
-			}
+			//foreach (Collection collection in R.Data.Collections)
+			//{
+			//	collection.Releases.Clear();
+			//	collection.Games.Clear();
+			//}
 		}
 
 		static void GetMameStatusesAsync()
@@ -491,6 +492,87 @@ namespace Robin
 			{
 				Game game = R.Data.Games.Local.FirstOrDefault(x => x.ID == beaten[0]);
 				game.IsBeaten = true;
+			}
+		}
+
+		static void ScrapeCHD()
+		{
+			string webstarterag = @"https://archive.org/download/MAME_0.185_CHDs_Merged/MAME%200.185%20CHDs%20%28merged%29%20%28a-g%29.zip/MAME%200.185%20CHDs%20%28merged%29%20%28a-g%29%2F";
+
+			string webstarterhz = @"https://archive.org/download/MAME_0.185_CHDs_Merged/MAME%200.185%20CHDs%20%28merged%29%20%28h-z%29.zip/MAME%200.185%20CHDs%20%28merged%29%20%28h-z%29%2F";
+
+			string filestarter = @"D:\RobinData\Working\MAMEUpdatesCHD2\";
+			Directory.CreateDirectory(filestarter);
+
+			foreach (string[] missFile in missCHDs)
+			{
+				using (WebClient webClient = new WebClient())
+				{
+					try
+					{
+						string url = String.Empty;
+
+						if (missFile[1] == "a-g")
+						{
+							url = webstarterag + missFile[0];
+						}
+						else
+						{
+							url = webstarterhz + missFile[0];
+						}
+
+						string filename = filestarter + missFile[2];
+
+						if (!File.Exists(filename))
+						{
+							webClient.DownloadFile(url, filename);
+
+							Stopwatch watch = Stopwatch.StartNew();
+							while (watch.ElapsedMilliseconds < 2000) { }
+						}
+					}
+					catch
+					{
+						Debug.WriteLine("biffed: " + missFile[2]);
+					}
+				}
+
+			}
+		}
+
+		static void ScrapeArchive()
+		{
+			//string webstarter = @"https://archive.org/download/MAME_0.185_EXTRAs/MAME%200.185%20EXTRAs.zip/MAME%200.185%20EXTRAs%2Fsamples%2F";
+
+			string webstarter = @"https://archive.org/download/MAME_0.185_ROMs_split/MAME_0.185_ROMs_split.zip/MAME%200.185%20ROMs%20%28split%29%2F";
+
+			string filestarter = @"D:\RobinData\Working\MAMEUpdatesCHD2\";
+			Directory.CreateDirectory(filestarter);
+
+			foreach (string[] missROM in missROMs)
+			{
+				using (WebClient webClient = new WebClient())
+				{
+					try
+					{
+						string url = webstarter + missROM[0];
+
+						string filename = filestarter + missROM[0];
+
+						if (!File.Exists(filename))
+						{
+							webClient.DownloadFile(url, filename);
+
+							Stopwatch watch = Stopwatch.StartNew();
+							while (watch.ElapsedMilliseconds < 2000) { }
+						}
+					}
+					catch
+					{
+						Debug.WriteLine("biffed: " + missROM[0]);
+					}
+				}
+
 			}
 		}
 
@@ -2890,7 +2972,113 @@ namespace Robin
 "zx97"
 			};
 
+		static List<string[]> missCHDs = new List<string[]>
+		{
+{ new string[] { @"bmiidx4%2Fa03jaa03.chd",  "a-g",  "a03jaa03.chd"}},
+{ new string[] { @"gwinggen%2Fgigawing_v2_02j.chd",  "a-g",  "gigawing_v2_02j.chd"}},
+{ new string[] { @"usagiol%2Fusagionline_v2_04j.chd",  "h-z",  "usagionline_v2_04j.chd"}},
+{ new string[] { @"popn7%2Fb00jaa02.chd",  "h-z",  "b00jaa02.chd"}},
+{ new string[] { @"gundcb79%2Fcdv-10024b.chd",  "a-g",  "cdv-10024b.chd"}},
+{ new string[] { @"homura%2Fhomura_v2_04jpn.chd",  "h-z",  "homura_v2_04jpn.chd"}},
+{ new string[] { @"hotgmkmp%2Fwdc wd400eb-11cpf0.chd",  "h-z",  "wdc wd400eb-11cpf0.chd"}},
+{ new string[] { @"otomedius%2Fotomedius.chd",  "h-z",  "otomedius.chd"}},
+{ new string[] { @"hotd4%2Fdvp-0003b.chd",  "h-z",  "dvp-0003b.chd"}},
+{ new string[] { @"raiden3%2Fraiden3_v2_01j.chd",  "h-z",  "raiden3_v2_01j.chd"}},
+{ new string[] { @"popn8%2Fgqb30jaa02.chd",  "h-z",  "gqb30jaa02.chd"}},
+{ new string[] { @"hotd4%2Fdvp-0003a.chd",  "h-z",  "dvp-0003a.chd"}},
+{ new string[] { @"gundcb83%2Fcdv-10030.chd",  "a-g",  "cdv-10030.chd"}},
+{ new string[] { @"gundcb83%2Fcdv-10037b.chd",  "a-g",  "cdv-10037b.chd"}},
+{ new string[] { @"bmiidx6%2Fb4ujaa03.chd",  "a-g",  "b4ujaa03.chd"}},
+{ new string[] { @"kov3hd%2Fkov3hd_m101.chd",  "h-z",  "kov3hd_m101.chd"}},
+{ new string[] { @"kov3hd%2Fkov3hd_m102.chd",  "h-z",  "kov3hd_m102.chd"}},
+{ new string[] { @"kov3hd%2Fkov3hd_m103.chd",  "h-z",  "kov3hd_m103.chd"}},
+{ new string[] { @"kov3hd%2Fkov3hd_m104.chd",  "h-z",  "kov3hd_m104.chd"}},
+{ new string[] { @"kov3hd%2Fkov3hd_m105.chd",  "h-z",  "kov3hd_m105.chd"}},
+{ new string[] { @"2spicy%2Fdvp-0027a.chd",  "a-g",  "dvp-0027a.chd"}},
+{ new string[] { @"raiden4%2Fraiden4_v1_00j.chd",  "h-z",  "raiden4_v1_00j.chd"}},
+{ new string[] { @"initiad4%2Fdvp-0030c.chd",  "h-z",  "dvp-0030c.chd"}},
+{ new string[] { @"initiad4%2Fdvp-0030d.chd",  "h-z",  "dvp-0030d.chd"}},
+{ new string[] { @"rambo%2Fdvp-0069.chd",  "h-z",  "dvp-0069.chd"}},
+{ new string[] { @"segartv%2Fdvp-0044.chd",  "h-z",  "dvp-0044.chd"}},
+{ new string[] { @"policet2%2Fpt2.chd",  "h-z",  "pt2.chd"}},
+{ new string[] { @"voyager%2Fvoyager.chd",  "h-z",  "voyager.chd"}},
+{ new string[] { @"bmiidx7%2Fb44jaa03.chd",  "a-g",  "b44jaa03.chd"}},
+{ new string[] { @"bm37th%2Fgcb07jca02.chd",  "a-g",  "gcb07jca02.chd"}},
+{ new string[] { @"bmiidx8%2Fc44jaa03.chd",  "a-g",  "c44jaa03.chd"}},
+{ new string[] { @"spicaadv%2Fspicaadventure_v2_03j.chd",  "h-z",  "spicaadventure_v2_03j.chd"}},
+{ new string[] { @"bmiidx6%2Fb4ujaa02.chd",  "a-g",  "b4ujaa02.chd"}},
+{ new string[] { @"bmiidx7%2Fb44jaa02.chd",  "a-g",  "b44jaa02.chd"}},
+{ new string[] { @"bmiidx8%2Fc44jaa02.chd",  "a-g",  "c44jaa02.chd"}},
+{ new string[] { @"bm3final%2Fgcc01jca02.chd",  "a-g",  "gcc01jca02.chd"}},
+{ new string[] { @"esh%2Fesh_ver2_en.chd",  "a-g",  "esh_ver2_en.chd"}},
+{ new string[] { @"rblaster%2Frblaster.chd",  "h-z",  "rblaster.chd"}}
+		};
 
+		static List<string[]> missROMs = new List<string[]>
+		{
+			{ new string[] { "1943jah.zip", "no" }},
+{ new string[] { "academy.zip", "no" }},
+{ new string[] { "brdrline.zip", "no" }},
+{ new string[] { "bublboblp.zip", "no" }},
+{ new string[] { "cawingur1.zip", "no" }},
+{ new string[] { "dbox.zip", "no" }},
+{ new string[] { "dctream.zip", "no" }},
+{ new string[] { "ddp3.zip", "no" }},
+{ new string[] { "dragntr.zip", "no" }},
+{ new string[] { "europc.zip", "no" }},
+{ new string[] { "footbpow.zip", "no" }},
+{ new string[] { "fscc9.zip", "no" }},
+{ new string[] { "gnw_dj101.zip", "no" }},
+{ new string[] { "gnw_mc25.zip", "no" }},
+{ new string[] { "gnw_ml102.zip", "no" }},
+{ new string[] { "gnw_mw56.zip", "no" }},
+{ new string[] { "hlntroyu.zip", "no" }},
+{ new string[] { "hod2bios.zip", "no" }},
+{ new string[] { "jclub2v100.zip", "no" }},
+{ new string[] { "jclub2v110.zip", "no" }},
+{ new string[] { "jclub2v112.zip", "no" }},
+{ new string[] { "jclub2v200.zip", "no" }},
+{ new string[] { "jclub2v201.zip", "no" }},
+{ new string[] { "jclub2v203.zip", "no" }},
+{ new string[] { "jclub2v204.zip", "no" }},
+{ new string[] { "jclub2v205.zip", "no" }},
+{ new string[] { "jclub2v220.zip", "no" }},
+{ new string[] { "jgakuen1.zip", "no" }},
+{ new string[] { "kbilly.zip", "no" }},
+{ new string[] { "kblades.zip", "no" }},
+{ new string[] { "kbucky.zip", "no" }},
+{ new string[] { "kdribble.zip", "no" }},
+{ new string[] { "kgarfld.zip", "no" }},
+{ new string[] { "kingpengsp.zip", "no" }},
+{ new string[] { "kinst.zip", "no" }},
+{ new string[] { "kinst2.zip", "no" }},
+{ new string[] { "kinst2uk.zip", "no" }},
+{ new string[] { "knfl.zip", "no" }},
+{ new string[] { "marmagicua.zip", "no" }},
+{ new string[] { "megazone.zip", "no" }},
+{ new string[] { "megazonea.zip", "no" }},
+{ new string[] { "meteorp.zip", "no" }},
+{ new string[] { "missb2.zip", "no" }},
+{ new string[] { "nsub.zip", "no" }},
+{ new string[] { "pompeia6ua.zip", "no" }},
+{ new string[] { "ptrmj.zip", "no" }},
+{ new string[] { "qnilesea.zip", "no" }},
+{ new string[] { "rastsagaa.zip", "no" }},
+{ new string[] { "sderby2s.zip", "no" }},
+{ new string[] { "shootaw2.zip", "no" }},
+{ new string[] { "sunmoona.zip", "no" }},
+{ new string[] { "taltbeast.zip", "no" }},
+{ new string[] { "targeth10.zip", "no" }},
+{ new string[] { "tddragon.zip", "no" }},
+{ new string[] { "tekken3.zip", "no" }},
+{ new string[] { "tgaunt.zip", "no" }},
+{ new string[] { "touchgo.zip", "no" }},
+{ new string[] { "tridento.zip", "no" }},
+{ new string[] { "tsjam.zip", "no" }},
+{ new string[] { "tsonic.zip", "no" }},
+{ new string[] { "vsmileg.zip", "no" }},
+{ new string[] { "wrally2.zip", "no" }}
+		};
 	}
 }
 #endif

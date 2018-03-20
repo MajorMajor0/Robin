@@ -130,6 +130,12 @@
     <Compile Include="ArtWindowViewModel.cs">
       <DependentUpon>ArtWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AuditWindow.xaml.cs">
+      <DependentUpon>AuditWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AuditWindowViewModel.cs">
+      <DependentUpon>AuditWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Classes\Command.cs" />
     <Compile Include="Classes\DebugStuff.cs" />
     <Compile Include="Classes\TitledCollection.cs" />
@@ -333,6 +339,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ArtWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AuditWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

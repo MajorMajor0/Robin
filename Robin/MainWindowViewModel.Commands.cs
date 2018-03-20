@@ -662,6 +662,14 @@ namespace Robin
 			return TaskInProgress;
 		}
 
+
+		public Command AuditRomsCommand { get; set; }
+
+		void AuditRoms()
+		{
+			new AuditWindow();
+		}
+
 		void InitializeCommands()
 		{
 			AddCollectionCommand = new Command(AddCollection, AddCollectionCanExecute, "Add collection", "Add a new custom collection to the list.");
@@ -715,6 +723,8 @@ namespace Robin
 			RemoveFromCollectionCommand = new Command(RemoveFromCollection, RemoveFromCollectionCanExecute, "Remove from collection", "Removes the current item from the collection permanently.");
 
 			CancelTaskCommand = new Command(CancelTask, CancelTaskCanExecute, "Cancel", "Cancel the current task");
+
+			AuditRomsCommand = new Command(AuditRoms, "Audit Roms", "Verify MAME ROMs");
 		}
 	}
 }
