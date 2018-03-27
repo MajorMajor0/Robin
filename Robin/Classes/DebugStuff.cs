@@ -63,14 +63,14 @@ namespace Robin
 
 		public static void SetFactoryDatabase()
 		{
-			//foreach (Release release in R.Data.Releases)
+			//foreach (Release release in R.Data.Releases.Local)
 			//{
 			//	release.IsBeaten = false;
 			//	release.Rating = null;
 			//	release.PlayCount = 0;
 			//}
 
-			//foreach (Collection collection in R.Data.Collections)
+			//foreach (Collection collection in R.Data.Collections.Local)
 			//{
 			//	collection.Releases.Clear();
 			//	collection.Games.Clear();
@@ -79,7 +79,7 @@ namespace Robin
 
 		static void GetMameStatusesAsync()
 		{
-			Platform arcadePlatform = R.Data.Platforms.FirstOrDefault(x => x.ID == CONSTANTS.ARCADE_PLATFORM_ID);
+			Platform arcadePlatform = R.Data.Platforms.Local.FirstOrDefault(x => x.ID == CONSTANTS.ARCADE_PLATFORM_ID);
 
 			Stopwatch Watch = Stopwatch.StartNew();
 			Stopwatch Watch1 = Stopwatch.StartNew();
@@ -90,7 +90,7 @@ namespace Robin
 			List<string> emulationStatuses = new List<string>();
 			settings.DtdProcessing = DtdProcessing.Parse;
 
-			arcadePlatform = R.Data.Platforms.FirstOrDefault(x => x.Title.Contains("Arcade"));
+			arcadePlatform = R.Data.Platforms.Local.FirstOrDefault(x => x.Title.Contains("Arcade"));
 
 			Watch1.Restart();
 			Reporter.Report("Getting xml file from MAME...");

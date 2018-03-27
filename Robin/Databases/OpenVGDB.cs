@@ -108,14 +108,14 @@ namespace Robin
 					List<VGDBROM> finishedVgdbRoms = new List<VGDBROM>();
 
 					int z = 0;
-					Platform atariPlatform = R.Data.Platforms.FirstOrDefault(x => x.Title.Contains("2600"));
+					Platform atariPlatform = R.Data.Platforms.Local.FirstOrDefault(x => x.Title.Contains("2600"));
 					foreach (VGDBROM atariVgdbRom in atariVgdbRoms)
 					{
 						if (!finishedVgdbRoms.Contains(atariVgdbRom))
 						{
 							Reporter.Report(z++.ToString());
 							Game game = new Game();
-							R.Data.Games.Add(game);
+							R.Data.Games.Local.Add(game);
 
 							List<VGDBROM> currentGameVgdbRoms = atariVgdbRoms
 							.Where(x =>

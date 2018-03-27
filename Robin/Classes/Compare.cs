@@ -57,7 +57,7 @@ namespace Robin
             switch (db)
             {
                 case LocalDB.GamesDB:
-                    platform = R.Data.Platforms.FirstOrDefault(x => x.ID_GDB == idbPlatform.ID);
+                    platform = R.Data.Platforms.Local.FirstOrDefault(x => x.ID_GDB == idbPlatform.ID);
                     if (platform != null)
                     {
                         RReleases = new List<Release>(platform.Releases.Where(x => x.ID_GDB == null && x.IsGame));
@@ -65,7 +65,7 @@ namespace Robin
                     break;
 
                 case LocalDB.GiantBomb:
-                    platform = R.Data.Platforms.FirstOrDefault(x => x.ID_GB == idbPlatform.ID);
+                    platform = R.Data.Platforms.Local.FirstOrDefault(x => x.ID_GB == idbPlatform.ID);
                     if (platform != null)
                     {
                         RReleases = new List<Release>(platform.Releases.Where(x => x.ID_GB == null && x.IsGame));
@@ -73,7 +73,7 @@ namespace Robin
                     break;
 
                 case LocalDB.LaunchBox:
-                    platform = R.Data.Platforms.FirstOrDefault(x => x.ID_LB == idbPlatform.ID);
+                    platform = R.Data.Platforms.Local.FirstOrDefault(x => x.ID_LB == idbPlatform.ID);
                     if (platform != null)
                     {
                         RReleases = new List<Release>(platform.Releases.Where(x => x.ID_LB == null && x.IsGame));

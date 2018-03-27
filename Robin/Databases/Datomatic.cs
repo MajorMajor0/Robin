@@ -150,7 +150,7 @@ namespace Robin
 					DatomaticFile = XDocument.Load(Dialog.FileName);
 				}
 
-				List<Region> datomaticRegions = R.Data.Regions.Where(x => x.Datomatic != null).ToList();
+				List<Region> datomaticRegions = R.Data.Regions.Local.Where(x => x.Datomatic != null).ToList();
 
 				// Add release where required to make sure xelements have standardized info
 				foreach (XElement gameElement in DatomaticFile.Root.Elements("game"))
@@ -249,7 +249,7 @@ namespace Robin
 						if (game == null)
 						{
 							game = new Game();
-							R.Data.Games.Add(game);
+							R.Data.Games.Local.Add(game);
 						}
 
 						// Check if each rom exists
@@ -261,13 +261,13 @@ namespace Robin
 								continue; // Malformed element
 							}
 
-							var rom = R.Data.Roms.FirstOrDefault(x => x.SHA1 == romElementSha1);
+							var rom = R.Data.Roms.Local.FirstOrDefault(x => x.SHA1 == romElementSha1);
 
 							// Not found, create a new one
 							if (rom == null)
 							{
 								rom = new Rom();// { Platform_ID = platform.ID };
-								R.Data.Roms.Add(rom);
+								R.Data.Roms.Local.Add(rom);
 							}
 #if DEBUG
 							Watch2.Restart();
@@ -289,7 +289,7 @@ namespace Robin
 									continue;
 								}
 
-								long? regionID = R.Data.Regions.FirstOrDefault(x => (x.Datomatic == releaseRegionTitle) || (x.Title == releaseRegionTitle)).ID;
+								long? regionID = R.Data.Regions.Local.FirstOrDefault(x => (x.Datomatic == releaseRegionTitle) || (x.Title == releaseRegionTitle)).ID;
 
 								if (regionID == null)
 								{
@@ -373,7 +373,7 @@ namespace Robin
 			// Get languages from datomatic using regex from parenthesis
 			release.Language = "";
 
-			foreach (Language language in R.Data.Languages)
+			foreach (Language language in R.Data.Languages.Local)
 			{
 				if (Regex.IsMatch(release.Title, @"\([^)]*" + language.Abbreviation + @"[^)]*\)"))
 				{
@@ -395,7 +395,7 @@ namespace Robin
 				Matches[i] = Matches[i].Replace("(", "").Replace(")", "");
 			}
 
-			foreach (Region region in R.Data.Regions)
+			foreach (Region region in R.Data.Regions.Local)
 			{
 				Matches.Remove(region.Title);
 			}

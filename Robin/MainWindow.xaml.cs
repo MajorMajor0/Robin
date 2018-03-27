@@ -194,7 +194,7 @@ namespace Robin
 			Watch.Start();
 			int i = 0;
 
-			foreach (Release release in R.Data.Releases)
+			foreach (Release release in R.Data.Releases.Local)
 			{
 				Watch.Restart();
 				Debug.WriteLine(i++ + " : " + Watch.ElapsedMilliseconds);

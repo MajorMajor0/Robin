@@ -26,7 +26,7 @@ namespace Robin
 		{
 			get
 			{
-				return R.Data.Platforms.FirstOrDefault(x => x.ID == ID);
+				return R.Data.Platforms.Local.FirstOrDefault(x => x.ID == ID);
 			}
 		}
 

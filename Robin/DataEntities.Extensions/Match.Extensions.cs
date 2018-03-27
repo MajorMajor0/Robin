@@ -40,11 +40,11 @@ namespace Robin
 			R.Data.Configuration.LazyLoadingEnabled = false;
 			R.Data.Matches.Load();
 			int i = 0;
-			foreach (Release release in R.Data.Releases)
+			foreach (Release release in R.Data.Releases.Local)
 			{
 				if (release.Rom.SHA1 != null && (release.ID_GB != null || release.ID_GDB != null || release.ID_OVG != null))
 				{
-					R.Data.Matches.Add(release);
+					R.Data.Matches.Local.Add(release);
 				}
 				Debug.WriteLine(i++);
 			}
@@ -60,10 +60,9 @@ namespace Robin
 			int i = 0;
 			await Task.Run(() =>
 			{
-				foreach (Match match in R.Data.Matches)
+				foreach (Match match in R.Data.Matches.Local)
 				{
-
-					Release release = R.Data.Releases.FirstOrDefault(x => x.Rom.SHA1 == match.SHA1 && x.Region_ID == match.Region_ID);
+					Release release = R.Data.Releases.Local.FirstOrDefault(x => x.Rom.SHA1 == match.SHA1 && x.Region_ID == match.Region_ID);
 					if (release != null)
 					{
 						Reporter.Report((i++).ToString() + " Matched " + release.TitleAndRegion);

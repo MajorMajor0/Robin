@@ -132,7 +132,7 @@ namespace Robin
 						continue;
 					}
 
-					LBPlatform lbPlatform = R.Data.LBPlatforms.FirstOrDefault(x => x.Title == tempTitle);
+					LBPlatform lbPlatform = R.Data.LBPlatforms.Local.FirstOrDefault(x => x.Title == tempTitle);
 					if (lbPlatform == null)
 					{
 						lbPlatform = new LBPlatform();
@@ -148,7 +148,7 @@ namespace Robin
 									break;
 
 								case false: // Add the new platform
-									R.Data.LBPlatforms.Add(lbPlatform);
+									R.Data.LBPlatforms.Local.Add(lbPlatform);
 									break;
 
 								default:

@@ -174,6 +174,7 @@
     <Compile Include="DataEntities.Extensions\GBRelease.Extensions.cs" />
     <Compile Include="DataEntities.Extensions\Game.Extensions.cs" />
     <Compile Include="DataEntities.Extensions\LBRelease.Extensions.cs" />
+    <Compile Include="Mame\Machine.Extensions.cs" />
     <Compile Include="DataEntities.Extensions\Match.Extensions.cs" />
     <Compile Include="DataEntities.Extensions\OVGPlatform.Extensions.cs" />
     <Compile Include="DataEntities.Extensions\OVGRelease.Extensions.cs" />
@@ -186,6 +187,24 @@
     <Compile Include="DataEntities.Extensions\LBGame.Extensions.cs" />
     <Compile Include="Emulator.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Mame\Disk.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Mame\Entities.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Entities.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Mame\Entities.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Mame\Entities.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Entities.edmx</DependentUpon>
     </Compile>
     <Compile Include="Galasoft.MvvmLight\RelayCommand.cs" />
     <Compile Include="Galasoft.MvvmLight\WeakAction.cs" />
@@ -223,6 +242,9 @@
     <Compile Include="LBRelease.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Mame\Machine.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
     <Compile Include="MainWindowViewModel.Commands.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -243,6 +265,9 @@
     <Compile Include="Classes\DateTimeRoutines.cs" />
     <Compile Include="MainWindowViewModel.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Mame\Rom.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
     </Compile>
     <Compile Include="Match.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
@@ -407,6 +432,13 @@
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>RobinDataModel.Designer.cs</LastGenOutput>
     </EntityDeploy>
+    <EntityDeploy Include="Mame\Entities.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>Entities.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="Mame\Entities.edmx.diagram">
+      <DependentUpon>Entities.edmx</DependentUpon>
+    </None>
     <None Include="RobinDataModel.edmx.diagram">
       <DependentUpon>RobinDataModel.edmx</DependentUpon>
     </None>
@@ -552,6 +584,16 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Mame\Entities.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>Entities.edmx</DependentUpon>
+      <LastGenOutput>Entities.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Mame\Entities.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>Entities.edmx</DependentUpon>
+      <LastGenOutput>Entities.cs</LastGenOutput>
+    </Content>
     <Content Include="OpenVGDBModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>OpenVGDBModel.edmx</DependentUpon>
