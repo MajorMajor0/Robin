@@ -33,7 +33,7 @@ namespace Robin
 
 		public Platform RPlatform => this;
 
-		public OVGPlatform OVGPlatform => R.Data.OVGPlatforms.FirstOrDefault(x => x.ID == ID);
+		public OVGPlatform OVGPlatform => R.Data.OVGPlatforms.Local.FirstOrDefault(x => x.ID == ID);
 
 		public int MatchedToGamesDB => Releases.Count(x => x.ID_GDB != null);
 
@@ -60,7 +60,7 @@ namespace Robin
 
 		public bool HasRelease => Releases.Any(x => x.Included);
 
-		public List<Rom> Roms => R.Data.Roms.Where(x => x.Platform_ID == ID).ToList();
+		public List<Rom> Roms => R.Data.Roms.Local.Where(x => x.Platform_ID == ID).ToList();
 
 		public string WhyCantIPlay
 		{

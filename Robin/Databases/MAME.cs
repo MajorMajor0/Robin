@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -32,11 +33,24 @@ namespace Robin
 
 		List<Region> notNullRegions;
 
+		public Mame.Entities Entities { get; set; }
+
 		public MAME()
 		{
-			arcadePlatform = R.Data.Platforms.FirstOrDefault(x => x.ID == CONSTANTS.ARCADE_PLATFORM_ID);
+			arcadePlatform = R.Data.Platforms.Local.FirstOrDefault(x => x.ID == CONSTANTS.ARCADE_PLATFORM_ID);
 
 			notNullRegions = R.Data.Regions.Local.Where(x => x.Priority != null).OrderByDescending(x => x.Priority).ToList();
+
+
+		}
+
+		public MAME(bool loadDB) : this()
+		{
+			if (loadDB)
+			{
+				Mame.Entities MEntities = new Mame.Entities();
+				MEntities.Machines.Include(x => x.Disks).Include(x => x.Roms).Load();
+			}
 		}
 
 		public void CacheDataBase()
@@ -45,16 +59,10 @@ namespace Robin
 			Stopwatch Watch1 = Stopwatch.StartNew();
 
 			XmlReaderSettings settings = new XmlReaderSettings();
-
+			settings.DtdProcessing = DtdProcessing.Parse;
 
 			int machineCount = 0;
 			List<XElement> machineElements = new List<XElement>();
-			//XDocument xdoc = new XDocument();
-
-			settings.DtdProcessing = DtdProcessing.Parse;
-
-			Reporter.Report("Opening databases...");
-			Watch1.Restart();
 
 			Reporter.ReportInline(Watch1.Elapsed.ToString(@"m\:ss"));
 			Watch1.Restart();
@@ -120,7 +128,7 @@ namespace Robin
 				if (game == null)
 				{
 					game = new Game();
-					R.Data.Games.Add(game);
+					R.Data.Games.Local.Add(game);
 				}
 
 				// Check if each rom exists and each release exists
@@ -202,7 +210,178 @@ namespace Robin
 
 							parentRelease.Game = parentGame;
 							orphanRelease.Game = parentGame;
-							R.Data.Games.Add(parentGame);
+							R.Data.Games.Local.Add(parentGame);
+							arcadePlatform.Releases.Add(parentRelease);
+
+							Debug.WriteLine(machineElement.SafeGetA(element1: "driver", attribute: "status"));
+						}
+					}
+				}
+			}
+			else
+			{
+				Reporter.Report("No orphans found.");
+			}
+
+			Reporter.Report("Finished: " + Watch.Elapsed.ToString(@"m\:ss"));
+		}
+
+
+		public void CacheDataBase2()
+		{
+			Stopwatch Watch = Stopwatch.StartNew();
+			Stopwatch Watch1 = Stopwatch.StartNew();
+
+			XmlReaderSettings settings = new XmlReaderSettings();
+			settings.DtdProcessing = DtdProcessing.Parse;
+
+			int machineCount = 0;
+			List<XElement> machineElements = new List<XElement>();
+
+			Watch1.Restart();
+			Reporter.Report("Getting xml file from MAME...");
+
+			// Scan through xml file from MAME and pick out working games
+			using (Process process = MAMEexe(@"-lx"))
+
+			using (XmlReader reader = XmlReader.Create(process.StandardOutput, settings))
+			{
+				while (reader.Read())
+				{
+					if (reader.Name == "machine")
+					{
+						XElement machineElement = XNode.ReadFrom(reader) as XElement;
+						string emulationStatus = machineElement.SafeGetA(element1: "driver", attribute: "emulation");
+						string publisher = machineElement.SafeGetA("manufacturer");
+
+						machineElements.Add(machineElement);
+
+						if (++machineCount % 100 == 0)
+						{
+							Reporter.Report(machineCount + " machines");
+						}
+
+					}
+				}
+			}
+
+			List<XElement> parentElements = machineElements.Where(x => x.SafeGetA(attribute: "cloneof") == null).ToList();
+			List<XElement> childElements = machineElements.Where(x => x.SafeGetA(attribute: "cloneof") != null).ToList();
+
+			int parentCount = parentElements.Count;
+			int childCount = childElements.Count;
+			int j = 0;
+			Reporter.Report("Found " + parentCount + " parent machines and " + childCount + " child machines.");
+			foreach (XElement parentElement in parentElements)
+			{
+				if (++j % (parentCount / 10) == 0)
+				{
+					Reporter.Report("Working " + j + " / " + parentCount + " parent machines.");
+				}
+
+				Game game = null;
+				string parentName = parentElement.SafeGetA(attribute: "name");
+				List<XElement> romElements = childElements.Where(x => x.SafeGetA(attribute: "cloneof") == parentName).ToList();
+				romElements.Insert(0, parentElement);
+
+				// Check if game exists
+				foreach (XElement romElement in romElements)
+				{
+					string romElementName = romElement.SafeGetA(attribute: "name") + ".zip";
+					Release tRelease = arcadePlatform.Releases.FirstOrDefault(x => x.Rom.FileName == romElementName);
+					if (tRelease != null)
+					{
+						game = tRelease.Game;
+						break; // Game exists--no need to keep looking
+					}
+				}
+
+				if (game == null)
+				{
+					game = new Game();
+					R.Data.Games.Local.Add(game);
+				}
+
+				// Check if each rom exists and each release exists
+				foreach (XElement romElement in romElements)
+				{
+					string romElementName = romElement.SafeGetA(attribute: "name") + ".zip";
+					var rom = arcadePlatform.Roms.FirstOrDefault(x => x.FileName == romElementName);
+
+					// Not found, create a new one
+					if (rom == null)
+					{
+						rom = new Rom();
+						arcadePlatform.Roms.Add(rom);
+					}
+
+					rom.Title = romElement.SafeGetA("description");
+					rom.FileName = romElementName;
+					rom.Source = "MAME";
+
+					var release = arcadePlatform.Releases.FirstOrDefault(x => x.Rom.FileName == romElementName);
+					if (release == null)
+					{
+						release = new Release();
+						release.Rom = rom;
+						arcadePlatform.Releases.Add(release);
+					}
+
+					release.Title = rom.Title;
+					release.Game = game;
+					ParseReleaseFromElement(romElement, release);
+				}
+			}
+			List<Release> orphanReleases = arcadePlatform.Releases.Where(x => x.Game == null).ToList();
+			int orphanCount = orphanReleases.Count;
+
+			if (orphanCount > 0)
+			{
+				// Get list of clones from MAME to help clean up orphans
+				Reporter.Report("Getting list of clones...");
+				Watch1.Restart();
+
+				List<string[]> cloneList = CloneList();
+
+				j = 0;
+
+				Reporter.ReportInline(Watch1.Elapsed.ToString(@"m\:ss"));
+				Reporter.Report("Cleaning up " + orphanCount + " orphans...");
+				Watch1.Restart();
+
+				foreach (Release orphanRelease in orphanReleases)
+				{
+					if (++j % (parentCount / 10) == 0)
+					{
+						Reporter.Report("Working " + j + " / " + orphanCount + " orphans.");
+					}
+
+					string[] clonePair = cloneList.FirstOrDefault(x => x[0] + @".zip" == orphanRelease.Rom.FileName);
+
+					// First look through arcadePlatform to see if the parent is there
+					if (arcadePlatform.Releases.Any(x => x.Rom.FileName == clonePair[1] + @".zip"))
+					{
+						Release parentRelease = arcadePlatform.Releases.FirstOrDefault(x => x.Rom.FileName == clonePair[1] + @".zip");
+						orphanRelease.Game = parentRelease.Game;
+					}
+
+					// If the parent is not in arcadePlatform, go back to mame to get the parent
+					else
+					{
+						using (Process process1 = MAMEexe(@"-lx " + clonePair[1]))
+						using (StreamReader MameOutput = process1.StandardOutput)
+						{
+							string text = MameOutput.ReadToEnd();
+							XElement machineElement = XElement.Parse(text).Element("machine");
+
+							Release parentRelease = new Release();
+							Game parentGame = new Game();
+
+							ParseReleaseFromElement(machineElement, parentRelease);
+
+							parentRelease.Game = parentGame;
+							orphanRelease.Game = parentGame;
+							R.Data.Games.Local.Add(parentGame);
 							arcadePlatform.Releases.Add(parentRelease);
 
 							Debug.WriteLine(machineElement.SafeGetA(element1: "driver", attribute: "status"));

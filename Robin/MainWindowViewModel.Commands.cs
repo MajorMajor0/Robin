@@ -582,8 +582,8 @@ namespace Robin
 				Reporter.ReportInline(Watch.Elapsed.ToString("ss") + " s");
 				Watch.Restart();
 
-				int count = R.Data.Releases.Count();
-				foreach (Release release in R.Data.Releases)
+				int count = R.Data.Releases.Local.Count();
+				foreach (Release release in R.Data.Releases.Local)
 				{
 					if (j++ % (count / 10) == 0)
 					{
