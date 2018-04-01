@@ -29,7 +29,7 @@ namespace Robin
 	}
 
 
-	public partial class RobinDataEntities : Entity
+	public partial class RobinDataEntities : REntity
 	{
 		string connectionString = "data source = " + Robin.FileLocation.RobinData;
 

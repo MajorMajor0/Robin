@@ -9,7 +9,7 @@ namespace Robin.Mame
 {
 	partial class Disk
 	{
-		public Disk(XElement xelement) : this()
+		public Disk(XElement xelement)
 		{
 			GetPropsFromXElement(xelement);
 		}
@@ -20,8 +20,8 @@ namespace Robin.Mame
 		/// <param name="xelement">XElement "disk" from MAME -listxml</param>
 		public void GetPropsFromXElement(XElement xelement)
 		{
-			Name = xelement.Attribute("name")?.Value;
-			SHA1 = xelement.Attribute("sha1")?.Value;
+			//Name = xelement.Attribute("name")?.Value;
+			//SHA1 = xelement.Attribute("sha1")?.Value;
 		}
 	}
 }

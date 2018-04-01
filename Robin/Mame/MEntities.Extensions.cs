@@ -34,7 +34,7 @@ namespace Robin.Mame
 	}
 
 
-	public partial class MEntities : Entity
+	public partial class MEntities : REntity
 	{
 		string connectionString = "data source = " + Robin.FileLocation.MameData;
 
@@ -49,9 +49,9 @@ namespace Robin.Mame
 
 			if (load)
 			{
-				Reporter.Tic("Loading MAME...");
-				Machines.Include(x => x.Disks).Include(x => x.Roms).Load();
-				Reporter.Toc();
+				//Reporter.Tic("Loading MAME...");
+				//Machines.Include(x => x.Disks).Include(x => x.Roms).Load();
+				//Reporter.Toc();
 			}
 
 		}

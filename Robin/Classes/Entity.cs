@@ -10,16 +10,16 @@ using System.Threading.Tasks;
 
 namespace Robin
 {
-	public class Entity : DbContext
+	public class REntity : DbContext
 	{
 		public virtual string FileLocation { get; set; }
 
-		public Entity() : base()
+		public REntity() : base()
 		{
 
 		}
 
-		public Entity(string namer) : base(namer)
+		public REntity(string namer) : base(namer)
 		{
 		}
 
