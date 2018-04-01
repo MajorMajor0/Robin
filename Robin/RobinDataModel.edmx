@@ -48,6 +48,7 @@
           </Key>
           <Property Name="ID" Type="integer" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="IsGame" Type="bit" Nullable="false" />
+          <Property Name="IsMess" Type="bit" Nullable="false" />
           <Property Name="IsCrap" Type="bit" Nullable="false" />
           <Property Name="IsAdult" Type="bit" Nullable="false" />
           <Property Name="IsBeaten" Type="bit" Nullable="false" />
@@ -59,7 +60,6 @@
           <Property Name="VideoFormat" Type="nvarchar" MaxLength="2147483647" />
           <Property Name="Players" Type="nvarchar" MaxLength="2147483647" />
           <Property Name="Rating" Type="decimal" Precision="53" Scale="0" />
-          <Property Name="IsMess" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="GBGame">
           <Key>

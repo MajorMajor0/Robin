@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Data.Entity;
 using System.Diagnostics;
 using System.Globalization;
@@ -25,7 +26,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace Robin
+namespace Robin.Mame
 {
 	public class MAME
 	{
@@ -33,25 +34,14 @@ namespace Robin
 
 		List<Region> notNullRegions;
 
-		public Mame.Entities Entities { get; set; }
+		//public Entities MEntities { get; set; }
 
 		public MAME()
 		{
 			arcadePlatform = R.Data.Platforms.Local.FirstOrDefault(x => x.ID == CONSTANTS.ARCADE_PLATFORM_ID);
-
 			notNullRegions = R.Data.Regions.Local.Where(x => x.Priority != null).OrderByDescending(x => x.Priority).ToList();
-
-
 		}
 
-		public MAME(bool loadDB) : this()
-		{
-			if (loadDB)
-			{
-				Mame.Entities MEntities = new Mame.Entities();
-				MEntities.Machines.Include(x => x.Disks).Include(x => x.Roms).Load();
-			}
-		}
 
 		public void CacheDataBase()
 		{
@@ -140,7 +130,7 @@ namespace Robin
 					// Not found, create a new one
 					if (rom == null)
 					{
-						rom = new Rom();
+						rom = new Robin.Rom();
 						arcadePlatform.Roms.Add(rom);
 					}
 
@@ -226,8 +216,152 @@ namespace Robin
 			Reporter.Report("Finished: " + Watch.Elapsed.ToString(@"m\:ss"));
 		}
 
-
 		public void CacheDataBase2()
+		{
+			Stopwatch Watch = Stopwatch.StartNew();
+
+			List<string> goodMachines = new List<string>();
+			List<string> goodRoms = new List<string>();
+			List<string> goodDisks = new List<string>();
+
+			XmlReaderSettings settings = new XmlReaderSettings();
+			settings.DtdProcessing = DtdProcessing.Parse;
+
+			// Wipe tables
+			Reporter.Tic("Wiping tables.");
+			//string query = @"DELETE FROM Machine_Disk;
+			//				DELETE FROM Machine_Rom;
+			//				DELETE FROM Machine;
+			//				DELETE FROM Disk;
+			//				DELETE FROM Rom;
+			//				DELETE FROM sqlite_sequence;";
+
+			//M.Data.Database.ExecuteSqlCommand(query);
+			M.Data.Machines.Local.Clear();
+			M.Data.Roms.Local.Clear();
+			M.Data.Disks.Local.Clear();
+			M.Data.SaveChanges();
+			Reporter.Toc();
+
+			int machineCount = 0;
+
+			Reporter.Tic("Getting xml file from MAME...");
+
+			List<Machine> machines = new List<Machine>();
+			//List<Rom> roms = new List<Rom>();
+			//List<Disk> disks = new List<Disk>();
+
+			// Scan through xml file from MAME and pick out working games
+			using (Process process = MAMEexe(@"-lx"))
+			using (XmlReader reader = XmlReader.Create(process.StandardOutput, settings))
+			{
+
+				while (reader.Read() && machineCount < 6000)
+				{
+					if (reader.Name == "machine")
+					{
+						XElement machineElement = XNode.ReadFrom(reader) as XElement;
+
+						// Check if machine exists, if not add it to database
+						//string machineName = machineElement.SafeGetA(attribute: "name");
+						//goodMachines.Add(machineName);
+
+						//Machine machine = M.Data.Machines.Local.FirstOrDefault(x => x.Name == machineName);
+
+						//if (machine == null)
+						//{
+						Machine machine = new Machine(machineElement);
+						machines.Add(machine);
+						//}
+
+						//else
+						//{
+						//	machine.GetPropsFromXElement(machineElement);
+						//}
+
+						// Check if roms exist, if not add them to database
+						foreach (XElement romElement in machineElement.Elements("rom"))
+						{
+							//string romName = romElement.SafeGetA(attribute: "name");
+							//goodRoms.Add(romName);
+
+							//Rom rom = M.Data.Roms.Local.FirstOrDefault(x => x.Name == romName);
+
+							//if (rom == null)
+							//{
+							//Rom rom = new Rom(romElement);
+							//roms.Add(rom);
+							//}
+
+							//else
+							//{
+							//	rom.GetPropsFromXElement(romElement);
+							//}
+							//rom.Machines.Add(machine);
+							machine.Roms.Add(new Rom(romElement));
+
+						}
+
+						// Check if disks exist, if not add them to database
+						foreach (XElement diskElement in machineElement.Elements("disk"))
+						{
+							//string diskName = diskElement.SafeGetA(attribute: "name");
+							//goodDisks.Add(diskName);
+
+							//Disk disk = M.Data.Disks.Local.FirstOrDefault(x => x.Name == diskName);
+
+							//if (disk == null)
+							//{
+							//Disk disk = new Disk(diskElement);
+							//disks.Add(disk);
+							//}
+
+							//else
+							//{
+							//	disk.GetPropsFromXElement(diskElement);
+							//}
+							//disk.Machines.Add(machine);
+							machine.Disks.Add(new Disk(diskElement));
+						}
+
+						if (++machineCount % 100 == 0)
+						{
+							Reporter.Report(machineCount + " machines");
+						}
+					}
+				}
+			}
+
+			Reporter.Toc();
+
+
+			// Remove items no longer in the latest database
+			//Reporter.Tic("Cleaning up database.");
+			//M.Data.Machines.Local.RemoveAll(x => !goodMachines.Contains(x.Name));
+			//M.Data.Roms.Local.RemoveAll(x => !goodRoms.Contains(x.Name));
+			//M.Data.Disks.Local.RemoveAll(x => !goodDisks.Contains(x.Name));
+			//Reporter.Toc();
+
+			// Find parent based on cloneof stored as temp value
+			Reporter.Tic("Storing clones.");
+			foreach (Machine machine in M.Data.Machines.Local.Where(x => x.CloneOf != null))
+			{
+				machine.Parent = M.Data.Machines.Local.FirstOrDefault(x => x.Name == machine.CloneOf);
+			}
+			Reporter.Toc();
+
+			// Find sample based on sampleof stored as temp value
+			Reporter.Tic("Storing samples.");
+			foreach (Machine machine in M.Data.Machines.Local.Where(x => x.CloneOf != null))
+			{
+				machine.Sample = M.Data.Machines.Local.FirstOrDefault(x => x.Name == machine.SampleOf);
+			}
+			Reporter.Toc();
+
+			Reporter.Report("Finished: " + Watch.Elapsed.ToString(@"m\:ss"));
+		}
+
+		public void CacheDataBase3()
 		{
 			Stopwatch Watch = Stopwatch.StartNew();
 			Stopwatch Watch1 = Stopwatch.StartNew();
@@ -235,164 +369,108 @@ namespace Robin
 			XmlReaderSettings settings = new XmlReaderSettings();
 			settings.DtdProcessing = DtdProcessing.Parse;
 
-			int machineCount = 0;
-			List<XElement> machineElements = new List<XElement>();
+			// Wipe tables
+			Reporter.Tic("Wiping tables.");
+			string query = @"DELETE FROM Machine_Disk;
+							DELETE FROM Machine_Rom;
+							DELETE FROM Machine;
+							DELETE FROM Disk;
+							DELETE FROM Rom;
+							DELETE FROM sqlite_sequence;";
 
-			Watch1.Restart();
-			Reporter.Report("Getting xml file from MAME...");
+			M.Data.Database.ExecuteSqlCommand(query);
+			Reporter.Toc();
+
+			//Reload M.Data so it knows about the wipe
+			M.Refresh(false);
+			M.Data.Configuration.ValidateOnSaveEnabled = false;
+
+			int machineCount = 0;
+			int noneRomCount = 0;
+			int noneDiskCount = 0;
+			HashSet<Machine> machines = new HashSet<Machine>();
+			Hashtable roms = new Hashtable();
+			Hashtable disks = new Hashtable();
 
 			// Scan through xml file from MAME and pick out working games
 			using (Process process = MAMEexe(@"-lx"))
-
 			using (XmlReader reader = XmlReader.Create(process.StandardOutput, settings))
 			{
+				Reporter.Tic("Getting xml file from MAME...");
 				while (reader.Read())
 				{
 					if (reader.Name == "machine")
 					{
 						XElement machineElement = XNode.ReadFrom(reader) as XElement;
-						string emulationStatus = machineElement.SafeGetA(element1: "driver", attribute: "emulation");
-						string publisher = machineElement.SafeGetA("manufacturer");
+						Machine machine = new Machine(machineElement);
+						machines.Add(machine);
 
-						machineElements.Add(machineElement);
-
-						if (++machineCount % 100 == 0)
+						foreach (XElement romElement in machineElement.Elements("rom"))
 						{
-							Reporter.Report(machineCount + " machines");
+							string crc = romElement.Attribute("crc")?.Value ?? "NONE" + noneRomCount;
+							Rom rom = roms[crc] as Rom;
+
+							if (rom == null)
+							{
+								rom = new Rom(romElement);
+								roms.Add(crc, rom);
+							}
+							machine.Roms.Add(rom);
 						}
 
-					}
-				}
-			}
-
-			List<XElement> parentElements = machineElements.Where(x => x.SafeGetA(attribute: "cloneof") == null).ToList();
-			List<XElement> childElements = machineElements.Where(x => x.SafeGetA(attribute: "cloneof") != null).ToList();
-
-			int parentCount = parentElements.Count;
-			int childCount = childElements.Count;
-			int j = 0;
-			Reporter.Report("Found " + parentCount + " parent machines and " + childCount + " child machines.");
-			foreach (XElement parentElement in parentElements)
-			{
-				if (++j % (parentCount / 10) == 0)
-				{
-					Reporter.Report("Working " + j + " / " + parentCount + " parent machines.");
-				}
-
-				Game game = null;
-				string parentName = parentElement.SafeGetA(attribute: "name");
-				List<XElement> romElements = childElements.Where(x => x.SafeGetA(attribute: "cloneof") == parentName).ToList();
-				romElements.Insert(0, parentElement);
-
-				// Check if game exists
-				foreach (XElement romElement in romElements)
-				{
-					string romElementName = romElement.SafeGetA(attribute: "name") + ".zip";
-					Release tRelease = arcadePlatform.Releases.FirstOrDefault(x => x.Rom.FileName == romElementName);
-					if (tRelease != null)
-					{
-						game = tRelease.Game;
-						break; // Game exists--no need to keep looking
-					}
-				}
-
-				if (game == null)
-				{
-					game = new Game();
-					R.Data.Games.Local.Add(game);
-				}
-
-				// Check if each rom exists and each release exists
-				foreach (XElement romElement in romElements)
-				{
-					string romElementName = romElement.SafeGetA(attribute: "name") + ".zip";
-					var rom = arcadePlatform.Roms.FirstOrDefault(x => x.FileName == romElementName);
-
-					// Not found, create a new one
-					if (rom == null)
-					{
-						rom = new Rom();
-						arcadePlatform.Roms.Add(rom);
-					}
-
-					rom.Title = romElement.SafeGetA("description");
-					rom.FileName = romElementName;
-					rom.Source = "MAME";
-
-					var release = arcadePlatform.Releases.FirstOrDefault(x => x.Rom.FileName == romElementName);
-					if (release == null)
-					{
-						release = new Release();
-						release.Rom = rom;
-						arcadePlatform.Releases.Add(release);
-					}
-
-					release.Title = rom.Title;
-					release.Game = game;
-					ParseReleaseFromElement(romElement, release);
-				}
-			}
-			List<Release> orphanReleases = arcadePlatform.Releases.Where(x => x.Game == null).ToList();
-			int orphanCount = orphanReleases.Count;
-
-			if (orphanCount > 0)
-			{
-				// Get list of clones from MAME to help clean up orphans
-				Reporter.Report("Getting list of clones...");
-				Watch1.Restart();
-
-				List<string[]> cloneList = CloneList();
-
-				j = 0;
-
-				Reporter.ReportInline(Watch1.Elapsed.ToString(@"m\:ss"));
-				Reporter.Report("Cleaning up " + orphanCount + " orphans...");
-				Watch1.Restart();
-
-				foreach (Release orphanRelease in orphanReleases)
-				{
-					if (++j % (parentCount / 10) == 0)
-					{
-						Reporter.Report("Working " + j + " / " + orphanCount + " orphans.");
-					}
-
-					string[] clonePair = cloneList.FirstOrDefault(x => x[0] + @".zip" == orphanRelease.Rom.FileName);
-
-					// First look through arcadePlatform to see if the parent is there
-					if (arcadePlatform.Releases.Any(x => x.Rom.FileName == clonePair[1] + @".zip"))
-					{
-						Release parentRelease = arcadePlatform.Releases.FirstOrDefault(x => x.Rom.FileName == clonePair[1] + @".zip");
-						orphanRelease.Game = parentRelease.Game;
-					}
-
-					// If the parent is not in arcadePlatform, go back to mame to get the parent
-					else
-					{
-						using (Process process1 = MAMEexe(@"-lx " + clonePair[1]))
-						using (StreamReader MameOutput = process1.StandardOutput)
+						foreach (XElement diskElement in machineElement.Elements("disk"))
 						{
-							string text = MameOutput.ReadToEnd();
-							XElement machineElement = XElement.Parse(text).Element("machine");
+							string sha1 = diskElement.Attribute("sha1")?.Value ?? "NONE" + noneDiskCount;
+							Disk disk = disks[sha1] as Disk;
 
-							Release parentRelease = new Release();
-							Game parentGame = new Game();
+							if (disk == null)
+							{
+								disk = new Disk(diskElement);
+								disks.Add(sha1, disk);
+							}
 
-							ParseReleaseFromElement(machineElement, parentRelease);
+							machine.Disks.Add(disk);
+						}
 
-							parentRelease.Game = parentGame;
-							orphanRelease.Game = parentGame;
-							R.Data.Games.Local.Add(parentGame);
-							arcadePlatform.Releases.Add(parentRelease);
-
-							Debug.WriteLine(machineElement.SafeGetA(element1: "driver", attribute: "status"));
+						if (++machineCount % 1000 == 0)
+						{
+							Reporter.Report(machineCount + " machines, " + Watch1.Elapsed.TotalSeconds + " s.");
+							Watch1.Restart();
 						}
 					}
 				}
+				Reporter.Toc();
 			}
-			else
+
+			// Add machines
+			Reporter.Tic("Adding machines...");
+			M.Data.Machines.AddRange(machines);
+			Reporter.Toc();
+
+			// Save changes
+			Reporter.Tic("Saving changes...");
+			M.Data.SaveChanges();
+			Reporter.Toc();
+
+			Reporter.Tic("Storing clones...");
+			foreach (Machine machine in M.Data.Machines.Local.Where(x => x.CloneOf != null))
 			{
-				Reporter.Report("No orphans found.");
+				machine.Parent = M.Data.Machines.Local.FirstOrDefault(x => x.Name == machine.CloneOf);
 			}
+			Reporter.Toc();
+
+			// Find sample based on sampleof stored as temp value
+			Reporter.Tic("Storing samples...");
+			foreach (Machine machine in M.Data.Machines.Local.Where(x => x.SampleOf != null))
+			{
+				machine.Sample = M.Data.Machines.Local.FirstOrDefault(x => x.Name == machine.SampleOf);
+			}
+			Reporter.Toc();
+
+			// Save changes
+			Reporter.Tic("Saving changes...");
+			M.Data.Save(true);
+			Reporter.Toc();
 
 			Reporter.Report("Finished: " + Watch.Elapsed.ToString(@"m\:ss"));
 		}
@@ -437,40 +515,20 @@ namespace Robin
 
 		void ParseReleaseFromElement(XElement xelement, Release release)
 		{
-			DateTime datecatcher;
 			release.Publisher = xelement.SafeGetA("manufacturer");
 			release.Players = xelement.SafeGetA(element1: "input", attribute: "players");
 
 			// Get date
-			if (DateTime.TryParseExact(xelement.SafeGetA("year"), "yyyy", new CultureInfo("en-US"), DateTimeStyles.None, out datecatcher))
+			if (DateTime.TryParseExact(xelement.SafeGetA("year"), "yyyy", new CultureInfo("en-US"), DateTimeStyles.None, out DateTime datecatcher))
 			{
 				release.Date = datecatcher;
 			}
 
 			// Standardize version/revision text within parenthesis
-			#region
 			Regex Rparenthesis = new Regex(@"\(.*\)");
-			string parenthesisText = Rparenthesis.Match(release.Title).Value;
-			string revisionFindText = @"rev[ison\.]*\s?";
-
-			if (parenthesisText != null)
-			{
-				parenthesisText = parenthesisText.Replace("US", "USA");
-
-				if (Regex.IsMatch(parenthesisText, revisionFindText, RegexOptions.IgnoreCase))
-				{
-					parenthesisText = Regex.Replace(parenthesisText, revisionFindText, "Rev ", RegexOptions.IgnoreCase);
-				}
-				else
-				{
-					parenthesisText = Regex.Replace(parenthesisText, @"v[ersion\.]*\s?", "V ", RegexOptions.IgnoreCase);
-				}
-			}
-			#endregion
+			string parenthesisText = Machine.GetParenthesisText(release.Title);
 
 			// Get region from text in parenthesis
-			#region
-
 			foreach (Region region in R.Data.Regions.Local)
 			{
 				if (parenthesisText != null && (parenthesisText.Contains(region.Title) || parenthesisText.Contains(region.Datomatic ?? "XXX") || parenthesisText.Contains(region.UNCode ?? "XXX")))
@@ -483,10 +541,7 @@ namespace Robin
 				}
 			}
 
-			#endregion
-
 			// Get version, remove region and store remaining text as special
-			#region
 			string versionFind = @"V\s(\d|\w|\.)*";
 			string revisionFind = @"Rev\s(\d+|\w|\.)*";
 
@@ -499,10 +554,7 @@ namespace Robin
 			release.Special = Regex.Replace(release.Special, @"\s+", " ");
 
 			release.Title = Regex.Replace(release.Title, @"\s\(.*\)", "");
-			#endregion
-
 		}
-
 
 		/// <summary>
 		/// Audit MAME ROMs currently used by Robin using MAME verifyroms command line switch
@@ -568,7 +620,6 @@ namespace Robin
 			return auditResults;
 		}
 
-
 		/// <summary>
 		/// Return a list of roms currently in Robin and return them formatted for use in MAME verify ROMs
 		/// Arguments are broke up into 32k long chunks for use in command line
@@ -603,8 +654,8 @@ namespace Robin
 
 		public class AuditResult
 		{
-			public Rom Rom { get; set; }
-			public Rom Parent { get; set; }
+			public Robin.Rom Rom { get; set; }
+			public Robin.Rom Parent { get; set; }
 			public string Result { get; set; }
 
 			public AuditResult(string line)

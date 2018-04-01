@@ -9,8 +9,8 @@ namespace Robin
 {
 	public class AuditWindowViewModel : INotifyPropertyChanged
 	{
-		List<MAME.AuditResult> auditResults;
-		public List<MAME.AuditResult> AuditResults
+		List<Mame.MAME.AuditResult> auditResults;
+		public List<Mame.MAME.AuditResult> AuditResults
 		{
 			get
 			{
@@ -30,11 +30,11 @@ namespace Robin
 			}
 		}
 
-		public List<MAME.AuditResult> GoodResults => AuditResults?.Where(x => x.Result.ToLower() == "good").ToList();
+		public List<Mame.MAME.AuditResult> GoodResults => AuditResults?.Where(x => x.Result.ToLower() == "good").ToList();
 
-		public List<MAME.AuditResult> BadResults => AuditResults?.Where(x => x.Result.ToLower() == "bad").ToList();
+		public List<Mame.MAME.AuditResult> BadResults => AuditResults?.Where(x => x.Result.ToLower() == "bad").ToList();
 
-		public List<MAME.AuditResult> BestResults => AuditResults?.Where(x => x.Result.ToLower() == "best").ToList();
+		public List<Mame.MAME.AuditResult> BestResults => AuditResults?.Where(x => x.Result.ToLower() == "best").ToList();
 
 		public int GoodCount => AuditResults?.Count(x => x.Result.ToLower() == "good") ?? 0;
 
@@ -49,7 +49,7 @@ namespace Robin
 
 		async void GetAuditResults()
 		{
-			await Task.Run(() => { AuditResults = MAME.AuditRoms(); });
+			await Task.Run(() => { AuditResults = Mame.MAME.AuditRoms(); });
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

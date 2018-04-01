@@ -21,129 +21,47 @@ namespace Robin
 	public static class R
 	{
 		public static RobinDataEntities Data;
-	}
 
-
-public partial class RobinDataEntities
-{
-	string connectionString = "data source = " + Robin.FileLocation.RobinData;
-
-	public string FileLocation => Robin.FileLocation.RobinData;
-
-	public RobinDataEntities(object sender)
-	{
-		this.Database.Connection.ConnectionString = connectionString;
-
-		Configuration.LazyLoadingEnabled = false;
-		Configuration.AutoDetectChangesEnabled = false;
-
-		Stopwatch Watch = Stopwatch.StartNew();
-
-		Platforms.Include(x => x.Emulators).Load();
-
-		Reporter.Report("Platforms loaded " + Watch.Elapsed.TotalSeconds.ToString("F1") + " s."); Watch.Restart();
-		Roms.Load();
-		Reporter.Report("Roms loaded " + Watch.Elapsed.TotalSeconds.ToString("F1") + " s."); Watch.Restart();
-		//Releases.Load();
-		//Reporter.Report("Releases loaded " + Watch.Elapsed.TotalSeconds.ToString("F1") + " s."); Watch.Restart();
-		Games.Include(x => x.Releases).Load();
-		Reporter.Report("Games loaded " + Watch.Elapsed.TotalSeconds.ToString("F1") + " s."); Watch.Restart();
-		Regions.Load();
-		Reporter.Report("Regions loaded " + Watch.Elapsed.TotalSeconds.ToString("F1") + " s."); Watch.Restart();
-		Collections.Include(x => x.Games).Include(x => x.Releases).Load();
-		Reporter.Report("Collections loaded " + Watch.Elapsed.TotalSeconds.ToString("F1") + " s."); Watch.Restart();
-		//Emulators.Include(x => x.Platforms).Load();
-		//Reporter.Report("Emulators loaded " + Watch.Elapsed.TotalSeconds.ToString("F1") + " s."); Watch.Restart();
-
-		foreach (Game game in Games)
+		static R()
 		{
-			game.Releases = game.Releases.OrderBy(x => x.Region.Priority).ThenByDescending(x => x.Version).ToList();
+			Data = new RobinDataEntities(true);
 		}
-		Reporter.Report("Games ordered " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
 	}
 
-	//		public void LoadAll()
-	//		{
-	//#if DEBUG
-	//			Stopwatch Watch = new Stopwatch();
-	//			Watch.Start();
-	//			Stopwatch Watch1 = new Stopwatch();
-	//			Watch1.Start();
-	//			Debug.WriteLine("\n\n****************************************************");
-	//#endif
-	//			Task[] tasks = new Task[7];
 
-	//			tasks[0] = Task.Factory.StartNew(() =>
-	//			{
-	//				Platforms.Load();
-	//#if DEBUG
-	//				Debug.WriteLine("Platforms: " + Watch.ElapsedMilliseconds); Watch.Restart();
-	//#endif
-	//			});
+	public partial class RobinDataEntities : Entity
+	{
+		string connectionString = "data source = " + Robin.FileLocation.RobinData;
 
-	//			tasks[1] = Task.Factory.StartNew(() =>
-	//			{
-	//				Roms.Load();
-	//#if DEBUG
-	//				Debug.WriteLine("Roms: " + Watch.ElapsedMilliseconds); Watch.Restart();
-	//#endif
-	//			});
+		public override string FileLocation => Robin.FileLocation.RobinData;
 
-	//			tasks[2] = Task.Factory.StartNew(() =>
-	//			{
-	//				Releases.Load();
-	//#if DEBUG
-	//				Debug.WriteLine("Releases: " + Watch.ElapsedMilliseconds); Watch.Restart();
-	//#endif
-	//			});
+		public RobinDataEntities(bool chooser)
+		{
+			this.Database.Connection.ConnectionString = connectionString;
 
-	//			tasks[3] = Games.LoadAsync();
-	//			Task.Factory.StartNew(() =>
-	//			{
-	//#if DEBUG
-	//				Debug.WriteLine("Games: " + Watch.ElapsedMilliseconds); Watch.Restart();
-	//#endif
-	//			});
+			Configuration.LazyLoadingEnabled = false;
+			Configuration.AutoDetectChangesEnabled = false;
 
-	//			tasks[4] = Task.Factory.StartNew(() =>
-	//			{
-	//				Regions.Load();
-	//#if DEBUG
-	//				Debug.WriteLine("Regions: " + Watch.ElapsedMilliseconds); Watch.Restart();
-	//#endif
-	//			});
+			Stopwatch Watch = Stopwatch.StartNew();
 
-	//			tasks[5] = Task.Factory.StartNew(() =>
-	//			{
-	//				Collections.LoadAsync();
-	//#if DEBUG
-	//				Debug.WriteLine("Collections: " + Watch.ElapsedMilliseconds); Watch.Restart();
-	//#endif
-	//			});
+			Platforms.Include(x => x.Emulators).Load();
 
-	//			tasks[6] = Task.Factory.StartNew(() =>
-	//			{
-	//				Emulators.LoadAsync();
-	//#if DEBUG
-	//				Debug.WriteLine("Emulators: " + Watch.ElapsedMilliseconds); Watch.Restart();
-	//#endif
-	//			});
+			Reporter.Report("Platforms loaded " + Watch.Elapsed.TotalSeconds.ToString("F1") + " s."); Watch.Restart();
+			Roms.Load();
+			Reporter.Report("Roms loaded " + Watch.Elapsed.TotalSeconds.ToString("F1") + " s."); Watch.Restart();
+			Games.Include(x => x.Releases).Load();
+			Reporter.Report("Games loaded " + Watch.Elapsed.TotalSeconds.ToString("F1") + " s."); Watch.Restart();
+			Regions.Load();
+			Reporter.Report("Regions loaded " + Watch.Elapsed.TotalSeconds.ToString("F1") + " s."); Watch.Restart();
+			Collections.Include(x => x.Games).Include(x => x.Releases).Load();
+			Reporter.Report("Collections loaded " + Watch.Elapsed.TotalSeconds.ToString("F1") + " s."); Watch.Restart();
 
-	//#if DEBUG
-	//			Debug.WriteLine("Total: " + Watch1.ElapsedMilliseconds);
-	//			Debug.WriteLine("****************************************************\n\n");
-	//#endif
-	//			//Collections.Include(x => x.Games).Load();
-	//			//Collections.Include(x => x.Releases).Load();
+			foreach (Game game in Games)
+			{
+				game.Releases = game.Releases.OrderBy(x => x.Region.Priority).ThenByDescending(x => x.Version).ToList();
+			}
+			Reporter.Report("Games ordered " + Watch.Elapsed.Seconds + " s."); Watch.Restart();
+		}
 
-	//			//Emulators.Include(x => x.Platforms1).Load();
-
-	//			Task.WaitAll(tasks);
-
-	//			foreach (Game game in Games)
-	//			{
-	//				game.Releases = game.Releases.OrderBy(x => x.Region.Priority).ToList();
-	//			}
-	//		}
-}
+	}
 }

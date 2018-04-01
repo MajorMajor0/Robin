@@ -25,6 +25,8 @@ namespace Robin.Mame
         public string Region { get; set; }
         public string CRC { get; set; }
         public Nullable<long> Size { get; set; }
+        public string Status { get; set; }
+        public bool Optional { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Machine> Machines { get; set; }

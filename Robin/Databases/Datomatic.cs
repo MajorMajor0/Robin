@@ -101,7 +101,7 @@ namespace Robin
 		{
 			if (platform.ID == CONSTANTS.ARCADE_PLATFORM_ID)
 			{
-				MAME mame = new MAME();
+				Mame.MAME mame = new Mame.MAME();
 				mame.CacheDataBase();
 			}
 			else

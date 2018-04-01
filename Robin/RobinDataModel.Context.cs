@@ -13,7 +13,7 @@ namespace Robin
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class RobinDataEntities : DbContext
+    public partial class RobinDataEntities : Entity
     {
         public RobinDataEntities()
             : base("name=RobinDataEntities")

@@ -57,6 +57,8 @@ namespace Robin
 
 		public static string RobinData = Data + @"RobinData.db3";
 
+		public static string MameData = Data + @"MAME.db3";
+
 		public static string Temp = Folder + @"\Temp\";
 
 		public static string HandyConverter = Emulators + @"Handy\make_lnx.exe";
