@@ -91,65 +91,6 @@ namespace Robin
 			}
 		}
 
-		public static void Save(this RobinDataEntities dbContext, bool detectChanges = false)
-		{
-			int i;
-			string backupFile = dbContext.Backup();
-
-			if (detectChanges)
-			{
-				dbContext.ChangeTracker.DetectChanges();
-			}
-
-			try
-			{
-				i = dbContext.SaveChanges();
-				Reporter.Report(i + " Database changes saved successfully");
-				if (i == 0)
-				{
-					File.Delete(backupFile);
-				}
-			}
-			catch (DbEntityValidationException dbEx)
-			{
-				foreach (var validationErrors in dbEx.EntityValidationErrors)
-				{
-					foreach (var validationError in validationErrors.ValidationErrors)
-					{
-						Trace.TraceInformation("Property: {0} Error: {1}",
-												validationError.PropertyName,
-												validationError.ErrorMessage);
-
-						Reporter.Report("Data validation error...\nProperty: " + validationError.PropertyName + "Error: " + validationError.ErrorMessage);
-					}
-				}
-			}
-
-		}
-
-		public static string Backup(this RobinDataEntities dbContext)
-		{
-			// Backup existing database
-			Directory.CreateDirectory(FileLocation.Backup);
-			string Date = DateTime.Now.ToString("yyyy-MM-dd-HHmmss");
-
-			string CurrentFile = dbContext.FileLocation;
-
-			string backupFile = FileLocation.Backup + Path.GetFileNameWithoutExtension(CurrentFile) + Date + Path.GetExtension(CurrentFile);
-			try
-			{
-				File.Copy(CurrentFile, backupFile);
-				Reporter.Report("DB file backed up to " + backupFile);
-				return backupFile;
-			}
-			catch (Exception ex)
-			{
-				Reporter.Report("Failed to backup file.");
-				Reporter.Report(ex.Message);
-				return null;
-			}
-		}
-
 		public static void AddRange<T>(this ObservableCollection<T> OC, IEnumerable<T> listToAdd)
 		{
 			if (listToAdd != null)
@@ -157,6 +98,25 @@ namespace Robin
 				foreach (T item in listToAdd)
 				{
 					OC.Add(item);
+				}
+			}
+		}
+
+		public static void RemoveAll<T>(this ObservableCollection<T> OC, IEnumerable<T> listToRemove)
+		{
+			foreach (T item in listToRemove)
+			{
+				OC.Remove(item);
+			}
+		}
+
+		public static void RemoveAll<T>(this ObservableCollection<T> collection, Func<T, bool> condition)
+		{
+			for (int i = collection.Count - 1; i >= 0; i--)
+			{
+				if (condition(collection[i]))
+				{
+					collection.RemoveAt(i);
 				}
 			}
 		}

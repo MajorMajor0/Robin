@@ -13,10 +13,10 @@ namespace Robin.Mame
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class Entities : DbContext
+    public partial class MEntities : Entity
     {
-        public Entities()
-            : base("name=Entities")
+        public MEntities()
+            : base("name=MEntities")
         {
         }
     
@@ -25,8 +25,8 @@ namespace Robin.Mame
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<Machine> Machines { get; set; }
         public virtual DbSet<Disk> Disks { get; set; }
+        public virtual DbSet<Machine> Machines { get; set; }
         public virtual DbSet<Rom> Roms { get; set; }
     }
 }

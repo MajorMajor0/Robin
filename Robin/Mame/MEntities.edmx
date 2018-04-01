@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="Mame.Store" Provider="System.Data.SQLite.EF6" ProviderManifestToken="data source=D:\Robin_debug\data\MAME.db3" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="MameModel.Store" Provider="System.Data.SQLite.EF6" ProviderManifestToken="data source=D:\Robin_debug\data\MAME.db3" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Disk">
           <Key>
             <PropertyRef Name="ID" />
@@ -27,24 +27,28 @@
           <Property Name="Players" Type="nvarchar" MaxLength="2147483647" />
           <Property Name="Display" Type="nvarchar" MaxLength="2147483647" />
           <Property Name="Control" Type="nvarchar" MaxLength="2147483647" />
-          <Property Name="IsMechanical" Type="bit" Nullable="false" />
           <Property Name="Parent_ID" Type="integer" />
+          <Property Name="Sample_ID" Type="integer" />
+          <Property Name="IsMechanical" Type="bit" Nullable="false" />
+          <Property Name="IsDevice" Type="bit" Nullable="false" />
+          <Property Name="IsBios" Type="bit" Nullable="false" />
+          <Property Name="IsRunnable" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Machine_Disk">
           <Key>
             <PropertyRef Name="Machine_ID" />
-            <PropertyRef Name="MDisk_ID" />
+            <PropertyRef Name="Disk_ID" />
           </Key>
           <Property Name="Machine_ID" Type="integer" Nullable="false" />
-          <Property Name="MDisk_ID" Type="integer" Nullable="false" />
+          <Property Name="Disk_ID" Type="integer" Nullable="false" />
         </EntityType>
         <EntityType Name="Machine_Rom">
           <Key>
             <PropertyRef Name="Machine_ID" />
-            <PropertyRef Name="MRom_ID" />
+            <PropertyRef Name="Rom_ID" />
           </Key>
           <Property Name="Machine_ID" Type="integer" Nullable="false" />
-          <Property Name="MRom_ID" Type="integer" Nullable="false" />
+          <Property Name="Rom_ID" Type="integer" Nullable="false" />
         </EntityType>
         <EntityType Name="Rom">
           <Key>
@@ -55,8 +59,22 @@
           <Property Name="Region" Type="nvarchar" MaxLength="2147483647" />
           <Property Name="CRC" Type="nvarchar" MaxLength="2147483647" />
           <Property Name="Size" Type="integer" />
+          <Property Name="Status" Type="nvarchar" MaxLength="2147483647" Nullable="false" />
+          <Property Name="Optional" Type="bit" Nullable="false" />
         </EntityType>
         <Association Name="FK_Machine_0_0">
+          <End Role="Machine" Type="Self.Machine" Multiplicity="0..1" />
+          <End Role="Machine1" Type="Self.Machine" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Machine">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Machine1">
+              <PropertyRef Name="Sample_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Machine_1_0">
           <End Role="Machine" Type="Self.Machine" Multiplicity="0..1" />
           <End Role="Machine1" Type="Self.Machine" Multiplicity="*" />
           <ReferentialConstraint>
@@ -76,7 +94,7 @@
               <PropertyRef Name="ID" />
             </Principal>
             <Dependent Role="Machine_Disk">
-              <PropertyRef Name="MDisk_ID" />
+              <PropertyRef Name="Disk_ID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -100,7 +118,7 @@
               <PropertyRef Name="ID" />
             </Principal>
             <Dependent Role="Machine_Rom">
-              <PropertyRef Name="MRom_ID" />
+              <PropertyRef Name="Rom_ID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -116,13 +134,17 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="MameStoreContainer">
+        <EntityContainer Name="MameModelStoreContainer">
           <EntitySet Name="Disk" EntityType="Self.Disk" store:Type="Tables" />
           <EntitySet Name="Machine" EntityType="Self.Machine" store:Type="Tables" />
           <EntitySet Name="Machine_Disk" EntityType="Self.Machine_Disk" store:Type="Tables" />
           <EntitySet Name="Machine_Rom" EntityType="Self.Machine_Rom" store:Type="Tables" />
           <EntitySet Name="Rom" EntityType="Self.Rom" store:Type="Tables" />
           <AssociationSet Name="FK_Machine_0_0" Association="Self.FK_Machine_0_0">
+            <End Role="Machine" EntitySet="Machine" />
+            <End Role="Machine1" EntitySet="Machine" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Machine_1_0" Association="Self.FK_Machine_1_0">
             <End Role="Machine" EntitySet="Machine" />
             <End Role="Machine1" EntitySet="Machine" />
           </AssociationSet>
@@ -143,10 +165,20 @@
             <End Role="Machine_Rom" EntitySet="Machine_Rom" />
           </AssociationSet>
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="Mame" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="MameModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Disk">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="SHA1" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Machines" Relationship="Self.Machine_Disk" FromRole="Disk" ToRole="Machine" />
+        </EntityType>
         <EntityType Name="Machine">
           <Key>
             <PropertyRef Name="ID" />
@@ -161,14 +193,44 @@
           <Property Name="Players" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="Display" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="Control" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
-          <Property Name="IsMechanical" Type="Boolean" Nullable="false" />
           <Property Name="Parent_ID" Type="Int64" />
+          <Property Name="Sample_ID" Type="Int64" />
+          <Property Name="IsMechanical" Type="Boolean" Nullable="false" />
+          <Property Name="IsDevice" Type="Boolean" Nullable="false" />
+          <Property Name="IsBios" Type="Boolean" Nullable="false" />
+          <Property Name="IsRunnable" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Children" Relationship="Self.FK_Machine_0_0" FromRole="Machine" ToRole="Machine1" />
           <NavigationProperty Name="Parent" Relationship="Self.FK_Machine_0_0" FromRole="Machine1" ToRole="Machine" />
-          <NavigationProperty Name="Disks" Relationship="Mame.Machine_Disk" FromRole="Machine" ToRole="Disk" />
-          <NavigationProperty Name="Roms" Relationship="Mame.Machine_Rom" FromRole="Machine" ToRole="Rom" />
+          <NavigationProperty Name="Sample" Relationship="Self.FK_Machine_1_0" FromRole="Machine1" ToRole="Machine" />
+          <NavigationProperty Name="Disks" Relationship="Self.Machine_Disk" FromRole="Machine" ToRole="Disk" />
+          <NavigationProperty Name="Roms" Relationship="Self.Machine_Rom" FromRole="Machine" ToRole="Rom" />
+        </EntityType>
+        <EntityType Name="Rom">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Region" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="CRC" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Size" Type="Int64" />
+          <Property Name="Status" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Optional" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Machines" Relationship="Self.Machine_Rom" FromRole="Rom" ToRole="Machine" />
         </EntityType>
         <Association Name="FK_Machine_0_0">
+          <End Role="Machine" Type="Self.Machine" Multiplicity="0..1" />
+          <End Role="Machine1" Type="Self.Machine" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Machine">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Machine1">
+              <PropertyRef Name="Sample_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Machine_1_0">
           <End Role="Machine" Type="Self.Machine" Multiplicity="0..1" />
           <End Role="Machine1" Type="Self.Machine" Multiplicity="*" />
           <ReferentialConstraint>
@@ -180,59 +242,52 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
+        <Association Name="Machine_Disk">
+          <End Role="Disk" Type="Self.Disk" Multiplicity="*" />
+          <End Role="Machine" Type="Self.Machine" Multiplicity="*" />
+        </Association>
+        <Association Name="Machine_Rom">
+          <End Role="Rom" Type="Self.Rom" Multiplicity="*" />
+          <End Role="Machine" Type="Self.Machine" Multiplicity="*" />
+        </Association>
+        <EntityContainer Name="MEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Disks" EntityType="Self.Disk" />
           <EntitySet Name="Machines" EntityType="Self.Machine" />
+          <EntitySet Name="Roms" EntityType="Self.Rom" />
           <AssociationSet Name="FK_Machine_0_0" Association="Self.FK_Machine_0_0">
             <End Role="Machine" EntitySet="Machines" />
             <End Role="Machine1" EntitySet="Machines" />
           </AssociationSet>
-          <EntitySet Name="Disks" EntityType="Mame.Disk" />
-          <EntitySet Name="Roms" EntityType="Mame.Rom" />
-          <AssociationSet Name="Machine_Disk" Association="Mame.Machine_Disk">
+          <AssociationSet Name="FK_Machine_1_0" Association="Self.FK_Machine_1_0">
+            <End Role="Machine" EntitySet="Machines" />
+            <End Role="Machine1" EntitySet="Machines" />
+          </AssociationSet>
+          <AssociationSet Name="Machine_Disk" Association="Self.Machine_Disk">
             <End Role="Disk" EntitySet="Disks" />
             <End Role="Machine" EntitySet="Machines" />
           </AssociationSet>
-          <AssociationSet Name="Machine_Rom" Association="Mame.Machine_Rom">
+          <AssociationSet Name="Machine_Rom" Association="Self.Machine_Rom">
             <End Role="Rom" EntitySet="Roms" />
             <End Role="Machine" EntitySet="Machines" />
           </AssociationSet>
         </EntityContainer>
-        <EntityType Name="Disk">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
-          <Property Name="SHA1" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Machines" Relationship="Mame.Machine_Disk" FromRole="Disk" ToRole="Machine" />
-        </EntityType>
-        <EntityType Name="Rom">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="2147483647" FixedLength="false" Unicode="true" />
-          <Property Name="Region" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
-          <Property Name="CRC" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
-          <Property Name="Size" Type="Int64" />
-          <NavigationProperty Name="Machines" Relationship="Mame.Machine_Rom" FromRole="Rom" ToRole="Machine" />
-        </EntityType>
-        <Association Name="Machine_Disk">
-          <End Type="Mame.Disk" Role="Disk" Multiplicity="*" />
-          <End Type="Mame.Machine" Role="Machine" Multiplicity="*" />
-        </Association>
-        <Association Name="Machine_Rom">
-          <End Type="Mame.Rom" Role="Rom" Multiplicity="*" />
-          <End Type="Mame.Machine" Role="Machine" Multiplicity="*" />
-        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="MameStoreContainer" CdmEntityContainer="Entities">
+        <EntityContainerMapping StorageEntityContainer="MameModelStoreContainer" CdmEntityContainer="MEntities">
+          <EntitySetMapping Name="Disks">
+            <EntityTypeMapping TypeName="MameModel.Disk">
+              <MappingFragment StoreEntitySet="Disk">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="SHA1" ColumnName="SHA1" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Machines">
-            <EntityTypeMapping TypeName="Mame.Machine">
+            <EntityTypeMapping TypeName="MameModel.Machine">
               <MappingFragment StoreEntitySet="Machine">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -244,48 +299,45 @@
                 <ScalarProperty Name="Players" ColumnName="Players" />
                 <ScalarProperty Name="Display" ColumnName="Display" />
                 <ScalarProperty Name="Control" ColumnName="Control" />
-                <ScalarProperty Name="IsMechanical" ColumnName="IsMechanical" />
                 <ScalarProperty Name="Parent_ID" ColumnName="Parent_ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Disks">
-            <EntityTypeMapping TypeName="Mame.Disk">
-              <MappingFragment StoreEntitySet="Disk">
-                <ScalarProperty Name="SHA1" ColumnName="SHA1" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Sample_ID" ColumnName="Sample_ID" />
+                <ScalarProperty Name="IsMechanical" ColumnName="IsMechanical" />
+                <ScalarProperty Name="IsDevice" ColumnName="IsDevice" />
+                <ScalarProperty Name="IsBios" ColumnName="IsBios" />
+                <ScalarProperty Name="IsRunnable" ColumnName="IsRunnable" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Roms">
-            <EntityTypeMapping TypeName="Mame.Rom">
+            <EntityTypeMapping TypeName="MameModel.Rom">
               <MappingFragment StoreEntitySet="Rom">
-                <ScalarProperty Name="Size" ColumnName="Size" />
-                <ScalarProperty Name="CRC" ColumnName="CRC" />
-                <ScalarProperty Name="Region" ColumnName="Region" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Region" ColumnName="Region" />
+                <ScalarProperty Name="CRC" ColumnName="CRC" />
+                <ScalarProperty Name="Size" ColumnName="Size" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Optional" ColumnName="Optional" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <AssociationSetMapping Name="Machine_Disk" TypeName="Mame.Machine_Disk" StoreEntitySet="Machine_Disk">
-            <EndProperty Name="Machine">
-              <ScalarProperty Name="ID" ColumnName="Machine_ID" />
-            </EndProperty>
+          <AssociationSetMapping Name="Machine_Disk" TypeName="MameModel.Machine_Disk" StoreEntitySet="Machine_Disk">
             <EndProperty Name="Disk">
-              <ScalarProperty Name="ID" ColumnName="MDisk_ID" />
+              <ScalarProperty Name="ID" ColumnName="Disk_ID" />
             </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="Machine_Rom" TypeName="Mame.Machine_Rom" StoreEntitySet="Machine_Rom">
             <EndProperty Name="Machine">
               <ScalarProperty Name="ID" ColumnName="Machine_ID" />
             </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="Machine_Rom" TypeName="MameModel.Machine_Rom" StoreEntitySet="Machine_Rom">
             <EndProperty Name="Rom">
-              <ScalarProperty Name="ID" ColumnName="MRom_ID" />
+              <ScalarProperty Name="ID" ColumnName="Rom_ID" />
+            </EndProperty>
+            <EndProperty Name="Machine">
+              <ScalarProperty Name="ID" ColumnName="Machine_ID" />
             </EndProperty>
           </AssociationSetMapping>
-          </EntityContainerMapping>
+        </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
   </edmx:Runtime>

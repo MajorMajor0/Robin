@@ -32,12 +32,17 @@ namespace Robin.Mame
         public string Players { get; set; }
         public string Display { get; set; }
         public string Control { get; set; }
-        public bool IsMechanical { get; set; }
         public Nullable<long> Parent_ID { get; set; }
+        public Nullable<long> Sample_ID { get; set; }
+        public bool IsMechanical { get; set; }
+        public bool IsDevice { get; set; }
+        public bool IsBios { get; set; }
+        public bool IsRunnable { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Machine> Children { get; set; }
         public virtual Machine Parent { get; set; }
+        public virtual Machine Sample { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Disk> Disks { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

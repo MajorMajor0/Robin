@@ -157,8 +157,6 @@ namespace Robin
 
 		public MainWindowViewModel()
 		{
-			R.Data = new RobinDataEntities(this);
-
 			MainBigList = new ObservableCollection<object>();
 			MainBigList.Add(releaseCollection = new AutoFilterReleases(R.Data.Releases.Local.ToList(), "Releases"));
 			MainBigList.Add(gameCollection = new AutoFilterGames(R.Data.Games.Local.ToList(), "Games"));

@@ -34,7 +34,8 @@ namespace Robin
 			Reporter.Report("BONUS!");
 			await Task.Run(() =>
 			{
-				ScrapeCHD();
+				Mame.MAME m = new Mame.MAME();
+				m.CacheDataBase3();
 			});
 
 			Reporter.Report("Finished");
@@ -97,7 +98,7 @@ namespace Robin
 
 			// Scan through xml file from MAME and pick out working games
 
-			using (Process process = MAME.MAMEexe(@"-lx"))
+			using (Process process = Mame.MAME.MAMEexe(@"-lx"))
 			using (XmlReader reader = XmlReader.Create(process.StandardOutput, settings))
 			{
 				while (reader.Read())

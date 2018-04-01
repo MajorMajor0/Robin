@@ -23,7 +23,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 		Height="300"
 		Width="300"
 		Style="{StaticResource WindowStyle1}"
-		SizeToContent="WidthAndHeight">
+		SizeToContent="Width">
 	<Grid>
 		<Border Style="{StaticResource CellStyle}">
 			<ListBox ItemsSource="{Binding Path=(local:Reporter.Messages)}"

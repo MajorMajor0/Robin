@@ -39,6 +39,7 @@ namespace Robin
 		void SaveDataBase()
 		{
 			R.Data.Save(true);
+			Mame.M.Data.Save(true);
 		}
 
 
