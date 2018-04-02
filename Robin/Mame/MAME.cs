@@ -388,11 +388,11 @@ namespace Robin.Mame
 			int machineCount = 0;
 			int noneRomCount = 0;
 			int noneDiskCount = 0;
-			HashSet<Machine> machines = new HashSet<Machine>();
+			Dictionary<string, Machine> machines = new Dictionary<string, Machine>();
 			Hashtable roms = new Hashtable();
 			Hashtable disks = new Hashtable();
 
-			// Scan through xml file from MAME and pick out working games
+			// Scan through xml file from MAME and store machines
 			using (Process process = MAMEexe(@"-lx"))
 			using (XmlReader reader = XmlReader.Create(process.StandardOutput, settings))
 			{
@@ -403,7 +403,7 @@ namespace Robin.Mame
 					{
 						XElement machineElement = XNode.ReadFrom(reader) as XElement;
 						Machine machine = new Machine(machineElement);
-						machines.Add(machine);
+						machines.Add(machine.Name, machine);
 
 						foreach (XElement romElement in machineElement.Elements("rom"))
 						{
@@ -432,7 +432,7 @@ namespace Robin.Mame
 							machine.Disks.Add(disk);
 						}
 
-						if (++machineCount % 1000 == 0)
+						if (++machineCount % 5000 == 0)
 						{
 							Reporter.Report(machineCount + " machines, " + Watch1.Elapsed.TotalSeconds + " s.");
 							Watch1.Restart();
@@ -444,18 +444,21 @@ namespace Robin.Mame
 
 			// Add machines
 			Reporter.Tic("Adding machines...");
-			M.Data.Machines.AddRange(machines);
+			M.Data.Machines.AddRange(machines.Select(x => x.Value));
 			Reporter.Toc();
 
 			// Save changes
 			Reporter.Tic("Saving changes...");
-			M.Data.SaveChanges();
+			M.Data.Save(false);
 			Reporter.Toc();
 
 			Reporter.Tic("Storing clones...");
 			foreach (Machine machine in M.Data.Machines.Local.Where(x => x.CloneOf != null))
 			{
-				machine.Parent = M.Data.Machines.Local.FirstOrDefault(x => x.Name == machine.CloneOf);
+				if (machines.TryGetValue(machine.CloneOf, out Machine parent))
+				{
+					machine.Parent = parent;
+				}
 			}
 			Reporter.Toc();
 
@@ -463,14 +466,12 @@ namespace Robin.Mame
 			Reporter.Tic("Storing samples...");
 			foreach (Machine machine in M.Data.Machines.Local.Where(x => x.SampleOf != null))
 			{
-				machine.Sample = M.Data.Machines.Local.FirstOrDefault(x => x.Name == machine.SampleOf);
+				if (machines.TryGetValue(machine.SampleOf, out Machine sampleof))
+					machine.Sample = sampleof;
 			}
 			Reporter.Toc();
 
-			// Save changes
-			Reporter.Tic("Saving changes...");
 			M.Data.Save(true);
-			Reporter.Toc();
 
 			Reporter.Report("Finished: " + Watch.Elapsed.ToString(@"m\:ss"));
 		}
