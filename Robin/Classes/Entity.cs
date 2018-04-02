@@ -14,6 +14,8 @@ namespace Robin
 	{
 		public virtual string FileLocation { get; set; }
 
+		public static bool Blocked { get; set; }
+
 		public Entity() : base()
 		{
 
@@ -26,6 +28,7 @@ namespace Robin
 		public void Save(bool detectChanges = false)
 		{
 			int i;
+
 			string backupFile = Backup();
 
 			if (detectChanges)
@@ -56,7 +59,6 @@ namespace Robin
 					}
 				}
 			}
-
 		}
 
 		public string Backup()
