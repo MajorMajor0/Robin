@@ -36,13 +36,13 @@ namespace Robin.Mame
 
 	public partial class MEntities : Entity
 	{
-		string connectionString = "data source = " + Robin.FileLocation.MameData;
+		public string ConnectionString = "data source = " + Robin.FileLocation.MameData;
 
 		public override string FileLocation => Robin.FileLocation.MameData;
 
 		public MEntities(bool load)
 		{
-			this.Database.Connection.ConnectionString = connectionString;
+			this.Database.Connection.ConnectionString = ConnectionString;
 
 			Configuration.LazyLoadingEnabled = false;
 			Configuration.AutoDetectChangesEnabled = false;

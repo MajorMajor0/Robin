@@ -25,6 +25,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
+using System.Data.SQLite;
 
 namespace Robin.Mame
 {
@@ -256,7 +257,7 @@ namespace Robin.Mame
 			using (XmlReader reader = XmlReader.Create(process.StandardOutput, settings))
 			{
 
-				while (reader.Read() && machineCount < 6000)
+				while (reader.Read())
 				{
 					if (reader.Name == "machine")
 					{
@@ -386,11 +387,12 @@ namespace Robin.Mame
 			M.Data.Configuration.ValidateOnSaveEnabled = false;
 
 			int machineCount = 0;
-			int noneRomCount = 0;
-			int noneDiskCount = 0;
+			int romCount = 0;
+			int diskCount = 0;
+
 			Dictionary<string, Machine> machines = new Dictionary<string, Machine>();
-			Hashtable roms = new Hashtable();
-			Hashtable disks = new Hashtable();
+			Dictionary<string, Rom> roms = new Dictionary<string, Rom>();
+			Dictionary<string, Disk> disks = new Dictionary<string, Disk>();
 
 			// Scan through xml file from MAME and store machines
 			using (Process process = MAMEexe(@"-lx"))
@@ -404,32 +406,33 @@ namespace Robin.Mame
 						XElement machineElement = XNode.ReadFrom(reader) as XElement;
 						Machine machine = new Machine(machineElement);
 						machines.Add(machine.Name, machine);
+						machine.ID = machineCount;
 
 						foreach (XElement romElement in machineElement.Elements("rom"))
 						{
-							string crc = romElement.Attribute("crc")?.Value ?? "NONE" + noneRomCount;
-							Rom rom = roms[crc] as Rom;
-
-							if (rom == null)
+							string crc = romElement.Attribute("crc")?.Value ?? "NONE" + romCount;
+							Rom rom;
+							if (!roms.TryGetValue(crc, out rom))
 							{
 								rom = new Rom(romElement);
 								roms.Add(crc, rom);
 							}
 							machine.Roms.Add(rom);
+							rom.ID = ++romCount;
 						}
 
 						foreach (XElement diskElement in machineElement.Elements("disk"))
 						{
-							string sha1 = diskElement.Attribute("sha1")?.Value ?? "NONE" + noneDiskCount;
-							Disk disk = disks[sha1] as Disk;
+							string sha1 = diskElement.Attribute("sha1")?.Value ?? "NONE" + diskCount;
+							Disk disk;
 
-							if (disk == null)
+							if (!disks.TryGetValue(sha1, out disk))
 							{
 								disk = new Disk(diskElement);
 								disks.Add(sha1, disk);
 							}
-
 							machine.Disks.Add(disk);
+							disk.ID = ++diskCount;
 						}
 
 						if (++machineCount % 5000 == 0)
@@ -447,11 +450,11 @@ namespace Robin.Mame
 			M.Data.Machines.AddRange(machines.Select(x => x.Value));
 			Reporter.Toc();
 
-			// Save changes
 			Reporter.Tic("Saving changes...");
 			M.Data.Save(false);
 			Reporter.Toc();
 
+			M.Refresh(true);
 			Reporter.Tic("Storing clones...");
 			foreach (Machine machine in M.Data.Machines.Local.Where(x => x.CloneOf != null))
 			{
@@ -475,6 +478,149 @@ namespace Robin.Mame
 
 			Reporter.Report("Finished: " + Watch.Elapsed.ToString(@"m\:ss"));
 		}
+
+		//public void CacheDataFast()
+		//{
+		//	Stopwatch Watch = Stopwatch.StartNew();
+		//	Stopwatch Watch1 = Stopwatch.StartNew();
+
+		//	XmlReaderSettings settings = new XmlReaderSettings();
+		//	settings.DtdProcessing = DtdProcessing.Parse;
+
+		//	// Wipe tables
+		//	Reporter.Tic("Wiping tables.");
+		//	string query = @"DELETE FROM Machine_Disk;
+		//					DELETE FROM Machine_Rom;
+		//					DELETE FROM Machine;
+		//					DELETE FROM Disk;
+		//					DELETE FROM Rom;
+		//					DELETE FROM sqlite_sequence;";
+
+		//	M.Data.Database.ExecuteSqlCommand(query);
+		//	Reporter.Toc();
+
+		//	//Reload M.Data so it knows about the wipe
+		//	M.Refresh(false);
+		//	M.Data.Configuration.ValidateOnSaveEnabled = false;
+
+		//	int machineCount = 0;
+		//	int romCount = 0;
+		//	int diskCount = 0;
+
+		//	Dictionary<string, Machine> machines = new Dictionary<string, Machine>();
+		//	Dictionary<string, Rom> roms = new Dictionary<string, Rom>();
+		//	Dictionary<string, Disk> disks = new Dictionary<string, Disk>();
+
+		//	// Scan through xml file from MAME and store machines
+		//	using (Process process = MAMEexe(@"-lx"))
+		//	using (XmlReader reader = XmlReader.Create(process.StandardOutput, settings))
+		//	{
+		//		Reporter.Tic("Getting xml file from MAME...");
+		//		while (reader.Read())
+		//		{
+		//			if (reader.Name == "machine")
+		//			{
+		//				XElement machineElement = XNode.ReadFrom(reader) as XElement;
+		//				Machine machine = new Machine(machineElement);
+		//				machines.Add(machine.Name, machine);
+		//				machine.ID = machineCount;
+
+		//				foreach (XElement romElement in machineElement.Elements("rom"))
+		//				{
+		//					string crc = romElement.Attribute("crc")?.Value ?? "NONE" + romCount;
+		//					Rom rom;
+		//					if (!roms.TryGetValue(crc, out rom))
+		//					{
+		//						rom = new Rom(romElement);
+		//						roms.Add(crc, rom);
+		//					}
+		//					machine.Roms.Add(rom);
+		//					rom.ID = ++romCount;
+		//				}
+
+		//				foreach (XElement diskElement in machineElement.Elements("disk"))
+		//				{
+		//					string sha1 = diskElement.Attribute("sha1")?.Value ?? "NONE" + diskCount;
+		//					Disk disk;
+
+		//					if (!disks.TryGetValue(sha1, out disk))
+		//					{
+		//						disk = new Disk(diskElement);
+		//						disks.Add(sha1, disk);
+		//					}
+		//					machine.Disks.Add(disk);
+		//					disk.ID = ++diskCount;
+		//				}
+
+		//				if (++machineCount % 5000 == 0)
+		//				{
+		//					Reporter.Report(machineCount + " machines, " + Watch1.Elapsed.TotalSeconds + " s.");
+		//					Watch1.Restart();
+		//				}
+		//			}
+		//		}
+		//		Reporter.Toc();
+		//	}
+
+		//	//// Add machines
+		//	//Reporter.Tic("Adding machines...");
+		//	//M.Data.Machines.AddRange(machines.Select(x => x.Value));
+		//	//Reporter.Toc();
+
+		//	Reporter.Tic("Saving changes...");
+		//	using (var connection = new SQLiteConnection(M.Data.ConnectionString))
+		//	{
+		//		connection.Open();
+		//		Stopwatch Watch2 = Stopwatch.StartNew();
+
+		//		using (var command = new SQLiteCommand(connection))
+		//		{
+		//			using (var transaction = connection.BeginTransaction())
+		//			{
+		//				foreach (Machine machine in machines.Values)
+		//				{
+		//					command.CommandText = MachineDictionaryToSql(machine);
+		//					command.ExecuteNonQuery();
+		//				}
+
+		//				foreach (Rom rom in roms.Values)
+		//				{
+		//					command.CommandText = RomDictionaryToSql(rom);
+		//					command.ExecuteNonQuery();
+		//				}
+
+		//				transaction.Commit();
+		//			}
+		//		}
+		//		connection.Close();
+		//	}
+		//	//M.Data.Save(false);
+		//	Reporter.Toc();
+
+		//	M.Refresh(true);
+		//	Reporter.Tic("Storing clones...");
+		//	foreach (Machine machine in M.Data.Machines.Local.Where(x => x.CloneOf != null))
+		//	{
+		//		if (machines.TryGetValue(machine.CloneOf, out Machine parent))
+		//		{
+		//			machine.Parent = parent;
+		//		}
+		//	}
+		//	Reporter.Toc();
+
+		//	// Find sample based on sampleof stored as temp value
+		//	Reporter.Tic("Storing samples...");
+		//	foreach (Machine machine in M.Data.Machines.Local.Where(x => x.SampleOf != null))
+		//	{
+		//		if (machines.TryGetValue(machine.SampleOf, out Machine sampleof))
+		//			machine.Sample = sampleof;
+		//	}
+		//	Reporter.Toc();
+
+		//	M.Data.Save(true);
+
+		//	Reporter.Report("Finished: " + Watch.Elapsed.ToString(@"m\:ss"));
+		//}
 
 		static ProcessStartInfo MAMEProcess(string arguments = null)
 		{
@@ -653,6 +799,41 @@ namespace Robin.Mame
 
 		}
 
+		string MachineDictionaryToSql(Machine machine)
+		{
+			StringBuilder returner = new StringBuilder("INSERT INTO Machine (ID, Name, Description, Year, Manufacturer, Status, Emulation, Players, Display, Control, Parent_ID, Sample_ID, IsMechanical, IsDevice, IsBios, IsRunnable) VALUES (");
+			returner.Append(machine.ID).Append(",").
+				Append("'").Append(machine.Name).Append("','").
+				Append(machine.Description.Replace("'", "''")).Append("','").
+				Append(machine.Year ?? "xkcd").Append("','").
+				Append((machine.Manufacturer ?? "xkcd").Replace("'", "''")).Append("','").
+				Append(machine.Status).Append("','").
+				Append(machine.Emulation).Append("','").
+				Append(machine.Players ?? "xkcd").Append("','").
+				Append(machine.Display ?? "xkcd").Append("','").
+				Append(machine.Control ?? "xkcd").Append("',").
+				Append(machine.Parent_ID == null ? "null" : machine.Parent_ID.ToString()).Append(",").
+				Append(machine.Sample_ID == null ? "null" : machine.Parent_ID.ToString()).Append(",").
+				Append(machine.IsMechanical ? "1" : "0").Append(",").
+				Append(machine.IsDevice ? "1" : "0").Append(",").
+				Append(machine.IsBios ? "1" : "0").Append(",").
+				Append(machine.IsRunnable ? "1" : "0").Append(");").Replace("'xkcd'", "null");
+			return returner.ToString();
+		}
+
+		string RomDictionaryToSql(Rom rom)
+		{
+			StringBuilder returner = new StringBuilder("INSERT INTO Rom (ID, Name, Region, CRC, Size, Status, Optional) VALUES (");
+			returner.Append(rom.ID).Append(",").
+				Append("'").Append(rom.Name.Replace("'", "''")).Append("','").
+				Append((rom.Region ?? "xkcd").Replace("'", "''")).Append("','").
+				Append(rom.CRC ?? "xkcd").Append("',").
+				Append(rom.Size == null ? "null" : rom.Size.ToString()).Append(",'").
+				Append(rom.Status).Append("',").
+				Append(rom.Optional ? "1" : "0").Append(");").Replace("'xkcd'", "null");
+			return returner.ToString();
+		}
+
 		public class AuditResult
 		{
 			public Robin.Rom Rom { get; set; }
@@ -677,6 +858,9 @@ namespace Robin.Mame
 				}
 			}
 		}
+
+
+
 
 	}
 }
