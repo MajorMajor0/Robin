@@ -13,19 +13,23 @@
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
 
 using System;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.SQLite;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Net;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
-using System.Data.SQLite;
 
 namespace Robin.Mame
 {
@@ -859,9 +863,23 @@ namespace Robin.Mame
 			}
 		}
 
+		public void GetFromZipFile(string filename)
+		{
+			try
+			{
+				using (ZipArchive archive = ZipFile.Open(filename, ZipArchiveMode.Read))
+				{
+					foreach (ZipArchiveEntry entry in archive.Entries)
+					{
+						
+					}
+				}
+			}
 
-
-
+			catch (Exception)
+			{
+			}
+		}
 	}
 }
 
