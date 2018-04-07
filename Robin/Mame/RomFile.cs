@@ -12,27 +12,20 @@ namespace Robin.Mame
     using System;
     using System.Collections.Generic;
     
-    public partial class Rom
+    public partial class RomFile
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Rom()
+        public RomFile()
         {
-            this.RomFiles = new HashSet<RomFile>();
-            this.Machines = new HashSet<Machine>();
+            this.Roms = new HashSet<Rom>();
         }
     
         public long ID { get; set; }
-        public string Name { get; set; }
-        public string Region { get; set; }
-        public string CRC { get; set; }
-        public Nullable<long> Size { get; set; }
-        public string Status { get; set; }
-        public bool Optional { get; set; }
-        public bool Unknown { get; set; }
+        public string FilePath { get; set; }
+        public Nullable<long> Machine_ID { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<RomFile> RomFiles { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Machine> Machines { get; set; }
+        public virtual ICollection<Rom> Roms { get; set; }
+        public virtual Machine Machine { get; set; }
     }
 }

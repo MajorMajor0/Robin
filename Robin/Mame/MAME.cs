@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.SQLite;
@@ -30,6 +31,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
+using Ionic.Zip;
+
 
 namespace Robin.Mame
 {
@@ -217,151 +220,6 @@ namespace Robin.Mame
 			{
 				Reporter.Report("No orphans found.");
 			}
-
-			Reporter.Report("Finished: " + Watch.Elapsed.ToString(@"m\:ss"));
-		}
-
-		public void CacheDataBase2()
-		{
-			Stopwatch Watch = Stopwatch.StartNew();
-
-			List<string> goodMachines = new List<string>();
-			List<string> goodRoms = new List<string>();
-			List<string> goodDisks = new List<string>();
-
-			XmlReaderSettings settings = new XmlReaderSettings();
-			settings.DtdProcessing = DtdProcessing.Parse;
-
-			// Wipe tables
-			Reporter.Tic("Wiping tables.");
-			//string query = @"DELETE FROM Machine_Disk;
-			//				DELETE FROM Machine_Rom;
-			//				DELETE FROM Machine;
-			//				DELETE FROM Disk;
-			//				DELETE FROM Rom;
-			//				DELETE FROM sqlite_sequence;";
-
-			//M.Data.Database.ExecuteSqlCommand(query);
-			M.Data.Machines.Local.Clear();
-			M.Data.Roms.Local.Clear();
-			M.Data.Disks.Local.Clear();
-			M.Data.SaveChanges();
-			Reporter.Toc();
-
-			int machineCount = 0;
-
-			Reporter.Tic("Getting xml file from MAME...");
-
-			List<Machine> machines = new List<Machine>();
-			//List<Rom> roms = new List<Rom>();
-			//List<Disk> disks = new List<Disk>();
-
-			// Scan through xml file from MAME and pick out working games
-			using (Process process = MAMEexe(@"-lx"))
-			using (XmlReader reader = XmlReader.Create(process.StandardOutput, settings))
-			{
-
-				while (reader.Read())
-				{
-					if (reader.Name == "machine")
-					{
-						XElement machineElement = XNode.ReadFrom(reader) as XElement;
-
-						// Check if machine exists, if not add it to database
-						//string machineName = machineElement.SafeGetA(attribute: "name");
-						//goodMachines.Add(machineName);
-
-						//Machine machine = M.Data.Machines.Local.FirstOrDefault(x => x.Name == machineName);
-
-						//if (machine == null)
-						//{
-						Machine machine = new Machine(machineElement);
-						machines.Add(machine);
-						//}
-
-						//else
-						//{
-						//	machine.GetPropsFromXElement(machineElement);
-						//}
-
-						// Check if roms exist, if not add them to database
-						foreach (XElement romElement in machineElement.Elements("rom"))
-						{
-							//string romName = romElement.SafeGetA(attribute: "name");
-							//goodRoms.Add(romName);
-
-							//Rom rom = M.Data.Roms.Local.FirstOrDefault(x => x.Name == romName);
-
-							//if (rom == null)
-							//{
-							//Rom rom = new Rom(romElement);
-							//roms.Add(rom);
-							//}
-
-							//else
-							//{
-							//	rom.GetPropsFromXElement(romElement);
-							//}
-							//rom.Machines.Add(machine);
-							machine.Roms.Add(new Rom(romElement));
-
-						}
-
-						// Check if disks exist, if not add them to database
-						foreach (XElement diskElement in machineElement.Elements("disk"))
-						{
-							//string diskName = diskElement.SafeGetA(attribute: "name");
-							//goodDisks.Add(diskName);
-
-							//Disk disk = M.Data.Disks.Local.FirstOrDefault(x => x.Name == diskName);
-
-							//if (disk == null)
-							//{
-							//Disk disk = new Disk(diskElement);
-							//disks.Add(disk);
-							//}
-
-							//else
-							//{
-							//	disk.GetPropsFromXElement(diskElement);
-							//}
-							//disk.Machines.Add(machine);
-							machine.Disks.Add(new Disk(diskElement));
-						}
-
-						if (++machineCount % 100 == 0)
-						{
-							Reporter.Report(machineCount + " machines");
-						}
-					}
-				}
-			}
-
-			Reporter.Toc();
-
-
-			// Remove items no longer in the latest database
-			//Reporter.Tic("Cleaning up database.");
-			//M.Data.Machines.Local.RemoveAll(x => !goodMachines.Contains(x.Name));
-			//M.Data.Roms.Local.RemoveAll(x => !goodRoms.Contains(x.Name));
-			//M.Data.Disks.Local.RemoveAll(x => !goodDisks.Contains(x.Name));
-			//Reporter.Toc();
-
-			// Find parent based on cloneof stored as temp value
-			Reporter.Tic("Storing clones.");
-			foreach (Machine machine in M.Data.Machines.Local.Where(x => x.CloneOf != null))
-			{
-				machine.Parent = M.Data.Machines.Local.FirstOrDefault(x => x.Name == machine.CloneOf);
-			}
-			Reporter.Toc();
-
-			// Find sample based on sampleof stored as temp value
-			Reporter.Tic("Storing samples.");
-			foreach (Machine machine in M.Data.Machines.Local.Where(x => x.CloneOf != null))
-			{
-				machine.Sample = M.Data.Machines.Local.FirstOrDefault(x => x.Name == machine.SampleOf);
-			}
-			Reporter.Toc();
 
 			Reporter.Report("Finished: " + Watch.Elapsed.ToString(@"m\:ss"));
 		}
@@ -863,22 +721,149 @@ namespace Robin.Mame
 			}
 		}
 
-		public void GetFromZipFile(string filename)
+		/// <summary>
+		/// Add a zipfile potentially containing roms to the database for later analysis
+		/// </summary>
+		public static void GetFromZipFile()
 		{
-			try
+
+			// Wipe tables
+			Reporter.Tic("Wiping tables...");
+			string query = @"DELETE FROM RomFile_Rom;
+							DELETE FROM RomFile;
+							DELETE FROM sqlite_sequence WHERE NAME = 'RomFile';";
+			M.Data.Database.ExecuteSqlCommand(query);
+			Reporter.Toc();
+
+			Reporter.Tic("Refreshing DB...");
+			M.Refresh(true);
+			Reporter.Toc();
+
+			RobinDataEntities RData = new RobinDataEntities();
+			Platform arcade = RData.Platforms.FirstOrDefault(x => x.ID == CONSTANTS.ARCADE_PLATFORM_ID);
+
+			string[] files = Directory.GetFiles(arcade.RomDirectory);
+
+			//try
+			//{
+			Reporter.Tic("Creating dictionary...");
+			ConcurrentDictionary<string, RomFile> romFiles = new ConcurrentDictionary<string, RomFile>();
+			Dictionary<string, Rom> roms = M.Data.Roms.ToDictionary(x => x.CRCN, y => y);
+			Dictionary<string, Machine> machines = M.Data.Machines.ToDictionary(x => x.Name, y => y);
+			Reporter.Toc();
+
+
+			Stopwatch Watch = Stopwatch.StartNew();
+			Stopwatch Watch1 = Stopwatch.StartNew();
+
+			int i = 0;
+			int noneCounter = 0;
+
+			//foreach (string file in files.Where(x => x.EndsWith(".zip")))
+			//{
+			//	if (!romFiles.ContainsKey(file))
+			//	{
+			//		RomFile romFile = new RomFile
+			//		{
+			//			FilePath = file
+			//		};
+
+			//		romFiles.Add(file, romFile);
+
+			//		using (Ionic.Zip.ZipFile zipFile = Ionic.Zip.ZipFile.Read(file))
+			//		{
+			//			foreach (ZipEntry entry in zipFile)
+			//			{
+			//				Rom rom;
+			//				if (roms.TryGetValue(entry.Crc.ToString("X"), out rom))
+			//				{
+			//					romFile.Roms.Add(rom);
+			//				}
+
+			//				else
+			//				{
+			//					rom = new Rom
+			//					{
+			//						Name = entry.FileName,
+			//						CRC = entry.Crc.ToString("X"),
+			//						Size = entry.UncompressedSize,
+			//						Unknown = true
+			//					};
+			//				}
+			//			}
+			//		}
+			//	}
+
+			//	if (++i % 1000 == 0)
+			//	{
+			//		Reporter.Report(i + " zipfiles scanned." + Watch.Elapsed.TotalSeconds.ToString("#.0"));
+			//	}
+			//}
+
+			var zipFiles = files.Where(x => x.EndsWith(".zip"));
+
+			System.Threading.Tasks.ParallelOptions opt = new System.Threading.Tasks.ParallelOptions();
+			opt.MaxDegreeOfParallelism = Math.Max(Environment.ProcessorCount / 2, 1);
+			Parallel.ForEach(zipFiles, opt, (file) =>
 			{
-				using (ZipArchive archive = ZipFile.Open(filename, ZipArchiveMode.Read))
+				if (!romFiles.ContainsKey(file))
 				{
-					foreach (ZipArchiveEntry entry in archive.Entries)
+					RomFile romFile = new RomFile
 					{
-						
+						FilePath = file
+					};
+
+					romFiles.TryAdd(file, romFile);
+
+					string name = Path.GetFileNameWithoutExtension(file);
+					if (machines.TryGetValue(name, out Machine machine))
+					{
+						romFile.Machine = machine;
+					}
+
+					using (Ionic.Zip.ZipFile zipFile = Ionic.Zip.ZipFile.Read(file))
+					{
+						foreach (ZipEntry entry in zipFile)
+						{
+							Rom rom;
+							if (roms.TryGetValue(entry.Crc.ToString("X"), out rom))
+							{
+								romFile.Roms.Add(rom);
+							}
+
+							else
+							{
+								rom = new Rom
+								{
+									Name = entry.FileName,
+									CRC = entry.Crc.ToString("X"),
+									Size = entry.UncompressedSize,
+									Unknown = true
+								};
+							}
+						}
 					}
 				}
-			}
+				if (++i % 1000 == 0)
+				{
+					Reporter.Report(i + " zipfiles scanned." + Watch.Elapsed.TotalSeconds.ToString("#.0"));
+				}
+			});
 
-			catch (Exception)
-			{
-			}
+			Reporter.Tic("Adding romfiles");
+			M.Data.RomFiles.AddRange(romFiles.Values);
+			Reporter.Toc();
+
+			M.Data.Save();
+
+			Debug.WriteLine("Finished: " + Watch1.ElapsedMilliseconds);
+
+			//}
+
+			//catch (Exception ex)
+			//{
+			//	int u = 0;
+			//}
 		}
 	}
 }
