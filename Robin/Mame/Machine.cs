@@ -20,6 +20,7 @@ namespace Robin.Mame
             this.Children = new HashSet<Machine>();
             this.Disks = new HashSet<Disk>();
             this.Roms = new HashSet<Rom>();
+            this.RomFiles = new HashSet<RomFile>();
         }
     
         public long ID { get; set; }
@@ -47,5 +48,7 @@ namespace Robin.Mame
         public virtual ICollection<Disk> Disks { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Rom> Roms { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<RomFile> RomFiles { get; set; }
     }
 }

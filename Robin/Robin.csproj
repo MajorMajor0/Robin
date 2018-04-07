@@ -274,6 +274,10 @@
       <DependentUpon>MEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="Mame\Rom.Extensions.cs" />
+    <Compile Include="Mame\RomFile.cs">
+      <DependentUpon>MEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Mame\RomFile.Extensions.cs" />
     <Compile Include="Match.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
@@ -529,6 +533,9 @@
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="PresentationCore" />

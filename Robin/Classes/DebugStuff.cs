@@ -34,8 +34,8 @@ namespace Robin
 			Reporter.Report("BONUS!");
 			await Task.Run(() =>
 			{
-				Mame.MAME m = new Mame.MAME();
-				m.CacheDataBase3();
+				//Mame.MAME m = new Mame.MAME();
+				Mame.MAME.GetFromZipFile();
 			});
 
 			Reporter.Report("Finished");

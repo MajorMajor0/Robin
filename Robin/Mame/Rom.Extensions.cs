@@ -14,6 +14,8 @@ namespace Robin.Mame
 			GetPropsFromXElement(xelement);
 		}
 
+		public string CRCN => CRC ?? String.Format("N{0}", ID);
+
 		/// <summary>
 		/// Get properties from XElement "rom" from MAME -listxml
 		/// </summary>

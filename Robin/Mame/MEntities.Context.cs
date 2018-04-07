@@ -28,5 +28,6 @@ namespace Robin.Mame
         public virtual DbSet<Disk> Disks { get; set; }
         public virtual DbSet<Machine> Machines { get; set; }
         public virtual DbSet<Rom> Roms { get; set; }
+        public virtual DbSet<RomFile> RomFiles { get; set; }
     }
 }
