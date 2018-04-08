@@ -19,7 +19,7 @@ namespace Robin
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Collection()
         {
-    		Games = new List<Game>();
+    		Games = new HashSet<Game>();
     		Releases = new List<Release>();
         }
     
@@ -46,7 +46,7 @@ namespace Robin
     
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual List<Game> Games { get; set; }
+        public virtual HashSet<Game> Games { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual List<Release> Releases { get; set; }
      

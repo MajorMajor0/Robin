@@ -19,7 +19,7 @@ namespace Robin
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public LBPlatform()
         {
-    		LBGames = new List<LBGame>();
+    		LBGames = new HashSet<LBGame>();
         }
     
         private long _iD;
@@ -122,7 +122,7 @@ namespace Robin
     
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual List<LBGame> LBGames { get; set; }
+        public virtual HashSet<LBGame> LBGames { get; set; }
      
         public event PropertyChangedEventHandler PropertyChanged;
     

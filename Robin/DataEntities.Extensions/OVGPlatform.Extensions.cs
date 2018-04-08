@@ -20,7 +20,7 @@ namespace Robin
 {
 	public partial class OVGPlatform : IDBPlatform
 	{
-		public IList Releases => OVGReleases;
+		public IList Releases => OVGReleases.ToList();
 
 		public Platform RPlatform
 		{

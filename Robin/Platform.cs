@@ -20,7 +20,7 @@ namespace Robin
         public Platform()
         {
     		Releases = new List<Release>();
-    		Emulators = new List<Emulator>();
+    		Emulators = new HashSet<Emulator>();
         }
     
         private long _iD;
@@ -218,7 +218,7 @@ namespace Robin
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual List<Release> Releases { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual List<Emulator> Emulators { get; set; }
+        public virtual HashSet<Emulator> Emulators { get; set; }
      
         public event PropertyChangedEventHandler PropertyChanged;
     
