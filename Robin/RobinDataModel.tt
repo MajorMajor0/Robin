@@ -56,7 +56,7 @@ foreach (var entity in typeMapper.GetItemsToGenerate<EntityType>(itemCollection)
 		else
 		{
 #>
-		<#=code.Escape(navigationProperty)#> = new List<<#=typeMapper.GetTypeName(navigationProperty.ToEndMember.GetEntityType())#>>();
+		<#=code.Escape(navigationProperty)#> = new HashSet<<#=typeMapper.GetTypeName(navigationProperty.ToEndMember.GetEntityType())#>>();
 <#
 }
 
@@ -370,7 +370,9 @@ public string Property(EdmProperty edmProperty, string entityName=null)
     public string NavigationProperty(NavigationProperty navProp)
     {
         var endType = _typeMapper.GetTypeName(navProp.ToEndMember.GetEntityType());
-        return string.Format(
+		if(navProp.Name.ToString()=="Releases")	
+		{
+		    return string.Format(
             CultureInfo.InvariantCulture,
             "{0} {1} {2} {{ {3}get; {4}set; }}",
             AccessibilityAndVirtual(Accessibility.ForNavigationProperty(navProp)),
@@ -378,6 +380,20 @@ public string Property(EdmProperty edmProperty, string entityName=null)
             _code.Escape(navProp),
             _code.SpaceAfter(Accessibility.ForGetter(navProp)),
             _code.SpaceAfter(Accessibility.ForSetter(navProp)));
+
+		}
+		else
+		{
+		    return string.Format(
+            CultureInfo.InvariantCulture,
+            "{0} {1} {2} {{ {3}get; {4}set; }}",
+            AccessibilityAndVirtual(Accessibility.ForNavigationProperty(navProp)),
+            navProp.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many ? ("HashSet<" + endType + ">") : endType,
+            _code.Escape(navProp),
+            _code.SpaceAfter(Accessibility.ForGetter(navProp)),
+            _code.SpaceAfter(Accessibility.ForSetter(navProp)));
+		}
+
     }
     
     public string AccessibilityAndVirtual(string accessibility)
@@ -564,7 +580,7 @@ public class TypeMapper
         var collectionType = edmType as CollectionType;
         if (collectionType != null)
         {
-            return String.Format(CultureInfo.InvariantCulture, "List<{0}>", GetTypeName(collectionType.TypeUsage, modelNamespace));
+            return String.Format(CultureInfo.InvariantCulture, "ICollection<{0}>", GetTypeName(collectionType.TypeUsage, modelNamespace));
         }
 
         var typeName = _code.Escape(edmType.MetadataProperties

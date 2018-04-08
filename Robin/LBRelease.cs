@@ -19,7 +19,7 @@ namespace Robin
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public LBRelease()
         {
-    		LBImages = new List<LBImage>();
+    		LBImages = new HashSet<LBImage>();
         }
     
         private long _iD;
@@ -53,7 +53,7 @@ namespace Robin
     
         public virtual LBGame LBGame { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual List<LBImage> LBImages { get; set; }
+        public virtual HashSet<LBImage> LBImages { get; set; }
         public virtual Region Region { get; set; }
      
         public event PropertyChangedEventHandler PropertyChanged;

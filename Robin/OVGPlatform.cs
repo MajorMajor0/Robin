@@ -19,7 +19,7 @@ namespace Robin
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public OVGPlatform()
         {
-    		OVGReleases = new List<OVGRelease>();
+    		OVGReleases = new HashSet<OVGRelease>();
         }
     
         private long _iD;
@@ -38,7 +38,7 @@ namespace Robin
     
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual List<OVGRelease> OVGReleases { get; set; }
+        public virtual HashSet<OVGRelease> OVGReleases { get; set; }
      
         public event PropertyChangedEventHandler PropertyChanged;
     

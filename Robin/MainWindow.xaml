@@ -1209,8 +1209,8 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 				<ListView.ItemsPanel>
 					<ItemsPanelTemplate>
-						<local:VirtualizingWrapPanel VirtualizingPanel.IsVirtualizing="True"
-													 VirtualizingPanel.ScrollUnit="Pixel"
+						<local:CCSWEVirtualizingWrapPanel VirtualizingPanel.IsVirtualizing="True"
+													 VirtualizingPanel.ScrollUnit="Item"
 													 CanHorizontallyScroll="False"
 													 ContextMenu="{StaticResource HammerContextMenu}"
 													 MouseMove="MainListWrapPanel_MouseMove"

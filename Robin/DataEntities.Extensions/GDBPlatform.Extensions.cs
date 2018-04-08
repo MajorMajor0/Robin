@@ -13,13 +13,14 @@
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Robin
 {
 	public partial class GDBPlatform : IDBPlatform
 	{
-		public IList Releases => GDBReleases;
+		public IList Releases => GDBReleases.ToList();
 
 		public Platform RPlatform
 		{

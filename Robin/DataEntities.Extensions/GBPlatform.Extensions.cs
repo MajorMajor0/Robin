@@ -19,7 +19,7 @@ namespace Robin
 {
 	public partial class GBPlatform : IDBPlatform
 	{
-		public IList Releases => GBReleases;
+		public IList Releases => GBReleases.ToList();
 
 		public Platform RPlatform
 		{

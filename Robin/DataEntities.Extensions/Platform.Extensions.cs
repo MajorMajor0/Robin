@@ -111,7 +111,7 @@ namespace Robin
 		public string ControllerPath => FileLocation.Art.Console + ID + "P-CTRL.jpg";
 
 
-		IList IDBPlatform.Releases => Releases;
+		IList IDBPlatform.Releases => Releases.ToList();
 
 
 		public void GetGames()

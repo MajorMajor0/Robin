@@ -22,7 +22,7 @@ namespace Robin
 	{
 		public IList Releases => LBReleases.ToList<LBRelease>();
 
-		public IList Games => LBGames;
+		public IList Games => LBGames.ToList();
 
 		public Platform RPlatform
 		{

@@ -157,12 +157,12 @@ namespace Robin
 
 		public MainWindowViewModel()
 		{
-			//MainBigList = new ObservableCollection<object>();
-			//MainBigList.Add(releaseCollection = new AutoFilterReleases(R.Data.Releases.Local.ToList(), "Releases"));
-			//MainBigList.Add(gameCollection = new AutoFilterGames(R.Data.Games.Local.ToList(), "Games"));
-			//MainBigList.Add(platformCollection = new AutoFilterPlatforms(R.Data.Platforms.Local.ToList(), "Platforms"));
-			//MainBigList.Add(emulatorCollection = new AutoFilterEmulators(R.Data.Emulators.Local.ToList(), "Emulators"));
-			//MainBigList.Add(CollectionList = new CollectionList("Collections"));
+			MainBigList = new ObservableCollection<object>();
+			MainBigList.Add(releaseCollection = new AutoFilterReleases(R.Data.Releases.Local.ToList(), "Releases"));
+			MainBigList.Add(gameCollection = new AutoFilterGames(R.Data.Games.Local.ToList(), "Games"));
+			MainBigList.Add(platformCollection = new AutoFilterPlatforms(R.Data.Platforms.Local.ToList(), "Platforms"));
+			MainBigList.Add(emulatorCollection = new AutoFilterEmulators(R.Data.Emulators.Local.ToList(), "Emulators"));
+			MainBigList.Add(CollectionList = new CollectionList("Collections"));
 
 			InitializeCommands();
 		}

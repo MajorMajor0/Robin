@@ -19,8 +19,8 @@ namespace Robin
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public GBPlatform()
         {
-    		GBGames = new List<GBGame>();
-    		GBReleases = new List<GBRelease>();
+    		GBGames = new HashSet<GBGame>();
+    		GBReleases = new HashSet<GBRelease>();
         }
     
         private long _iD;
@@ -81,9 +81,9 @@ namespace Robin
     
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual List<GBGame> GBGames { get; set; }
+        public virtual HashSet<GBGame> GBGames { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual List<GBRelease> GBReleases { get; set; }
+        public virtual HashSet<GBRelease> GBReleases { get; set; }
      
         public event PropertyChangedEventHandler PropertyChanged;
     

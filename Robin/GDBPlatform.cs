@@ -19,7 +19,7 @@ namespace Robin
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public GDBPlatform()
         {
-    		GDBReleases = new List<GDBRelease>();
+    		GDBReleases = new HashSet<GDBRelease>();
         }
     
         private long _iD;
@@ -150,7 +150,7 @@ namespace Robin
     
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual List<GDBRelease> GDBReleases { get; set; }
+        public virtual HashSet<GDBRelease> GDBReleases { get; set; }
      
         public event PropertyChangedEventHandler PropertyChanged;
     
