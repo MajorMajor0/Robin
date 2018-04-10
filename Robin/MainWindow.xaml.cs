@@ -22,7 +22,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Windows.UI.Xaml.Controls;
 
 namespace Robin
 {
@@ -92,8 +91,7 @@ namespace Robin
 			Emulator emulator = (sender as StackPanel).DataContext as Emulator;
 			if (e.Data.GetDataPresent(DataFormats.FileDrop))
 			{
-				string[] filePath = e.Data.GetData(DataFormats.FileDrop, false) as string[];
-				if (filePath != null)
+				if (e.Data.GetData(DataFormats.FileDrop, false) is string[] filePath)
 				{
 					emulator.Add(filePath[0]);
 				}
@@ -111,7 +109,7 @@ namespace Robin
 
 		 void MainListWrapPanel_MouseMove(object sender, MouseEventArgs e)
 		{
-			if (sender is VirtualizingWrapPanel panel && MainList.SelectedItems != null && e.LeftButton == MouseButtonState.Pressed)
+			if (sender is CCSWEVirtualizingWrapPanel panel && MainList.SelectedItems != null && e.LeftButton == MouseButtonState.Pressed)
 			{
 				DragDrop.DoDragDrop(panel, MainList.SelectedItems, DragDropEffects.Copy);
 			}
@@ -156,29 +154,35 @@ namespace Robin
 			var debugItemBrush = new SolidColorBrush(Colors.Blue);
 			PresentationTraceSources.DataBindingSource.Switch.Level = SourceLevels.Critical;
 
-			Button bonusButton = new Button();
-			bonusButton.Content = "BONUS!";
-			bonusButton.Width = 50;
-			bonusButton.Height = 30;
+			Button bonusButton = new Button
+			{
+				Content = "BONUS!",
+				Width = 50,
+				Height = 30,
+				Foreground = debugItemBrush
+			};
 			bonusButton.Click += BonusButton_Click;
-			bonusButton.Foreground = debugItemBrush;
 			DockPanel.SetDock(bonusButton, Dock.Right);
 			SearchBox_DockPanel.Children.Add(bonusButton);
 
 			CreateThumbnailsCommand = new RelayCommand(CreateThumbnails);
-			MenuItem createThumbs = new MenuItem();
-			createThumbs.Header = "Create thumbnails";
-			createThumbs.ToolTip = "Create a thumbnail for every release that doesn't have one.";
-			createThumbs.Command = CreateThumbnailsCommand;
-			createThumbs.Foreground = debugItemBrush;
+			MenuItem createThumbs = new MenuItem
+			{
+				Header = "Create thumbnails",
+				ToolTip = "Create a thumbnail for every release that doesn't have one.",
+				Command = CreateThumbnailsCommand,
+				Foreground = debugItemBrush
+			};
 			ArtMenuItem.Items.Add(createThumbs);
 
 			SetFactoryDBCommand = new RelayCommand(SetFactoryDB);
-			MenuItem setFactoryDB = new MenuItem();
-			setFactoryDB.Header = "Set factory database";
-			setFactoryDB.ToolTip = "Erase all custom settings from database.";
-			setFactoryDB.Command = SetFactoryDBCommand;
-			setFactoryDB.Foreground = debugItemBrush;
+			MenuItem setFactoryDB = new MenuItem
+			{
+				Header = "Set factory database",
+				ToolTip = "Erase all custom settings from database.",
+				Command = SetFactoryDBCommand,
+				Foreground = debugItemBrush
+			};
 			FileMenuItem.Items.Add(setFactoryDB);
 		}
 

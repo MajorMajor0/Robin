@@ -194,7 +194,7 @@ namespace Robin
 			}
 		}
 
-		public string Year => Date == null ? null : Date.Value.Year.ToString();
+		public string Year => Date?.Year.ToString();
 
 		public string TitleAndRegion => Title + " " + Version + " (" + Region.Title + ")";
 
