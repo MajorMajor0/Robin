@@ -56,8 +56,10 @@ namespace Robin.Mame
 			Stopwatch Watch = Stopwatch.StartNew();
 			Stopwatch Watch1 = Stopwatch.StartNew();
 
-			XmlReaderSettings settings = new XmlReaderSettings();
-			settings.DtdProcessing = DtdProcessing.Parse;
+			XmlReaderSettings settings = new XmlReaderSettings
+			{
+				DtdProcessing = DtdProcessing.Parse
+			};
 
 			int machineCount = 0;
 			List<XElement> machineElements = new List<XElement>();
@@ -486,13 +488,15 @@ namespace Robin.Mame
 
 		static ProcessStartInfo MAMEProcess(string arguments = null)
 		{
-			ProcessStartInfo MAMEexe = new ProcessStartInfo();
-			MAMEexe.FileName = FileLocation.MAME;
-			MAMEexe.UseShellExecute = false;
-			MAMEexe.RedirectStandardOutput = true;
-			MAMEexe.WindowStyle = ProcessWindowStyle.Hidden;
-			MAMEexe.CreateNoWindow = true;
-			MAMEexe.Arguments = arguments;
+			ProcessStartInfo MAMEexe = new ProcessStartInfo
+			{
+				FileName = FileLocation.MAME,
+				UseShellExecute = false,
+				RedirectStandardOutput = true,
+				WindowStyle = ProcessWindowStyle.Hidden,
+				CreateNoWindow = true,
+				Arguments = arguments
+			};
 
 			return MAMEexe;
 		}
@@ -757,7 +761,6 @@ namespace Robin.Mame
 			Stopwatch Watch1 = Stopwatch.StartNew();
 
 			int i = 0;
-			int noneCounter = 0;
 
 			//foreach (string file in files.Where(x => x.EndsWith(".zip")))
 			//{
@@ -802,7 +805,7 @@ namespace Robin.Mame
 
 			var zipFiles = files.Where(x => x.EndsWith(".zip"));
 
-			System.Threading.Tasks.ParallelOptions opt = new System.Threading.Tasks.ParallelOptions();
+			ParallelOptions opt = new ParallelOptions();
 			opt.MaxDegreeOfParallelism = Math.Max(Environment.ProcessorCount / 2, 1);
 			Parallel.ForEach(zipFiles, opt, (file) =>
 			{
