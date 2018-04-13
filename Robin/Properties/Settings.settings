@@ -120,7 +120,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="GameFilterIsMess" Type="System.Nullable&lt;System.Boolean&gt;" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="DisplayMess" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
