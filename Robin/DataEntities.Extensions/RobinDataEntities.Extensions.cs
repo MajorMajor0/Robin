@@ -31,13 +31,15 @@ namespace Robin
 
 	public partial class RobinDataEntities : Entity
 	{
-		string connectionString = "data source = " + Robin.FileLocation.RobinData;
-
+		string dbName = "RobinDataModel";
+		string dataSource = Robin.FileLocation.RobinData;
+		
 		public override string FileLocation => Robin.FileLocation.RobinData;
 
 		public RobinDataEntities(bool chooser)
 		{
-			this.Database.Connection.ConnectionString = connectionString;
+			string connectionString = $"metadata=res://*/{dbName}.csdl|res://*/{dbName}.ssdl|res://*/{dbName}.msl;provider=System.Data.SQLite.EF6;data source = {dataSource}";
+			Database.Connection.ConnectionString = connectionString;
 
 			Configuration.LazyLoadingEnabled = false;
 			Configuration.AutoDetectChangesEnabled = false;
