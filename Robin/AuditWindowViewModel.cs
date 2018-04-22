@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -9,8 +10,11 @@ namespace Robin
 {
 	public class AuditWindowViewModel : INotifyPropertyChanged
 	{
-		List<Mame.MAME.AuditResult> auditResults;
-		public List<Mame.MAME.AuditResult> AuditResults
+		public ObservableCollection<Platform> PlatformList => R.Data.Platforms.Local;
+		public Platform SelectedPlatform { get; set; }
+
+		List<Audit.Result> auditResults;
+		public List<Audit.Result> AuditResults
 		{
 			get
 			{
@@ -30,26 +34,21 @@ namespace Robin
 			}
 		}
 
-		public List<Mame.MAME.AuditResult> GoodResults => AuditResults?.Where(x => x.Result.ToLower() == "good").ToList();
+		public List<Audit.Result> GoodResults => AuditResults?.Where(x => x.Status == Status.Good).ToList();
 
-		public List<Mame.MAME.AuditResult> BadResults => AuditResults?.Where(x => x.Result.ToLower() == "bad").ToList();
+		public List<Audit.Result> BadResults => AuditResults?.Where(x => x.Status == Status.Bad).ToList();
 
-		public List<Mame.MAME.AuditResult> BestResults => AuditResults?.Where(x => x.Result.ToLower() == "best").ToList();
+		public List<Audit.Result> BestResults => AuditResults?.Where(x => x.Status == Status.Best).ToList();
 
-		public int GoodCount => AuditResults?.Count(x => x.Result.ToLower() == "good") ?? 0;
+		public int GoodCount => AuditResults?.Count(x => x.Status == Status.Good) ?? 0;
 
-		public int BadCount => AuditResults?.Count(x => x.Result.ToLower() == "bad") ?? 0;
+		public int BadCount => AuditResults?.Count(x => x.Status == Status.Bad) ?? 0;
 
-		public int BestCount => AuditResults?.Count(x => x.Result.ToLower() == "best") ?? 0;
+		public int BestCount => AuditResults?.Count(x => x.Status == Status.Best) ?? 0;
 
 		public AuditWindowViewModel()
 		{
-			GetAuditResults();
-		}
-
-		async void GetAuditResults()
-		{
-			await Task.Run(() => { AuditResults = Mame.MAME.AuditRoms(); });
+			AuditCommand = new Command(Audit, AuditCanExecute, "Audit", "Audit selected platform.");
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -57,6 +56,21 @@ namespace Robin
 		protected void OnPropertyChanged(string prop)
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+		}
+
+		public Command AuditCommand { get; set; }
+
+		async void Audit()
+		{
+			await Task.Run(() =>
+			{
+				AuditResults = SelectedPlatform.AuditRoms();
+			});
+		}
+
+		bool AuditCanExecute()
+		{
+			return SelectedPlatform != null;
 		}
 	}
 }

@@ -136,7 +136,9 @@
     <Compile Include="AuditWindowViewModel.cs">
       <DependentUpon>AuditWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Classes\Audit.cs" />
     <Compile Include="Classes\Command.cs" />
+    <Compile Include="Classes\Crc32.cs" />
     <Compile Include="Classes\DebugStuff.cs" />
     <Compile Include="Classes\Entity.cs" />
     <Compile Include="Classes\TitledCollection.cs" />
@@ -182,7 +184,7 @@
       <DependentUpon>MEntities.edmx</DependentUpon>
     </Compile>
     <Compile Include="Mame\MEntities.Extensions.cs" />
-    <Compile Include="Mame\MAME.cs" />
+    <Compile Include="Mame\Database.cs" />
     <Compile Include="Databases\OpenVGDB.cs" />
     <Compile Include="DatabaseWindowViewModel.cs">
       <DependentUpon>DatabaseWindow.xaml</DependentUpon>

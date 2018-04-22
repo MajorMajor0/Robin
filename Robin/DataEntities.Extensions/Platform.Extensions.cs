@@ -25,7 +25,6 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace Robin
-
 {
 	public partial class Platform : IDBobject, IDBPlatform
 	{
@@ -90,15 +89,15 @@ namespace Robin
 
 		public string RomDirectory => FileLocation.Roms + FileName + @"\";
 
-		public string BoxFrontURL => GDBPlatform != null ? GDBPlatform.BoxFrontURL : null;
+		public string BoxFrontURL => GDBPlatform?.BoxFrontURL;
 
-		public string BoxBackURL => GDBPlatform != null ? GDBPlatform.BoxBackURL : null;
+		public string BoxBackURL => GDBPlatform?.BoxBackURL;
 
-		public string BannerURL => GDBPlatform != null ? GDBPlatform.BannerURL : null;
+		public string BannerURL => GDBPlatform?.BannerURL;
 
-		public string ConsoleURL => GDBPlatform != null ? GDBPlatform.ConsoleURL : null;
+		public string ConsoleURL => GDBPlatform?.ConsoleURL;
 
-		public string ControllerURL => GDBPlatform != null ? GDBPlatform.ControllerURL : null;
+		public string ControllerURL => GDBPlatform?.ControllerURL;
 
 		public string BoxFrontPath => FileLocation.Art.Console + ID + "P-BXF.jpg";
 
@@ -269,13 +268,13 @@ namespace Robin
 							} while (stream.CanRead && count > 0);
 
 							//sha1 = GetHash(memoryStream, "SHA1", (int)HeaderLength, (int)entry.Length);
-							sha1 = GetHash(memoryStream, "SHA1", (int)HeaderLength);
+							sha1 = Audit.GetHash(memoryStream, HashOptions.SHA1, (int)HeaderLength);
 							matchedRom = Roms.FirstOrDefault(x => sha1.Equals(x.SHA1, StringComparison.OrdinalIgnoreCase));
 
 							if (matchedRom == null && HeaderLength > 0)
 							{
 								//sha1 = GetHash(memoryStream, "SHA1", 0, (int)entry.Length);
-								sha1 = GetHash(memoryStream, "SHA1", 0);
+								sha1 = Audit.GetHash(memoryStream, HashOptions.SHA1, 0);
 
 								matchedRom = Roms.FirstOrDefault(x => sha1.Equals(x.SHA1, StringComparison.OrdinalIgnoreCase));
 							}
@@ -331,11 +330,11 @@ namespace Robin
 		{
 			int total = 0;
 
-			var sha1 = GetHash(foundFilePath, "SHA1", (int)HeaderLength);
+			var sha1 = Audit.GetHash(foundFilePath, HashOptions.SHA1, (int)HeaderLength);
 			Rom matchedRom = Roms.FirstOrDefault(x => sha1.Equals(x.SHA1, StringComparison.OrdinalIgnoreCase));
 			if (matchedRom == null && HeaderLength > 0)
 			{
-				sha1 = GetHash(foundFilePath, "SHA1", 0);
+				sha1 = Audit.GetHash(foundFilePath, HashOptions.SHA1, 0);
 				matchedRom = Roms.FirstOrDefault(x => sha1.Equals(x.SHA1, StringComparison.OrdinalIgnoreCase));
 			}
 
@@ -382,54 +381,6 @@ namespace Robin
 				}
 			}
 			return total;
-		}
-
-		public static string GetHash(string file, string method, int headerlength = 0)
-		{
-			string hash;
-			using (FileStream stream = new FileStream(file, FileMode.Open, FileAccess.Read))
-			{
-				hash = GetHash(stream, method, headerlength);
-			}
-			return hash;
-		}
-
-		public static string GetHash(Stream stream, string method, int headerlength = 0)
-		{
-			string hash = "";
-			int streamLength = (int)stream.Length;
-
-			if (streamLength < headerlength)
-			{
-				return "";
-			}
-			// Read header
-			//byte[] header = new byte[headerlength];
-			stream.Seek(headerlength, SeekOrigin.Begin);
-			//stream.Read(header, 0, headerlength);
-
-			// Read buffer
-			byte[] buffer = new byte[streamLength - headerlength];
-			stream.Read(buffer, 0, (streamLength - headerlength));
-
-			// Read buffer
-			//byte[] buffer = new byte[streamLength - headerlength];
-			//stream.Seek(headerlength, SeekOrigin.Begin);
-			//stream.Read(buffer, 0, (streamLength - headerlength));
-
-			switch (method)
-			{
-				case "SHA1":
-					SHA1Managed managedSHA1 = new SHA1Managed();
-					byte[] shaBuffer = managedSHA1.ComputeHash(buffer);
-					foreach (byte b in shaBuffer)
-					{
-						hash += b.ToString("x2").ToUpper();
-					}
-					break;
-			}
-
-			return hash;
 		}
 
 		public void MarkPreferred(Emulator emulator)
@@ -497,5 +448,50 @@ namespace Robin
 			//CopyPlayers();
 		}
 
+		public List<Audit.Result> AuditRoms()
+		{
+			List<Audit.Result> returner = new List<Audit.Result>();
+			if (ID == CONSTANTS.ARCADE_PLATFORM_ID)
+			{
+				returner = Mame.Database.AuditRoms();
+			}
+
+			return returner;
+		}
+
+		/// <summary>
+		/// Audits existance of roms for patforms that are not mame. Cycles through all roms under the platform, checks the existance of a file under ROM.filename, checks the  crc
+		/// </summary>
+		/// <returns>A list of Audit.Result </returns>
+		List<Audit.Result> AuditNonMameRoms()
+		{
+			List<Audit.Result> returner = new List<Audit.Result>();
+
+			// First audit all ROMS in the database
+			foreach (Rom rom in Roms)
+			{
+				var result = new Audit.Result(rom);
+				returner.Add(result);
+
+				if (File.Exists(rom.FilePath))
+				{
+					if (rom.SHA1 != null)
+					{
+						string fileSHA1 = Audit.GetHash(file: rom.FilePath, headerlength: (int)HeaderLength);
+						if (fileSHA1 == rom.SHA1)
+						{
+							result.Status = Status.Good;
+						}
+					}			
+				}
+
+				else
+				{
+					result.Status = Status.Missing;
+				}
+			}
+			return returner;
+
+		}
 	}
 }

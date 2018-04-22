@@ -36,7 +36,7 @@ using Ionic.Zip;
 
 namespace Robin.Mame
 {
-	public class MAME
+	public class Database
 	{
 		Platform arcadePlatform;
 
@@ -44,7 +44,7 @@ namespace Robin.Mame
 
 		//public Entities MEntities { get; set; }
 
-		public MAME()
+		public Database()
 		{
 			arcadePlatform = R.Data.Platforms.Local.FirstOrDefault(x => x.ID == CONSTANTS.ARCADE_PLATFORM_ID);
 			notNullRegions = R.Data.Regions.Local.Where(x => x.Priority != null).OrderByDescending(x => x.Priority).ToList();
@@ -275,8 +275,7 @@ namespace Robin.Mame
 						foreach (XElement romElement in machineElement.Elements("rom"))
 						{
 							string crc = romElement.Attribute("crc")?.Value ?? "NONE" + romCount;
-							Rom rom;
-							if (!roms.TryGetValue(crc, out rom))
+							if (!roms.TryGetValue(crc, out Rom rom))
 							{
 								rom = new Rom(romElement);
 								roms.Add(crc, rom);
@@ -288,9 +287,8 @@ namespace Robin.Mame
 						foreach (XElement diskElement in machineElement.Elements("disk"))
 						{
 							string sha1 = diskElement.Attribute("sha1")?.Value ?? "NONE" + diskCount;
-							Disk disk;
 
-							if (!disks.TryGetValue(sha1, out disk))
+							if (!disks.TryGetValue(sha1, out Disk disk))
 							{
 								disk = new Disk(diskElement);
 								disks.Add(sha1, disk);
@@ -570,9 +568,9 @@ namespace Robin.Mame
 		}
 
 		/// <summary>
-		/// Audit MAME ROMs currently used by Robin using MAME verifyroms command line switch
+		/// Audit MAME ROMs currently used by Robin using MAME.exe -verifyroms command line switch
 		/// </summary>
-		public static List<AuditResult> AuditRoms()
+		public static List<Audit.Result> AuditRoms()
 		{
 			Reporter.Report("Auditing MAME ROMs");
 			Emulator mame = R.Data.Emulators.Local.FirstOrDefault(x => x.ID == CONSTANTS.MAME_ID);
@@ -587,7 +585,7 @@ namespace Robin.Mame
 			{
 				using (Process emulatorProcess = new Process())
 				{
-					emulatorProcess.StartInfo.CreateNoWindow = false;
+					emulatorProcess.StartInfo.CreateNoWindow = true;
 					emulatorProcess.StartInfo.UseShellExecute = false;
 					emulatorProcess.StartInfo.RedirectStandardOutput = true;
 					emulatorProcess.StartInfo.RedirectStandardError = true;
@@ -611,22 +609,18 @@ namespace Robin.Mame
 					string error = emulatorProcess.StandardError.ReadToEnd();
 
 					Reporter.Tic("Listing results...");
-					List<string> lines = output.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Replace("romset ", "").Replace(" is", "").Replace(" available", "")).ToList();
+					List<string> lines = output.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
 					resultStrings.AddRange(lines);
 					Reporter.Toc();
 				}
 			}
 
-			//List<string> goodResults = resultStrings.Where(x => x.Contains("is good")).ToList();
-			//List<string> badResults = resultStrings.Where(x => x.Contains("is bad")).ToList();
-			//List<string> bestAvailableResults = resultStrings.Where(x => x.Contains("is best available")).ToList();
-
-			List<AuditResult> auditResults = new List<AuditResult>();
+			List<Audit.Result> auditResults = new List<Audit.Result>();
 			foreach (string line in resultStrings)
 			{
 				if (!line.Contains(": "))
 				{
-					auditResults.Add(new AuditResult(line));
+					auditResults.Add(Audit.GetResultFromMameLine(line));
 				}
 			}
 
@@ -662,7 +656,6 @@ namespace Robin.Mame
 			}
 			Reporter.Report("Finished getting ROMs from Robin.");
 			return returner;
-
 		}
 
 		string MachineDictionaryToSql(Machine machine)
@@ -700,37 +693,11 @@ namespace Robin.Mame
 			return returner.ToString();
 		}
 
-		public class AuditResult
-		{
-			public Robin.Rom Rom { get; set; }
-			public Robin.Rom Parent { get; set; }
-			public string Result { get; set; }
-
-			public AuditResult(string line)
-			{
-				string[] liner = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-				if (liner.Length == 2)
-				{
-					Rom = R.Data.Roms.Local.FirstOrDefault(x => x.FileName == liner[0] + ".zip");
-					Result = liner[1];
-				}
-
-				if (liner.Length == 3)
-				{
-					Rom = R.Data.Roms.Local.FirstOrDefault(x => x.FileName == liner[0] + ".zip");
-					Parent = R.Data.Roms.Local.FirstOrDefault(x => x.FileName == liner[1].Replace("[", "").Replace("]", "") + ".zip");
-					Result = liner[2];
-				}
-			}
-		}
-
 		/// <summary>
 		/// Add a zipfile potentially containing roms to the database for later analysis
 		/// </summary>
 		public static void GetFromZipFile()
 		{
-
 			// Wipe tables
 			Reporter.Tic("Wiping tables...");
 			string query = @"DELETE FROM RomFile_Rom;
@@ -751,18 +718,62 @@ namespace Robin.Mame
 			//try
 			//{
 			Reporter.Tic("Creating dictionary...");
-			ConcurrentDictionary<string, RomFile> romFiles = new ConcurrentDictionary<string, RomFile>();
+			//ConcurrentDictionary<string, RomFile> romFiles = new ConcurrentDictionary<string, RomFile>();
+			Dictionary<string, RomFile> romFiles = new Dictionary<string, RomFile>();
 			Dictionary<string, Rom> roms = M.Data.Roms.ToDictionary(x => x.CRCN, y => y);
 			Dictionary<string, Machine> machines = M.Data.Machines.ToDictionary(x => x.Name, y => y);
 			Reporter.Toc();
-
 
 			Stopwatch Watch = Stopwatch.StartNew();
 			Stopwatch Watch1 = Stopwatch.StartNew();
 
 			int i = 0;
 
-			//foreach (string file in files.Where(x => x.EndsWith(".zip")))
+			foreach (string file in files.Where(x => x.EndsWith(".zip")))
+			{
+				if (!romFiles.ContainsKey(file))
+				{
+					RomFile romFile = new RomFile
+					{
+						FilePath = file
+					};
+
+					romFiles.Add(file, romFile);
+
+					using (Ionic.Zip.ZipFile zipFile = Ionic.Zip.ZipFile.Read(file))
+					{
+						foreach (ZipEntry entry in zipFile)
+						{
+							if (roms.TryGetValue(entry.Crc.ToString("X"), out Rom rom))
+							{
+								romFile.Roms.Add(rom);
+							}
+
+							else
+							{
+								rom = new Rom
+								{
+									Name = entry.FileName,
+									CRC = entry.Crc.ToString("X"),
+									Size = entry.UncompressedSize,
+									Unknown = true
+								};
+							}
+						}
+					}
+				}
+
+				if (++i % 1000 == 0)
+				{
+					Reporter.Report(i + " zipfiles scanned." + Watch.Elapsed.TotalSeconds.ToString("#.0"));
+				}
+			}
+
+			//var zipFiles = files.Where(x => x.EndsWith(".zip"));
+
+			//ParallelOptions opt = new ParallelOptions();
+			//opt.MaxDegreeOfParallelism = Math.Max(Environment.ProcessorCount / 2, 1);
+			//Parallel.ForEach(zipFiles, opt, (file) =>
 			//{
 			//	if (!romFiles.ContainsKey(file))
 			//	{
@@ -771,7 +782,13 @@ namespace Robin.Mame
 			//			FilePath = file
 			//		};
 
-			//		romFiles.Add(file, romFile);
+			//		romFiles.TryAdd(file, romFile);
+
+			//		string name = Path.GetFileNameWithoutExtension(file);
+			//		if (machines.TryGetValue(name, out Machine machine))
+			//		{
+			//			romFile.Machine = machine;
+			//		}
 
 			//		using (Ionic.Zip.ZipFile zipFile = Ionic.Zip.ZipFile.Read(file))
 			//		{
@@ -796,62 +813,11 @@ namespace Robin.Mame
 			//			}
 			//		}
 			//	}
-
 			//	if (++i % 1000 == 0)
 			//	{
 			//		Reporter.Report(i + " zipfiles scanned." + Watch.Elapsed.TotalSeconds.ToString("#.0"));
 			//	}
-			//}
-
-			var zipFiles = files.Where(x => x.EndsWith(".zip"));
-
-			ParallelOptions opt = new ParallelOptions();
-			opt.MaxDegreeOfParallelism = Math.Max(Environment.ProcessorCount / 2, 1);
-			Parallel.ForEach(zipFiles, opt, (file) =>
-			{
-				if (!romFiles.ContainsKey(file))
-				{
-					RomFile romFile = new RomFile
-					{
-						FilePath = file
-					};
-
-					romFiles.TryAdd(file, romFile);
-
-					string name = Path.GetFileNameWithoutExtension(file);
-					if (machines.TryGetValue(name, out Machine machine))
-					{
-						romFile.Machine = machine;
-					}
-
-					using (Ionic.Zip.ZipFile zipFile = Ionic.Zip.ZipFile.Read(file))
-					{
-						foreach (ZipEntry entry in zipFile)
-						{
-							Rom rom;
-							if (roms.TryGetValue(entry.Crc.ToString("X"), out rom))
-							{
-								romFile.Roms.Add(rom);
-							}
-
-							else
-							{
-								rom = new Rom
-								{
-									Name = entry.FileName,
-									CRC = entry.Crc.ToString("X"),
-									Size = entry.UncompressedSize,
-									Unknown = true
-								};
-							}
-						}
-					}
-				}
-				if (++i % 1000 == 0)
-				{
-					Reporter.Report(i + " zipfiles scanned." + Watch.Elapsed.TotalSeconds.ToString("#.0"));
-				}
-			});
+			//});
 
 			Reporter.Tic("Adding romfiles");
 			M.Data.RomFiles.AddRange(romFiles.Values);

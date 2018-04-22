@@ -128,19 +128,19 @@ namespace Robin
 	public enum LocalDB
 	{
 		[Description("Unknown")]
-		Unknown = 0,
+		Unknown,
 		[Description("Games DB")]
-		GamesDB = 1,
+		GamesDB,
 		[Description("GiantBomb")]
-		GiantBomb = 2,
+		GiantBomb,
 		[Description("Open VGDB")]
-		OpenVGDB = 3,
+		OpenVGDB,
 		[Description("LaunchBox")]
-		LaunchBox = 4,
+		LaunchBox,
 		[Description("Datomatic")]
-		Datomatic = 5,
+		Datomatic,
 		[Description("Robin")]
-		Robin = 6
+		Robin
 	}
 
 }

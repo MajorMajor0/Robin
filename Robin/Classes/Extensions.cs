@@ -151,6 +151,27 @@ namespace Robin
 			return washed;
 		}
 
+		/// <summary>
+		/// Capitalize teh first letter of a string
+		/// </summary>
+		/// <param name="input"></param>
+		/// <returns>Capitalized string</returns>
+		public static string Capitalize(this string input)
+		{
+			if (input == null)
+			{
+				return null;
+			}
+
+			if (input.Length > 1)
+			{
+				return char.ToUpper(input[0]) + input.Substring(1);
+			}
+
+			return input.ToUpper();
+
+		}
+
 		public static string SafeGetA(this XElement element,
 			string element1 = null, string element2 = null, string element3 = null,
 			string attribute = null)
