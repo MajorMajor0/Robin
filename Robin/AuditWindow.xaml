@@ -21,7 +21,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 		xmlns:local="clr-namespace:Robin"
 		mc:Ignorable="d"
 		Title="Audit Window"
-		Width="500"
+		Width="600"
 		Height="800"
 		Style="{StaticResource WindowStyle1}">
 	<Window.DataContext>
@@ -55,6 +55,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 					</Grid.RowDefinitions>
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="200" />
+						<ColumnDefinition Width="70" />
 						<ColumnDefinition Width="*" />
 					</Grid.ColumnDefinitions>
 
@@ -78,7 +79,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 					<StackPanel x:Name="ButtonsStackPanel"
 								Grid.Column="1"
 								Grid.Row="1"
-								Margin="10,0,0,10">
+								HorizontalAlignment="Center">
 						<Button Style="{StaticResource CButtonStyle}"
 								Command="{Binding AuditCommand}"
 								Height="25"
@@ -87,10 +88,30 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 						</Button>
 					</StackPanel>
+					<TextBlock Text="Audit Results"
+							   Style="{StaticResource Heading0}"
+							   Grid.Column="2" />
+					<ListBox x:Name="AuditResultsListBox"
+							 ItemsSource="{Binding AuditResultsCollection}"
+							 SelectedItem="{Binding SelectedAuditResults, Mode=TwoWay}"
+							 Grid.Row="1"
+							 Grid.Column="2"
+							 Height="100"
+							 Background="Transparent"
+							 BorderBrush="Transparent"
+							 ScrollViewer.CanContentScroll="True">
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<TextBlock Text="{Binding Title}"
+										   Style="{StaticResource Normal}" />
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
 
 				</Grid>
 
-				<StackPanel Grid.Row="1">
+				<StackPanel Grid.Row="1"
+							Visibility="{Binding SelectedAuditResult, Converter={StaticResource NullToVisibilityConverter}}">
 					<TextBlock Text="Audit Summary"
 							   Style="{StaticResource Heading0}"
 							   Margin="0,20,0,0" />
@@ -99,7 +120,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 							   Style="{StaticResource Normal}">
 						<TextBlock.Text>
 							<MultiBinding StringFormat="{}Total Results: {0}">
-								<Binding Path="AuditResults.Count"
+								<Binding ElementName="AuditResultsListBox" Path="SelectedItem.Count"
 										 FallbackValue="0" />
 							</MultiBinding>
 						</TextBlock.Text>
@@ -116,11 +137,43 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						</TextBlock.Text>
 					</TextBlock>
 
+					<TextBlock  x:Name="MissingBlock"
+								Style="{StaticResource Heading0}"
+								Margin="0,20,0,0">
+						<TextBlock.Text>
+							<MultiBinding StringFormat="{}Missing ROMs ({0})">
+								<Binding Path="MissingCount"
+										 FallbackValue="0" />
+							</MultiBinding>
+						</TextBlock.Text>
+					</TextBlock>
+					<ListView x:Name="MissingResultsListView"
+							  ItemsSource="{Binding BadResults}"
+							  Background="Transparent"
+							  BorderBrush="Transparent"
+							  MaxHeight="200"
+							  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+						<ListView.ItemTemplate>
+							<DataTemplate>
+								<TextBlock Style="{StaticResource Normal}">
+									<TextBlock.Text>
+										<MultiBinding StringFormat="{}{0}, {1}">
+											<Binding Path="Rom.FileName"
+													 FallbackValue="0" />
+											<Binding Path="Rom.Title"
+													 FallbackValue="0" />
+										</MultiBinding>
+									</TextBlock.Text>
+								</TextBlock>
+							</DataTemplate>
+						</ListView.ItemTemplate>
+					</ListView>
+
 					<TextBlock  x:Name="BadBlock"
 								Style="{StaticResource Heading0}"
 								Margin="0,20,0,0">
 						<TextBlock.Text>
-							<MultiBinding StringFormat="{}Roms with problems that could be fixed ({0})">
+							<MultiBinding StringFormat="{}ROMs with problems that could be fixed ({0})">
 								<Binding Path="BadCount"
 										 FallbackValue="0" />
 							</MultiBinding>
@@ -151,7 +204,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 								Style="{StaticResource Heading0}"
 								Margin="0,20,0,0">
 						<TextBlock.Text>
-							<MultiBinding StringFormat="{}Roms with problems, but no better are available ({0})">
+							<MultiBinding StringFormat="{}ROMs with problems, but no better are available ({0})">
 								<Binding Path="BestCount"
 										 FallbackValue="0" />
 							</MultiBinding>

@@ -57,7 +57,7 @@ namespace Robin
 
 		public Launchbox()
 		{
-			Reporter.Tic("Loading LaunchBox local cache...");
+			Reporter.Tic("Loading LaunchBox local cache...", out int tic1);
 
 			R.Data.LBPlatforms.Load();
 			R.Data.LBImages.Load();
@@ -66,7 +66,7 @@ namespace Robin
 
 			platformsCached = false;
 
-			Reporter.Toc();
+			Reporter.Toc(tic1);
 		}
 
 		public void GetLaunchBoxFile()
@@ -79,14 +79,14 @@ namespace Robin
 				}
 				else
 				{
-					Reporter.Tic("Updating LaunchBox zip file...");
+					Reporter.Tic("Updating LaunchBox zip file...", out int tic1);
 
 					webclient.DownloadFileFromDB(@"http://gamesdb.launchbox-app.com/Metadata.zip", LaunchBoxDataZipFile);
-					Reporter.Toc();
+					Reporter.Toc(tic1);
 				}
 			}
 
-			Reporter.Tic("Extracting info from zip file...");
+			Reporter.Tic("Extracting info from zip file...", out int tic2);
 			try
 			{
 				using (ZipArchive archive = ZipFile.Open(LaunchBoxDataZipFile, ZipArchiveMode.Read))
@@ -96,7 +96,7 @@ namespace Robin
 				}
 			}
 
-			catch(System.IO.InvalidDataException)
+			catch (InvalidDataException)
 			{
 				Reporter.Report("Error in LaunchBox Metadata file.");
 				File.Delete(LaunchBoxDataZipFile);
@@ -107,14 +107,14 @@ namespace Robin
 			releaseElements = launchboxFile.Root.Elements("GameAlternateName").ToList();
 			imageElements = launchboxFile.Root.Elements("GameImage").ToList();
 
-			Reporter.Toc();
+			Reporter.Toc(tic2);
 		}
 
 		public void CachePlatformData(Platform platform)
 		{
 			if (!platformsCached)
 			{
-				Reporter.Tic("Caching data for all platforms to save time.");
+				 Reporter.Tic("Caching data for all platforms to save time.", out int tic1);
 				if (launchboxFile == null)
 				{
 					GetLaunchBoxFile();
@@ -171,7 +171,7 @@ namespace Robin
 					lbPlatform.Controllers = platformElement.SafeGetA("MaxControllers");
 					lbPlatform.Category = platformElement.SafeGetA("Category");
 				}
-				Reporter.Toc();
+				Reporter.Toc(tic1);
 
 				platformsCached = true;
 			}
@@ -205,10 +205,9 @@ namespace Robin
 				}
 
 				string title = gameElement.Element("Name")?.Value;
-				int id;
 
 				// Don't create this game if the title or database ID is null
-				if (string.IsNullOrEmpty(title) || !int.TryParse(gameElement.SafeGetA("DatabaseID"), out id))
+				if (string.IsNullOrEmpty(title) || !int.TryParse(gameElement.SafeGetA("DatabaseID"), out int id))
 				{
 					continue;
 				}
@@ -217,8 +216,7 @@ namespace Robin
 				LBGame lbGame = R.Data.LBGames.Local.FirstOrDefault(x => x.ID == id);
 				if (lbGame == null)
 				{
-					lbGame = new LBGame();
-					lbGame.ID = id;
+					lbGame = new LBGame { ID = id };
 					platform.LBPlatform.LBGames.Add(lbGame);
 					Debug.WriteLine("New game: " + lbGame.Title);
 				}
@@ -345,8 +343,7 @@ namespace Robin
 
 					if (lbImage == null)
 					{
-						lbImage = new LBImage();
-						lbImage.FileName = fileName;
+						lbImage = new LBImage { FileName = fileName };
 					}
 
 					lbImage.Type = imageElement.Element("Type")?.Value;

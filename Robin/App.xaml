@@ -24,6 +24,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 	<Application.Resources>
 		<ResourceDictionary>
 			<BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" />
+			<local:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
 			<local:IntToVisibilityConverter x:Key="intToVisibilityConverter" />
 			<local:PlatformToVisibilityConverter x:Key="PlatformToVisibilityConverter" />
 			<local:BooleanToHiddenConverter x:Key="boolToHiddenConverter" />

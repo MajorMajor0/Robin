@@ -100,12 +100,35 @@ namespace Robin
 			}
 		}
 
-		bool displayCrap;
-		bool displayAdult;
-		bool displayNonGames;
-		bool displayNotIncluded;
-		bool displayMess;
-		bool sortGamesRandom;
+		public AppSettings.DisplayOption DisplayChoice
+		{
+			get
+			{
+				return AppSettings.DisplayChoice;
+			}
+			set
+			{
+				AppSettings.DisplayChoice = value;
+				HasChanges = true;
+			}
+		}
+
+		public IEnumerable<AppSettings.DisplayOption> DisplayOptions
+		{
+			get
+			{
+				return Enum.GetValues(typeof(AppSettings.DisplayOption)).Cast<AppSettings.DisplayOption>();
+			}
+		}
+
+
+		bool displayCrapStorage;
+		bool displayAdultStorage;
+		bool displayNonGamesStorage;
+		bool displayNotIncludedStorage;
+		bool displayMessStorage;
+		bool sortGamesRandomStorage;
+		AppSettings.DisplayOption displayChoiceStorage;
 
 		bool HasChanges;
 
@@ -145,22 +168,24 @@ namespace Robin
 
 		void StoreSettings()
 		{
-			displayCrap = DisplayCrap;
-			displayAdult = DisplayAdult;
-			displayNonGames = DisplayNonGames;
-			displayNotIncluded = DisplayNotIncluded;
-			displayMess = DisplayMess;
-			sortGamesRandom = SortGamesRandom;
+			displayCrapStorage = DisplayCrap;
+			displayAdultStorage = DisplayAdult;
+			displayNonGamesStorage = DisplayNonGames;
+			displayNotIncludedStorage = DisplayNotIncluded;
+			displayMessStorage = DisplayMess;
+			sortGamesRandomStorage = SortGamesRandom;
+			displayChoiceStorage = DisplayChoice;
 		}
 
 		void RestoreSettings()
 		{
-			DisplayCrap = displayCrap;
-			DisplayAdult = displayAdult;
-			DisplayNonGames = displayNonGames;
-			DisplayNotIncluded = displayNotIncluded;
-			DisplayMess = displayMess;
-			SortGamesRandom = sortGamesRandom;
+			DisplayCrap = displayCrapStorage;
+			DisplayAdult = displayAdultStorage;
+			DisplayNonGames = displayNonGamesStorage;
+			DisplayNotIncluded = displayNotIncludedStorage;
+			DisplayMess = displayMessStorage;
+			SortGamesRandom = sortGamesRandomStorage;
+			DisplayChoice = displayChoiceStorage;
 		}
 
 	}

@@ -13,6 +13,7 @@
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -26,13 +27,13 @@ namespace Robin
 	{
 		// static ObservableCollection<Message> messages;
 
-		 static object messagesLock = new object();
+		static object messagesLock = new object();
 
 		public static ObservableCollection<Message> Messages { get; set; }
 
-		static Stopwatch watch;
+		static List<Stopwatch> watches = new List<Stopwatch>();
 
-		 static string _newsFeed;
+		static string _newsFeed;
 		public static string NewsFeed
 		{
 			get
@@ -48,7 +49,6 @@ namespace Robin
 
 		static Reporter()
 		{
-			watch = new Stopwatch();
 			Messages = new ObservableCollection<Message>();
 			BindingOperations.EnableCollectionSynchronization(Messages, messagesLock);
 			Report("I'm not your guy, buddy.");
@@ -57,9 +57,7 @@ namespace Robin
 		public static void Report(string msg, Message.Sort sort = Message.Sort.Note)
 		{
 			NewsFeed = msg;
-
-			Message message = new Message(msg);
-			message.MsgSort = sort;
+			Message message = new Message(msg) { MsgSort = sort };
 			Messages.Add(message);
 		}
 
@@ -80,24 +78,25 @@ namespace Robin
 			Messages.Last().Msg += message;
 		}
 
-		public static void Tic(string message)
+		public static void Tic(string message, out int ticker)
 		{
-			watch.Start();
+			Stopwatch watch = Stopwatch.StartNew();
+			watches.Add(watch);
 			Report(message);
+			ticker = watches.Count - 1;
 		}
 
-		public static void Toc(string message = null)
+		public static void Toc(int watchNo, string message = null)
 		{
-			watch.Stop();		
+			watches[watchNo].Stop();
 			if (message == null)
 			{
-				ReportInline(watch.Elapsed.TotalSeconds.ToString("F1") + " s");
+				ReportInline(watches[watchNo].Elapsed.TotalSeconds.ToString("F1") + " s");
 			}
 			else
 			{
 				ReportInline(message);
 			}
-			watch.Reset();
 		}
 
 		public class Message

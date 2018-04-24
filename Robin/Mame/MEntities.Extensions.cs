@@ -51,9 +51,9 @@ namespace Robin.Mame
 
 			if (load)
 			{
-				Reporter.Tic("Loading MAME...");
+				Reporter.Tic("Loading MAME...", out int tic1);
 				Machines.Include(x => x.Disks).Include(x => x.Roms).Load();
-				Reporter.Toc();
+				Reporter.Toc(tic1);
 			}
 
 		}

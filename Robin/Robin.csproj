@@ -136,9 +136,9 @@
     <Compile Include="AuditWindowViewModel.cs">
       <DependentUpon>AuditWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Classes\AppSettings.cs" />
     <Compile Include="Classes\Audit.cs" />
     <Compile Include="Classes\Command.cs" />
-    <Compile Include="Classes\Crc32.cs" />
     <Compile Include="Classes\DebugStuff.cs" />
     <Compile Include="Classes\Entity.cs" />
     <Compile Include="Classes\TitledCollection.cs" />

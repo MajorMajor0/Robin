@@ -25,7 +25,7 @@ namespace Robin
 	{
 		//Stopwatch Watch = new Stopwatch();
 
-		 string _title;
+		string _title;
 		public string Title
 		{
 			get
@@ -118,7 +118,24 @@ namespace Robin
 		}
 
 
-		public int BorderThickness { get; set; } = 1;
+		int borderThickness = 1;
+		public int BorderThickness
+		{
+			get
+			{
+				return borderThickness;
+			}
+
+			set
+			{
+				if (borderThickness != value)
+				{
+					borderThickness = value;
+					OnPropertyChanged("BorderThickness");
+				}
+			}
+		}
+
 
 		public string MainDisplay
 		{
@@ -127,25 +144,85 @@ namespace Robin
 #if DEBUG
 				Stopwatch Watch = Stopwatch.StartNew();
 #endif
-				if (Platform_ID == CONSTANTS.ARCADE_PLATFORM_ID)
+				switch (AppSettings.DisplayChoice)
 				{
-					if (File.Exists(LogoPath)) { BorderThickness = 0; OnPropertyChanged("BorderThickness"); return LogoPath; }
-					if (File.Exists(MarqueePath)) { BorderThickness = 1; OnPropertyChanged("BorderThickness"); return MarqueePath; }
-					if (File.Exists(BoxFrontThumbPath)) { BorderThickness = 1; OnPropertyChanged("BorderThickness"); return BoxFrontThumbPath; }
-				}
+					case AppSettings.DisplayOption.Default:
+						if (Platform_ID == CONSTANTS.ARCADE_PLATFORM_ID)
+						{
+							if (File.Exists(LogoPath))
+							{
+								BorderThickness = 0;
+								return LogoPath;
+							}
+							if (File.Exists(MarqueePath))
+							{
+								BorderThickness = 1;
+								return MarqueePath;
+							}
+							if (File.Exists(BoxFrontThumbPath))
+							{
+								BorderThickness = 1;
+								return BoxFrontThumbPath;
+							}
+						}
 
-				else
-				{
-					if (File.Exists(BoxFrontThumbPath)) { BorderThickness = 1; OnPropertyChanged("BorderThickness"); return BoxFrontThumbPath; }
-					if (File.Exists(LogoPath)) { BorderThickness = 0; OnPropertyChanged("BorderThickness"); return LogoPath; }
-					if (File.Exists(MarqueePath)) { BorderThickness = 1; OnPropertyChanged("BorderThickness"); return MarqueePath; }
+						else
+						{
+							if (File.Exists(BoxFrontThumbPath))
+							{
+								BorderThickness = 1;
+								return BoxFrontThumbPath;
+							}
+							if (File.Exists(LogoPath))
+							{
+								BorderThickness = 0;
+								return LogoPath;
+							}
+							if (File.Exists(MarqueePath))
+							{
+								BorderThickness = 1;
+								return MarqueePath;
+							}
+						}
+						break;
+					case AppSettings.DisplayOption.BoxFront:
+						if (File.Exists(BoxFrontThumbPath))
+						{
+							BorderThickness = 1;
+							return BoxFrontThumbPath;
+						}
+						break;
+					case AppSettings.DisplayOption.BoxBack:
+						if (File.Exists(BoxBackPath))
+						{
+							BorderThickness = 1;
+							return BoxBackPath;
+						}
+						break;
+					case AppSettings.DisplayOption.Screen:
+						if (File.Exists(ScreenPath))
+						{
+							BorderThickness = 1;
+							return ScreenPath;
+						}
+						break;
+					case AppSettings.DisplayOption.Banner:
+						if (File.Exists(BannerPath))
+						{
+							BorderThickness = 0;
+							return BannerPath;
+						}
+						break;
+					default:
+						Debug.Assert(false, "No valid display option");
+						break;
 				}
 #if DEBUG
 				Debug.WriteLine("MainDisplay: " + Title + " " + Watch.ElapsedMilliseconds);
 #endif
 				BorderThickness = 0;
-				OnPropertyChanged("BorderThickness");
-				return Releases[0].Platform.ControllerPath;
+
+				return Platform.ControllerPath;
 			}
 		}
 
@@ -170,7 +247,7 @@ namespace Robin
 			}
 		}
 
-		 string _boxFrontThumbPath;
+		string _boxFrontThumbPath;
 		public string BoxFrontThumbPath
 		{
 			get
@@ -220,7 +297,7 @@ namespace Robin
 			get { return Releases[0].MarqueePath; }
 		}
 
-		 Release _preferredRelease;
+		Release _preferredRelease;
 		public Release PreferredRelease
 		{
 			get

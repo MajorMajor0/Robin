@@ -38,27 +38,26 @@ namespace Robin
 
 		public GamesDB()
 		{
-			Reporter.Tic("Opening Games DB cache...");
+			Reporter.Tic("Opening Games DB cache...", out int tic1);
 
 			R.Data.GDBPlatforms.Load();
 			R.Data.GDBReleases.Load();
-			Reporter.Toc();
+			Reporter.Toc(tic1);
 		}
 
 		public void CachePlatformReleases(Platform platform)
 		{
-			Reporter.Tic("Getting " + platform.Title + " release list from Games DB...");
+			Reporter.Tic("Getting " + platform.Title + " release list from Games DB...", out int tic1);
 
 			GDBPlatform gdbPlatform = platform.GDBPlatform;
 
 			XDocument xDocument;
-			string downloadText;
 
 			string url = @"http://thegamesdb.net/api/GetPlatformGames.php?platform=" + gdbPlatform.ID;
 
 			using (WebClient webclient = new WebClient())
 			{
-				if (webclient.SafeDownloadStringDB(url, out downloadText))
+				if (webclient.SafeDownloadStringDB(url, out string downloadText))
 				{
 					xDocument = XDocument.Parse(downloadText);
 
@@ -78,8 +77,7 @@ namespace Robin
 
 						if (gdbRelease == null)
 						{
-							gdbRelease = new GDBRelease();
-							gdbRelease.ID = id;
+							gdbRelease = new GDBRelease { ID = id };
 							gdbPlatform.GDBReleases.Add(gdbRelease);
 							Debug.WriteLine(id);
 						}
@@ -101,7 +99,7 @@ namespace Robin
 					}
 				}
 
-				Reporter.Toc();
+				Reporter.Toc(tic1);
 			}
 
 			// Temporarily set wait time to 1 ms while caching tens of thousands of games
@@ -126,13 +124,12 @@ namespace Robin
 
 		public void CachePlatformData(Platform platform)
 		{
-			Reporter.Tic("Getting " + platform.Title + " data from Games DB...");
+			Reporter.Tic("Getting " + platform.Title + " data from Games DB...", out int tic1);
 
 			GDBPlatform gdbPlatform = platform.GDBPlatform;
 
 			XDocument xdoc;
 			string url;
-			string downloadtext;
 
 			string urlbase = @"http://thegamesdb.net/api/GetPlatform.php?id=";
 			using (WebClient webclient = new WebClient())
@@ -141,7 +138,7 @@ namespace Robin
 				url = urlbase + gdbPlatform.ID;
 
 				// Pull down the xml file containing platform data from gamesdb
-				if (webclient.SafeDownloadStringDB(url, out downloadtext))
+				if (webclient.SafeDownloadStringDB(url, out string downloadtext))
 				{
 					xdoc = XDocument.Parse(downloadtext);
 
@@ -155,13 +152,6 @@ namespace Robin
 					gdbPlatform.Controllers = xdoc.SafeGetB("Platform", "maxcontrollers");
 					gdbPlatform.Rating = decimal.Parse(xdoc.SafeGetB("Platform", "rating") ?? "0");
 					gdbPlatform.Overview = xdoc.SafeGetB("Platform", "overview");
-
-					//string BaseImageUrl;
-					//string BoxFrontUrl;
-					//string BoxBackUrl;
-					//string BannerUrl;
-					//string ConsoleUrl;
-					//string ControllerUrl;
 
 					string BaseImageUrl = xdoc.SafeGetB("baseImgUrl");
 
@@ -186,20 +176,19 @@ namespace Robin
 					Reporter.Warn("Failure getting " + gdbPlatform.Title + " data from Games DB.");
 				}
 			}
-			Reporter.Toc();
+			Reporter.Toc(tic1);
 		}
 
 		public void CacheReleaseData(GDBRelease gdbRelease)
 		{
 			XDocument xDocument;
-			string downloadText;
 
 			string url = @"http://thegamesdb.net/api/GetGame.php?id=" + gdbRelease.ID;
 			using (WebClient webclient = new WebClient())
 			{
 
 				// Pull down the xml file containing game data from gamesdb
-				if (webclient.SafeDownloadStringDB(url, out downloadText))
+				if (webclient.SafeDownloadStringDB(url, out string downloadText))
 				{
 					//string coop;
 					xDocument = XDocument.Parse(downloadText);

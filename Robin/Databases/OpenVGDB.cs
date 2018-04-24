@@ -39,13 +39,13 @@ namespace Robin
 
 		public OpenVGDB()
 		{
-			Reporter.Tic("Opening Open VGDB cache...");
+			Reporter.Tic("Opening Open VGDB cache...", out int tic1);
 
 			R.Data.OVGPlatforms.Load();
 			R.Data.OVGReleases.Load();
 			//R.Data.Releases.Include(x => x.OVGRelease);
 
-			Reporter.Toc();
+			Reporter.Toc(tic1);
 		}
 
 		void LoadOVData()

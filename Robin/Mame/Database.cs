@@ -151,8 +151,7 @@ namespace Robin.Mame
 					var release = arcadePlatform.Releases.FirstOrDefault(x => x.Rom.FileName == romElementName);
 					if (release == null)
 					{
-						release = new Release();
-						release.Rom = rom;
+						release = new Release { Rom = rom };
 						arcadePlatform.Releases.Add(release);
 					}
 
@@ -231,11 +230,10 @@ namespace Robin.Mame
 			Stopwatch Watch = Stopwatch.StartNew();
 			Stopwatch Watch1 = Stopwatch.StartNew();
 
-			XmlReaderSettings settings = new XmlReaderSettings();
-			settings.DtdProcessing = DtdProcessing.Parse;
+			XmlReaderSettings settings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
 
 			// Wipe tables
-			Reporter.Tic("Wiping tables.");
+			Reporter.Tic("Wiping tables.", out int tic1);
 			string query = @"DELETE FROM Machine_Disk;
 							DELETE FROM Machine_Rom;
 							DELETE FROM Machine;
@@ -244,7 +242,7 @@ namespace Robin.Mame
 							DELETE FROM sqlite_sequence;";
 
 			M.Data.Database.ExecuteSqlCommand(query);
-			Reporter.Toc();
+			Reporter.Toc(tic1);
 
 			//Reload M.Data so it knows about the wipe
 			M.Refresh(false);
@@ -262,7 +260,7 @@ namespace Robin.Mame
 			using (Process process = MAMEexe(@"-lx"))
 			using (XmlReader reader = XmlReader.Create(process.StandardOutput, settings))
 			{
-				Reporter.Tic("Getting xml file from MAME...");
+				Reporter.Tic("Getting xml file from MAME...", out int tic2);
 				while (reader.Read())
 				{
 					if (reader.Name == "machine")
@@ -304,20 +302,20 @@ namespace Robin.Mame
 						}
 					}
 				}
-				Reporter.Toc();
+				Reporter.Toc(tic2);
 			}
 
 			// Add machines
-			Reporter.Tic("Adding machines...");
+			Reporter.Tic("Adding machines...", out int tic3);
 			M.Data.Machines.AddRange(machines.Select(x => x.Value));
-			Reporter.Toc();
+			Reporter.Toc(tic3);
 
-			Reporter.Tic("Saving changes...");
+			Reporter.Tic("Saving changes...", out int tic4);
 			M.Data.Save(false);
-			Reporter.Toc();
+			Reporter.Toc(tic4);
 
 			M.Refresh(true);
-			Reporter.Tic("Storing clones...");
+			Reporter.Tic("Storing clones...", out int tic5);
 			foreach (Machine machine in M.Data.Machines.Local.Where(x => x.CloneOf != null))
 			{
 				if (machines.TryGetValue(machine.CloneOf, out Machine parent))
@@ -325,16 +323,16 @@ namespace Robin.Mame
 					machine.Parent = parent;
 				}
 			}
-			Reporter.Toc();
+			Reporter.Toc(tic5);
 
 			// Find sample based on sampleof stored as temp value
-			Reporter.Tic("Storing samples...");
+			Reporter.Tic("Storing samples...", out int tic6);
 			foreach (Machine machine in M.Data.Machines.Local.Where(x => x.SampleOf != null))
 			{
 				if (machines.TryGetValue(machine.SampleOf, out Machine sampleof))
 					machine.Sample = sampleof;
 			}
-			Reporter.Toc();
+			Reporter.Toc(tic6);
 
 			M.Data.Save(true);
 
@@ -570,7 +568,7 @@ namespace Robin.Mame
 		/// <summary>
 		/// Audit MAME ROMs currently used by Robin using MAME.exe -verifyroms command line switch
 		/// </summary>
-		public static List<Audit.Result> AuditRoms()
+		public static TitledCollection<Audit.Result> AuditRoms()
 		{
 			Reporter.Report("Auditing MAME ROMs");
 			Emulator mame = R.Data.Emulators.Local.FirstOrDefault(x => x.ID == CONSTANTS.MAME_ID);
@@ -593,29 +591,28 @@ namespace Robin.Mame
 
 					emulatorProcess.StartInfo.FileName = mame.FilePath;
 					emulatorProcess.StartInfo.Arguments = argument;
-
+					Reporter.Tic("Getting batch " + ++k + " / " + N + " from MAME...", out int tic1);
 					try
 					{
 						emulatorProcess.Start();
-						Reporter.Tic("Getting batch " + ++k + " / " + N + " from MAME...");
 					}
 					catch (Exception)
 					{
-						// TODO: report something usefull here if the process fails to start
+						Reporter.Report("MAME process failed to start.");
 					}
 
 					string output = emulatorProcess.StandardOutput.ReadToEnd();
-					Reporter.Toc();
+					Reporter.Toc(tic1);
 					string error = emulatorProcess.StandardError.ReadToEnd();
 
-					Reporter.Tic("Listing results...");
+					Reporter.Tic("Listing results...", out int tic2);
 					List<string> lines = output.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
 					resultStrings.AddRange(lines);
-					Reporter.Toc();
+					Reporter.Toc(tic2);
 				}
 			}
 
-			List<Audit.Result> auditResults = new List<Audit.Result>();
+			TitledCollection<Audit.Result> auditResults = new TitledCollection<Audit.Result>("Arcade");
 			foreach (string line in resultStrings)
 			{
 				if (!line.Contains(": "))
@@ -699,16 +696,16 @@ namespace Robin.Mame
 		public static void GetFromZipFile()
 		{
 			// Wipe tables
-			Reporter.Tic("Wiping tables...");
+			Reporter.Tic("Wiping tables...", out int tic1);
 			string query = @"DELETE FROM RomFile_Rom;
 							DELETE FROM RomFile;
 							DELETE FROM sqlite_sequence WHERE NAME = 'RomFile';";
 			M.Data.Database.ExecuteSqlCommand(query);
-			Reporter.Toc();
+			Reporter.Toc(tic1);
 
-			Reporter.Tic("Refreshing DB...");
+			Reporter.Tic("Refreshing DB...", out int tic2);
 			M.Refresh(true);
-			Reporter.Toc();
+			Reporter.Toc(tic2);
 
 			RobinDataEntities RData = new RobinDataEntities();
 			Platform arcade = RData.Platforms.FirstOrDefault(x => x.ID == CONSTANTS.ARCADE_PLATFORM_ID);
@@ -717,12 +714,12 @@ namespace Robin.Mame
 
 			//try
 			//{
-			Reporter.Tic("Creating dictionary...");
+			Reporter.Tic("Creating dictionary...", out int tic3);
 			//ConcurrentDictionary<string, RomFile> romFiles = new ConcurrentDictionary<string, RomFile>();
 			Dictionary<string, RomFile> romFiles = new Dictionary<string, RomFile>();
 			Dictionary<string, Rom> roms = M.Data.Roms.ToDictionary(x => x.CRCN, y => y);
 			Dictionary<string, Machine> machines = M.Data.Machines.ToDictionary(x => x.Name, y => y);
-			Reporter.Toc();
+			Reporter.Toc(tic3);
 
 			Stopwatch Watch = Stopwatch.StartNew();
 			Stopwatch Watch1 = Stopwatch.StartNew();
@@ -819,9 +816,9 @@ namespace Robin.Mame
 			//	}
 			//});
 
-			Reporter.Tic("Adding romfiles");
+			Reporter.Tic("Adding romfiles", out int tic4);
 			M.Data.RomFiles.AddRange(romFiles.Values);
-			Reporter.Toc();
+			Reporter.Toc(tic4);
 
 			M.Data.Save();
 

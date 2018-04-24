@@ -34,11 +34,60 @@ namespace Robin
 			Reporter.Report("BONUS!");
 			await Task.Run(() =>
 			{
-				//Mame.MAME m = new Mame.MAME();
-				Mame.MAME.GetFromZipFile();
+				//HashsetSpeedTest();
 			});
 
 			Reporter.Report("Finished");
+		}
+
+		static void HashsetSpeedTest()
+		{
+			Platform NES = R.Data.Platforms.FirstOrDefault(x => x.ID == 22);
+
+			Stopwatch Watch1 = Stopwatch.StartNew();
+			List<Rom> roms = roms = R.Data.Roms.Local.Where(x => x.Platform_ID == NES.ID).ToList();
+			Debug.WriteLine($"List created: {Watch1.ElapsedMilliseconds}."); Watch1.Restart();
+
+			HashSet<string> stringDing = roms.Select(x => x.CRC32) as HashSet<string>;
+			Debug.WriteLine($"Hashset created: {Watch1.ElapsedMilliseconds}."); Watch1.Restart();
+
+
+		}
+
+		static void TestHash()
+		{
+			Platform NES = R.Data.Platforms.FirstOrDefault(x => x.ID == 22);
+			foreach (Rom rom in NES.Roms.Where(x => x.FileName != null))
+			{
+				string crc32a = Audit.GetHash(rom.FilePath, HashOption.CRC32, (int)NES.HeaderLength);
+				string sha1a = Audit.GetHash(rom.FilePath, HashOption.SHA1, (int)NES.HeaderLength);
+				string md5a = Audit.GetHash(rom.FilePath, HashOption.MD5, (int)NES.HeaderLength);
+
+				string crc32b = rom.CRC32;
+				string sha1b = rom.SHA1;
+				string md5b = rom.MD5;
+
+				if (crc32a == crc32b && md5a == md5b && sha1a == sha1b)
+				{
+					Debug.WriteLine($"OK - {rom.Title} - {rom.ID}");
+				}
+
+				else
+				{
+					crc32a = Audit.GetHash(rom.FilePath, HashOption.CRC32, 0);
+					sha1a = Audit.GetHash(rom.FilePath, HashOption.SHA1, 0);
+					md5a = Audit.GetHash(rom.FilePath, HashOption.MD5, 0);
+				}
+
+				if (crc32a == crc32b && md5a == md5b && sha1a == sha1b)
+				{
+					Debug.WriteLine($"OK - {rom.Title} - {rom.ID}");
+				}
+
+				Debug.Assert(crc32a == crc32b || crc32b == null, $"CRC32 failure on {rom.Title} - {rom.ID}");
+				Debug.Assert(sha1a == sha1b || sha1b == null, $"SHA1 failure on {rom.Title} - {rom.ID}");
+				Debug.Assert(md5a == md5b || md5b == null, $"MD5 failure on {rom.Title} - {rom.ID}");
+			}
 		}
 
 		static void SetMessMachines()
@@ -98,7 +147,7 @@ namespace Robin
 
 			// Scan through xml file from MAME and pick out working games
 
-			using (Process process = Mame.MAME.MAMEexe(@"-lx"))
+			using (Process process = Mame.Database.MAMEexe(@"-lx"))
 			using (XmlReader reader = XmlReader.Create(process.StandardOutput, settings))
 			{
 				while (reader.Read())

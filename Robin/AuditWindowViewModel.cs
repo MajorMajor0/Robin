@@ -10,41 +10,49 @@ namespace Robin
 {
 	public class AuditWindowViewModel : INotifyPropertyChanged
 	{
-		public ObservableCollection<Platform> PlatformList => R.Data.Platforms.Local;
+		public List<Platform> PlatformList => R.Data.Platforms.Local.OrderBy(x => x.Title).ToList();
 		public Platform SelectedPlatform { get; set; }
 
-		List<Audit.Result> auditResults;
-		public List<Audit.Result> AuditResults
+		TitledCollection<Audit.Result> selectedAuditResults;
+		public TitledCollection<Audit.Result> SelectedAuditResults
 		{
 			get
 			{
-				return auditResults;
+				return selectedAuditResults;
 			}
 
 			set
 			{
-				auditResults = value;
+				selectedAuditResults = value;
 				OnPropertyChanged("AuditResults");
 				OnPropertyChanged("GoodResults");
+				OnPropertyChanged("MissingResults");
 				OnPropertyChanged("BadResults");
 				OnPropertyChanged("BestResults");
 				OnPropertyChanged("GoodCount");
+				OnPropertyChanged("MissingCount");
 				OnPropertyChanged("BadCount");
 				OnPropertyChanged("BestCount");
 			}
 		}
 
-		public List<Audit.Result> GoodResults => AuditResults?.Where(x => x.Status == Status.Good).ToList();
+		public ObservableCollection<TitledCollection<Audit.Result>> AuditResultsCollection { get; set; } = new ObservableCollection<TitledCollection<Audit.Result>>();
 
-		public List<Audit.Result> BadResults => AuditResults?.Where(x => x.Status == Status.Bad).ToList();
+		public List<Audit.Result> GoodResults => SelectedAuditResults?.Where(x => x.Status == Status.Good).ToList();
 
-		public List<Audit.Result> BestResults => AuditResults?.Where(x => x.Status == Status.Best).ToList();
+		public List<Audit.Result> BadResults => SelectedAuditResults?.Where(x => x.Status == Status.Bad).ToList();
 
-		public int GoodCount => AuditResults?.Count(x => x.Status == Status.Good) ?? 0;
+		public List<Audit.Result> MissingResults => SelectedAuditResults?.Where(x => x.Status == Status.Missing).ToList();
 
-		public int BadCount => AuditResults?.Count(x => x.Status == Status.Bad) ?? 0;
+		public List<Audit.Result> BestResults => SelectedAuditResults?.Where(x => x.Status == Status.Best).ToList();
 
-		public int BestCount => AuditResults?.Count(x => x.Status == Status.Best) ?? 0;
+		public int GoodCount => SelectedAuditResults?.Count(x => x.Status == Status.Good) ?? 0;
+
+		public int MissingCount => SelectedAuditResults?.Count(x => x.Status == Status.Missing) ?? 0;
+
+		public int BadCount => SelectedAuditResults?.Count(x => x.Status == Status.Bad) ?? 0;
+
+		public int BestCount => SelectedAuditResults?.Count(x => x.Status == Status.Best) ?? 0;
 
 		public AuditWindowViewModel()
 		{
@@ -62,10 +70,15 @@ namespace Robin
 
 		async void Audit()
 		{
+			Reporter.Report("Auditing");
+			TitledCollection<Audit.Result> resultCollection = null;
+
 			await Task.Run(() =>
 			{
-				AuditResults = SelectedPlatform.AuditRoms();
+				resultCollection = Robin.Audit.AuditRoms(SelectedPlatform);
 			});
+
+			AuditResultsCollection.Add(resultCollection);
 		}
 
 		bool AuditCanExecute()

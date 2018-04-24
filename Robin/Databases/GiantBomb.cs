@@ -42,12 +42,12 @@ namespace Robin
 
 		public GiantBomb()
 		{
-			Reporter.Tic("Opening GiantBomb cache...");
+			Reporter.Tic("Opening GiantBomb cache...", out int tic1);
 
 			R.Data.GBPlatforms.Load();
 			R.Data.GBReleases.Load();
 			R.Data.GBGames.Load();
-			Reporter.Toc();
+			Reporter.Toc(tic1);
 		}
 
 		public void CachePlatformReleases(Platform platform)
@@ -63,8 +63,6 @@ namespace Robin
 
 			int N_results;
 			bool haveResults;
-			int intCatcher;
-			string downloadText;
 			string url;
 			StringBuilder urlBuilder;
 			XDocument xdoc;
@@ -78,7 +76,7 @@ namespace Robin
 
 				//url = @"http://www.giantbomb.com/api/releases/" + GBAPIKEY + @"&filter=date_last_updated:" + startDate + "|" + endDate + @",platform:" + platform.ID_GB + @"&field_list=id&sort=id:asc";
 
-				if (webClient.SafeDownloadStringDB(url, out downloadText))
+				if (webClient.SafeDownloadStringDB(url, out string downloadText))
 				{
 					xdoc = XDocument.Parse(downloadText);
 					haveResults = int.TryParse(xdoc.SafeGetB("number_of_total_results"), out N_results);
@@ -113,7 +111,7 @@ namespace Robin
 							foreach (XElement element in xdoc.Root.Element("results").Elements("release"))
 							{
 								// If the ID XML value was found
-								if (int.TryParse(element.SafeGetA("id"), out intCatcher))
+								if (int.TryParse(element.SafeGetA("id"), out int intCatcher))
 								{
 									GBRelease gbRelease = R.Data.GBReleases.Local.FirstOrDefault(x => x.ID == intCatcher);
 
@@ -244,8 +242,7 @@ namespace Robin
 
 									if (gbGame == null)
 									{
-										gbGame = new GBGame();
-										gbGame.ID = intCatcher;
+										gbGame = new GBGame { ID = intCatcher };
 										gbPlatform.GBGames.Add(gbGame);
 									}
 
@@ -280,36 +277,34 @@ namespace Robin
 			GBPlatform gbPlatform = platform.GBPlatform;
 			//DateTime startdate = gbPlatform.CacheDate;
 
-			string downloadText;
 			string url;
 			XDocument xDocument;
 
-			Reporter.Tic("Attempting to cache " + gbPlatform.Title + "...");
+			Reporter.Tic("Attempting to cache " + gbPlatform.Title + "...", out int tic1);
 
 			using (WebClient webClient = new WebClient())
 			{
 				url = GBURL + @"platform/" + gbPlatform.ID + "/" + GBAPIKEY;
 
-				if (webClient.SafeDownloadStringDB(url, out downloadText))
+				if (webClient.SafeDownloadStringDB(url, out string downloadText))
 				{
-					long company;
 					xDocument = XDocument.Parse(downloadText);
 
 					gbPlatform.Title = xDocument.SafeGetB("results", "name");
 					gbPlatform.Abbreviation = xDocument.SafeGetB("results", "abbreviation");
-					if (long.TryParse(xDocument.SafeGetB("results", "company"), out company))
+					if (long.TryParse(xDocument.SafeGetB("results", "company"), out long company))
 					{
 						gbPlatform.Company = company;
 					}
 					gbPlatform.Deck = xDocument.SafeGetB("results", "deck");
 					gbPlatform.Price = xDocument.SafeGetB("results", "original_price");
 					gbPlatform.Date = DateTimeRoutines.SafeGetDate(xDocument.SafeGetB("results", "release_date"));
-					Reporter.Toc();
+					Reporter.Toc(tic1);
 				}
 
 				else
 				{
-					Reporter.Toc("Error communicating with GiantBomb.");
+					Reporter.Toc(tic1, "Error communicating with GiantBomb.");
 				}
 
 			}// end using webclient
