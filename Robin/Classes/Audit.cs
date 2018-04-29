@@ -149,7 +149,8 @@ namespace Robin
 		}
 
 		public static TitledCollection<Result> AuditRoms(Platform platform)
-		{;
+		{
+			;
 			if (platform.ID == CONSTANTS.ARCADE_PLATFORM_ID)
 			{
 				return Mame.Database.AuditRoms();
@@ -175,7 +176,7 @@ namespace Robin
 			int headerLength = (int)platform.HeaderLength;
 			int romCount = platform.Roms.Count;
 
-			Reporter.Tic($"Auditing {romCount} dataase ROMs...", out int tic1);
+			Reporter.Tic($"Auditing {romCount} {platform.Title} database ROMs...", out int tic1);
 			// First audit all ROMS in the database
 			foreach (Rom rom in platform.Roms)
 			{

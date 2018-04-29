@@ -111,7 +111,7 @@ namespace Robin
 					return Title + " is ready to play.";
 				}
 				string and = HasRelease || HasEmulator ? "" : " and ";
-				string emulatorTrouble = HasEmulator ? "" : "no emulator appears to be installed for " + Platform.Title + ".";
+				string emulatorTrouble = HasEmulator ? "" : "no emulator appears to be installed for " + Platform.Title;
 				string releaseTrouble = HasRelease ? "" : "no rom files appear to be available";
 				return Title + " can't launch because " + releaseTrouble + and + emulatorTrouble + ".";
 			}

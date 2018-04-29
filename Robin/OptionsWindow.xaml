@@ -6,13 +6,13 @@
 		xmlns:local="clr-namespace:Robin"
 		mc:Ignorable="d"
 		Title="Options"
-		Height="420"
+		Height="700"
 		Width="400">
+
 	<Window.Resources>
 		<Style TargetType="TextBlock">
 			<Setter Property="VerticalAlignment"
 					Value="Center" />
-
 		</Style>
 
 		<Style TargetType="CheckBox">
@@ -45,11 +45,22 @@
 
 	<Grid>
 		<StackPanel Orientation="Vertical">
+			<StackPanel.Resources>
+				<Style x:Key="GroupBoxStyle"
+					   TargetType="GroupBox">
+					<Setter Property="Margin"
+							Value="10" />
+					<Setter Property="Padding"
+							Value="5" />
+					<Setter Property="HorizontalAlignment"
+							Value="Stretch" />
+					<Setter Property="BorderBrush"
+							Value="Gray" />
+				</Style>
+			</StackPanel.Resources>
 			<GroupBox Header="Types to Load"
-					  Padding="5"
-					  Margin="10"
-					  VerticalAlignment="Top"
-					  HorizontalAlignment="Left">
+					  Style="{StaticResource GroupBoxStyle}"
+					  ToolTip="Games de-selected here will not be loaded into memory, improving filter performance.">
 				<StackPanel Orientation="Vertical">
 					<StackPanel x:Name="CrapPanel"
 								Style="{StaticResource StackPanelStyle1}">
@@ -77,16 +88,98 @@
 					<StackPanel x:Name="MessPanel"
 								Style="{StaticResource StackPanelStyle1}">
 						<CheckBox  IsChecked="{Binding DisplayMess}" />
-						<TextBlock Text="Load MESS machines" />
+						<TextBlock Text="Load MESS machines"
+								   ToolTip="Mechanical machines, chess computers and similar MESS machines that may not look much like video games. These may be playable."/>
 					</StackPanel>
 				</StackPanel>
 			</GroupBox>
 
-			<GroupBox Header="Options"
-					  Padding="5"
-					  Margin="10"
-					  VerticalAlignment="Top"
-					  HorizontalAlignment="Left">
+			<GroupBox Header="Art to Download"
+					  Style="{StaticResource GroupBoxStyle}"
+					  ToolTip="Choose what types of images to download when &quot;Get all Art&quot; is selected.">
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition />
+						<ColumnDefinition />
+					</Grid.ColumnDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition />
+						<RowDefinition />
+					</Grid.RowDefinitions>
+					<StackPanel Orientation="Vertical">
+						<TextBlock Text="Platforms" />
+						<StackPanel x:Name="PlatformBoxFrontPanel"
+									Style="{StaticResource StackPanelStyle1}">
+							<CheckBox  IsChecked="{Binding ScrapePlatformBoxFront}" />
+							<TextBlock Text="Box front"
+									   ToolTip="Download an image of the front of the box each console came in." />
+						</StackPanel>
+						<StackPanel x:Name="PlatformBoxBackPanel"
+									Style="{StaticResource StackPanelStyle1}">
+							<CheckBox  IsChecked="{Binding ScrapePlatformBoxBack}" />
+							<TextBlock Text="Box back"
+									   ToolTip="Download an image of the back of the box each console came in." />
+						</StackPanel>
+						<StackPanel x:Name="PlatformBannerPanel"
+									Style="{StaticResource StackPanelStyle1}">
+							<CheckBox  IsChecked="{Binding ScrapePlatformBanner}" />
+							<TextBlock Text="Banner"
+									   ToolTip="Download a banner for each console." />
+						</StackPanel>
+						<StackPanel x:Name="PlatformConsolePanel"
+									Style="{StaticResource StackPanelStyle1}">
+							<CheckBox  IsChecked="{Binding ScrapePlatformConsole}" />
+							<TextBlock Text="Console *" 
+									   ToolTip="Downlod an image of each console"/>
+						</StackPanel>
+						<StackPanel x:Name="PlatformControllerPanel"
+									Style="{StaticResource StackPanelStyle1}">
+							<CheckBox  IsChecked="{Binding ScrapePlatformController}" />
+							<TextBlock Text="Controller *"
+									   ToolTip="Download an image of each console controller."/>
+						</StackPanel>
+					</StackPanel>
+					<StackPanel Orientation="Vertical"
+								Grid.Column="1">
+						<TextBlock Text="Releases and Games" />
+						<StackPanel x:Name="ReleaseBoxFrontPanel"
+									Style="{StaticResource StackPanelStyle1}">
+							<CheckBox  IsChecked="{Binding ScrapeReleaseBoxFront}" />
+							<TextBlock Text="Box front *"
+									   ToolTip="Download an image of the front of the box each release came in." />
+						</StackPanel>
+						<StackPanel x:Name="ReleaseBoxBackPanel"
+									Style="{StaticResource StackPanelStyle1}">
+							<CheckBox  IsChecked="{Binding ScrapeReleaseBoxBack}" />
+							<TextBlock Text="Box back"
+									   ToolTip="Download an image of the back of the box each release came in." />
+						</StackPanel>
+						<StackPanel x:Name="ReleaseBannerPanel"
+									Style="{StaticResource StackPanelStyle1}">
+							<CheckBox  IsChecked="{Binding ScrapeReleaseBanner}" />
+							<TextBlock Text="Banner"
+									   ToolTip="Download a banner for each game." />
+						</StackPanel>
+						<StackPanel x:Name="ReleaseConsolePanel"
+									Style="{StaticResource StackPanelStyle1}">
+							<CheckBox  IsChecked="{Binding ScrapeReleaseScreen}" />
+							<TextBlock Text="Screen"
+									   ToolTip="DOwnload a screenshot ofr each release."/>
+						</StackPanel>
+						<StackPanel x:Name="ReleaseControllerPanel"
+									Style="{StaticResource StackPanelStyle1}">
+							<CheckBox  IsChecked="{Binding ScrapeReleaseLogo}" />
+							<TextBlock Text="Logo *"
+									   ToolTip="Download a clear logo for each game."/>
+						</StackPanel>
+					</StackPanel>
+					<TextBox Text="* Recommended" Grid.Row="1" BorderBrush="Transparent" Margin="0,10,0,0"/>
+				</Grid>
+				
+			</GroupBox>
+
+			<GroupBox Header="Miscellaneous"
+					  Style="{StaticResource GroupBoxStyle}">
 				<StackPanel Orientation="Vertical">
 					<StackPanel Style="{StaticResource StackPanelStyle1}">
 						<CheckBox  IsChecked="{Binding SortGamesRandom}" />
@@ -97,18 +190,14 @@
 				</StackPanel>
 			</GroupBox>
 			<GroupBox Header="Main Display"
-					  Padding="5"
-					  Margin="10"
-					  VerticalAlignment="Top"
-					  HorizontalAlignment="Left">
+					  Style="{StaticResource GroupBoxStyle}"
+					  ToolTip="Choose what image to display under the games tab.">
 				<ComboBox Height="20"
+						  Width="100"
+						  HorizontalAlignment="Left"
 						  ItemsSource="{Binding DisplayOptions}"
-						  SelectedItem="{Binding DisplayChoice}">
-					<ComboBox.ItemTemplate>
-						<DataTemplate>
-							<TextBox Text="{Binding}" />
-						</DataTemplate>
-					</ComboBox.ItemTemplate>
+						  SelectedItem="{Binding DisplayChoice}"
+						  ToolTip="Choose what image to display under the games tab.">
 
 
 				</ComboBox>

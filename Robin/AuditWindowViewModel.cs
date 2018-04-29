@@ -70,7 +70,7 @@ namespace Robin
 
 		async void Audit()
 		{
-			Reporter.Report("Auditing");
+			Reporter.Report($"Auditing {SelectedPlatform.Title}");
 			TitledCollection<Audit.Result> resultCollection = null;
 
 			await Task.Run(() =>

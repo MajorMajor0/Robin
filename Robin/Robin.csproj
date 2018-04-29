@@ -40,7 +40,7 @@
     <OutputPath>D:\Robin_debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS, PLATFORMNET45</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>3</WarningLevel>
+    <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <Prefer32Bit>false</Prefer32Bit>

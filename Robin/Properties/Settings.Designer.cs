@@ -510,5 +510,125 @@ namespace Robin.Properties {
                 this["DisplayChoice"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ScrapePlatformBanner {
+            get {
+                return ((bool)(this["ScrapePlatformBanner"]));
+            }
+            set {
+                this["ScrapePlatformBanner"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ScrapePlatformBoxBack {
+            get {
+                return ((bool)(this["ScrapePlatformBoxBack"]));
+            }
+            set {
+                this["ScrapePlatformBoxBack"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ScrapePlatformBoxFront {
+            get {
+                return ((bool)(this["ScrapePlatformBoxFront"]));
+            }
+            set {
+                this["ScrapePlatformBoxFront"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ScrapePlatformConsole {
+            get {
+                return ((bool)(this["ScrapePlatformConsole"]));
+            }
+            set {
+                this["ScrapePlatformConsole"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ScrapePlatformController {
+            get {
+                return ((bool)(this["ScrapePlatformController"]));
+            }
+            set {
+                this["ScrapePlatformController"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ScrapeReleaseBanner {
+            get {
+                return ((bool)(this["ScrapeReleaseBanner"]));
+            }
+            set {
+                this["ScrapeReleaseBanner"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ScrapeReleaseBoxBack {
+            get {
+                return ((bool)(this["ScrapeReleaseBoxBack"]));
+            }
+            set {
+                this["ScrapeReleaseBoxBack"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ScrapeReleaseBoxFront {
+            get {
+                return ((bool)(this["ScrapeReleaseBoxFront"]));
+            }
+            set {
+                this["ScrapeReleaseBoxFront"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ScrapeReleaseLogo {
+            get {
+                return ((bool)(this["ScrapeReleaseLogo"]));
+            }
+            set {
+                this["ScrapeReleaseLogo"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ScrapeReleaseScreen {
+            get {
+                return ((bool)(this["ScrapeReleaseScreen"]));
+            }
+            set {
+                this["ScrapeReleaseScreen"] = value;
+            }
+        }
     }
 }

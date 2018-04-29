@@ -54,8 +54,7 @@ namespace Robin
 
 		void Help()
 		{
-			// TODO Launch help website
-			Reporter.Report("Help is on the way.");
+			Process.Start(@"http://robinemu.org/help/");
 		}
 
 
@@ -608,9 +607,11 @@ namespace Robin
 
 		void AddCollection()
 		{
-			Collection collection = new Collection();
-			collection.Title = "New friggin collection";
-			collection.Type = "Game";
+			Collection collection = new Collection
+			{
+				Title = "New friggin collection",
+				Type = "Game"
+			};
 			CollectionList.Add(collection);
 		}
 
@@ -687,7 +688,7 @@ namespace Robin
 
 			SaveDataBaseCommand = new Command(SaveDataBase, "Save database", "Save all changes from the current session to the database.");
 			AboutCommand = new Command(About, "About", "Open the about box.");
-			HelpCommand = new Command(About, "Help", "Navigate to the help website.");
+			HelpCommand = new Command(Help, "Help", "Navigate to the help website.");
 
 			PlayCommand = new Command(Play, PlayCanExecute, "Play this", "Launch the selected game or release.");
 			ClearFiltersCommand = new Command(ClearFilters, ClearFiltersCanExecute, "X", "Clear filters and display all objects.");
@@ -725,7 +726,7 @@ namespace Robin
 
 			CancelTaskCommand = new Command(CancelTask, CancelTaskCanExecute, "Cancel", "Cancel the current task");
 
-			AuditRomsCommand = new Command(AuditRoms, "Audit Roms", "Verify MAME ROMs");
+			AuditRomsCommand = new Command(AuditRoms, "Audit Roms", "Verify ROM files are as expected.");
 		}
 	}
 }

@@ -148,7 +148,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						</TextBlock.Text>
 					</TextBlock>
 					<ListView x:Name="MissingResultsListView"
-							  ItemsSource="{Binding BadResults}"
+							  ItemsSource="{Binding MissingResults}"
 							  Background="Transparent"
 							  BorderBrush="Transparent"
 							  MaxHeight="200"
