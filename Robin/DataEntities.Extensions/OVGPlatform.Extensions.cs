@@ -22,15 +22,19 @@ namespace Robin
 	{
 		public IList Releases => OVGReleases.ToList();
 
-		public Platform RPlatform
+		public Platform RPlatform => R.Data.Platforms.Local.FirstOrDefault(x => x.ID == ID);
+
+		public int MatchedReleaseCount
 		{
 			get
 			{
-				return R.Data.Platforms.Local.FirstOrDefault(x => x.ID == ID);
+				if (RPlatform != null)
+				{
+					return RPlatform.MatchedToOpenVG;
+				}
+				return 0;
 			}
 		}
-
-		public int MatchedReleaseCount => RPlatform.MatchedToOpenVG;
 
 		public bool Preferred
 		{

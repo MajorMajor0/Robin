@@ -32,63 +32,21 @@ namespace Robin
 
 		void Play();
 
-		int ScrapeArt(LocalDB localDB);
+		int ScrapeArt(ArtType artType, LocalDB localDB);
 	}
 
 	public interface IDBRelease
 	{
 		long ID { get; }
-
 		string Title { get; }
 		string Overview { get; }
 		string RegionTitle { get; }
 		LocalDB LocalDB { get; }
 
-
-		//string BannerURL { get; }
-		//string Box3DURL { get; }
-		//string BoxBackURL { get; }
-		//string BoxFrontURL { get; }
-		//string Cart3DURL { get; }
-		//string CartBackURL { get; }
-		//string CartFrontURL { get; }
-		//string ControlInformationURL { get; }
-		//string ControlPanelURL { get; }
-		//string LogoURL { get; }
-		//string MarqueeURL { get; }
-		//string ScreenURL { get; }
-
-
-		//string BannerPath { get; }
-		//string Box3DPath { get; }
-		//string BoxBackPath { get; }
-		//string BoxFrontPath { get; }
-		//string Cart3DPath { get; }
-		//string CartBackPath { get; }
-		//string CartFrontPath { get; }
-		//string ControlInformationPath { get; }
-		//string ControlPanelPath { get; }
-		//string LogoPath { get; }
-		//string MarqueePath { get; }
-		//string ScreenPath { get; }
-
 		Region Region { get; }
 
 		DateTime? Date { get; }
-
-		//int ScrapeBanner();
-		//int ScrapeBox3D();
-		//int ScrapeBoxBack();
 		int ScrapeBoxFront();
-		//int ScrapeCart3D();
-		//int ScrapeCartBack();
-		//int ScrapeCartFront();
-		//int ControlInformation();
-		//int ScrapeControlPanel();
-		//int ScrapeLogo();
-		//int ScrapeMarquee();
-		//int ScrapeScreen();
-
 	}
 
 	public interface IDBPlatform
@@ -124,7 +82,6 @@ namespace Robin
 
 	}
 
-
 	public enum LocalDB
 	{
 		[Description("Unknown")]
@@ -141,6 +98,40 @@ namespace Robin
 		Datomatic,
 		[Description("Robin")]
 		Robin
+	}
+
+	public enum ArtType
+	{
+		[Description("All")]
+		All,
+		[Description("Box Front")]
+		BoxFront,
+		[Description("Box Back")]
+		BoxBack,
+		[Description("Banner")]
+		Banner,
+		[Description("Console")]
+		Console,
+		[Description("Controller")]
+		Controller,
+		[Description("Screen Shot")]
+		Screen,
+		[Description("Clear Logo")]
+		Logo,
+		[Description("Box 3D")]
+		Box3D,
+		[Description("Marquee")]
+		Marquee,
+		[Description("Control Panel")]
+		ControlPanel,
+		[Description("Control Information")]
+		ControlInformation,
+		[Description("Cartridge Front")]
+		CartFront,
+		[Description("Cartridg Back")]
+		CartBack,
+		[Description("Cartridge 3D")]
+		Cart3D
 	}
 
 }

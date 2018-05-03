@@ -210,7 +210,7 @@ namespace Robin
 				IDBs[0].ReportUpdates(false);
 			}
 
-			//R.Data.Save(false); TODO: this should not be commented
+			R.Data.Save(false);
 		}
 
 		bool CacheReleasesCanExecute()

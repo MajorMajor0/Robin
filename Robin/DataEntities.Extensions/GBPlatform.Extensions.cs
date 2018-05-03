@@ -21,15 +21,20 @@ namespace Robin
 	{
 		public IList Releases => GBReleases.ToList();
 
-		public Platform RPlatform
+		public Platform RPlatform => R.Data.Platforms.Local.FirstOrDefault(x => x.ID_GB == ID);
+
+		public int MatchedReleaseCount
 		{
 			get
 			{
-				return R.Data.Platforms.Local.FirstOrDefault(x => x.ID_GB == ID);
+				if (RPlatform != null)
+				{
+					return RPlatform.MatchedToGiantBomb;
+				}
+				return 0;
 			}
 		}
 
-		public int MatchedReleaseCount => RPlatform.MatchedToGiantBomb;
 
 		public bool Preferred
 		{
@@ -43,9 +48,6 @@ namespace Robin
 			}
 		}
 
-		public string Manufacturer
-		{
-			get { return null; }
-		}
+		public string Manufacturer => null;
 	}
 }

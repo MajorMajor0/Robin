@@ -147,9 +147,9 @@ namespace Robin
 			});
 		}
 
-		public int ScrapeArt(LocalDB localDB)
+		public int ScrapeArt(ArtType artType, LocalDB localDB)
 		{
-			Reporter.Report("Scraping art not available for emulators");
+			Debug.Assert(false, "Trying to scrape art for an emulator. Don't do that.");
 			return 0;
 		}
 

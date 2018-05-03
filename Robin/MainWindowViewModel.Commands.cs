@@ -26,14 +26,6 @@ namespace Robin
 {
 	partial class MainWindowViewModel
 	{
-		public Command DropCollectionCommand { get; set; }
-
-		void DropCollection()
-		{
-
-		}
-
-
 		public Command SaveDataBaseCommand { get; set; }
 
 		void SaveDataBase()
@@ -69,18 +61,6 @@ namespace Robin
 		{
 			return SelectedDB != null && SelectedDB.Included;
 		}
-
-		//public Command GetSelectedArtCommand { get; set; }
-
-		// void GetSelectedArt1()
-		//{
-		//    //GetSelectedArt();
-		//}
-
-		// bool GetSelectedArtCanExecute()
-		//{
-		//    return SelectedDB != null;
-		//}
 
 
 		public Command ReporterWindowCommand { get; set; }
@@ -124,7 +104,7 @@ namespace Robin
 		{
 			SaveSettings();
 			OptionsWindow optionsWindow = new OptionsWindow();
-			optionsWindow.Closed += new System.EventHandler(OptionsWindowClosed);
+			optionsWindow.Closed += new EventHandler(OptionsWindowClosed);
 		}
 
 
@@ -175,7 +155,6 @@ namespace Robin
 				idbObject.IsCrap = value;
 			}
 		}
-
 
 
 		public Command MarkPreferredCommand { get; set; }
@@ -468,89 +447,101 @@ namespace Robin
 		}
 
 
-
-		async void GetArt(bool selected)
+		void GetArt(bool selected)
 		{
 			TaskInProgress = true;
+			tokenSource = new CancellationTokenSource();
+			FileLocation.CreateDirectories();
+
+			if (MainBigSelection == PlatformCollection)
+			{
+				GetPlatformArt(selected);
+			}
+			else
+			{
+				GetReleaseArt(selected);
+			}
+		}
+
+		async void GetReleaseArt(bool selected)
+		{
 			try
 			{
-				Directory.CreateDirectory(FileLocation.Art.BoxFront);
-				Directory.CreateDirectory(FileLocation.Art.BoxFrontThumbs);
-				Directory.CreateDirectory(FileLocation.Art.BoxBack);
-				Directory.CreateDirectory(FileLocation.Art.Screen);
-				Directory.CreateDirectory(FileLocation.Art.Banner);
-				Directory.CreateDirectory(FileLocation.Art.Logo);
-				Directory.CreateDirectory(FileLocation.Art.Console);
-
+				// Cache the art count prior to scraping to find out how many we get
 				int boxFrontCount = Directory.GetFiles(FileLocation.Art.BoxFront).Count();
 				int boxBackCount = Directory.GetFiles(FileLocation.Art.BoxBack).Count();
+				int bannerCount = Directory.GetFiles(FileLocation.Art.Banner).Count();
+				int screenCount = Directory.GetFiles(FileLocation.Art.Screen).Count();
 				int logoCount = Directory.GetFiles(FileLocation.Art.Logo).Count();
-				int screenCount = Directory.GetFiles(FileLocation.Art.Logo).Count();
-
-				int misCount = 0;
-
-				tokenSource = new CancellationTokenSource();
 
 				await Task.Run(() =>
 				{
 					Reporter.Report("Opening databases...");
 
-					if (MainBigSelection == PlatformCollection)
-					{
-						R.Data.GDBPlatforms.Load();
-					}
-					else
-					{
-						R.Data.GDBReleases.Load();
-						R.Data.GBReleases.Load();
-						R.Data.OVGReleases.Load();
-						R.Data.LBReleases.Include(x => x.LBImages).Load();
-					}
+					R.Data.GDBReleases.Load();
+					R.Data.GBReleases.Load();
+					R.Data.OVGReleases.Load();
+					R.Data.LBReleases.Include(x => x.LBImages).Load();
 
 					Reporter.Report("Scraping art files...");
 
 					List<IDBobject> list = new List<IDBobject>();
 
+					// Cache selected items in case the user changes them during scrape
+					// If items are selected, cache them
 					if (selected)
 					{
-						// Must cache selected items in case user changes during scrape
 						foreach (IDBobject idbObject in SelectedDBs)
 						{
 							list.Add(idbObject);
 						}
 					}
+
+					// If no items are selected, cache the entire collection
 					else
 					{
 						dynamic MainBigThing = MainBigSelection;
 						list.AddRange(MainBigThing.FilteredCollection);
 					}
 
-					int tryCount = 0;
-					do
+					// Scrape art in the order of most usefull
+					if (Properties.Settings.Default.ScrapeReleaseBoxFront)
 					{
-						foreach (IDBobject idbObject in list)
-						{
-							if (tokenSource.Token.IsCancellationRequested)
-							{
-								Reporter.Report("Downloading art cancelled.");
-								tryCount = 6;
-								break;
-							}
-							misCount += idbObject.ScrapeArt(0);
-						}
-					} while (misCount < 0 && ++tryCount < 5);
+						GetArtSub(list, ArtType.BoxFront, 0);
+					}
 
+					if (Properties.Settings.Default.ScrapeReleaseLogo)
+					{
+						GetArtSub(list, ArtType.Logo, 0);
+					}
+
+					if (Properties.Settings.Default.ScrapeReleaseScreen)
+					{
+						GetArtSub(list, ArtType.Screen, 0);
+					}
+
+					if (Properties.Settings.Default.ScrapeReleaseBanner)
+					{
+						GetArtSub(list, ArtType.Banner, 0);
+					}
+
+					if (Properties.Settings.Default.ScrapeReleaseBoxBack)
+					{
+						GetArtSub(list, ArtType.BoxBack, 0);
+					}
 				});
 
 				boxFrontCount = Directory.GetFiles(FileLocation.Art.BoxFront).Count() - boxFrontCount;
 				boxBackCount = Directory.GetFiles(FileLocation.Art.BoxBack).Count() - boxBackCount;
+				bannerCount = Directory.GetFiles(FileLocation.Art.Banner).Count() - bannerCount;
+				screenCount = Directory.GetFiles(FileLocation.Art.Screen).Count() - screenCount;
 				logoCount = Directory.GetFiles(FileLocation.Art.Logo).Count() - logoCount;
-				screenCount = Directory.GetFiles(FileLocation.Art.Logo).Count() - screenCount;
 
-				Reporter.Report("Added " + boxFrontCount + " box front art images.");
-				Reporter.Report("Added " + boxBackCount + " box back art images.");
-				Reporter.Report("Added " + logoCount + " clear logos.");
-				Reporter.Report("Added " + screenCount + " screenshots.");
+				Reporter.Report($"Added {boxFrontCount} box front art images.");
+				Reporter.Report($"Added {boxBackCount} box back art images.");
+				Reporter.Report($"Added {bannerCount} banner images.");
+				Reporter.Report($"Added {logoCount} clear logos.");
+				Reporter.Report($"Added {screenCount} screenshots.");
 			}
 
 			catch { }
@@ -561,6 +552,103 @@ namespace Robin
 			}
 		}
 
+		async void GetPlatformArt(bool selected)
+		{
+			try
+			{
+				// Cache the number of art files so we can see how many we got
+				int platformArtCount = Directory.GetFiles(FileLocation.Art.Console).Count();
+
+				await Task.Run(() =>
+				{
+					Reporter.Report("Opening databases...");
+
+					R.Data.GDBPlatforms.Load();
+
+					Reporter.Report("Scraping art files...");
+
+					List<IDBobject> list = new List<IDBobject>();
+
+					// Cache selected items in case the user changes them during scrape
+					// If items are selected, cache them
+					if (selected)
+					{
+						foreach (IDBobject idbObject in SelectedDBs)
+						{
+							list.Add(idbObject);
+						}
+					}
+
+					// If no items are selected, cache the entire collection
+					else
+					{
+						dynamic MainBigThing = MainBigSelection;
+						list.AddRange(MainBigThing.FilteredCollection);
+					}
+
+					// Scrape art in the order of most usefull
+					if (Properties.Settings.Default.ScrapePlatformConsole)
+					{
+						GetArtSub(list, ArtType.Console, 0);
+
+					}
+
+					if (Properties.Settings.Default.ScrapePlatformController)
+					{
+						GetArtSub(list, ArtType.Controller, 0);
+					}
+
+					if (Properties.Settings.Default.ScrapePlatformBoxFront)
+					{
+						GetArtSub(list, ArtType.BoxFront, 0);
+					}
+
+					if (Properties.Settings.Default.ScrapePlatformBanner)
+					{
+						GetArtSub(list, ArtType.Banner, 0);
+					}
+
+					if (Properties.Settings.Default.ScrapePlatformBoxBack)
+					{
+						GetArtSub(list, ArtType.BoxBack, 0);
+					}
+				});
+			}
+
+			catch { }
+
+			finally
+			{
+				TaskInProgress = false;
+			}
+		}
+
+		/// <summary>
+		/// Sub function to download art based on options figured elsewhere
+		/// </summary>
+		/// <param name="db"></param>
+		/// <param name="artType"></param>
+		/// <returns></returns>
+		int GetArtSub(List<IDBobject> list, ArtType artType, LocalDB localDB)
+		{
+			int misCount;
+			int tryCount = 0;
+			do
+			{
+				misCount = 0;
+				foreach (IDBobject idbObject in list)
+				{
+					if (tokenSource.Token.IsCancellationRequested)
+					{
+						Reporter.Report("Downloading art cancelled.");
+						tryCount = 6;
+						break;
+					}
+					misCount += idbObject.ScrapeArt(artType, localDB);
+				}
+			} while (misCount < 0 && ++tryCount < 5);
+			return misCount;
+		}
 
 		public Command GetAllDataCommand { get; set; }
 
@@ -579,6 +667,7 @@ namespace Robin
 				R.Data.GBReleases.Load();
 				R.Data.GDBReleases.Load();
 				R.Data.OVGReleases.Load();
+				R.Data.LBReleases.Include(x => x.LBGame).Load();
 				Reporter.ReportInline(Watch.Elapsed.ToString("ss") + " s");
 				Watch.Restart();
 
@@ -593,8 +682,10 @@ namespace Robin
 					release.CopyData();
 				}
 			});
-			Reporter.Report("Finished. Copied data to " + j + " releases." + Watch1.Elapsed.ToString(@"m\:ss"));
-			R.Data.Save(true);
+
+			Datomatic datomatic = new Datomatic();
+			datomatic.ReportUpdates(true);
+			R.Data.Save(false);
 		}
 
 		bool GetAllDataCanExecute()

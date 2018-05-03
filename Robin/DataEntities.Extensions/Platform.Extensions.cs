@@ -127,64 +127,160 @@ namespace Robin
 
 		public void GetGames()
 		{
-			
+			Debug.Assert(false, "Called GetGames() on Robin.Platform. Don't do that. GetGames is for LocalDB caches.");
 		}
 
-		public int ScrapeArt(LocalDB localDB)
+		/// <summary>
+		/// Scrape art from the selected online database to the built-in file location unique to the release instance. 
+		/// </summary>
+		/// <param name="artType">The type of art to scrape. Default is all available art.</param>
+		/// <param name="localDB">Null for platforms.</param>
+		/// <returns>Returns a negative integer to indicate the number of scraping attempts that could be tried again, or 0 if all attempts are successfull.</returns>
+		public int ScrapeArt(ArtType artType, LocalDB localDB = 0)
 		{
-			// TODO: Add other db options for art
-			WebClient webclient = new WebClient();
-			Stopwatch Watch = Stopwatch.StartNew();
+			int returner = 0;
+			string url = null;
+			string filePath = null;
+			string property = null;
 
-			if (BoxFrontURL != null && !File.Exists(BoxFrontPath))
+			switch (artType)
 			{
-				Reporter.Report("  Box front...");
-				webclient.DownloadFileFromDB(BoxFrontURL, BoxFrontPath);
-				OnPropertyChanged("BoxFrontPath");
-				Reporter.ReportInline(Watch.Elapsed.ToString("ss"));
+				case ArtType.All:
+					returner += ScrapeArt(ArtType.BoxFront);
+					returner += ScrapeArt(ArtType.BoxBack);
+					returner += ScrapeArt(ArtType.Banner);
+					returner += ScrapeArt(ArtType.Console);
+					returner += ScrapeArt(ArtType.Controller);
+					break;
+				case ArtType.BoxFront:
+					url = BoxFrontURL;
+					filePath = BoxFrontPath;
+					property = "BoxFrontPath";
+					break;
+				case ArtType.BoxBack:
+					url = BoxBackURL;
+					filePath = BoxBackPath;
+					property = "BoxBackPath";
+					break;
+				case ArtType.Banner:
+					url = BannerURL;
+					filePath = BannerPath;
+					property = "BannerPath";
+					break;
+				case ArtType.Console:
+					url = ConsoleURL;
+					filePath = ConsolePath;
+					property = "ConsolePath";
+					break;
+				case ArtType.Controller:
+					url = ControllerURL;
+					filePath = ControllerPath;
+					property = "ControllerPath";
+					break;
+				default:
+					// Not implemented.
+					Debug.Assert(false, $"Called Release.ScrapeArt() with the option {artType.Description()}, which is valid only for Releases. Can't see what it's hurting, but don't do that.");
+					break;
 			}
-			Watch.Restart();
 
-			if (BoxBackURL != null && !File.Exists(BoxBackPath))
+			return Scrape(url, filePath, property, artType.Description());
+		}
+
+		/// <summary>
+		/// Sub function to scrape art based on strings computed elsewhere.
+		/// </summary>
+		/// <param name="url">URL to scrape art from.</param>
+		/// <param name="filePath">Path to download art to.</param>
+		/// <param name="property">Property of this release to notify PropertyChanged if art is downloaded.</param>
+		/// <param name="description">String describing the art to download.</param>
+		/// <returns>Returns -1 if artwork to indicate the scrape attempt could be tried again, or 0 if the scrape attempt is successfull.</returns>
+		int Scrape(string url, string filePath, string property, string description)
+		{
+			using (WebClient webclient = new WebClient())
 			{
-				Reporter.Report("  Box back...");
-				webclient.DownloadFileFromDB(BoxBackURL, BoxBackPath);
-				OnPropertyChanged("BoxBackPath");
-				Reporter.ReportInline(Watch.Elapsed.ToString("ss") + " s");
-			}
-			Watch.Restart();
+				if (!File.Exists(filePath))
+				{
+					if (url != null)
+					{
+						Reporter.Report($"Getting {description} art for {Title}...");
 
-			if (BannerURL != null && !File.Exists(BannerPath))
-			{
-				Reporter.Report("  Banner...");
-				webclient.DownloadFileFromDB(BannerURL, BannerPath);
-				OnPropertyChanged("BannerPath");
-				Reporter.ReportInline(Watch.Elapsed.ToString("ss") + " s");
+						if (webclient.DownloadFileFromDB(url, filePath))
+						{
+							Reporter.ReportInline("success!");
+							OnPropertyChanged(property);
+						}
+						else
+						{
+							Reporter.ReportInline("dammit!");
+							return -1;
+						}
+					}
+				}
 			}
-			Watch.Restart();
 
-			if (ConsoleURL != null && !File.Exists(ConsolePath))
-			{
-				Reporter.Report("  Console...");
-				webclient.DownloadFileFromDB(ConsoleURL, ConsolePath);
-				OnPropertyChanged("ConsolePath");
-				OnPropertyChanged("MainDisplay");
-				Reporter.ReportInline(Watch.Elapsed.ToString("ss") + " s");
-			}
-			Watch.Restart();
-
-			if (ControllerURL != null && !File.Exists(ControllerPath))
-			{
-				Reporter.Report("  Controller...");
-				webclient.DownloadFileFromDB(ControllerURL, ControllerPath);
-				OnPropertyChanged("ControllerFile");
-				Reporter.ReportInline(Watch.Elapsed.ToString("ss") + " s");
-			}
-			Watch.Restart();
-
-			//TODO: Make the return integers make sense across all scrapeart functions
 			return 0;
 		}
+
+
+
+
+
+
+		//public int ScrapeArt(LocalDB localDB)
+		//{
+		//	// TODO: Add other db options for art
+		//	WebClient webclient = new WebClient();
+		//	Stopwatch Watch = Stopwatch.StartNew();
+
+		//	if (BoxFrontURL != null && !File.Exists(BoxFrontPath))
+		//	{
+		//		Reporter.Report("  Box front...");
+		//		webclient.DownloadFileFromDB(BoxFrontURL, BoxFrontPath);
+		//		OnPropertyChanged("BoxFrontPath");
+		//		Reporter.ReportInline(Watch.Elapsed.ToString("ss"));
+		//	}
+		//	Watch.Restart();
+
+		//	if (BoxBackURL != null && !File.Exists(BoxBackPath))
+		//	{
+		//		Reporter.Report("  Box back...");
+		//		webclient.DownloadFileFromDB(BoxBackURL, BoxBackPath);
+		//		OnPropertyChanged("BoxBackPath");
+		//		Reporter.ReportInline(Watch.Elapsed.ToString("ss") + " s");
+		//	}
+		//	Watch.Restart();
+
+		//	if (BannerURL != null && !File.Exists(BannerPath))
+		//	{
+		//		Reporter.Report("  Banner...");
+		//		webclient.DownloadFileFromDB(BannerURL, BannerPath);
+		//		OnPropertyChanged("BannerPath");
+		//		Reporter.ReportInline(Watch.Elapsed.ToString("ss") + " s");
+		//	}
+		//	Watch.Restart();
+
+		//	if (ConsoleURL != null && !File.Exists(ConsolePath))
+		//	{
+		//		Reporter.Report("  Console...");
+		//		webclient.DownloadFileFromDB(ConsoleURL, ConsolePath);
+		//		OnPropertyChanged("ConsolePath");
+		//		OnPropertyChanged("MainDisplay");
+		//		Reporter.ReportInline(Watch.Elapsed.ToString("ss") + " s");
+		//	}
+		//	Watch.Restart();
+
+		//	if (ControllerURL != null && !File.Exists(ControllerPath))
+		//	{
+		//		Reporter.Report("  Controller...");
+		//		webclient.DownloadFileFromDB(ControllerURL, ControllerPath);
+		//		OnPropertyChanged("ControllerFile");
+		//		Reporter.ReportInline(Watch.Elapsed.ToString("ss") + " s");
+		//	}
+		//	Watch.Restart();
+
+		//	//TODO: Make the return integers make sense across all scrapeart functions
+		//	return 0;
+		//}
 
 		public async void GetReleaseDirectoryAsync(string[] paths)
 		{

@@ -427,7 +427,7 @@ namespace Robin
 		{
 			if (ID_LB != null)
 			{
-				Overview = LBGame.Overview;
+				Overview = LBRelease?.Overview;
 			}
 
 			if ((Overview == null || Overview.Length < 20) && ID_GDB != null)
@@ -454,7 +454,7 @@ namespace Robin
 		{
 			if (ID_LB != null)
 			{
-				Developer = LBGame.Developer;
+				Developer = LBRelease.Developer;
 			}
 
 			if ((Developer == null || Developer.Length < 2) && ID_GDB != null)
@@ -472,7 +472,7 @@ namespace Robin
 		{
 			if (ID_LB != null)
 			{
-				Publisher = LBGame.Publisher;
+				Publisher = LBRelease.Publisher;
 			}
 
 			if ((Publisher == null || Publisher.Length < 2) && ID_GDB != null)
@@ -492,9 +492,9 @@ namespace Robin
 			string joinSeperator = ", ";
 			string[] genres;
 
-			if (ID_LB != null && LBGame.Genres != null)
+			if (ID_LB != null && LBRelease.LBGame.Genres != null)
 			{
-				genres = LBGame.Genres.Split(splitSeparators, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).OrderBy(x => x).ToArray();
+				genres = LBRelease.LBGame.Genres.Split(splitSeparators, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).OrderBy(x => x).ToArray();
 				Genre = string.Join(joinSeperator, genres);
 			}
 
@@ -522,7 +522,7 @@ namespace Robin
 			{
 				if (ID_LB != null)
 				{
-					Date = LBGame.Date;
+					Date = LBRelease.Date;
 				}
 
 				if (Date == null && ID_GDB != null)
@@ -546,7 +546,7 @@ namespace Robin
 		{
 			if (ID_LB != null)
 			{
-				Players = LBGame.Players;
+				Players = LBRelease.Players;
 			}
 
 			if (string.IsNullOrEmpty(Players) && ID_GDB != null)
@@ -570,27 +570,119 @@ namespace Robin
 			CopyPlayers();
 		}
 
-
+		/// <summary>
+		/// IDBRelease.ScrapeBoxFront
+		/// </summary>
+		/// <returns>Returns -1 if artwork to indicate the scrape attempt could be tried again, or 0 if the scrape attempt is successfull.</returns>
 		public int ScrapeBoxFront()
 		{
-			return ScrapeBoxFront(0);
+			return ScrapeArt(ArtType.All, 0);
 		}
 
-		public int ScrapeBoxFront(LocalDB DB = 0)
+		/// <summary>
+		/// Scrape art from the selected online database to the built-in file location unique to the release instance. 
+		/// </summary>
+		/// <param name="artType">The type of art to scrape. Default is all available art.</param>
+		/// <param name="localDB">The database to scrape from. Default is unknown, which allows Robin to cycle through available databases in preferred order.</param>
+		/// <returns>Returns a negative integer to indicate the number of scraping attempts that could be tried again, or 0 if all attempts are successfull.</returns>
+		public int ScrapeArt(ArtType artType, LocalDB localDB = 0)
+		{
+			int returner = 0;
+			string url = null;
+			string filePath = null;
+			string property = null;
+
+			switch (artType)
+			{
+				case ArtType.All:
+					returner += ScrapeArt(ArtType.BoxFront, localDB);
+					returner += ScrapeArt(ArtType.BoxBack, localDB);
+					returner += ScrapeArt(ArtType.Banner, localDB);
+					returner += ScrapeArt(ArtType.Screen, localDB);
+					returner += ScrapeArt(ArtType.Logo, localDB);
+					break;
+				case ArtType.BoxFront:
+					url = GetBoxFrontURL(localDB);
+					filePath = BoxFrontPath;
+					property = "BoxFrontPath";
+					break;
+				case ArtType.BoxBack:
+					url = GetBoxBackURL(localDB);
+					filePath = BoxBackPath;
+					property = "BoxBackPath";
+					break;
+				case ArtType.Banner:
+					url = GetBannerURL(localDB);
+					filePath = BannerPath;
+					property = "BannerPath";
+					break;
+				case ArtType.Screen:
+					url = GetScreenURL(localDB);
+					filePath = ScreenPath;
+					property = "ScreenPath";
+					break;
+				case ArtType.Logo:
+					url = GetLogoURL(localDB);
+					filePath = LogoPath;
+					property = "LogoPath";
+					break;
+				case ArtType.Box3D:
+					// Needs URL implemented
+					break;
+				case ArtType.Marquee:
+					// Needs URL implemented
+					break;
+				case ArtType.ControlPanel:
+					// Needs URL implemented
+					break;
+				case ArtType.ControlInformation:
+					// Needs URL implemented
+					break;
+				case ArtType.CartFront:
+					// Needs URL implemented
+					break;
+				case ArtType.CartBack:
+					// Needs URL implemented
+					break;
+				case ArtType.Cart3D:
+					// Needs URL implemented
+					break;
+				default:
+					// Not implemented.
+					Debug.Assert(false, $"Called Release.ScrapeArt() with the option {artType.Description()}, which is valid only for Platforms. Can't see what it's hurting, but don't do that.");
+					break;
+			}
+
+			return Scrape(url, filePath, property, artType.Description());
+		}
+
+		/// <summary>
+		/// SUb function to scrape art based on strings computed elsewhere.
+		/// </summary>
+		/// <param name="url">URL to scrape art from.</param>
+		/// <param name="filePath">Path to download art to.</param>
+		/// <param name="property">Property of this release to notify PropertyChanged if art is downloaded.</param>
+		/// <param name="description">String describing the art to download.</param>
+		/// <returns>Returns -1 if artwork to indicate the scrape attempt could be tried again, or 0 if the scrape attempt is successfull.</returns>
+		int Scrape(string url, string filePath, string property, string description)
 		{
 			using (WebClient webclient = new WebClient())
 			{
-				if (!File.Exists(BoxFrontPath))
+				if (!File.Exists(filePath))
 				{
-					if (GetBoxFrontURL(DB) != null)
+					if (url != null)
 					{
-						Reporter.Report("Getting front box art for " + Title + "...");
+						Reporter.Report($"Getting {description} art for {Title}...");
 
-						if (webclient.DownloadFileFromDB(GetBoxFrontURL(DB), BoxFrontPath))
+						if (webclient.DownloadFileFromDB(url, filePath))
 						{
 							Reporter.ReportInline("success!");
-							CreateThumbnail();
-							OnPropertyChanged("BoxFrontPath");
+							if (property == "BoxFrontPath")
+							{
+								CreateThumbnail();
+							}
+							OnPropertyChanged(property);
+							Game.OnPropertyChanged2(property);
 						}
 						else
 						{
@@ -604,183 +696,6 @@ namespace Robin
 			return 0;
 		}
 
-		public int ScrapeBoxBack()
-		{
-			return ScrapeBoxBack(0);
-		}
-
-		public int ScrapeBoxBack(LocalDB DB = 0)
-		{
-			using (WebClient webclient = new WebClient())
-			{
-				if (!File.Exists(BoxBackPath))
-				{
-					if (GetBoxBackURL(DB) != null)
-					{
-						Reporter.Report("Getting back box art for " + Title + "...");
-
-						if (webclient.DownloadFileFromDB(GetBoxBackURL(DB), BoxBackPath))
-						{
-							Reporter.ReportInline("success!");
-							OnPropertyChanged("BoxBackPath");
-							Game.OnPropertyChanged2("BoxBackPath");
-						}
-						else
-						{
-							Reporter.ReportInline("dammit!");
-							return -1;
-						}
-					}
-				}
-			}
-
-			return 0;
-		}
-
-		public int ScrapeScreen()
-		{
-			return ScrapeScreen(0);
-		}
-
-		public int ScrapeScreen(LocalDB DB = 0)
-		{
-			using (WebClient webclient = new WebClient())
-			{
-				if (!File.Exists(ScreenPath))
-				{
-					if (GetScreenURL(DB) != null)
-					{
-						Reporter.Report("Getting screen shot for " + Title + "...");
-						if (webclient.DownloadFileFromDB(GetScreenURL(DB), ScreenPath))
-						{
-							Reporter.ReportInline("success");
-							OnPropertyChanged("ScreenPath");
-							Game.OnPropertyChanged2("ScreenPath");
-						}
-						else
-						{
-							Reporter.ReportInline("dammit!");
-							return -1;
-						}
-					}
-				}
-			}
-			return 0;
-		}
-
-		public int ScrapeBanner()
-		{
-			return ScrapeBanner(0);
-		}
-
-		public int ScrapeBanner(LocalDB DB = 0)
-		{
-			using (WebClient webclient = new WebClient())
-			{
-				if (!File.Exists(BannerPath))
-				{
-					if (GetBannerURL(DB) != null)
-					{
-						Reporter.Report("Getting banner for " + Title + "...");
-
-						if (webclient.DownloadFileFromDB(GetBannerURL(), BannerPath))
-						{
-							Reporter.ReportInline("success");
-							OnPropertyChanged("BannerPath");
-							Game.OnPropertyChanged2("BannerPath");
-						}
-						else
-						{
-							Reporter.ReportInline("dammit!");
-							return -1;
-						}
-					}
-				}
-			}
-			return 0;
-		}
-
-		public int ScrapeLogo()
-		{
-			return ScrapeLogo(0);
-		}
-
-		public int ScrapeLogo(LocalDB DB = 0)
-		{
-			using (WebClient webclient = new WebClient())
-			{
-				if (!File.Exists(LogoPath))
-				{
-					if (GetLogoURL(DB) != null)
-					{
-						Reporter.Report("Getting logo for " + Title + "...");
-
-						if (webclient.DownloadFileFromDB(GetLogoURL(), LogoPath))
-						{
-							Reporter.ReportInline("success");
-							OnPropertyChanged("LogoPath");
-							OnPropertyChanged("MainDisplay");
-							Game.OnPropertyChanged2("LogoPath");
-							Game.OnPropertyChanged2("MainDisplay");
-						}
-						else
-						{
-							Reporter.ReportInline("dammit!");
-							return -1;
-						}
-					}
-				}
-			}
-			return 0;
-		}
-
-		public int ScrapeMarquee()
-		{
-			// TODO: Implement
-			throw new NotImplementedException();
-		}
-
-		public int ScrapeBox3D()
-		{
-			// TODO: Implement
-			throw new NotImplementedException();
-		}
-
-		public int ScrapeCartFront()
-		{
-			// TODO: Implement
-			throw new NotImplementedException();
-		}
-
-		public int ScrapeCart3D()
-		{
-			// TODO: Implement
-			throw new NotImplementedException();
-		}
-
-		public int ScrapeControlPanel()
-		{
-			// TODO: Implement
-			throw new NotImplementedException();
-		}
-
-		public void ScrapeArt()
-		{
-			ScrapeArt(0);
-		}
-
-		public int ScrapeArt(LocalDB DB = 0)
-		{
-			int scrapedCount = 0;
-
-			scrapedCount += ScrapeBoxFront(DB);
-			scrapedCount += ScrapeBoxBack(DB);
-			scrapedCount += ScrapeScreen(DB);
-			scrapedCount += ScrapeBanner(DB);
-			scrapedCount += ScrapeLogo(DB);
-
-			return scrapedCount;
-		}
 
 		public void Play()
 		{

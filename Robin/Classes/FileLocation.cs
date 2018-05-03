@@ -65,5 +65,15 @@ namespace Robin
 
 		public static string Flags = Images + @"Flags\";
 
+		public static void CreateDirectories()
+		{
+			Directory.CreateDirectory(Art.BoxFront);
+			Directory.CreateDirectory(Art.BoxFrontThumbs);
+			Directory.CreateDirectory(Art.BoxBack);
+			Directory.CreateDirectory(Art.Screen);
+			Directory.CreateDirectory(Art.Banner);
+			Directory.CreateDirectory(Art.Logo);
+			Directory.CreateDirectory(Art.Console);
+		}
 	}
 }

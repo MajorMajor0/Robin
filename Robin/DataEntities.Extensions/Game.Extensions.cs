@@ -347,12 +347,12 @@ namespace Robin
 			release.Play(null);
 		}
 
-		public int ScrapeArt(LocalDB localDB)
+		public int ScrapeArt(ArtType artType, LocalDB localDB)
 		{
 			int returner = 0;
 			foreach (Release release in Releases)
 			{
-				returner += release.ScrapeArt(localDB);
+				returner += release.ScrapeArt(artType, localDB);
 			}
 			return returner;
 		}

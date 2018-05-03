@@ -22,15 +22,19 @@ namespace Robin
 	{
 		public IList Releases => GDBReleases.ToList();
 
-		public Platform RPlatform
+		public Platform RPlatform => R.Data.Platforms.Local.FirstOrDefault(x => x.ID_GDB == ID);
+
+		public int MatchedReleaseCount
 		{
 			get
 			{
-				return R.Data.Platforms.Local.FirstOrDefault(x => x.ID_GDB == ID);
+				if (RPlatform != null)
+				{
+					return RPlatform.MatchedToGamesDB;
+				}
+				return 0;
 			}
 		}
-
-		public int MatchedReleaseCount => RPlatform.MatchedToGamesDB;
 
 		public bool Preferred
 		{

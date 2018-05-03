@@ -24,17 +24,21 @@ namespace Robin
 
 		public IList Games => LBGames.ToList();
 
-		public Platform RPlatform
-		{
-			get
-			{
-				return R.Data.Platforms.Local.FirstOrDefault(x => x.ID_LB == ID);
-			}
-		}
+		public Platform RPlatform => R.Data.Platforms.Local.FirstOrDefault(x => x.ID_LB == ID);
 
 		public IEnumerable<LBRelease> LBReleases => LBGames.SelectMany(x => x.LBReleases);
 
-		public int MatchedReleaseCount => RPlatform.MatchedToLaunchBox;
+		public int MatchedReleaseCount
+		{
+			get
+			{
+				if (RPlatform != null)
+				{
+					return RPlatform.MatchedToLaunchBox;
+				}
+				return 0;
+			}
+		}
 
 		public bool Preferred
 		{

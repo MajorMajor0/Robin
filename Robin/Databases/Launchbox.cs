@@ -330,7 +330,7 @@ namespace Robin
 					Reporter.Report("  Working " + j + " / " + gameCount + " " + platform.LBPlatform.Title + " games in the local cache.");
 				}
 
-				gameImageElements = imageElements.Where(x => x.Element("DatabaseID")?.Value == lbGame.ID.ToString()).ToList();
+				gameImageElements = imageElements.Where(x => x.Element("DatabaseID").Value == lbGame.ID.ToString()).ToList();
 
 				// Cache images for this game from the launchbox file
 				foreach (XElement imageElement in gameImageElements)
