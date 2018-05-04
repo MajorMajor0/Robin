@@ -161,6 +161,24 @@
     <Compile Include="Databases\GiantBomb.cs" />
     <Compile Include="Classes\Reporter.cs" />
     <Compile Include="Controls\BindableSelectionListBox.cs" />
+    <Compile Include="Launchbox\Image.cs">
+      <DependentUpon>LBEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Launchbox\LBEntities.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LBEntities.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Launchbox\LBEntities.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LBEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Launchbox\LBEntities.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LBEntities.edmx</DependentUpon>
+    </Compile>
     <Compile Include="Mame\Disk.cs">
       <DependentUpon>MEntities.tt</DependentUpon>
     </Compile>
@@ -218,8 +236,8 @@
     <Compile Include="Galasoft.MvvmLight\RelayCommand.cs" />
     <Compile Include="Galasoft.MvvmLight\WeakAction.cs" />
     <Compile Include="Galasoft.MvvmLight\WeakFunc.cs" />
-    <Compile Include="Game.cs">
-      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    <Compile Include="Launchbox\Game.cs">
+      <DependentUpon>LBEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="GBGame.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
@@ -310,15 +328,15 @@
     <Compile Include="OVGRelease.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Platform.cs">
-      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    <Compile Include="Launchbox\Platform.cs">
+      <DependentUpon>LBEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="Classes\Randomizer.cs" />
     <Compile Include="Region.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Release.cs">
-      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    <Compile Include="Launchbox\Release.cs">
+      <DependentUpon>LBEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="RobinDataModel.Context.cs">
       <AutoGen>True</AutoGen>
@@ -447,6 +465,13 @@
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>MEntities.Designer.cs</LastGenOutput>
     </EntityDeploy>
+    <EntityDeploy Include="Launchbox\LBEntities.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>LBEntities.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="Launchbox\LBEntities.edmx.diagram">
+      <DependentUpon>LBEntities.edmx</DependentUpon>
+    </None>
     <None Include="Mame\MEntities.edmx.diagram">
       <DependentUpon>MEntities.edmx</DependentUpon>
     </None>
@@ -531,6 +556,7 @@
       <HintPath>..\packages\DotNetZip.1.10.1\lib\net20\DotNetZip.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
@@ -596,6 +622,16 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Launchbox\LBEntities.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>LBEntities.edmx</DependentUpon>
+      <LastGenOutput>LBEntities.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Launchbox\LBEntities.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>LBEntities.edmx</DependentUpon>
+      <LastGenOutput>LBEntities.cs</LastGenOutput>
+    </Content>
     <Content Include="Mame\MEntities.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>MEntities.edmx</DependentUpon>
@@ -630,6 +666,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </SplashScreen>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

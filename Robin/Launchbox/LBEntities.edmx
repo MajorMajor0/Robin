@@ -1,0 +1,325 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="LBModel.Store" Provider="System.Data.SQLite.EF6" ProviderManifestToken="data source=D:\Robin_debug\data\Launchbox.db3" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Game">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="integer" Nullable="false" />
+          <Property Name="Title" Type="nvarchar" MaxLength="2147483647" Nullable="false" />
+          <Property Name="Date" Type="datetime" />
+          <Property Name="Overview" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="Platform_ID" Type="integer" Nullable="false" />
+          <Property Name="Genres" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="Developer" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="Publisher" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="VideoURL" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="WikiURL" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="Players" Type="nvarchar" MaxLength="2147483647" />
+        </EntityType>
+        <EntityType Name="Image">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="integer" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Type" Type="nvarchar" MaxLength="2147483647" Nullable="false" />
+          <Property Name="FileName" Type="nvarchar" MaxLength="2147483647" Nullable="false" />
+          <Property Name="LBRegion" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="Region_ID" Type="integer" Nullable="false" />
+          <Property Name="Release_ID" Type="integer" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Platform">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="integer" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Title" Type="nvarchar" MaxLength="2147483647" Nullable="false" />
+          <Property Name="Category" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="Date" Type="datetime" />
+          <Property Name="Developer" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="Manufacturer" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="Cpu" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="Memory" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="Graphics" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="Sound" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="Display" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="Media" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="Controllers" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="CacheDate" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Release">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="integer" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Game_ID" Type="integer" Nullable="false" />
+          <Property Name="Region_ID" Type="integer" Nullable="false" />
+          <Property Name="Title" Type="nvarchar" MaxLength="2147483647" />
+        </EntityType>
+        <Association Name="FK_Game_0_0">
+          <End Role="Platform" Type="Self.Platform" Multiplicity="1" />
+          <End Role="Game" Type="Self.Game" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Platform">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Game">
+              <PropertyRef Name="Platform_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Image_0_0">
+          <End Role="Release" Type="Self.Release" Multiplicity="1" />
+          <End Role="Image" Type="Self.Image" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Release">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Image">
+              <PropertyRef Name="Release_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Release_0_0">
+          <End Role="Game" Type="Self.Game" Multiplicity="1" />
+          <End Role="Release" Type="Self.Release" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Game">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Release">
+              <PropertyRef Name="Game_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="LBModelStoreContainer">
+          <EntitySet Name="Game" EntityType="Self.Game" store:Type="Tables" />
+          <EntitySet Name="Image" EntityType="Self.Image" store:Type="Tables" />
+          <EntitySet Name="Platform" EntityType="Self.Platform" store:Type="Tables" />
+          <EntitySet Name="Release" EntityType="Self.Release" store:Type="Tables" />
+          <AssociationSet Name="FK_Game_0_0" Association="Self.FK_Game_0_0">
+            <End Role="Platform" EntitySet="Platform" />
+            <End Role="Game" EntitySet="Game" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Image_0_0" Association="Self.FK_Image_0_0">
+            <End Role="Release" EntitySet="Release" />
+            <End Role="Image" EntitySet="Image" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Release_0_0" Association="Self.FK_Release_0_0">
+            <End Role="Game" EntitySet="Game" />
+            <End Role="Release" EntitySet="Release" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="LBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Game">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" />
+          <Property Name="Title" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Date" Type="DateTime" />
+          <Property Name="Overview" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Platform_ID" Type="Int64" Nullable="false" />
+          <Property Name="Genres" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Developer" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Publisher" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="VideoURL" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="WikiURL" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Players" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Platform" Relationship="Self.FK_Game_0_0" FromRole="Game" ToRole="Platform" />
+          <NavigationProperty Name="Releases" Relationship="Self.FK_Release_0_0" FromRole="Game" ToRole="Release" />
+        </EntityType>
+        <EntityType Name="Image">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Type" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="FileName" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="LBRegion" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Region_ID" Type="Int64" Nullable="false" />
+          <Property Name="Release_ID" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="Release" Relationship="Self.FK_Image_0_0" FromRole="Image" ToRole="Release" />
+        </EntityType>
+        <EntityType Name="Platform">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Category" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Date" Type="DateTime" />
+          <Property Name="Developer" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Manufacturer" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Cpu" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Memory" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Graphics" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Sound" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Display" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Media" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Controllers" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="CacheDate" Type="DateTime" Nullable="false" />
+          <NavigationProperty Name="Games" Relationship="Self.FK_Game_0_0" FromRole="Platform" ToRole="Game" />
+        </EntityType>
+        <EntityType Name="Release">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Game_ID" Type="Int64" Nullable="false" />
+          <Property Name="Region_ID" Type="Int64" Nullable="false" />
+          <Property Name="Title" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Game" Relationship="Self.FK_Release_0_0" FromRole="Release" ToRole="Game" />
+          <NavigationProperty Name="Images" Relationship="Self.FK_Image_0_0" FromRole="Release" ToRole="Image" />
+        </EntityType>
+        <Association Name="FK_Game_0_0">
+          <End Role="Platform" Type="Self.Platform" Multiplicity="1" />
+          <End Role="Game" Type="Self.Game" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Platform">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Game">
+              <PropertyRef Name="Platform_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Release_0_0">
+          <End Role="Game" Type="Self.Game" Multiplicity="1" />
+          <End Role="Release" Type="Self.Release" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Game">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Release">
+              <PropertyRef Name="Game_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Image_0_0">
+          <End Role="Release" Type="Self.Release" Multiplicity="1" />
+          <End Role="Image" Type="Self.Image" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Release">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Image">
+              <PropertyRef Name="Release_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="LBEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Games" EntityType="Self.Game" />
+          <EntitySet Name="Images" EntityType="Self.Image" />
+          <EntitySet Name="Platforms" EntityType="Self.Platform" />
+          <EntitySet Name="Releases" EntityType="Self.Release" />
+          <AssociationSet Name="FK_Game_0_0" Association="Self.FK_Game_0_0">
+            <End Role="Platform" EntitySet="Platforms" />
+            <End Role="Game" EntitySet="Games" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Release_0_0" Association="Self.FK_Release_0_0">
+            <End Role="Game" EntitySet="Games" />
+            <End Role="Release" EntitySet="Releases" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Image_0_0" Association="Self.FK_Image_0_0">
+            <End Role="Release" EntitySet="Releases" />
+            <End Role="Image" EntitySet="Images" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="LBModelStoreContainer" CdmEntityContainer="LBEntities">
+          <EntitySetMapping Name="Games">
+            <EntityTypeMapping TypeName="LBModel.Game">
+              <MappingFragment StoreEntitySet="Game">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Overview" ColumnName="Overview" />
+                <ScalarProperty Name="Platform_ID" ColumnName="Platform_ID" />
+                <ScalarProperty Name="Genres" ColumnName="Genres" />
+                <ScalarProperty Name="Developer" ColumnName="Developer" />
+                <ScalarProperty Name="Publisher" ColumnName="Publisher" />
+                <ScalarProperty Name="VideoURL" ColumnName="VideoURL" />
+                <ScalarProperty Name="WikiURL" ColumnName="WikiURL" />
+                <ScalarProperty Name="Players" ColumnName="Players" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Images">
+            <EntityTypeMapping TypeName="LBModel.Image">
+              <MappingFragment StoreEntitySet="Image">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="FileName" ColumnName="FileName" />
+                <ScalarProperty Name="LBRegion" ColumnName="LBRegion" />
+                <ScalarProperty Name="Region_ID" ColumnName="Region_ID" />
+                <ScalarProperty Name="Release_ID" ColumnName="Release_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Platforms">
+            <EntityTypeMapping TypeName="LBModel.Platform">
+              <MappingFragment StoreEntitySet="Platform">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Developer" ColumnName="Developer" />
+                <ScalarProperty Name="Manufacturer" ColumnName="Manufacturer" />
+                <ScalarProperty Name="Cpu" ColumnName="Cpu" />
+                <ScalarProperty Name="Memory" ColumnName="Memory" />
+                <ScalarProperty Name="Graphics" ColumnName="Graphics" />
+                <ScalarProperty Name="Sound" ColumnName="Sound" />
+                <ScalarProperty Name="Display" ColumnName="Display" />
+                <ScalarProperty Name="Media" ColumnName="Media" />
+                <ScalarProperty Name="Controllers" ColumnName="Controllers" />
+                <ScalarProperty Name="CacheDate" ColumnName="CacheDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Releases">
+            <EntityTypeMapping TypeName="LBModel.Release">
+              <MappingFragment StoreEntitySet="Release">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Game_ID" ColumnName="Game_ID" />
+                <ScalarProperty Name="Region_ID" ColumnName="Region_ID" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
