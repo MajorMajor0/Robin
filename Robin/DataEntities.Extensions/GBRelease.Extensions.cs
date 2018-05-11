@@ -36,7 +36,7 @@ namespace Robin
 		{
 			R.Data.GBReleases.Load();
 			R.Data.Regions.Load();
-			return R.Data.GBReleases.Local.Where(x => x.GBPlatform_ID == platform.ID_GB).ToList();
+			return R.Data.GBReleases.Where(x => x.GBPlatform_ID == platform.ID_GB).ToList();
 		}
 
 		public int ScrapeBoxFront()

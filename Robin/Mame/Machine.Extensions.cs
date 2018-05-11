@@ -100,7 +100,7 @@ namespace Robin.Mame
 		/// <returns></returns>
 		public static Region GetRegion(string parenthesisText)
 		{
-			foreach (Region region in R.Data.Regions.Local)
+			foreach (Region region in R.Data.Regions)
 			{
 				if (parenthesisText != null && (parenthesisText.Contains(region.Title) || parenthesisText.Contains(region.Datomatic ?? "XXX") || parenthesisText.Contains(region.UNCode ?? "XXX")))
 				{

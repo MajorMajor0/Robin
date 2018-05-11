@@ -22,7 +22,7 @@ namespace Robin
 	{
 		public IList Releases => OVGReleases.ToList();
 
-		public Platform RPlatform => R.Data.Platforms.Local.FirstOrDefault(x => x.ID == ID);
+		public Platform RPlatform => R.Data.Platforms.FirstOrDefault(x => x.ID == ID);
 
 		public int MatchedReleaseCount
 		{

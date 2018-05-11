@@ -114,7 +114,7 @@ namespace Robin
 		{
 			if (!platformsCached)
 			{
-				 Reporter.Tic("Caching data for all platforms to save time.", out int tic1);
+				Reporter.Tic("Caching data for all platforms to save time.", out int tic1);
 				if (launchboxFile == null)
 				{
 					GetLaunchBoxFile();
@@ -131,8 +131,13 @@ namespace Robin
 					{
 						continue;
 					}
-
-					LBPlatform lbPlatform = R.Data.LBPlatforms.Local.FirstOrDefault(x => x.Title == tempTitle);
+#if DEBUG
+					Stopwatch watch1 = Stopwatch.StartNew();
+#endif
+					LBPlatform lbPlatform = R.Data.LBPlatforms.FirstOrDefault(x => x.Title == tempTitle);
+#if DEBUG
+					Debug.WriteLine("PA: " + watch1.ElapsedMilliseconds); watch1.Restart();
+#endif
 					if (lbPlatform == null)
 					{
 						lbPlatform = new LBPlatform();
@@ -148,7 +153,7 @@ namespace Robin
 									break;
 
 								case false: // Add the new platform
-									R.Data.LBPlatforms.Local.Add(lbPlatform);
+									R.Data.LBPlatforms.Add(lbPlatform);
 									break;
 
 								default:
@@ -156,7 +161,9 @@ namespace Robin
 							}
 						});
 					}
-
+#if DEBUG
+					Debug.WriteLine("PB: " + watch1.ElapsedMilliseconds); watch1.Restart();
+#endif
 					lbPlatform.Title = tempTitle;
 					lbPlatform.Date = DateTimeRoutines.SafeGetDate(platformElement.SafeGetA("Date"));
 					lbPlatform.Developer = platformElement.SafeGetA("Developer");
@@ -170,6 +177,9 @@ namespace Robin
 					lbPlatform.Display = platformElement.SafeGetA("Display");
 					lbPlatform.Controllers = platformElement.SafeGetA("MaxControllers");
 					lbPlatform.Category = platformElement.SafeGetA("Category");
+#if DEBUG
+					Debug.WriteLine("PC: " + watch1.ElapsedMilliseconds); watch1.Restart();
+#endif
 				}
 				Reporter.Toc(tic1);
 
@@ -213,7 +223,13 @@ namespace Robin
 				}
 
 				// Check if the game alredy exists in the local cache
-				LBGame lbGame = R.Data.LBGames.Local.FirstOrDefault(x => x.ID == id);
+#if DEBUG
+				Stopwatch watch1 = Stopwatch.StartNew();
+#endif
+				LBGame lbGame = R.Data.LBGames.FirstOrDefault(x => x.ID == id);
+#if DEBUG
+				Debug.WriteLine("GA: " + watch1.ElapsedMilliseconds); watch1.Restart();
+#endif
 				if (lbGame == null)
 				{
 					lbGame = new LBGame { ID = id };
@@ -225,7 +241,7 @@ namespace Robin
 				if (lbGame.LBPlatform_ID != platform.LBPlatform.ID)
 				{
 					lbGame.LBPlatform = platform.LBPlatform;
-					Release release = R.Data.Releases.Local.FirstOrDefault(x => x.ID_LB == lbGame.ID);
+					Release release = R.Data.Releases.FirstOrDefault(x => x.ID_LB == lbGame.ID);
 					if (release != null)
 					{
 						release.ID_LB = null;
@@ -290,9 +306,13 @@ namespace Robin
 						regionID = CONSTANTS.UNKNOWN_REGION_ID;
 						Reporter.Report("Couldn't find " + regionText + " in LB image dictionary.");
 					}
-
+#if DEBUG
+					Stopwatch watch1 = Stopwatch.StartNew();
+#endif
 					LBRelease lbRelease = lbGame.LBReleases.FirstOrDefault(x => x.Region_ID == regionID);
-
+#if DEBUG
+					Debug.WriteLine("RA: " + watch1.ElapsedMilliseconds); watch1.Restart();
+#endif
 					if (lbRelease == null)
 					{
 						lbRelease = new LBRelease();
@@ -339,7 +359,13 @@ namespace Robin
 					fileName = imageElement.Element("FileName").Value;
 
 					// Check if image already exists in the local cache
-					LBImage lbImage = R.Data.LBImages.Local.FirstOrDefault(x => x.FileName == fileName);
+#if DEBUG
+					Stopwatch watch1 = Stopwatch.StartNew();
+#endif
+					LBImage lbImage = R.Data.LBImages.FirstOrDefault(x => x.FileName == fileName);
+#if DEBUG
+					Debug.WriteLine("IA: " + watch1.ElapsedMilliseconds); watch1.Restart();
+#endif
 
 					if (lbImage == null)
 					{

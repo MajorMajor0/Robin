@@ -51,7 +51,7 @@ namespace Robin
 
 			string[] liner = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-			returner.Rom = R.Data.Roms.Local.FirstOrDefault(x => x.FileName == liner[0] + ".zip");
+			returner.Rom = R.Data.Roms.FirstOrDefault(x => x.FileName == liner[0] + ".zip");
 
 			// liner length will b 2 if there is no parent
 			if (liner.Length == 2)
@@ -65,7 +65,7 @@ namespace Robin
 			// liner length will be 3 if there is a parent--liner [2] == "[parentname]"
 			if (liner.Length == 3)
 			{
-				returner.Parent = R.Data.Roms.Local.FirstOrDefault(x => x.FileName == liner[1].Replace("[", "").Replace("]", "") + ".zip");
+				returner.Parent = R.Data.Roms.FirstOrDefault(x => x.FileName == liner[1].Replace("[", "").Replace("]", "") + ".zip");
 
 				if (Enum.TryParse(liner[2].Capitalize(), out Status status))
 				{

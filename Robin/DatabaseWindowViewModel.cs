@@ -133,7 +133,7 @@ namespace Robin
 		{
 			// TODO: Does this function even work? Is it even hooked-up to a button?
 			Reporter.Report("Getting data...");
-			foreach (Release release in R.Data.Releases.Local)
+			foreach (Release release in R.Data.Releases)
 			{
 				release.CopyData();
 			}

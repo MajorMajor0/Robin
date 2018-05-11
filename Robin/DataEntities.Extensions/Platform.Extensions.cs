@@ -28,11 +28,11 @@ namespace Robin
 {
 	public partial class Platform : IDBobject, IDBPlatform
 	{
-		public IEnumerable<Game> Games => R.Data.Games.Local.Where(x => x.Platform_ID == ID);
+		public IEnumerable<Game> Games => R.Data.Games.Where(x => x.Platform_ID == ID);
 
 		public Platform RPlatform => this;
 
-		public OVGPlatform OVGPlatform => R.Data.OVGPlatforms.Local.FirstOrDefault(x => x.ID == ID);
+		public OVGPlatform OVGPlatform => R.Data.OVGPlatforms.FirstOrDefault(x => x.ID == ID);
 
 		public int MatchedToGamesDB => Releases.Count(x => x.ID_GDB != null);
 
@@ -66,7 +66,7 @@ namespace Robin
 			{
 				if (roms == null)
 				{
-					roms = R.Data.Roms.Local.Where(x => x.Platform_ID == ID).ToList();
+					roms = R.Data.Roms.Where(x => x.Platform_ID == ID).ToList();
 				}
 				return roms;
 			}

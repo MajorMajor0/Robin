@@ -45,7 +45,7 @@ namespace Robin
 			Platform NES = R.Data.Platforms.FirstOrDefault(x => x.ID == 22);
 
 			Stopwatch Watch1 = Stopwatch.StartNew();
-			List<Rom> roms = roms = R.Data.Roms.Local.Where(x => x.Platform_ID == NES.ID).ToList();
+			List<Rom> roms = roms = R.Data.Roms.Where(x => x.Platform_ID == NES.ID).ToList();
 			Debug.WriteLine($"List created: {Watch1.ElapsedMilliseconds}."); Watch1.Restart();
 
 			HashSet<string> stringDing = roms.Select(x => x.CRC32) as HashSet<string>;
@@ -95,7 +95,7 @@ namespace Robin
 			int i = 0;
 			foreach (string messMachine in messMachines)
 			{
-				Release release = R.Data.Releases.Local.FirstOrDefault(x => x.Rom.FileName != null && x.Rom.FileName.Split('.')[0] == messMachine);
+				Release release = R.Data.Releases.FirstOrDefault(x => x.Rom.FileName != null && x.Rom.FileName.Split('.')[0] == messMachine);
 
 				if (release != null)
 				{
@@ -113,14 +113,14 @@ namespace Robin
 
 		public static void SetFactoryDatabase()
 		{
-			foreach (Release release in R.Data.Releases.Local)
+			foreach (Release release in R.Data.Releases)
 			{
 				release.IsBeaten = false;
 				release.Rating = null;
 				release.PlayCount = 0;
 			}
 
-			foreach (Collection collection in R.Data.Collections.Local)
+			foreach (Collection collection in R.Data.Collections)
 			{
 				collection.Releases.Clear();
 				collection.Games.Clear();
@@ -129,7 +129,7 @@ namespace Robin
 
 		static void GetMameStatusesAsync()
 		{
-			Platform arcadePlatform = R.Data.Platforms.Local.FirstOrDefault(x => x.ID == CONSTANTS.ARCADE_PLATFORM_ID);
+			Platform arcadePlatform = R.Data.Platforms.FirstOrDefault(x => x.ID == CONSTANTS.ARCADE_PLATFORM_ID);
 
 			Stopwatch Watch = Stopwatch.StartNew();
 			Stopwatch Watch1 = Stopwatch.StartNew();
@@ -140,7 +140,7 @@ namespace Robin
 			List<string> emulationStatuses = new List<string>();
 			settings.DtdProcessing = DtdProcessing.Parse;
 
-			arcadePlatform = R.Data.Platforms.Local.FirstOrDefault(x => x.Title.Contains("Arcade"));
+			arcadePlatform = R.Data.Platforms.FirstOrDefault(x => x.Title.Contains("Arcade"));
 
 			Watch1.Restart();
 			Reporter.Report("Getting xml file from MAME...");
@@ -172,7 +172,7 @@ namespace Robin
 
 		static void SetAdult()
 		{
-			foreach (Release release in R.Data.Releases.Local)
+			foreach (Release release in R.Data.Releases)
 			{
 				if (adults.Contains(release.Rom.FileName))
 				{

@@ -24,7 +24,7 @@ namespace Robin
 
 		public IList Games => LBGames.ToList();
 
-		public Platform RPlatform => R.Data.Platforms.Local.FirstOrDefault(x => x.ID_LB == ID);
+		public Platform RPlatform => R.Data.Platforms.FirstOrDefault(x => x.ID_LB == ID);
 
 		public IEnumerable<LBRelease> LBReleases => LBGames.SelectMany(x => x.LBReleases);
 

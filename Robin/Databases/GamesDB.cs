@@ -65,7 +65,7 @@ namespace Robin
 					{
 						int id = int.Parse(element.SafeGetA("id"));
 
-						GDBRelease gdbRelease = R.Data.GDBReleases.Local.FirstOrDefault(x => x.ID == id);
+						GDBRelease gdbRelease = R.Data.GDBReleases.FirstOrDefault(x => x.ID == id);
 
 						string title = element.SafeGetA("GameTitle");
 
@@ -90,7 +90,7 @@ namespace Robin
 						if (gdbRelease.GDBPlatform_ID != gdbPlatform.ID)
 						{
 							gdbRelease.GDBPlatform_ID = gdbPlatform.ID;
-							Release release = R.Data.Releases.Local.FirstOrDefault(x => x.ID_GDB == id);
+							Release release = R.Data.Releases.FirstOrDefault(x => x.ID_GDB == id);
 							if (release != null)
 							{
 								release.ID_GDB = null;

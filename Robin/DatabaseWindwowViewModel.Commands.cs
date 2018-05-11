@@ -80,12 +80,12 @@ namespace Robin
 				return;
 			}
 
-			Platform RPlatform = R.Data.Platforms.Local.FirstOrDefault(x => x.ID == idbPlatform.ID);
+			Platform RPlatform = R.Data.Platforms.FirstOrDefault(x => x.ID == idbPlatform.ID);
 
 			OVGRelease ovgrelease;
 			foreach (Release release in RPlatform.Releases)
 			{
-				ovgrelease = R.Data.OVGReleases.Local.FirstOrDefault(x => x.SHA1 == release.Rom.SHA1 && x.Region_ID == release.Region_ID && (x.BoxFrontURL != null || x.BoxBackURL != null));
+				ovgrelease = R.Data.OVGReleases.FirstOrDefault(x => x.SHA1 == release.Rom.SHA1 && x.Region_ID == release.Region_ID && (x.BoxFrontURL != null || x.BoxBackURL != null));
 				if (ovgrelease != null)
 				{
 					release.ID_OVG = ovgrelease.ID;
@@ -183,6 +183,7 @@ namespace Robin
 		async void CacheReleases()
 		{
 			// Cache platforms to cache in case selection changes during operation
+			//R.Data.Configuration.AutoDetectChangesEnabled = true;
 			List<IDBPlatform> IDBPlatforms = new List<IDBPlatform>();
 
 			foreach (IDBPlatform idbPlatform in SelectedPlatforms)

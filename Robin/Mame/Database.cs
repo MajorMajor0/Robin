@@ -46,8 +46,8 @@ namespace Robin.Mame
 
 		public Database()
 		{
-			arcadePlatform = R.Data.Platforms.Local.FirstOrDefault(x => x.ID == CONSTANTS.ARCADE_PLATFORM_ID);
-			notNullRegions = R.Data.Regions.Local.Where(x => x.Priority != null).OrderByDescending(x => x.Priority).ToList();
+			arcadePlatform = R.Data.Platforms.FirstOrDefault(x => x.ID == CONSTANTS.ARCADE_PLATFORM_ID);
+			notNullRegions = R.Data.Regions.Where(x => x.Priority != null).OrderByDescending(x => x.Priority).ToList();
 		}
 
 
@@ -128,7 +128,7 @@ namespace Robin.Mame
 				if (game == null)
 				{
 					game = new Game();
-					R.Data.Games.Local.Add(game);
+					R.Data.Games.Add(game);
 				}
 
 				// Check if each rom exists and each release exists
@@ -209,7 +209,7 @@ namespace Robin.Mame
 
 							parentRelease.Game = parentGame;
 							orphanRelease.Game = parentGame;
-							R.Data.Games.Local.Add(parentGame);
+							R.Data.Games.Add(parentGame);
 							arcadePlatform.Releases.Add(parentRelease);
 
 							Debug.WriteLine(machineElement.SafeGetA(element1: "driver", attribute: "status"));
@@ -316,7 +316,7 @@ namespace Robin.Mame
 
 			M.Refresh(true);
 			Reporter.Tic("Storing clones...", out int tic5);
-			foreach (Machine machine in M.Data.Machines.Local.Where(x => x.CloneOf != null))
+			foreach (Machine machine in M.Data.Machines.Where(x => x.CloneOf != null))
 			{
 				if (machines.TryGetValue(machine.CloneOf, out Machine parent))
 				{
@@ -327,7 +327,7 @@ namespace Robin.Mame
 
 			// Find sample based on sampleof stored as temp value
 			Reporter.Tic("Storing samples...", out int tic6);
-			foreach (Machine machine in M.Data.Machines.Local.Where(x => x.SampleOf != null))
+			foreach (Machine machine in M.Data.Machines.Where(x => x.SampleOf != null))
 			{
 				if (machines.TryGetValue(machine.SampleOf, out Machine sampleof))
 					machine.Sample = sampleof;
@@ -338,149 +338,6 @@ namespace Robin.Mame
 
 			Reporter.Report("Finished: " + Watch.Elapsed.ToString(@"m\:ss"));
 		}
-
-		//public void CacheDataFast()
-		//{
-		//	Stopwatch Watch = Stopwatch.StartNew();
-		//	Stopwatch Watch1 = Stopwatch.StartNew();
-
-		//	XmlReaderSettings settings = new XmlReaderSettings();
-		//	settings.DtdProcessing = DtdProcessing.Parse;
-
-		//	// Wipe tables
-		//	Reporter.Tic("Wiping tables.");
-		//	string query = @"DELETE FROM Machine_Disk;
-		//					DELETE FROM Machine_Rom;
-		//					DELETE FROM Machine;
-		//					DELETE FROM Disk;
-		//					DELETE FROM Rom;
-		//					DELETE FROM sqlite_sequence;";
-
-		//	M.Data.Database.ExecuteSqlCommand(query);
-		//	Reporter.Toc();
-
-		//	//Reload M.Data so it knows about the wipe
-		//	M.Refresh(false);
-		//	M.Data.Configuration.ValidateOnSaveEnabled = false;
-
-		//	int machineCount = 0;
-		//	int romCount = 0;
-		//	int diskCount = 0;
-
-		//	Dictionary<string, Machine> machines = new Dictionary<string, Machine>();
-		//	Dictionary<string, Rom> roms = new Dictionary<string, Rom>();
-		//	Dictionary<string, Disk> disks = new Dictionary<string, Disk>();
-
-		//	// Scan through xml file from MAME and store machines
-		//	using (Process process = MAMEexe(@"-lx"))
-		//	using (XmlReader reader = XmlReader.Create(process.StandardOutput, settings))
-		//	{
-		//		Reporter.Tic("Getting xml file from MAME...");
-		//		while (reader.Read())
-		//		{
-		//			if (reader.Name == "machine")
-		//			{
-		//				XElement machineElement = XNode.ReadFrom(reader) as XElement;
-		//				Machine machine = new Machine(machineElement);
-		//				machines.Add(machine.Name, machine);
-		//				machine.ID = machineCount;
-
-		//				foreach (XElement romElement in machineElement.Elements("rom"))
-		//				{
-		//					string crc = romElement.Attribute("crc")?.Value ?? "NONE" + romCount;
-		//					Rom rom;
-		//					if (!roms.TryGetValue(crc, out rom))
-		//					{
-		//						rom = new Rom(romElement);
-		//						roms.Add(crc, rom);
-		//					}
-		//					machine.Roms.Add(rom);
-		//					rom.ID = ++romCount;
-		//				}
-
-		//				foreach (XElement diskElement in machineElement.Elements("disk"))
-		//				{
-		//					string sha1 = diskElement.Attribute("sha1")?.Value ?? "NONE" + diskCount;
-		//					Disk disk;
-
-		//					if (!disks.TryGetValue(sha1, out disk))
-		//					{
-		//						disk = new Disk(diskElement);
-		//						disks.Add(sha1, disk);
-		//					}
-		//					machine.Disks.Add(disk);
-		//					disk.ID = ++diskCount;
-		//				}
-
-		//				if (++machineCount % 5000 == 0)
-		//				{
-		//					Reporter.Report(machineCount + " machines, " + Watch1.Elapsed.TotalSeconds + " s.");
-		//					Watch1.Restart();
-		//				}
-		//			}
-		//		}
-		//		Reporter.Toc();
-		//	}
-
-		//	//// Add machines
-		//	//Reporter.Tic("Adding machines...");
-		//	//M.Data.Machines.AddRange(machines.Select(x => x.Value));
-		//	//Reporter.Toc();
-
-		//	Reporter.Tic("Saving changes...");
-		//	using (var connection = new SQLiteConnection(M.Data.ConnectionString))
-		//	{
-		//		connection.Open();
-		//		Stopwatch Watch2 = Stopwatch.StartNew();
-
-		//		using (var command = new SQLiteCommand(connection))
-		//		{
-		//			using (var transaction = connection.BeginTransaction())
-		//			{
-		//				foreach (Machine machine in machines.Values)
-		//				{
-		//					command.CommandText = MachineDictionaryToSql(machine);
-		//					command.ExecuteNonQuery();
-		//				}
-
-		//				foreach (Rom rom in roms.Values)
-		//				{
-		//					command.CommandText = RomDictionaryToSql(rom);
-		//					command.ExecuteNonQuery();
-		//				}
-
-		//				transaction.Commit();
-		//			}
-		//		}
-		//		connection.Close();
-		//	}
-		//	//M.Data.Save(false);
-		//	Reporter.Toc();
-
-		//	M.Refresh(true);
-		//	Reporter.Tic("Storing clones...");
-		//	foreach (Machine machine in M.Data.Machines.Local.Where(x => x.CloneOf != null))
-		//	{
-		//		if (machines.TryGetValue(machine.CloneOf, out Machine parent))
-		//		{
-		//			machine.Parent = parent;
-		//		}
-		//	}
-		//	Reporter.Toc();
-
-		//	// Find sample based on sampleof stored as temp value
-		//	Reporter.Tic("Storing samples...");
-		//	foreach (Machine machine in M.Data.Machines.Local.Where(x => x.SampleOf != null))
-		//	{
-		//		if (machines.TryGetValue(machine.SampleOf, out Machine sampleof))
-		//			machine.Sample = sampleof;
-		//	}
-		//	Reporter.Toc();
-
-		//	M.Data.Save(true);
-
-		//	Reporter.Report("Finished: " + Watch.Elapsed.ToString(@"m\:ss"));
-		//}
 
 		static ProcessStartInfo MAMEProcess(string arguments = null)
 		{
@@ -538,7 +395,7 @@ namespace Robin.Mame
 			string parenthesisText = Machine.GetParenthesisText(release.Title);
 
 			// Get region from text in parenthesis
-			foreach (Region region in R.Data.Regions.Local)
+			foreach (Region region in R.Data.Regions)
 			{
 				if (parenthesisText != null && (parenthesisText.Contains(region.Title) || parenthesisText.Contains(region.Datomatic ?? "XXX") || parenthesisText.Contains(region.UNCode ?? "XXX")))
 				{
@@ -571,7 +428,7 @@ namespace Robin.Mame
 		public static TitledCollection<Audit.Result> AuditRoms()
 		{
 			Reporter.Report("Auditing MAME ROMs");
-			Emulator mame = R.Data.Emulators.Local.FirstOrDefault(x => x.ID == CONSTANTS.MAME_ID);
+			Emulator mame = R.Data.Emulators.FirstOrDefault(x => x.ID == CONSTANTS.MAME_ID);
 
 			List<string> arguments = GetListOfCurrentRoms();
 
@@ -633,7 +490,7 @@ namespace Robin.Mame
 		{
 			Reporter.Report("Getting roms from Robin...");
 			List<string> returner = new List<string>();
-			Platform arcadePlatform = R.Data.Platforms.Local.FirstOrDefault(x => x.ID == CONSTANTS.ARCADE_PLATFORM_ID);
+			Platform arcadePlatform = R.Data.Platforms.FirstOrDefault(x => x.ID == CONSTANTS.ARCADE_PLATFORM_ID);
 			string[] arcadeRoms = arcadePlatform.Releases.Select(x => x.Rom.FileName.Replace(@".zip", "")).OrderBy(x => x).ToArray();
 
 			int i = 0;

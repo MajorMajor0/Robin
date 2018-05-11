@@ -159,10 +159,10 @@ namespace Robin
 		{
 			MainBigList = new ObservableCollection<object>
 			{
-				(releaseCollection = new AutoFilterReleases(R.Data.Releases.Local.ToList(), "Releases")),
-				(gameCollection = new AutoFilterGames(R.Data.Games.Local.ToList(), "Games")),
-				(platformCollection = new AutoFilterPlatforms(R.Data.Platforms.Local.ToList(), "Platforms")),
-				(emulatorCollection = new AutoFilterEmulators(R.Data.Emulators.Local.ToList(), "Emulators")),
+				(releaseCollection = new AutoFilterReleases(R.Data.Releases.ToList(), "Releases")),
+				(gameCollection = new AutoFilterGames(R.Data.Games.ToList(), "Games")),
+				(platformCollection = new AutoFilterPlatforms(R.Data.Platforms.ToList(), "Platforms")),
+				(emulatorCollection = new AutoFilterEmulators(R.Data.Emulators.ToList(), "Emulators")),
 				(CollectionList = new CollectionList("Collections"))
 			};
 
@@ -180,9 +180,9 @@ namespace Robin
 
 		void OptionsWindowClosed(object sender, EventArgs e)
 		{
-			releaseCollection = new AutoFilterReleases(R.Data.Releases.Local.ToList(), "Releases");
+			releaseCollection = new AutoFilterReleases(R.Data.Releases.ToList(), "Releases");
 			MainBigList[0] = releaseCollection;
-			gameCollection = new AutoFilterGames(R.Data.Games.Local.ToList(), "Games");
+			gameCollection = new AutoFilterGames(R.Data.Games.ToList(), "Games");
 			MainBigList[1] = gameCollection;
 		}
 

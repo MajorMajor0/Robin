@@ -21,7 +21,7 @@ namespace Robin
 	{
 		public IList Releases => GBReleases.ToList();
 
-		public Platform RPlatform => R.Data.Platforms.Local.FirstOrDefault(x => x.ID_GB == ID);
+		public Platform RPlatform => R.Data.Platforms.FirstOrDefault(x => x.ID_GB == ID);
 
 		public int MatchedReleaseCount
 		{

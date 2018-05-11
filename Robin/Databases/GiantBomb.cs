@@ -113,7 +113,7 @@ namespace Robin
 								// If the ID XML value was found
 								if (int.TryParse(element.SafeGetA("id"), out int intCatcher))
 								{
-									GBRelease gbRelease = R.Data.GBReleases.Local.FirstOrDefault(x => x.ID == intCatcher);
+									GBRelease gbRelease = R.Data.GBReleases.FirstOrDefault(x => x.ID == intCatcher);
 
 									string title = element.SafeGetA("name");
 
@@ -134,7 +134,7 @@ namespace Robin
 									if (gbRelease.GBPlatform_ID != gbPlatform.ID)
 									{
 										gbRelease.GBPlatform_ID = gbPlatform.ID;
-										Release release = R.Data.Releases.Local.FirstOrDefault(x => x.ID_GB == gbRelease.ID);
+										Release release = R.Data.Releases.FirstOrDefault(x => x.ID_GB == gbRelease.ID);
 										if (release != null)
 										{
 											release.ID_GB = null;
@@ -157,7 +157,7 @@ namespace Robin
 									gbRelease.GBPlatform_ID = gbPlatform.ID;
 									if (int.TryParse(element.SafeGetA("region", "id"), out intCatcher))
 									{
-										gbRelease.Region = R.Data.Regions.Local.FirstOrDefault(x => x.ID_GB == intCatcher) ?? R.Data.Regions.Local.FirstOrDefault(x => x.Title.Contains("Unk"));
+										gbRelease.Region = R.Data.Regions.FirstOrDefault(x => x.ID_GB == intCatcher) ?? R.Data.Regions.FirstOrDefault(x => x.Title.Contains("Unk"));
 									}
 
 									gbRelease.Date = DateTimeRoutines.SafeGetDate(element.SafeGetA("release_date"));
@@ -238,7 +238,7 @@ namespace Robin
 								// If the ID XML value was found
 								if (int.TryParse(element.SafeGetA("id"), out var intCatcher))
 								{
-									GBGame gbGame = R.Data.GBGames.Local.FirstOrDefault(x => x.ID == intCatcher);
+									GBGame gbGame = R.Data.GBGames.FirstOrDefault(x => x.ID == intCatcher);
 
 									if (gbGame == null)
 									{
