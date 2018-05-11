@@ -17,7 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 
-namespace Robin
+namespace Robin.Launchbox
 {
 	public partial class LBRelease : IDBRelease
 	{
@@ -433,6 +433,13 @@ namespace Robin
 				}
 			}
 			return 0;
+		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged(string name)
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 		}
 	}
 }

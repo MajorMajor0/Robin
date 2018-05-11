@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="8b9fee902baf4197927357a607c68889" Name="Diagram1">
+        <EntityTypeShape EntityType="LaunchboxModel.LBGame" Width="1.5" PointX="3" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="LaunchboxModel.LBImage" Width="1.5" PointX="7.5" PointY="1.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="LaunchboxModel.LBPlatform" Width="1.5" PointX="0.75" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="LaunchboxModel.LBRelease" Width="1.5" PointX="5.25" PointY="1.875" IsExpanded="true" />
+        <AssociationConnector Association="LaunchboxModel.FK_LBGame_0_0" ManuallyRouted="false" />
+        <AssociationConnector Association="LaunchboxModel.FK_LBRelease_0_0" ManuallyRouted="false" />
+        <AssociationConnector Association="LaunchboxModel.FK_LBImage_0_0" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

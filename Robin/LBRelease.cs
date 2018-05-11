@@ -11,68 +11,22 @@ namespace Robin
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Collections.ObjectModel;
     
-    public partial class LBRelease : INotifyPropertyChanged
+    public partial class LBRelease
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public LBRelease()
         {
-    		LBImages = new HashSet<LBImage>();
+            this.LBImages = new HashSet<LBImage>();
         }
     
-        private long _iD;
-    	public long ID 
-    	{ 
-    		get { return _iD; } 
-    		set { _iD = value; OnPropertyChanged("ID"); } 
-    	}
-    
-        private long _lBGame_ID;
-    	public long LBGame_ID 
-    	{ 
-    		get { return _lBGame_ID; } 
-    		set { _lBGame_ID = value; OnPropertyChanged("LBGame_ID"); } 
-    	}
-    
-        private long _region_ID;
-    	public long Region_ID 
-    	{ 
-    		get { return _region_ID; } 
-    		set { _region_ID = value; OnPropertyChanged("Region_ID"); } 
-    	}
-    
-        private string _title;
-    	public string Title 
-    	{ 
-    		get { return _title; } 
-    		set { _title = value; OnPropertyChanged("Title"); } 
-    	}
-    
+        public long ID { get; set; }
+        public long LBGame_ID { get; set; }
+        public long Region_ID { get; set; }
+        public string Title { get; set; }
     
         public virtual LBGame LBGame { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual HashSet<LBImage> LBImages { get; set; }
-        public virtual Region Region { get; set; }
-     
-        public event PropertyChangedEventHandler PropertyChanged;
-    
-        protected void OnPropertyChanged(string propertyName)
-        {
-            OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
-        }
-    	
-        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            if (PropertyChanged != null)
-            {
-                WhenPropertyChanged(e);
-                PropertyChanged(this, e);
-            }
-        }
-    
-        partial void WhenPropertyChanged(PropertyChangedEventArgs e);
-        
+        public virtual ICollection<LBImage> LBImages { get; set; }
     }
 }

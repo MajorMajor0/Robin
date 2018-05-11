@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Robin.Launchbox
+namespace Robin
 {
     using System;
     using System.Data.Entity;
@@ -25,9 +25,9 @@ namespace Robin.Launchbox
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<Game> Games { get; set; }
-        public virtual DbSet<Image> Images { get; set; }
-        public virtual DbSet<Platform> Platforms { get; set; }
-        public virtual DbSet<Release> Releases { get; set; }
+        public virtual DbSet<LBGame> LBGames { get; set; }
+        public virtual DbSet<LBImage> LBImages { get; set; }
+        public virtual DbSet<LBPlatform> LBPlatforms { get; set; }
+        public virtual DbSet<LBRelease> LBReleases { get; set; }
     }
 }

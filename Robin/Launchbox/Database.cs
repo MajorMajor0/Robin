@@ -25,9 +25,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Xml.Linq;
 
-namespace Robin
+namespace Robin.Launchbox
 {
-	class Launchbox : IDB
+	class Database: IDB
 	{
 		bool platformsCached;
 

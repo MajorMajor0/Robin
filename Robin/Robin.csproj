@@ -161,8 +161,29 @@
     <Compile Include="Databases\GiantBomb.cs" />
     <Compile Include="Classes\Reporter.cs" />
     <Compile Include="Controls\BindableSelectionListBox.cs" />
-    <Compile Include="Launchbox\Image.cs">
-      <DependentUpon>LBEntities.tt</DependentUpon>
+    <Compile Include="Emulator.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Game.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GBGame.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GBPlatform.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GBRelease.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GDBPlatform.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GDBRelease.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Language.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Launchbox\LBEntities.Context.cs">
       <AutoGen>True</AutoGen>
@@ -178,6 +199,18 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>LBEntities.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Launchbox\LBGame.cs">
+      <DependentUpon>LBEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Launchbox\LBImage.cs">
+      <DependentUpon>LBEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Launchbox\LBPlatform.cs">
+      <DependentUpon>LBEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Launchbox\LBRelease.cs">
+      <DependentUpon>LBEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="Mame\Disk.cs">
       <DependentUpon>MEntities.tt</DependentUpon>
@@ -230,45 +263,9 @@
     <Compile Include="DataEntities.Extensions\Rom.Extensions.cs" />
     <Compile Include="DataEntities.Extensions\VGDBRELEAS.Extensions.cs" />
     <Compile Include="DataEntities.Extensions\LBGame.Extensions.cs" />
-    <Compile Include="Emulator.cs">
-      <DependentUpon>RobinDataModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Galasoft.MvvmLight\RelayCommand.cs" />
     <Compile Include="Galasoft.MvvmLight\WeakAction.cs" />
     <Compile Include="Galasoft.MvvmLight\WeakFunc.cs" />
-    <Compile Include="Launchbox\Game.cs">
-      <DependentUpon>LBEntities.tt</DependentUpon>
-    </Compile>
-    <Compile Include="GBGame.cs">
-      <DependentUpon>RobinDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="GBPlatform.cs">
-      <DependentUpon>RobinDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="GBRelease.cs">
-      <DependentUpon>RobinDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="GDBPlatform.cs">
-      <DependentUpon>RobinDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="GDBRelease.cs">
-      <DependentUpon>RobinDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Language.cs">
-      <DependentUpon>RobinDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="LBGame.cs">
-      <DependentUpon>RobinDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="LBImage.cs">
-      <DependentUpon>RobinDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="LBPlatform.cs">
-      <DependentUpon>RobinDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="LBRelease.cs">
-      <DependentUpon>RobinDataModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="MainWindowViewModel.Commands.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -322,21 +319,21 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>OpenVGDBModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Classes\Randomizer.cs" />
     <Compile Include="OVGPlatform.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="OVGRelease.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Launchbox\Platform.cs">
-      <DependentUpon>LBEntities.tt</DependentUpon>
+    <Compile Include="Platform.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Classes\Randomizer.cs" />
     <Compile Include="Region.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Launchbox\Release.cs">
-      <DependentUpon>LBEntities.tt</DependentUpon>
+    <Compile Include="Release.cs">
+      <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RobinDataModel.Context.cs">
       <AutoGen>True</AutoGen>
@@ -457,10 +454,6 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="data\RobinData.db3" />
-    <EntityDeploy Include="RobinDataModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>RobinDataModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
     <EntityDeploy Include="Mame\MEntities.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>MEntities.Designer.cs</LastGenOutput>
@@ -475,6 +468,10 @@
     <None Include="Mame\MEntities.edmx.diagram">
       <DependentUpon>MEntities.edmx</DependentUpon>
     </None>
+    <EntityDeploy Include="RobinDataModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>RobinDataModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
     <None Include="RobinDataModel.edmx.diagram">
       <DependentUpon>RobinDataModel.edmx</DependentUpon>
     </None>

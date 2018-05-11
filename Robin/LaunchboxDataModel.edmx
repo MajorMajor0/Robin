@@ -4,8 +4,8 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="LBModel.Store" Provider="System.Data.SQLite.EF6" ProviderManifestToken="data source=D:\Robin_debug\data\Launchbox.db3" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <EntityType Name="Game">
+      <Schema Namespace="MEntities.Store" Provider="System.Data.SQLite.EF6" ProviderManifestToken="data source=D:\Robin_debug\data\Launchbox.db3" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="LBGame">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
@@ -13,7 +13,7 @@
           <Property Name="Title" Type="nvarchar" MaxLength="2147483647" Nullable="false" />
           <Property Name="Date" Type="datetime" />
           <Property Name="Overview" Type="nvarchar" MaxLength="2147483647" />
-          <Property Name="Platform_ID" Type="integer" Nullable="false" />
+          <Property Name="LBPlatform_ID" Type="integer" Nullable="false" />
           <Property Name="Genres" Type="nvarchar" MaxLength="2147483647" />
           <Property Name="Developer" Type="nvarchar" MaxLength="2147483647" />
           <Property Name="Publisher" Type="nvarchar" MaxLength="2147483647" />
@@ -21,7 +21,7 @@
           <Property Name="WikiURL" Type="nvarchar" MaxLength="2147483647" />
           <Property Name="Players" Type="nvarchar" MaxLength="2147483647" />
         </EntityType>
-        <EntityType Name="Image">
+        <EntityType Name="LBImage">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
@@ -30,9 +30,9 @@
           <Property Name="FileName" Type="nvarchar" MaxLength="2147483647" Nullable="false" />
           <Property Name="LBRegion" Type="nvarchar" MaxLength="2147483647" />
           <Property Name="Region_ID" Type="integer" Nullable="false" />
-          <Property Name="Release_ID" Type="integer" Nullable="false" />
+          <Property Name="LBRelease_ID" Type="integer" Nullable="false" />
         </EntityType>
-        <EntityType Name="Platform">
+        <EntityType Name="LBPlatform">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
@@ -51,75 +51,75 @@
           <Property Name="Controllers" Type="nvarchar" MaxLength="2147483647" />
           <Property Name="CacheDate" Type="datetime" Nullable="false" />
         </EntityType>
-        <EntityType Name="Release">
+        <EntityType Name="LBRelease">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="integer" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Game_ID" Type="integer" Nullable="false" />
+          <Property Name="LBGame_ID" Type="integer" Nullable="false" />
           <Property Name="Region_ID" Type="integer" Nullable="false" />
           <Property Name="Title" Type="nvarchar" MaxLength="2147483647" />
         </EntityType>
-        <Association Name="FK_Game_0_0">
-          <End Role="Platform" Type="Self.Platform" Multiplicity="1" />
-          <End Role="Game" Type="Self.Game" Multiplicity="*" />
+        <Association Name="FK_LBGame_0_0">
+          <End Role="LBPlatform" Type="Self.LBPlatform" Multiplicity="1" />
+          <End Role="LBGame" Type="Self.LBGame" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Platform">
+            <Principal Role="LBPlatform">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="Game">
-              <PropertyRef Name="Platform_ID" />
+            <Dependent Role="LBGame">
+              <PropertyRef Name="LBPlatform_ID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Image_0_0">
-          <End Role="Release" Type="Self.Release" Multiplicity="1" />
-          <End Role="Image" Type="Self.Image" Multiplicity="*" />
+        <Association Name="FK_LBImage_0_0">
+          <End Role="LBRelease" Type="Self.LBRelease" Multiplicity="1" />
+          <End Role="LBImage" Type="Self.LBImage" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Release">
+            <Principal Role="LBRelease">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="Image">
-              <PropertyRef Name="Release_ID" />
+            <Dependent Role="LBImage">
+              <PropertyRef Name="LBRelease_ID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Release_0_0">
-          <End Role="Game" Type="Self.Game" Multiplicity="1" />
-          <End Role="Release" Type="Self.Release" Multiplicity="*" />
+        <Association Name="FK_LBRelease_0_0">
+          <End Role="LBGame" Type="Self.LBGame" Multiplicity="1" />
+          <End Role="LBRelease" Type="Self.LBRelease" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Game">
+            <Principal Role="LBGame">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="Release">
-              <PropertyRef Name="Game_ID" />
+            <Dependent Role="LBRelease">
+              <PropertyRef Name="LBGame_ID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="LBModelStoreContainer">
-          <EntitySet Name="Game" EntityType="Self.Game" store:Type="Tables" />
-          <EntitySet Name="Image" EntityType="Self.Image" store:Type="Tables" />
-          <EntitySet Name="Platform" EntityType="Self.Platform" store:Type="Tables" />
-          <EntitySet Name="Release" EntityType="Self.Release" store:Type="Tables" />
-          <AssociationSet Name="FK_Game_0_0" Association="Self.FK_Game_0_0">
-            <End Role="Platform" EntitySet="Platform" />
-            <End Role="Game" EntitySet="Game" />
+        <EntityContainer Name="MEntitiesStoreContainer">
+          <EntitySet Name="LBGame" EntityType="Self.LBGame" store:Type="Tables" />
+          <EntitySet Name="LBImage" EntityType="Self.LBImage" store:Type="Tables" />
+          <EntitySet Name="LBPlatform" EntityType="Self.LBPlatform" store:Type="Tables" />
+          <EntitySet Name="LBRelease" EntityType="Self.LBRelease" store:Type="Tables" />
+          <AssociationSet Name="FK_LBGame_0_0" Association="Self.FK_LBGame_0_0">
+            <End Role="LBPlatform" EntitySet="LBPlatform" />
+            <End Role="LBGame" EntitySet="LBGame" />
           </AssociationSet>
-          <AssociationSet Name="FK_Image_0_0" Association="Self.FK_Image_0_0">
-            <End Role="Release" EntitySet="Release" />
-            <End Role="Image" EntitySet="Image" />
+          <AssociationSet Name="FK_LBImage_0_0" Association="Self.FK_LBImage_0_0">
+            <End Role="LBRelease" EntitySet="LBRelease" />
+            <End Role="LBImage" EntitySet="LBImage" />
           </AssociationSet>
-          <AssociationSet Name="FK_Release_0_0" Association="Self.FK_Release_0_0">
-            <End Role="Game" EntitySet="Game" />
-            <End Role="Release" EntitySet="Release" />
+          <AssociationSet Name="FK_LBRelease_0_0" Association="Self.FK_LBRelease_0_0">
+            <End Role="LBGame" EntitySet="LBGame" />
+            <End Role="LBRelease" EntitySet="LBRelease" />
           </AssociationSet>
         </EntityContainer>
       </Schema>
     </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="LBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="Game">
+      <Schema Namespace="MEntities" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="LBGame">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
@@ -127,17 +127,17 @@
           <Property Name="Title" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Date" Type="DateTime" />
           <Property Name="Overview" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
-          <Property Name="Platform_ID" Type="Int64" Nullable="false" />
+          <Property Name="LBPlatform_ID" Type="Int64" Nullable="false" />
           <Property Name="Genres" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="Developer" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="Publisher" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="VideoURL" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="WikiURL" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="Players" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Platform" Relationship="Self.FK_Game_0_0" FromRole="Game" ToRole="Platform" />
-          <NavigationProperty Name="Releases" Relationship="Self.FK_Release_0_0" FromRole="Game" ToRole="Release" />
+          <NavigationProperty Name="LBPlatform" Relationship="Self.FK_LBGame_0_0" FromRole="LBGame" ToRole="LBPlatform" />
+          <NavigationProperty Name="LBReleases" Relationship="Self.FK_LBRelease_0_0" FromRole="LBGame" ToRole="LBRelease" />
         </EntityType>
-        <EntityType Name="Image">
+        <EntityType Name="LBImage">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
@@ -146,10 +146,10 @@
           <Property Name="FileName" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="LBRegion" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="Region_ID" Type="Int64" Nullable="false" />
-          <Property Name="Release_ID" Type="Int64" Nullable="false" />
-          <NavigationProperty Name="Release" Relationship="Self.FK_Image_0_0" FromRole="Image" ToRole="Release" />
+          <Property Name="LBRelease_ID" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="LBRelease" Relationship="Self.FK_LBImage_0_0" FromRole="LBImage" ToRole="LBRelease" />
         </EntityType>
-        <EntityType Name="Platform">
+        <EntityType Name="LBPlatform">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
@@ -167,71 +167,71 @@
           <Property Name="Media" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="Controllers" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="CacheDate" Type="DateTime" Nullable="false" />
-          <NavigationProperty Name="Games" Relationship="Self.FK_Game_0_0" FromRole="Platform" ToRole="Game" />
+          <NavigationProperty Name="LBGames" Relationship="Self.FK_LBGame_0_0" FromRole="LBPlatform" ToRole="LBGame" />
         </EntityType>
-        <EntityType Name="Release">
+        <EntityType Name="LBRelease">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Game_ID" Type="Int64" Nullable="false" />
+          <Property Name="LBGame_ID" Type="Int64" Nullable="false" />
           <Property Name="Region_ID" Type="Int64" Nullable="false" />
           <Property Name="Title" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Game" Relationship="Self.FK_Release_0_0" FromRole="Release" ToRole="Game" />
-          <NavigationProperty Name="Images" Relationship="Self.FK_Image_0_0" FromRole="Release" ToRole="Image" />
+          <NavigationProperty Name="LBGame" Relationship="Self.FK_LBRelease_0_0" FromRole="LBRelease" ToRole="LBGame" />
+          <NavigationProperty Name="LBImages" Relationship="Self.FK_LBImage_0_0" FromRole="LBRelease" ToRole="LBImage" />
         </EntityType>
-        <Association Name="FK_Game_0_0">
-          <End Role="Platform" Type="Self.Platform" Multiplicity="1" />
-          <End Role="Game" Type="Self.Game" Multiplicity="*" />
+        <Association Name="FK_LBGame_0_0">
+          <End Role="LBPlatform" Type="Self.LBPlatform" Multiplicity="1" />
+          <End Role="LBGame" Type="Self.LBGame" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Platform">
+            <Principal Role="LBPlatform">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="Game">
-              <PropertyRef Name="Platform_ID" />
+            <Dependent Role="LBGame">
+              <PropertyRef Name="LBPlatform_ID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Release_0_0">
-          <End Role="Game" Type="Self.Game" Multiplicity="1" />
-          <End Role="Release" Type="Self.Release" Multiplicity="*" />
+        <Association Name="FK_LBRelease_0_0">
+          <End Role="LBGame" Type="Self.LBGame" Multiplicity="1" />
+          <End Role="LBRelease" Type="Self.LBRelease" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Game">
+            <Principal Role="LBGame">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="Release">
-              <PropertyRef Name="Game_ID" />
+            <Dependent Role="LBRelease">
+              <PropertyRef Name="LBGame_ID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Image_0_0">
-          <End Role="Release" Type="Self.Release" Multiplicity="1" />
-          <End Role="Image" Type="Self.Image" Multiplicity="*" />
+        <Association Name="FK_LBImage_0_0">
+          <End Role="LBRelease" Type="Self.LBRelease" Multiplicity="1" />
+          <End Role="LBImage" Type="Self.LBImage" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Release">
+            <Principal Role="LBRelease">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="Image">
-              <PropertyRef Name="Release_ID" />
+            <Dependent Role="LBImage">
+              <PropertyRef Name="LBRelease_ID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="LBEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Games" EntityType="Self.Game" />
-          <EntitySet Name="Images" EntityType="Self.Image" />
-          <EntitySet Name="Platforms" EntityType="Self.Platform" />
-          <EntitySet Name="Releases" EntityType="Self.Release" />
-          <AssociationSet Name="FK_Game_0_0" Association="Self.FK_Game_0_0">
-            <End Role="Platform" EntitySet="Platforms" />
-            <End Role="Game" EntitySet="Games" />
+          <EntitySet Name="LBGames" EntityType="Self.LBGame" />
+          <EntitySet Name="LBImages" EntityType="Self.LBImage" />
+          <EntitySet Name="LBPlatforms" EntityType="Self.LBPlatform" />
+          <EntitySet Name="LBReleases" EntityType="Self.LBRelease" />
+          <AssociationSet Name="FK_LBGame_0_0" Association="Self.FK_LBGame_0_0">
+            <End Role="LBPlatform" EntitySet="LBPlatforms" />
+            <End Role="LBGame" EntitySet="LBGames" />
           </AssociationSet>
-          <AssociationSet Name="FK_Release_0_0" Association="Self.FK_Release_0_0">
-            <End Role="Game" EntitySet="Games" />
-            <End Role="Release" EntitySet="Releases" />
+          <AssociationSet Name="FK_LBRelease_0_0" Association="Self.FK_LBRelease_0_0">
+            <End Role="LBGame" EntitySet="LBGames" />
+            <End Role="LBRelease" EntitySet="LBReleases" />
           </AssociationSet>
-          <AssociationSet Name="FK_Image_0_0" Association="Self.FK_Image_0_0">
-            <End Role="Release" EntitySet="Releases" />
-            <End Role="Image" EntitySet="Images" />
+          <AssociationSet Name="FK_LBImage_0_0" Association="Self.FK_LBImage_0_0">
+            <End Role="LBRelease" EntitySet="LBReleases" />
+            <End Role="LBImage" EntitySet="LBImages" />
           </AssociationSet>
         </EntityContainer>
       </Schema>
@@ -239,15 +239,15 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="LBModelStoreContainer" CdmEntityContainer="LBEntities">
-          <EntitySetMapping Name="Games">
-            <EntityTypeMapping TypeName="LBModel.Game">
-              <MappingFragment StoreEntitySet="Game">
+        <EntityContainerMapping StorageEntityContainer="MEntitiesStoreContainer" CdmEntityContainer="LBEntities">
+          <EntitySetMapping Name="LBGames">
+            <EntityTypeMapping TypeName="MEntities.LBGame">
+              <MappingFragment StoreEntitySet="LBGame">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
                 <ScalarProperty Name="Date" ColumnName="Date" />
                 <ScalarProperty Name="Overview" ColumnName="Overview" />
-                <ScalarProperty Name="Platform_ID" ColumnName="Platform_ID" />
+                <ScalarProperty Name="LBPlatform_ID" ColumnName="LBPlatform_ID" />
                 <ScalarProperty Name="Genres" ColumnName="Genres" />
                 <ScalarProperty Name="Developer" ColumnName="Developer" />
                 <ScalarProperty Name="Publisher" ColumnName="Publisher" />
@@ -257,21 +257,21 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Images">
-            <EntityTypeMapping TypeName="LBModel.Image">
-              <MappingFragment StoreEntitySet="Image">
+          <EntitySetMapping Name="LBImages">
+            <EntityTypeMapping TypeName="MEntities.LBImage">
+              <MappingFragment StoreEntitySet="LBImage">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Type" ColumnName="Type" />
                 <ScalarProperty Name="FileName" ColumnName="FileName" />
                 <ScalarProperty Name="LBRegion" ColumnName="LBRegion" />
                 <ScalarProperty Name="Region_ID" ColumnName="Region_ID" />
-                <ScalarProperty Name="Release_ID" ColumnName="Release_ID" />
+                <ScalarProperty Name="LBRelease_ID" ColumnName="LBRelease_ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Platforms">
-            <EntityTypeMapping TypeName="LBModel.Platform">
-              <MappingFragment StoreEntitySet="Platform">
+          <EntitySetMapping Name="LBPlatforms">
+            <EntityTypeMapping TypeName="MEntities.LBPlatform">
+              <MappingFragment StoreEntitySet="LBPlatform">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
                 <ScalarProperty Name="Category" ColumnName="Category" />
@@ -289,11 +289,11 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Releases">
-            <EntityTypeMapping TypeName="LBModel.Release">
-              <MappingFragment StoreEntitySet="Release">
+          <EntitySetMapping Name="LBReleases">
+            <EntityTypeMapping TypeName="MEntities.LBRelease">
+              <MappingFragment StoreEntitySet="LBRelease">
                 <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="Game_ID" ColumnName="Game_ID" />
+                <ScalarProperty Name="LBGame_ID" ColumnName="LBGame_ID" />
                 <ScalarProperty Name="Region_ID" ColumnName="Region_ID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
               </MappingFragment>

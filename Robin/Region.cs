@@ -16,6 +16,13 @@ namespace Robin
     
     public partial class Region : INotifyPropertyChanged
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Region()
+        {
+    		GBReleases = new HashSet<GBRelease>();
+    		OVGReleases = new HashSet<OVGRelease>();
+        }
+    
         private long _iD;
     	public long ID 
     	{ 
@@ -79,6 +86,11 @@ namespace Robin
     		set { _launchbox = value; OnPropertyChanged("Launchbox"); } 
     	}
     
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual HashSet<GBRelease> GBReleases { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual HashSet<OVGRelease> OVGReleases { get; set; }
      
         public event PropertyChangedEventHandler PropertyChanged;
     
