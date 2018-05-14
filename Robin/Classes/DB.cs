@@ -62,6 +62,9 @@ namespace Robin
 		int MatchedReleaseCount { get; }
 	}
 
+	/// <summary>
+	/// A local cache of and online database, Games DB, GiantBomb, LaunchBox...
+	/// </summary>
 	public interface IDB : IDisposable
 	{
 		LocalDB DB { get; }
@@ -69,10 +72,34 @@ namespace Robin
 		DbSet Platforms { get; }
 		DbSet Releases { get; }
 		bool HasRegions { get; }
+
+		/// <summary>
+		/// Update the list of platforms in the local DB cache, GBPlatform, GDBlatform, LBPlatform...
+		/// </summary>
 		void CachePlatforms();
+
+		/// <summary>
+		/// Update the local DB cache of realeases for one platform, inlcluding the list of releases and associated metadata. LBRealease, GBRelease, GDBRelease...
+		/// </summary>
+		/// <param name="platform"></param>
 		void CachePlatformReleases(Platform platform);
+
+		/// <summary>
+		/// Update the local DB cache of games for one platform, inlcluding the list o games and associated metadata.
+		/// </summary>
+		/// <param name="platform"></param>
 		void CachePlatformGames(Platform platform);
+		
+		/// <summary>
+		/// Update the local DB cache of platform associated metadata
+		/// </summary>
+		/// <param name="platform"></param>
 		void CachePlatformData(Platform platform);
+
+		/// <summary>
+		/// Report to the UI how many database entries and of what type have been updated or added since the last save changes for a local DB cache.
+		/// </summary>
+		/// <param name="detect">Whether to detect changes prior to reporting. Detecting changes takes about 4 seconds. This can be set to false if no changes have been made since the last detect changes. Detecting changes is only necessary for updates, it is not necessary to detect additions.</param>
 		void ReportUpdates(bool detect);
 	}
 

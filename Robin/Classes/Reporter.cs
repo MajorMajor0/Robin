@@ -86,17 +86,17 @@ namespace Robin
 			ticker = watches.Count - 1;
 		}
 
-		public static void Toc(int watchNo, string message = null)
+		public static void Toc(int watchNo, string message = "")
 		{
 			watches[watchNo].Stop();
-			if (message == null)
+			if(!string.IsNullOrEmpty(message))
 			{
-				ReportInline(watches[watchNo].Elapsed.TotalSeconds.ToString("F1") + " s");
+				message += ",";
 			}
-			else
-			{
-				ReportInline(message);
-			}
+
+			string secondsElapsed = watches[watchNo].Elapsed.TotalSeconds.ToString("F1");
+			ReportInline($"{message} {secondsElapsed} s");
+			ReportInline(message);
 		}
 
 		public class Message

@@ -183,7 +183,6 @@ namespace Robin
 		async void CacheReleases()
 		{
 			// Cache platforms to cache in case selection changes during operation
-			//R.Data.Configuration.AutoDetectChangesEnabled = true;
 			List<IDBPlatform> IDBPlatforms = new List<IDBPlatform>();
 
 			foreach (IDBPlatform idbPlatform in SelectedPlatforms)
@@ -211,7 +210,7 @@ namespace Robin
 				IDBs[0].ReportUpdates(false);
 			}
 
-			R.Data.Save(false);
+			//R.Data.Save(false);
 		}
 
 		bool CacheReleasesCanExecute()

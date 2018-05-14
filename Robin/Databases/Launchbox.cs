@@ -69,7 +69,10 @@ namespace Robin
 			Reporter.Toc(tic1);
 		}
 
-		public void GetLaunchBoxFile()
+		/// <summary>
+		/// Get the xml file containing hte entire Launchbox database. Use existing downloaded file if it was modified today. Load the xml file to memory as property launchboxFile.
+		/// </summary>
+		void GetLaunchBoxFile()
 		{
 			using (WebClient webclient = new WebClient())
 			{
@@ -110,16 +113,27 @@ namespace Robin
 			Reporter.Toc(tic2);
 		}
 
+		/// <summary>
+		/// Cache data for all LBPlatforms in the local database from an xml file downloaded from Launchbox. IDB.CachePlatform interface usually cahces only one platform, but the overhead associated with parsing the xml file makes it more sensible to just cache all platforms.
+		/// </summary>
+		/// <param name="platform">Robin.Platform associated with the LBPlatform to cache.</param>
 		public void CachePlatformData(Platform platform)
 		{
-			if (!platformsCached)
+			if (platformsCached)
+
 			{
-				Reporter.Tic("Caching data for all platforms to save time.", out int tic1);
+				Reporter.Report("Platforms recently cached--no need to cache again");
+			}
+
+			else
+			{
+				Reporter.Tic("Caching data for all platforms to save time...", out int tic1);
 				if (launchboxFile == null)
 				{
 					GetLaunchBoxFile();
 				}
 
+				// Find all platforms in the Launhbox DB
 				List<XElement> platformElements = launchboxFile.Root.Elements("Platform").ToList();
 
 				foreach (XElement platformElement in platformElements)
@@ -134,15 +148,17 @@ namespace Robin
 #if DEBUG
 					Stopwatch watch1 = Stopwatch.StartNew();
 #endif
+					// To avoid adding a new platform, check whether it exists. LBPlatforms have no ID, so check by title
 					LBPlatform lbPlatform = R.Data.LBPlatforms.FirstOrDefault(x => x.Title == tempTitle);
 #if DEBUG
 					Debug.WriteLine("PA: " + watch1.ElapsedMilliseconds); watch1.Restart();
 #endif
+					// If the title isn't found, this might be because the LBPlatform is new or because the title has been changed. The merge window let's the user decide.
 					if (lbPlatform == null)
 					{
 						lbPlatform = new LBPlatform();
 
-						App.Current.Dispatcher.Invoke(() =>
+						Application.Current.Dispatcher.Invoke(() =>
 						{
 							MergeWindow mergeWindow = new MergeWindow(tempTitle);
 
@@ -181,17 +197,12 @@ namespace Robin
 					Debug.WriteLine("PC: " + watch1.ElapsedMilliseconds); watch1.Restart();
 #endif
 				}
-				Reporter.Toc(tic1);
+				Reporter.Toc(tic1, "all platforms cached.");
 
 				platformsCached = true;
 			}
 
-			else
-			{
-				Reporter.Report("Platforms recently cached--no need to cache again");
-			}
 		}
-
 
 		public void CachePlatformGames(Platform platform)
 		{
@@ -265,14 +276,13 @@ namespace Robin
 
 		public void CachePlatformReleases(Platform platform)
 		{
+			Reporter.Tic($"Cache {platform.LBPlatform.Title} releases begun...", out int tic1);
 			CachePlatformGames(platform);
 
 			if (launchboxFile == null)
 			{
 				GetLaunchBoxFile();
 			}
-
-			Reporter.Report("Caching " + platform.LBPlatform.Title + " releasses.");
 
 			List<XElement> gameReleaseElements;
 			int j = 0;
@@ -324,6 +334,7 @@ namespace Robin
 				}
 			}
 			CachePlatformImages(platform);
+			Reporter.Toc(tic1, $"Cache { platform.LBPlatform.Title} releases finished.");
 		}
 
 		public void CachePlatformImages(Platform platform)
@@ -332,7 +343,9 @@ namespace Robin
 			{
 				GetLaunchBoxFile();
 			}
-
+#if DEBUG
+			int i = 0;
+#endif
 			Reporter.Report("Caching " + platform.LBPlatform.Title + " images.");
 			List<XElement> gameImageElements;
 			int j = 0;
@@ -349,9 +362,13 @@ namespace Robin
 				{
 					Reporter.Report("  Working " + j + " / " + gameCount + " " + platform.LBPlatform.Title + " games in the local cache.");
 				}
-
+#if DEBUG
+				Stopwatch watch1 = Stopwatch.StartNew();
+#endif
 				gameImageElements = imageElements.Where(x => x.Element("DatabaseID").Value == lbGame.ID.ToString()).ToList();
-
+#if DEBUG
+				Debug.WriteLine("Game: " + watch1.ElapsedMilliseconds); watch1.Restart();
+#endif
 				// Cache images for this game from the launchbox file
 				foreach (XElement imageElement in gameImageElements)
 				{
@@ -359,9 +376,7 @@ namespace Robin
 					fileName = imageElement.Element("FileName").Value;
 
 					// Check if image already exists in the local cache
-#if DEBUG
-					Stopwatch watch1 = Stopwatch.StartNew();
-#endif
+
 					LBImage lbImage = R.Data.LBImages.FirstOrDefault(x => x.FileName == fileName);
 #if DEBUG
 					Debug.WriteLine("IA: " + watch1.ElapsedMilliseconds); watch1.Restart();
@@ -385,7 +400,9 @@ namespace Robin
 						regionID = CONSTANTS.UNKNOWN_REGION_ID;
 						Reporter.Report("Couldn't find " + regionText + " in LB image dictionary.");
 					}
-
+#if DEBUG
+					Debug.WriteLine("IB: " + watch1.ElapsedMilliseconds); watch1.Restart();
+#endif
 
 					// Create a release to hold the image or attach it to it
 					LBRelease lbRelease = lbGame.LBReleases.FirstOrDefault(x => x.Region_ID == regionID);
@@ -397,7 +414,21 @@ namespace Robin
 						lbRelease.Title = lbGame.Title;
 					}
 
-					lbRelease.LBImages.Add(lbImage);
+#if DEBUG
+					Debug.WriteLine("IC: " + watch1.ElapsedMilliseconds); watch1.Restart();
+#endif
+					// This is a hack to avoid trying to add the image to multiple releases, which will bonk
+					// because the foreign key relation is 1 or 0. The correct answer is to make this many-to-many,
+					// but that seems like a pain in the ass since there are very few images related to more than one release.
+					if (lbImage.LBRelease == null)
+					{
+						lbRelease.LBImages.Add(lbImage);
+					}
+
+#if DEBUG
+					Debug.WriteLine("ID: " + watch1.ElapsedMilliseconds); watch1.Restart();
+					Debug.WriteLine(i++);
+#endif
 				}
 			}
 		}
