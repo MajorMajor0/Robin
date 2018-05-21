@@ -34,11 +34,58 @@ namespace Robin
 			Reporter.Report("BONUS!");
 			await Task.Run(() =>
 			{
-				//HashsetSpeedTest();
+				ForEachSpeedTest();
 			});
 
 			Reporter.Report("Finished");
 		}
+
+		static void ForEachSpeedTest()
+		{
+			Stopwatch watch = Stopwatch.StartNew();
+			HashSet<Release> hs = new HashSet<Release>(R.Data.Releases);
+			foreach (Release release in hs)
+			{
+				string s = release.Title;
+				long i = release.ID;
+			}
+			Debug.WriteLine($"Straight from DbSet: {watch.ElapsedMilliseconds} elapsed.");
+
+		}
+
+
+		static void MetaTest()
+		{
+			List<Release> releases = R.Data.Releases.ToList();
+			Release release = releases.Find(x => x.ID == 1000);
+			release.Title = "xkcd";
+			Datomatic dat = new Datomatic();
+			dat.ReportUpdates(true);
+		}
+
+		static void FindSpeedTest()
+		{
+			Stopwatch watch = Stopwatch.StartNew();
+			Dictionary<long, Release> releases = R.Data.Releases.ToDictionary(x => x.ID, x => x);
+			List<long> list = R.Data.Releases.Select(x => x.ID).ToList();
+			int yes = 0;
+			int no = 0;
+	
+			Release release;
+			foreach (long id in list)
+			{
+				if(releases.TryGetValue(id, out release))
+				{
+					yes++;
+				}
+				else
+				{
+					no++;
+				}
+			}
+			Debug.WriteLine($"{watch.ElapsedMilliseconds} elapsed. {yes} yes, {no} no.");
+		}
+
 
 		static void HashsetSpeedTest()
 		{

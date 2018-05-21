@@ -178,11 +178,11 @@ namespace Robin
 								BorderThickness = 0;
 								return LogoPath;
 							}
-							if (File.Exists(MarqueePath))
-							{
-								BorderThickness = 1;
-								return MarqueePath;
-							}
+							//if (File.Exists(MarqueePath))
+							//{
+							//	BorderThickness = 1;
+							//	return MarqueePath;
+							//}
 						}
 						break;
 					case AppSettings.DisplayOption.BoxFront:
@@ -218,7 +218,7 @@ namespace Robin
 						break;
 				}
 #if DEBUG
-				Debug.WriteLine("MainDisplay: " + Title + " " + Watch.ElapsedMilliseconds);
+				//Debug.WriteLine("MainDisplay: " + Title + " " + Watch.ElapsedMilliseconds);
 #endif
 				BorderThickness = 0;
 

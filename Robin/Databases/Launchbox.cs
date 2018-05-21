@@ -29,15 +29,15 @@ namespace Robin
 {
 	class Launchbox : IDB
 	{
-		bool platformsCached;
-
 		bool disposed;
 
-		List<XElement> gameElements;
+		ILookup<string, XElement> gameElementLookupByPlatform;
 
-		List<XElement> releaseElements;
+		ILookup<string, XElement> releaseElementLookupByGameID;
 
-		List<XElement> imageElements;
+		ILookup<string, XElement> imageElementLookupByGameID;
+
+		List<XElement> platformElements;
 
 
 		public string Title => "LaunchBox";
@@ -63,8 +63,6 @@ namespace Robin
 			R.Data.LBImages.Load();
 			R.Data.LBReleases.Load();
 			R.Data.LBGames.Load();
-
-			platformsCached = false;
 
 			Reporter.Toc(tic1);
 		}
@@ -106,102 +104,93 @@ namespace Robin
 				launchboxFile = null;
 			}
 
-			gameElements = launchboxFile.Root.Elements("Game").ToList();
-			releaseElements = launchboxFile.Root.Elements("GameAlternateName").ToList();
-			imageElements = launchboxFile.Root.Elements("GameImage").ToList();
+			gameElementLookupByPlatform = launchboxFile.Root.Elements("Game").ToLookup(x => x.Element("Platform").Value);
+			releaseElementLookupByGameID = launchboxFile.Root.Elements("GameAlternateName").ToLookup(x => x.Element("DatabaseID").Value);
+			imageElementLookupByGameID = launchboxFile.Root.Elements("GameImage").ToLookup(x => x.Element("DatabaseID").Value);
+			platformElements = launchboxFile.Root.Elements("Platform").ToList();
 
 			Reporter.Toc(tic2);
 		}
 
 		/// <summary>
-		/// Cache data for all LBPlatforms in the local database from an xml file downloaded from Launchbox. IDB.CachePlatform interface usually cahces only one platform, but the overhead associated with parsing the xml file makes it more sensible to just cache all platforms.
+		/// Cache data for a selected LBPlatforms in the local database from an xml file downloaded from Launchbox.
 		/// </summary>
 		/// <param name="platform">Robin.Platform associated with the LBPlatform to cache.</param>
 		public void CachePlatformData(Platform platform)
 		{
-			if (platformsCached)
-
+			Reporter.Tic($"Caching data for {platform.Title}...", out int tic1);
+			if (launchboxFile == null)
 			{
-				Reporter.Report("Platforms recently cached--no need to cache again");
+				GetLaunchBoxFile();
 			}
 
-			else
+			// Create a dictionary of existing LBPlatforms to speed lookups
+			Dictionary<string, LBPlatform> platformDictionary = R.Data.LBPlatforms.ToDictionary(x => x.Title);
+
+			// Create a Hashset of LBPlatforms to store any new LBPlatforms that we discover
+			HashSet<LBPlatform> newLBPlatforms = new HashSet<LBPlatform>();
+
+			foreach (XElement platformElement in platformElements)
 			{
-				Reporter.Tic("Caching data for all platforms to save time...", out int tic1);
-				if (launchboxFile == null)
+				string tempTitle = platformElement.Element("Name").Value;
+
+				// If a bad titl is found or the title is gamewave, just bail
+				if (string.IsNullOrEmpty(tempTitle) || Regex.IsMatch(tempTitle, @"Game*.Wave", RegexOptions.IgnoreCase))
 				{
-					GetLaunchBoxFile();
+					continue;
 				}
 
-				// Find all platforms in the Launhbox DB
-				List<XElement> platformElements = launchboxFile.Root.Elements("Platform").ToList();
-
-				foreach (XElement platformElement in platformElements)
+#if DEBUG
+				Stopwatch watch1 = Stopwatch.StartNew();
+#endif
+				// Check whether the LBPlatform exists before trying to add it. LBPlatforms have no ID, so check by title. If the title isn't found, this might be because the LBPlatform is new or because the title has been changed. The merge window lets the user decide.
+				if (!platformDictionary.TryGetValue(tempTitle, out LBPlatform lbPlatform))
 				{
-					string tempTitle = platformElement.SafeGetA("Name");
+					lbPlatform = new LBPlatform();
 
-					// Fuck Gamewave
-					if (Regex.IsMatch(tempTitle, @"Game*.Wave", RegexOptions.IgnoreCase))
+					Application.Current.Dispatcher.Invoke(() =>
 					{
-						continue;
-					}
-#if DEBUG
-					Stopwatch watch1 = Stopwatch.StartNew();
-#endif
-					// To avoid adding a new platform, check whether it exists. LBPlatforms have no ID, so check by title
-					LBPlatform lbPlatform = R.Data.LBPlatforms.FirstOrDefault(x => x.Title == tempTitle);
-#if DEBUG
-					Debug.WriteLine("PA: " + watch1.ElapsedMilliseconds); watch1.Restart();
-#endif
-					// If the title isn't found, this might be because the LBPlatform is new or because the title has been changed. The merge window let's the user decide.
-					if (lbPlatform == null)
-					{
-						lbPlatform = new LBPlatform();
+						MergeWindow mergeWindow = new MergeWindow(tempTitle);
 
-						Application.Current.Dispatcher.Invoke(() =>
+						switch (mergeWindow.ShowDialog())
 						{
-							MergeWindow mergeWindow = new MergeWindow(tempTitle);
+							case true: // Merge the new platform with existing
+								lbPlatform = mergeWindow.SelectedLBPlatform;
+								break;
 
-							switch (mergeWindow.ShowDialog())
-							{
-								case true: // Merge the new platform with existing
-									lbPlatform = mergeWindow.SelectedLBPlatform;
-									break;
+							case false: // Add the new platform
+								newLBPlatforms.Add(lbPlatform);
+								break;
 
-								case false: // Add the new platform
-									R.Data.LBPlatforms.Add(lbPlatform);
-									break;
-
-								default:
-									throw new ArgumentOutOfRangeException();
-							}
-						});
-					}
-#if DEBUG
-					Debug.WriteLine("PB: " + watch1.ElapsedMilliseconds); watch1.Restart();
-#endif
-					lbPlatform.Title = tempTitle;
-					lbPlatform.Date = DateTimeRoutines.SafeGetDate(platformElement.SafeGetA("Date"));
-					lbPlatform.Developer = platformElement.SafeGetA("Developer");
-					lbPlatform.Manufacturer = platformElement.SafeGetA("Manufacturer");
-					lbPlatform.Cpu = platformElement.SafeGetA("Cpu");
-					lbPlatform.Memory = platformElement.SafeGetA("Memory");
-					lbPlatform.Graphics = platformElement.SafeGetA("Graphics");
-					lbPlatform.Sound = platformElement.SafeGetA("Sound");
-					lbPlatform.Display = platformElement.SafeGetA("Display");
-					lbPlatform.Media = platformElement.SafeGetA("Media");
-					lbPlatform.Display = platformElement.SafeGetA("Display");
-					lbPlatform.Controllers = platformElement.SafeGetA("MaxControllers");
-					lbPlatform.Category = platformElement.SafeGetA("Category");
-#if DEBUG
-					Debug.WriteLine("PC: " + watch1.ElapsedMilliseconds); watch1.Restart();
-#endif
+							default:
+								throw new ArgumentOutOfRangeException();
+						}
+					});
 				}
-				Reporter.Toc(tic1, "all platforms cached.");
-
-				platformsCached = true;
+#if DEBUG
+				Debug.WriteLine("PB: " + watch1.ElapsedMilliseconds); watch1.Restart();
+#endif
+				// Whether the LBPlatorm is new or old, overwrite everything with the newest data
+				lbPlatform.Title = tempTitle;
+				lbPlatform.Date = DateTimeRoutines.SafeGetDate(platformElement.SafeGetA("Date"));
+				lbPlatform.Developer = platformElement.Element("Developer")?.Value ?? lbPlatform.Developer;
+				lbPlatform.Manufacturer = platformElement.Element("Manufacturer")?.Value ?? lbPlatform.Manufacturer;
+				lbPlatform.Cpu = platformElement.Element("Cpu")?.Value ?? lbPlatform.Cpu;
+				lbPlatform.Memory = platformElement.Element("Memory")?.Value ?? lbPlatform.Memory;
+				lbPlatform.Graphics = platformElement.Element("Graphics")?.Value ?? lbPlatform.Graphics;
+				lbPlatform.Sound = platformElement.Element("Sound")?.Value ?? lbPlatform.Sound;
+				lbPlatform.Display = platformElement.Element("Display")?.Value ?? lbPlatform.Display;
+				lbPlatform.Media = platformElement.Element("Media")?.Value ?? lbPlatform.Media;
+				lbPlatform.Display = platformElement.Element("Display")?.Value ?? lbPlatform.Display;
+				lbPlatform.Controllers = platformElement.Element("MaxControllers")?.Value ?? lbPlatform.Controllers;
+				lbPlatform.Category = platformElement.Element("Category")?.Value ?? lbPlatform.Category;
+#if DEBUG
+				Debug.WriteLine("PC: " + watch1.ElapsedMilliseconds); watch1.Restart();
+#endif
 			}
 
+			R.Data.LBPlatforms.AddRange(newLBPlatforms);
+			Reporter.Toc(tic1, "all platforms cached.");
 		}
 
 		public void CachePlatformGames(Platform platform)
@@ -211,10 +200,15 @@ namespace Robin
 				GetLaunchBoxFile();
 			}
 
-			List<XElement> platformGameElements = launchboxFile.Root.Elements("Game").Where(x => x.Element("Platform").Value == platform.LBPlatform.Title).ToList();
+			// Create a dictionary of existing Games to speed lookups
+			Dictionary<long, LBGame> existingLBGameDict = R.Data.LBGames.ToDictionary(x => x.ID);
 
+			// Create a Hashset of LBGames to store any new LBGames that we discover
+			HashSet<LBGame> newLBGames = new HashSet<LBGame>();
+
+			List<XElement> platformGameElements = gameElementLookupByPlatform[platform.LBPlatform.Title].ToList();
 			int gameCount = platformGameElements.Count;
-			Reporter.Report("Found " + gameCount + " " + platform.LBPlatform.Title + " games in LaunchBox file.");
+			Reporter.Report($"Found {gameCount} {platform.LBPlatform.Title} games in LaunchBox zip file.");
 			int j = 0;
 
 			foreach (XElement gameElement in platformGameElements)
@@ -228,23 +222,16 @@ namespace Robin
 				string title = gameElement.Element("Name")?.Value;
 
 				// Don't create this game if the title or database ID is null
-				if (string.IsNullOrEmpty(title) || !int.TryParse(gameElement.SafeGetA("DatabaseID"), out int id))
+				if (string.IsNullOrEmpty(title) || !long.TryParse(gameElement.SafeGetA("DatabaseID"), out long id))
 				{
 					continue;
 				}
 
-				// Check if the game alredy exists in the local cache
-#if DEBUG
-				Stopwatch watch1 = Stopwatch.StartNew();
-#endif
-				LBGame lbGame = R.Data.LBGames.FirstOrDefault(x => x.ID == id);
-#if DEBUG
-				Debug.WriteLine("GA: " + watch1.ElapsedMilliseconds); watch1.Restart();
-#endif
-				if (lbGame == null)
+				// Check if the game alredy exists in the local cache before trying to add it
+				if (!existingLBGameDict.TryGetValue(id, out LBGame lbGame))
 				{
 					lbGame = new LBGame { ID = id };
-					platform.LBPlatform.LBGames.Add(lbGame);
+					newLBGames.Add(lbGame);
 					Debug.WriteLine("New game: " + lbGame.Title);
 				}
 
@@ -263,15 +250,15 @@ namespace Robin
 				lbGame.Title = title;
 				lbGame.Date = DateTimeRoutines.SafeGetDateTime(gameElement.SafeGetA("ReleaseDate") ?? gameElement.SafeGetA("ReleaseYear") + @"-01-01 00:00:00");
 
-				lbGame.Overview = gameElement.Element("Overview")?.Value;
-				lbGame.Genres = gameElement.Element("Genres")?.Value;
-				lbGame.Developer = gameElement.Element("Developer")?.Value;
-
-				lbGame.Publisher = gameElement.Element("Publisher")?.Value;
-				lbGame.VideoURL = gameElement.Element("VideoURL")?.Value;
-				lbGame.WikiURL = gameElement.Element("WikipediaURL")?.Value;
-				lbGame.Players = gameElement.Element("MaxPlayers")?.Value;
+				lbGame.Overview = gameElement.Element("Overview")?.Value ?? lbGame.Overview;
+				lbGame.Genres = gameElement.Element("Genres")?.Value ?? lbGame.Genres;
+				lbGame.Developer = gameElement.Element("Developer")?.Value ?? lbGame.Developer;
+				lbGame.Publisher = gameElement.Element("Publisher")?.Value ?? lbGame.Publisher;
+				lbGame.VideoURL = gameElement.Element("VideoURL")?.Value ?? lbGame.VideoURL;
+				lbGame.WikiURL = gameElement.Element("WikipediaURL")?.Value ?? lbGame.WikiURL;
+				lbGame.Players = gameElement.Element("MaxPlayers")?.Value ?? lbGame.Players;
 			}
+			R.Data.LBGames.AddRange(newLBGames);
 		}
 
 		public void CachePlatformReleases(Platform platform)
@@ -284,27 +271,30 @@ namespace Robin
 				GetLaunchBoxFile();
 			}
 
-			List<XElement> gameReleaseElements;
-			int j = 0;
+			// Create a dictionary of existing LBReleases to speed lookups
+			Dictionary<long, LBRelease> existingLBReleaseDict = R.Data.LBReleases.ToDictionary(x => x.ID);
+
+			// Create a Hashset of LBReleases to store any new LBReleases that we discover
+			HashSet<LBRelease> newLBReleases = new HashSet<LBRelease>();
+
 			int gameCount = platform.LBPlatform.LBGames.Count;
+			int j = 0;
 
 			foreach (LBGame lbGame in platform.LBPlatform.LBGames)
 			{
-				long regionID;
-				string regionText;
-
 				// Reporting only
 				if ((gameCount / 10) != 0 && ++j % (gameCount / 10) == 0)
 				{
-					Reporter.Report("  Working " + j + " / " + gameCount + " " + platform.LBPlatform.Title + " games.");
+					Reporter.Report($"  Working {j} / {gameCount} {platform.LBPlatform.Title} games.");
 				}
 
-				gameReleaseElements = releaseElements.Where(x => x.Element("DatabaseID").Value == lbGame.ID.ToString()).ToList();
+				var gameReleaseElements = releaseElementLookupByGameID[lbGame.ID.ToString()];
 
 				// Cache releases for this game from the launchbox file
 				foreach (XElement releaseElement in gameReleaseElements)
 				{
-					regionText = releaseElement.Element("Region")?.Value;
+					string regionText = releaseElement.Element("Region")?.Value;
+					long regionID;
 
 					if (regionText == null)
 					{
@@ -314,14 +304,14 @@ namespace Robin
 					else if (!RegionDictionary.TryGetValue(regionText, out regionID))
 					{
 						regionID = CONSTANTS.UNKNOWN_REGION_ID;
-						Reporter.Report("Couldn't find " + regionText + " in LB image dictionary.");
+						Reporter.Report($"Couldn't find {regionText} in LB image dictionary.");
 					}
 #if DEBUG
 					Stopwatch watch1 = Stopwatch.StartNew();
 #endif
 					LBRelease lbRelease = lbGame.LBReleases.FirstOrDefault(x => x.Region_ID == regionID);
 #if DEBUG
-					Debug.WriteLine("RA: " + watch1.ElapsedMilliseconds); watch1.Restart();
+					Debug.WriteLine($"RA: " + watch1.ElapsedMilliseconds); watch1.Restart();
 #endif
 					if (lbRelease == null)
 					{
@@ -334,7 +324,7 @@ namespace Robin
 				}
 			}
 			CachePlatformImages(platform);
-			Reporter.Toc(tic1, $"Cache { platform.LBPlatform.Title} releases finished.");
+			Reporter.Toc(tic1, $"Cache {platform.LBPlatform.Title} releases finished.");
 		}
 
 		public void CachePlatformImages(Platform platform)
@@ -346,50 +336,41 @@ namespace Robin
 #if DEBUG
 			int i = 0;
 #endif
+			Dictionary<string, LBImage> existingLbImageDict = R.Data.LBImages.ToDictionary(x => x.FileName);
+
 			Reporter.Report("Caching " + platform.LBPlatform.Title + " images.");
-			List<XElement> gameImageElements;
 			int j = 0;
 			int gameCount = platform.LBPlatform.LBGames.Count;
 
 			foreach (LBGame lbGame in platform.LBPlatform.LBGames)
 			{
-				long regionID;
-				string regionText;
-				string fileName;
-
 				// Reporting only
 				if ((gameCount / 10) != 0 && ++j % (gameCount / 10) == 0)
 				{
-					Reporter.Report("  Working " + j + " / " + gameCount + " " + platform.LBPlatform.Title + " games in the local cache.");
+					Reporter.Report($"  Working {j} / {gameCount} {platform.LBPlatform.Title} games in the local cache.");
 				}
 #if DEBUG
 				Stopwatch watch1 = Stopwatch.StartNew();
 #endif
-				gameImageElements = imageElements.Where(x => x.Element("DatabaseID").Value == lbGame.ID.ToString()).ToList();
+				var gameImageElements = imageElementLookupByGameID[lbGame.ID.ToString()];
 #if DEBUG
 				Debug.WriteLine("Game: " + watch1.ElapsedMilliseconds); watch1.Restart();
 #endif
 				// Cache images for this game from the launchbox file
 				foreach (XElement imageElement in gameImageElements)
 				{
+					string fileName = imageElement.Element("FileName")?.Value;
 
-					fileName = imageElement.Element("FileName").Value;
-
-					// Check if image already exists in the local cache
-
-					LBImage lbImage = R.Data.LBImages.FirstOrDefault(x => x.FileName == fileName);
-#if DEBUG
-					Debug.WriteLine("IA: " + watch1.ElapsedMilliseconds); watch1.Restart();
-#endif
-
-					if (lbImage == null)
+					// Check if image already exists in the local cache before creating a new one. Whether new or old, overwrite properties.
+					if (!existingLbImageDict.TryGetValue(fileName, out LBImage lbImage))
 					{
 						lbImage = new LBImage { FileName = fileName };
 					}
 
-					lbImage.Type = imageElement.Element("Type")?.Value;
+					lbImage.Type = imageElement.Element("Type")?.Value ?? lbImage.Type;
 
-					regionText = imageElement.Element("Region")?.Value;
+					string regionText = imageElement.Element("Region")?.Value;
+					long regionID;
 					if (regionText == null)
 					{
 						regionID = CONSTANTS.UNKNOWN_REGION_ID;
@@ -398,12 +379,11 @@ namespace Robin
 					else if (!RegionDictionary.TryGetValue(regionText, out regionID))
 					{
 						regionID = CONSTANTS.UNKNOWN_REGION_ID;
-						Reporter.Report("Couldn't find " + regionText + " in LB image dictionary.");
+						Reporter.Report("Couldn't find {regionText} in the region dictionary.");
 					}
 #if DEBUG
 					Debug.WriteLine("IB: " + watch1.ElapsedMilliseconds); watch1.Restart();
 #endif
-
 					// Create a release to hold the image or attach it to it
 					LBRelease lbRelease = lbGame.LBReleases.FirstOrDefault(x => x.Region_ID == regionID);
 					if (lbRelease == null)
@@ -413,7 +393,6 @@ namespace Robin
 						lbRelease.Region_ID = regionID;
 						lbRelease.Title = lbGame.Title;
 					}
-
 #if DEBUG
 					Debug.WriteLine("IC: " + watch1.ElapsedMilliseconds); watch1.Restart();
 #endif
@@ -427,7 +406,7 @@ namespace Robin
 
 #if DEBUG
 					Debug.WriteLine("ID: " + watch1.ElapsedMilliseconds); watch1.Restart();
-					Debug.WriteLine(i++);
+					Debug.WriteLine($"Image #: {i++}.");
 #endif
 				}
 			}
@@ -498,7 +477,6 @@ namespace Robin
 			{ "North America", 21 },
 			{ "Oceania", 2 },
 			{ "South America", 3 }
-
 		};
 
 		public const string IMAGESURL = @"http://images.launchbox-app.com/";
