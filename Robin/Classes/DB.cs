@@ -63,7 +63,7 @@ namespace Robin
 	}
 
 	/// <summary>
-	/// A local cache of and online database, Games DB, GiantBomb, LaunchBox...
+	/// A local cache of an online database, Games DB, GiantBomb, LaunchBox...
 	/// </summary>
 	public interface IDB : IDisposable
 	{
@@ -93,7 +93,7 @@ namespace Robin
 		/// <summary>
 		/// Update the local DB cache of platform associated metadata
 		/// </summary>
-		/// <param name="platform"></param>
+		/// <param name="platform">Robin.Platform associated with the DBPlatorm to update.</param>
 		void CachePlatformData(Platform platform);
 
 		/// <summary>

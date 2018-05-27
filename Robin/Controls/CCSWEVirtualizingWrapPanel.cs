@@ -893,7 +893,6 @@ namespace Robin
 
 		public void SetVerticalOffset(double offset)
 		{
-			Debug.WriteLine("SetVerticalOffset(double " + offset + ")");
 			if (offset < 0 || _viewport.Height >= _extent.Height)
 			{
 				offset = 0;

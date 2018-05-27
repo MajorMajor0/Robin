@@ -80,6 +80,10 @@ namespace Robin
 			Reporter.Report("Open VGDB uses Robin's platforms and does not need platforms cached.");
 		}
 
+		/// <summary>
+		/// Implements IDB.CachePlatformdata() Update the local DB cache of platform associated metadata. Not implemented for OVG.
+		/// </summary>
+		/// <param name="platform">Robin.Platform associated with the DBPlatorm to update.</param>
 		public void CachePlatformData(Platform platform)
 		{
 			Reporter.Report("Open VGDB uses Robin's platforms and does not need platform data cached.");

@@ -34,7 +34,12 @@ namespace Robin
 			Reporter.Report("BONUS!");
 			await Task.Run(() =>
 			{
-				ForEachSpeedTest();
+				int j = 0;
+				for (int i = 0; i < 100 && j < 25; i++, j += 2)
+				{
+					Debug.WriteLine($"i = {i}");
+					Debug.WriteLine($"j = {j}");
+				}
 			});
 
 			Reporter.Report("Finished");
@@ -70,11 +75,11 @@ namespace Robin
 			List<long> list = R.Data.Releases.Select(x => x.ID).ToList();
 			int yes = 0;
 			int no = 0;
-	
+
 			Release release;
 			foreach (long id in list)
 			{
-				if(releases.TryGetValue(id, out release))
+				if (releases.TryGetValue(id, out release))
 				{
 					yes++;
 				}

@@ -19,6 +19,7 @@ using System.Net;
 using System.Xml.Linq;
 using System.Data.Entity;
 using System.Globalization;
+using System.Collections.Generic;
 
 namespace Robin
 {
@@ -44,46 +45,47 @@ namespace Robin
 			R.Data.GDBReleases.Load();
 			Reporter.Toc(tic1);
 		}
-
+		/// <summary>
+		/// Implement IDB.CachePlatfomrReleases(). Go out to gamesdb.com and cache all known releases for the specified platform. Update the list of releases and store metadata for each one.
+		/// </summary>
+		/// <param name="platform">Robin.Platform associated with the GDBPlatform to cache.</param>
 		public void CachePlatformReleases(Platform platform)
 		{
-			Reporter.Tic("Getting " + platform.Title + " release list from Games DB...", out int tic1);
-
+			Reporter.Tic($"Getting {platform.Title} release list from Games DB...", out int tic1);
 			GDBPlatform gdbPlatform = platform.GDBPlatform;
 
-			XDocument xDocument;
-
-			string url = @"http://thegamesdb.net/api/GetPlatformGames.php?platform=" + gdbPlatform.ID;
-
+			// Update list of GDBReleases for this platform from xml file
 			using (WebClient webclient = new WebClient())
 			{
+				// API to get xml file containing all gamesdb releases for this platform.
+				string url = @"http://thegamesdb.net/api/GetPlatformGames.php?platform=" + gdbPlatform.ID;
+
+				// Put existing GDBReleases in a dictionary for lookup performance
+				var existingGDBReleaseDict = R.Data.GDBReleases.ToDictionary(x => x.ID);
+				HashSet<GDBRelease> newGDBReleases = new HashSet<GDBRelease>();
+
 				if (webclient.SafeDownloadStringDB(url, out string downloadText))
 				{
-					xDocument = XDocument.Parse(downloadText);
+					XDocument xDocument = XDocument.Parse(downloadText);
 
 					foreach (XElement element in xDocument.Root.Elements("Game"))
 					{
-						int id = int.Parse(element.SafeGetA("id"));
-
-						GDBRelease gdbRelease = R.Data.GDBReleases.FirstOrDefault(x => x.ID == id);
-
-						string title = element.SafeGetA("GameTitle");
-
 						// Don't create this game if the title is null
+						string title = element.Element("GameTitle")?.Value;
 						if (string.IsNullOrEmpty(title))
 						{
 							continue;
 						}
 
-						if (gdbRelease == null)
+						// Check if gbdRelease exists before creating new one. Whether it exists or not, overwrite properties with properties from xml file.
+						long id = long.Parse(element.Element("id")?.Value);
+						if (!existingGDBReleaseDict.TryGetValue(id, out GDBRelease gdbRelease))
 						{
 							gdbRelease = new GDBRelease { ID = id };
-							gdbPlatform.GDBReleases.Add(gdbRelease);
-							Debug.WriteLine(id);
+							newGDBReleases.Add(gdbRelease);
 						}
 
 						gdbRelease.Title = title;
-
 						gdbRelease.Date = DateTimeRoutines.SafeGetDate(element.SafeGetA("ReleaseDate") ?? "01-01-1901");
 
 						// If a release has changed platforms, catch it and zero out match
@@ -98,23 +100,23 @@ namespace Robin
 						}
 					}
 				}
-
+				gdbPlatform.GDBReleases.UnionWith(newGDBReleases);
 				Reporter.Toc(tic1);
 			}
 
-			// Temporarily set wait time to 1 ms while caching tens of thousands of games
-			// sorry GDB
+			// Temporarily set wait time to 1 ms while caching tens of thousands of games. Sorry GDB.
 			int waitTimeHolder = DBTimers.GamesDB.WaitTime;
 			DBTimers.GamesDB.WaitTime = 1;
 
 			int releaseCount = gdbPlatform.GDBReleases.Count;
 			int i = 0;
 
+			// Cache metadata for each individual game
 			foreach (GDBRelease gdbRelease in gdbPlatform.GDBReleases)
 			{
 				if (releaseCount / 10 != 0 && i++ % (releaseCount / 10) == 0)
 				{
-					Reporter.Report(i + " / " + releaseCount);
+					Reporter.Report($"{i} / {releaseCount}");
 				}
 
 				CacheReleaseData(gdbRelease);
@@ -122,6 +124,10 @@ namespace Robin
 			DBTimers.GamesDB.WaitTime = waitTimeHolder;
 		}
 
+		/// <summary>
+		/// Implements IDB.CachePlatformdata() Update the local DB cache of platform associated metadata
+		/// </summary>
+		/// <param name="platform">Robin.Platform associated with the DBPlatorm to update.</param>
 		public void CachePlatformData(Platform platform)
 		{
 			Reporter.Tic("Getting " + platform.Title + " data from Games DB...", out int tic1);
@@ -179,25 +185,27 @@ namespace Robin
 			Reporter.Toc(tic1);
 		}
 
+		/// <summary>
+		/// Cache metadata from gamesdb.com API for a GDBRelease.
+		/// </summary>
+		/// <param name="gdbRelease">GDBRelease whose metadat is to be cached.</param>
 		public void CacheReleaseData(GDBRelease gdbRelease)
 		{
-			XDocument xDocument;
-
+			// URL of gamesdb API to cache metadata for one release
 			string url = @"http://thegamesdb.net/api/GetGame.php?id=" + gdbRelease.ID;
 			using (WebClient webclient = new WebClient())
 			{
-
 				// Pull down the xml file containing game data from gamesdb
 				if (webclient.SafeDownloadStringDB(url, out string downloadText))
 				{
-					//string coop;
-					xDocument = XDocument.Parse(downloadText);
+					XDocument xDocument = XDocument.Parse(downloadText);
 
-					gdbRelease.Title = xDocument.SafeGetB("Game", "GameTitle");
-					gdbRelease.Developer = xDocument.SafeGetB("Game", "Developer");
-					gdbRelease.Publisher = xDocument.SafeGetB("Game", "Publisher");
-					gdbRelease.Players = xDocument.SafeGetB("Game", "Players");
-					gdbRelease.Overview = xDocument.SafeGetB("Game", "Overview");
+					gdbRelease.Title = xDocument.SafeGetB("Game", "GameTitle") ?? gdbRelease.Title;
+					gdbRelease.Developer = xDocument.SafeGetB("Game", "Developer") ?? gdbRelease.Developer;
+					gdbRelease.Publisher = xDocument.SafeGetB("Game", "Publisher") ?? gdbRelease.Publisher;
+					gdbRelease.Players = xDocument.SafeGetB("Game", "Players") ?? gdbRelease.Players;
+					gdbRelease.Overview = xDocument.SafeGetB("Game", "Overview") ?? gdbRelease.Overview;
+
 					gdbRelease.Rating = decimal.Parse(xDocument.SafeGetB("Game", "Rating") ?? "0", CultureInfo.InvariantCulture);
 					gdbRelease.Genre = string.Join(",", xDocument.Root.Descendants("genre").Select(x => x.Value));
 					gdbRelease.Date = DateTimeRoutines.SafeGetDate(xDocument.SafeGetB("Game", "ReleaseDate"));
@@ -217,19 +225,34 @@ namespace Robin
 					if (BaseImageUrl != null)
 					{
 						url = xDocument.SafeGetBoxArt("front");
-						gdbRelease.BoxFrontURL = url != null ? BaseImageUrl + url : null;
+						if (url != null)
+						{
+							gdbRelease.BoxFrontURL = BaseImageUrl + url;
+						}
 
 						url = xDocument.SafeGetBoxArt("back");
-						gdbRelease.BoxBackURL = url != null ? BaseImageUrl + url : null;
+						if (url != null)
+						{
+							gdbRelease.BoxBackURL = BaseImageUrl + url;
+						}
 
 						url = xDocument.SafeGetB("Game", "Images", "banner");
-						gdbRelease.BannerURL = url != null ? BaseImageUrl + url : null;
+						if (url != null)
+						{
+							gdbRelease.BannerURL = BaseImageUrl + url;
+						}
 
 						url = xDocument.SafeGetB("Game", "Images", "screenshot", "original");
-						gdbRelease.ScreenURL = url != null ? BaseImageUrl + url : null;
+						if (url != null)
+						{
+							gdbRelease.ScreenURL = BaseImageUrl + url;
+						}
 
 						url = xDocument.SafeGetB("Game", "Images", "clearlogo");
-						gdbRelease.LogoURL = url != null ? BaseImageUrl + url : null;
+						if (url != null)
+						{
+							gdbRelease.LogoURL = BaseImageUrl + url;
+						}
 					}
 				}
 				else
@@ -244,12 +267,19 @@ namespace Robin
 			Reporter.Report("GamesDB does not have games and releases--try caching releases");
 		}
 
+		/// <summary>
+		/// Implements IDB.CachePlatforms(). Update the list of GDBPlatforms in the local cache.
+		/// </summary>
 		public void CachePlatforms()
 		{
-			// TODO Get list of platforms from giantbom and cache in GBPlatforms
+			// TODO Get list of platforms from gamesdb and cache in GDBPlatforms
 			Reporter.Report("Cache platforms not yet implemented for GamesDB");
 		}
 
+		/// <summary>
+		/// Implements IDB.ReportUpdates(). Report to the UI how many database entries and of what type have been updated or added since the last save changes for a local DB cache.
+		/// </summary>
+		/// <param name="detect">Whether to detect changes prior to reporting. Detecting changes takes about 4 seconds. This can be set to false if no changes have been made since the last detect changes. Detecting changes is only necessary for updates, it is not necessary to detect additions.</param>
 		public void ReportUpdates(bool detect)
 		{
 

@@ -43,6 +43,10 @@ namespace Robin
 
 		public bool HasRegions => true;
 
+		/// <summary>
+		/// Implements IDB.ReportUpdates(). Report to the UI how many database entries and of what type have been updated or added since the last save changes for a local DB cache.
+		/// </summary>
+		/// <param name="detect">Whether to detect changes prior to reporting. Detecting changes takes about 4 seconds. This can be set to false if no changes have been made since the last detect changes. Detecting changes is only necessary for updates, it is not necessary to detect additions.</param>
 		public void ReportUpdates(bool detect)
 		{
 #if DEBUG
@@ -87,6 +91,10 @@ namespace Robin
 			Reporter.Report("It is not possible to cache games for Robin/Datomatic, only releases");
 		}
 
+		/// <summary>
+		/// Implements IDB.CachePlatformdata() Update the local DB cache of platform associated metadata. Not fully implemented for Datomatic
+		/// </summary>
+		/// <param name="platform">Robin.Platform associated with the DBPlatorm to update.</param>
 		public void CachePlatformData(Platform platform)
 		{
 			// TODO: make this copy data from DBs to Platforms
