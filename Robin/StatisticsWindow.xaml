@@ -47,7 +47,8 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 				<TabItem Header="Releases"
 						 Background="Transparent">
 					<StackPanel Orientation="Vertical">
-						<Grid Margin="6,0,0,0">
+						<Grid x:Name="ReleaseHeaderGrid"
+							  Margin="6,0,0,0">
 							<Grid.Resources>
 								<Style TargetType="TextBlock"
 									   BasedOn="{StaticResource Heading2}" />
@@ -154,7 +155,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						 Background="Transparent">
 					<StackPanel Orientation="Vertical">
 						<Grid x:Name="GameHeaderGrid"
-							Margin="6,0,0,0" >
+							  Margin="6,0,0,0">
 							<Grid.Resources>
 								<Style TargetType="TextBlock"
 									   BasedOn="{StaticResource Heading2}" />
@@ -180,7 +181,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										Text="Matched" />
 						</Grid >
 
-						<ListView x:Name="PlatformsListview"
+						<ListView x:Name="GameListview"
 								  HorizontalAlignment="Left"
 								  Background="Transparent"
 								  BorderBrush="White"
@@ -222,7 +223,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 													Text="{Binding Games.Count}" />
 										<TextBlock  Grid.Column="2"
 													HorizontalAlignment="Right"
-													Text="{Binding GamesesWithArt}" />
+													Text="{Binding GamesWithArt}" />
 										<TextBlock  Grid.Column="3"
 													HorizontalAlignment="Right"
 													Text="{Binding MatchedGameCount}" />

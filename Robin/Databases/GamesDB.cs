@@ -25,6 +25,8 @@ namespace Robin
 {
 	class GamesDB : IDB
 	{
+		string baseUrl = @"http://legacy.thegamesdb.net/api/";
+
 		public string Title => "Games DB";
 
 		public LocalDB DB => LocalDB.GamesDB;
@@ -58,7 +60,7 @@ namespace Robin
 			using (WebClient webclient = new WebClient())
 			{
 				// API to get xml file containing all gamesdb releases for this platform.
-				string url = @"http://thegamesdb.net/api/GetPlatformGames.php?platform=" + gdbPlatform.ID;
+				string url = $"{baseUrl}GetPlatformGames.php?platform=" + gdbPlatform.ID;
 
 				// Put existing GDBReleases in a dictionary for lookup performance
 				var existingGDBReleaseDict = R.Data.GDBReleases.ToDictionary(x => x.ID);
@@ -137,7 +139,7 @@ namespace Robin
 			XDocument xdoc;
 			string url;
 
-			string urlbase = @"http://thegamesdb.net/api/GetPlatform.php?id=";
+			string urlbase = $"{baseUrl}GetPlatform.php?id=";
 			using (WebClient webclient = new WebClient())
 			{
 				// Assemble the platformsdb url from the platform data and the base API url
@@ -192,7 +194,7 @@ namespace Robin
 		public void CacheReleaseData(GDBRelease gdbRelease)
 		{
 			// URL of gamesdb API to cache metadata for one release
-			string url = @"http://thegamesdb.net/api/GetGame.php?id=" + gdbRelease.ID;
+			string url = $"{baseUrl}GetGame.php?id=" + gdbRelease.ID;
 			using (WebClient webclient = new WebClient())
 			{
 				// Pull down the xml file containing game data from gamesdb

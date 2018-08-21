@@ -16,8 +16,6 @@ using GalaSoft.MvvmLight.CommandWpf;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -34,11 +32,6 @@ namespace Robin
 	{
 		public MainWindow()
 		{
-			//if (Properties.Settings.Default.User == null)
-			//{
-			//	Properties.Settings.Default.User = new UserSettings();
-			//}
-
 			InitializeComponent();
 			QuitFocusCommand = new RelayCommand(QuitFocus);
 			ListViewScale.ScaleX = .8;
@@ -70,11 +63,6 @@ namespace Robin
 					ListViewScale.ScaleY += 0;
 				}
 			}
-		}
-
-		 void Database_Click(object sender, RoutedEventArgs e)
-		{
-			var DatabaseWindow = new DatabaseWindow();
 		}
 
 		 void MainListPlatform_Drop(object sender, DragEventArgs e)
@@ -148,6 +136,8 @@ namespace Robin
 			FocusManager.SetFocusedElement(this, null);
 		}
 
+
+
 #if DEBUG
 		 void MainWindowDebugStuff()
 		{
@@ -212,7 +202,7 @@ namespace Robin
 
 		 void SetFactoryDB()
 		{
-			Robin.DebugStuff.SetFactoryDatabase();
+			DebugStuff.SetFactoryDatabase();
 		}
 
 #endif

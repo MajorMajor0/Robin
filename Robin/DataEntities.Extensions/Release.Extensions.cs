@@ -749,7 +749,13 @@ namespace Robin
 					try
 					{
 						emulatorProcess.Start();
-						PlayCount++;
+						emulatorProcess.PriorityClass = ProcessPriorityClass.High;
+
+						if (!IsAdult && IsGame)
+						{
+							PlayCount++;
+						}
+
 					}
 					catch (Exception)
 					{

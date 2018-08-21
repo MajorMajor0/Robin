@@ -62,8 +62,6 @@ namespace Robin
 		/// <param name="platform">Robin.Platform associated with the GBPlatform to cache.</param>
 		public void CachePlatformReleases(Platform platform, bool reset = false)
 		{
-
-
 			using (WebClient webClient = new WebClient())
 			{
 				GBPlatform gbPlatform = platform.GBPlatform;
@@ -92,7 +90,7 @@ namespace Robin
 				if (haveResults && N_results != 0)
 				{
 					Dictionary<long, GBRelease> existingGbReleaseDict = R.Data.GBReleases.ToDictionary(x => x.ID);
-					Dictionary<long?, Release> releaseDict = R.Data.Releases.ToDictionary(x => x.ID_GB);
+					ILookup<long?, Release> releaseLookupByGB_ID = R.Data.Releases.Where(x => x.ID_GB != null).ToLookup(x => x.ID_GB);
 					HashSet<GBRelease> newGbReleases = new HashSet<GBRelease>();
 
 					int N_pages = N_results / 100;
@@ -122,9 +120,10 @@ namespace Robin
 										continue;
 									}
 
+									// Check if GBRelease is in database prior to this update, else add it
 									if (!existingGbReleaseDict.TryGetValue(id, out GBRelease gbRelease))
 									{
-										gbRelease = new GBRelease { ID = id };
+										gbRelease = new GBRelease { ID = id, GBPlatform = platform.GBPlatform };
 										newGbReleases.Add(gbRelease);
 									}
 
@@ -132,9 +131,13 @@ namespace Robin
 									if (gbRelease.GBPlatform_ID != gbPlatform.ID)
 									{
 										gbRelease.GBPlatform_ID = gbPlatform.ID;
-										if (releaseDict.TryGetValue(gbRelease.ID, out Release release))
+
+										if (releaseLookupByGB_ID[gbRelease.ID].Any())
 										{
-											release.ID_GB = null;
+											foreach (Release release in releaseLookupByGB_ID[gbRelease.ID])
+											{
+												release.ID_GB = null;
+											}
 										}
 									}
 
@@ -167,7 +170,7 @@ namespace Robin
 							return;
 						}
 					}
-					gbPlatform.GBReleases.UnionWith(newGbReleases);
+					R.Data.GBReleases.AddRange(newGbReleases);
 					Reporter.ReportInline("Finished.");
 				}
 				else

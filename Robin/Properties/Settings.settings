@@ -158,5 +158,17 @@
     <Setting Name="ScrapeReleaseScreen" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="GameFilterIsBeaten" Type="System.Nullable&lt;System.Boolean&gt;" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ReleaseFilterIsBeaten" Type="System.Nullable&lt;System.Boolean&gt;" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="RecentFileIDs" Type="System.Collections.Generic.List&lt;long&gt;" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="RecentFileLimit" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">10</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

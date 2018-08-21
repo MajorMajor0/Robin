@@ -77,6 +77,15 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 					<MenuItem Style="{StaticResource CMenuItemStyle}"
 							  Command="{Binding SaveDataBaseCommand}" />
 
+					<MenuItem Header="Recent"
+							  ItemsSource="{Binding RecentFiles}">
+						<MenuItem.ItemTemplate>
+							<DataTemplate>
+								<TextBlock Text="{Binding Title}" />
+							</DataTemplate>
+						</MenuItem.ItemTemplate>
+
+					</MenuItem>
 					<MenuItem Header="Exit"
 							  Click="Exit_Click" />
 				</MenuItem>
@@ -283,7 +292,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 												   Style="{StaticResource Heading1}" />
 										<StackPanel Orientation="Horizontal"
 													Background="Transparent">
-											<ComboBox ItemsSource="{Binding DistinctValues, IsAsync=True}"
+											<ComboBox ItemsSource="{Binding DistinctValues, IsAsync=False}"
 													  SelectedItem="{Binding Value}"
 													  Foreground="{StaticResource Heading0_Brush}"
 													  FontFamily="{StaticResource NormalFontFamily}"
@@ -1070,6 +1079,16 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										Height="100">
 
 								<Grid>
+									<TextBlock Visibility="{Binding PlayCount, Converter={StaticResource intToVisibilityConverter}}"
+											   Style="{StaticResource Heading0}"
+											   Margin="10,0,0,0">
+										<TextBlock.Text>
+											<MultiBinding StringFormat="{}({0})">
+												<Binding Path="PlayCount" />
+											</MultiBinding>
+										</TextBlock.Text>
+									</TextBlock>
+
 									<TextBlock Style="{StaticResource StarTextBlock}"
 											   HorizontalAlignment="Center" />
 									<TextBlock Style="{StaticResource BeatenTextBlock}"
@@ -1130,6 +1149,10 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										   HorizontalAlignment="Left"
 										   VerticalAlignment="Stretch"
 										   RenderOptions.BitmapScalingMode="Linear" />
+									<TextBlock Text="{Binding PlayCount}"
+											   Visibility="{Binding PlayCount, Converter={StaticResource intToVisibilityConverter}}"
+											   Style="{StaticResource Heading0}"
+											   Margin="35,0,0,0" />
 									<TextBlock Style="{StaticResource StarTextBlock}"
 											   HorizontalAlignment="Center"
 											   VerticalAlignment="Center" />
@@ -1204,11 +1227,12 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 				<ListView.ItemsPanel>
 					<ItemsPanelTemplate>
 						<local:CCSWEVirtualizingWrapPanel VirtualizingPanel.IsVirtualizing="True"
-														  VirtualizingPanel.ScrollUnit="Item"
+														  VirtualizingPanel.ScrollUnit="Pixel"
 														  CanHorizontallyScroll="False"
 														  ContextMenu="{StaticResource HammerContextMenu}"
 														  MouseMove="MainListWrapPanel_MouseMove"
-														  Tag="{Binding ElementName=Main_Window, Path=DataContext}" />
+														  Tag="{Binding ElementName=Main_Window, Path=DataContext}"
+														  ItemWidth="300" />
 					</ItemsPanelTemplate>
 				</ListView.ItemsPanel>
 

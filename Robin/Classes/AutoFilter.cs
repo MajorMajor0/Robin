@@ -163,6 +163,7 @@ namespace Robin
 		public StringFilter YearFilter { get; }
 
 		public BoolFilter UnlicensedFilter { get; }
+		public BoolFilter BeatenFilter { get; }
 		public BoolFilter CrapFilter { get; }
 		public BoolFilter IncludedFilter { get; }
 		public BoolFilter IsGameFilter { get; }
@@ -181,6 +182,7 @@ namespace Robin
 			StringFilters.Add(YearFilter = new StringFilter("Year", () => Update(), Settings.ReleaseFilterYear));
 
 			BoolFilters.Add(UnlicensedFilter = new BoolFilter("Unlicensed", () => Update(), Settings.ReleaseFilterUnlicensed));
+			BoolFilters.Add(BeatenFilter = new BoolFilter("Beaten", () => Update(), Settings.ReleaseFilterIsBeaten));
 
 			if (Settings.DisplayCrap)
 			{
@@ -268,6 +270,11 @@ namespace Robin
 				_filteredCollection = _filteredCollection.Where(x => x.Unlicensed == UnlicensedFilter.Value);
 			}
 
+			if (BeatenFilter.IsSet)
+			{
+				_filteredCollection = _filteredCollection.Where(x => x.IsBeaten == BeatenFilter.Value);
+			}
+
 			if (Settings.DisplayCrap && CrapFilter.IsSet)
 			{
 				_filteredCollection = _filteredCollection.Where(x => x.IsCrap == CrapFilter.Value);
@@ -324,6 +331,7 @@ namespace Robin
 			Settings.ReleaseFilterIncluded = IncludedFilter?.Value;
 			Settings.ReleaseFilterIsCrap = CrapFilter?.Value;
 			Settings.ReleaseFilterUnlicensed = UnlicensedFilter.Value;
+			Settings.ReleaseFilterIsBeaten = BeatenFilter.Value;
 			Settings.ReleaseFilterAdult = AdultFilter?.Value;
 			Settings.ReleaseFilterIsGame = IsGameFilter?.Value;
 		}
@@ -347,6 +355,7 @@ namespace Robin
 		public StringFilter YearFilter { get; }
 
 		public BoolFilter UnlicensedFilter { get; }
+		public BoolFilter BeatenFilter { get; }
 		public BoolFilter CrapFilter { get; }
 		public BoolFilter IncludedFilter { get; }
 		public BoolFilter IsGameFilter { get; }
@@ -376,6 +385,7 @@ namespace Robin
 			StringFilters.Add(YearFilter = new StringFilter("Year", () => Update(), Settings.GameFilterYear));
 
 			BoolFilters.Add(UnlicensedFilter = new BoolFilter("Unlicensed", () => Update(), Settings.ReleaseFilterUnlicensed));
+			BoolFilters.Add(BeatenFilter = new BoolFilter("Beaten", () => Update(), Settings.GameFilterIsBeaten));
 
 			if (Settings.DisplayCrap)
 			{
@@ -474,6 +484,11 @@ namespace Robin
 				_filteredCollection = _filteredCollection.Where(x => x.Unlicensed == UnlicensedFilter.Value);
 			}
 
+			if (BeatenFilter.IsSet)
+			{
+				_filteredCollection = _filteredCollection.Where(x => x.IsBeaten == BeatenFilter.Value);
+			}
+
 			if (Settings.DisplayCrap && CrapFilter.IsSet)
 			{
 				_filteredCollection = _filteredCollection.Where(x => x.IsCrap == CrapFilter.Value);
@@ -535,6 +550,7 @@ namespace Robin
 			Settings.GameFilterIncluded = IncludedFilter?.Value;
 			Settings.GameFilterIsCrap = CrapFilter?.Value;
 			Settings.GameFilterUnlicensed = UnlicensedFilter.Value;
+			Settings.GameFilterIsBeaten = BeatenFilter.Value;
 			Settings.GameFilterAdult = AdultFilter?.Value;
 			Settings.GameFilterIsGame = IsGameFilter?.Value;
 			Settings.GameFilterIsMess = MessFilter?.Value;

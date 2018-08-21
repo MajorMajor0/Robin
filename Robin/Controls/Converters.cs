@@ -42,7 +42,8 @@ namespace Robin
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			int i = (int)(value ?? 0);
+			int i = System.Convert.ToInt32(value ?? 0);
+
 			if (i < 1)
 			{
 				return Visibility.Hidden;

@@ -25,8 +25,6 @@ namespace Robin
 {
 	public static class Reporter
 	{
-		// static ObservableCollection<Message> messages;
-
 		static object messagesLock = new object();
 
 		public static ObservableCollection<Message> Messages { get; set; }
@@ -73,7 +71,6 @@ namespace Robin
 
 		public static void ReportInline(string message)
 		{
-
 			NewsFeed += message;
 			Messages.Last().Msg += message;
 		}
@@ -89,7 +86,7 @@ namespace Robin
 		public static void Toc(int watchNo, string message = "")
 		{
 			watches[watchNo].Stop();
-			if(!string.IsNullOrEmpty(message))
+			if (!string.IsNullOrEmpty(message))
 			{
 				message += ",";
 			}

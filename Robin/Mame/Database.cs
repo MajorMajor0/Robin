@@ -55,24 +55,17 @@ namespace Robin.Mame
 		{
 			Stopwatch Watch = Stopwatch.StartNew();
 			Stopwatch Watch1 = Stopwatch.StartNew();
-
-			XmlReaderSettings settings = new XmlReaderSettings
-			{
-				DtdProcessing = DtdProcessing.Parse
-			};
-
-			int machineCount = 0;
+	
 			List<XElement> machineElements = new List<XElement>();
 
-			Reporter.ReportInline(Watch1.Elapsed.ToString(@"m\:ss"));
-			Watch1.Restart();
 			Reporter.Report("Getting xml file from MAME...");
 
 			// Scan through xml file from MAME and pick out working games
-
+			XmlReaderSettings settings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
 			using (Process process = MAMEexe(@"-lx"))
 			using (XmlReader reader = XmlReader.Create(process.StandardOutput, settings))
 			{
+				int machineCount = 0;
 				while (reader.Read())
 				{
 					if (reader.Name == "machine")

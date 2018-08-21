@@ -28,7 +28,7 @@ namespace Robin
 {
 	public partial class Platform : IDBobject, IDBPlatform
 	{
-		public IEnumerable<Game> Games => R.Data.Games.Where(x => x.Platform_ID == ID);
+		public IEnumerable<Game> Games => Releases.Select(x => x.Game);
 
 		public Platform RPlatform => this;
 
@@ -48,7 +48,7 @@ namespace Robin
 
 		public int ReleasesWithArt => Releases.Count(x => x.HasArt);
 
-		public int GamesesWithArt => Games.Count(x => x.HasArt);
+		public int GamesWithArt => Games.Count(x => x.HasArt);
 
 		public int ReleasesIncluded => Releases.Count(x => x.Included);
 

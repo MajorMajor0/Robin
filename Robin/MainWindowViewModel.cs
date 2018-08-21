@@ -17,15 +17,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Data.Entity;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.CommandWpf;
 using System.Threading;
+
 
 namespace Robin
 {
@@ -175,6 +169,8 @@ namespace Robin
 			{
 				AFC.SaveSettings();
 			}
+
+			RecentFileList.Save();
 			Properties.Settings.Default.Save();
 		}
 
@@ -198,7 +194,9 @@ namespace Robin
 	{
 		public string Title { get; set; }
 
-		public ObservableCollection<Collection> List => R.Data.Collections.Local;
+		public Collection popular => new Collection(R.Data.Games.Local.Where(x => x.PlayCount > 0).OrderByDescending(x => x.PlayCount)) { Title = "Popular" };
+
+		public IEnumerable<Collection> List => R.Data.Collections.Local.Concat(new[] { popular });
 
 		public CollectionList(string title)
 		{
@@ -207,11 +205,11 @@ namespace Robin
 
 		public void Add(Collection collection)
 		{
-			List.Add(collection);
+			R.Data.Collections.Add(collection);
 		}
 		public void Remove(Collection collection)
 		{
-			List.Remove(collection);
+			R.Data.Collections.Remove(collection);
 		}
 	}
 }

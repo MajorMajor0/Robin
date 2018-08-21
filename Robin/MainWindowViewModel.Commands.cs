@@ -54,7 +54,17 @@ namespace Robin
 
 		void Play()
 		{
-			SelectedDB?.Play();
+			if (SelectedDB is Release)
+			{
+				RecentFileList.Add(SelectedDB as Release);
+			}
+
+			else if (SelectedDB is Game)
+			{
+				RecentFileList.Add((SelectedDB as Game).PreferredRelease);
+			}
+
+			SelectedDB.Play();
 		}
 
 		bool PlayCanExecute()
