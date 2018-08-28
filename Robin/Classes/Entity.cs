@@ -1,12 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
+﻿/*This file is part of Robin.
+ * 
+ * Robin is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published 
+ * version 3 of the License, or (at your option) any later version.
+ * 
+ * Robin is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the GNU 
+ * General Public License for more details. 
+ * 
+ * You should have received a copy of the GNU General Public License
+ *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
+ 
+using System;
 using System.Data.Entity;
 using System.Data.Entity.Validation;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Robin
 {
@@ -27,23 +38,22 @@ namespace Robin
 
 		public void Save(bool detectChanges = false)
 		{
-			int i;
-
-			string backupFile = Backup();
+			string backupFile;
 
 			if (detectChanges)
 			{
 				ChangeTracker.DetectChanges();
 			}
 
+			if(ChangeTracker.Entries().Any())
+			{
+				backupFile = Backup();
+			}
+
 			try
 			{
-				i = SaveChanges();
-				Reporter.Report(i + " Database changes saved successfully");
-				if (i == 0)
-				{
-					File.Delete(backupFile);
-				}
+				int nChanges = SaveChanges();
+				Reporter.Report($"{nChanges} Database changes saved successfully");
 			}
 			catch (DbEntityValidationException dbEx)
 			{
@@ -55,15 +65,18 @@ namespace Robin
 												validationError.PropertyName,
 												validationError.ErrorMessage);
 
-						Reporter.Report("Data validation error...\nProperty: " + validationError.PropertyName + "Error: " + validationError.ErrorMessage);
+						Reporter.Report($"Data validation error...\nProperty: {validationError.PropertyName} Error: {validationError.ErrorMessage}");
 					}
 				}
 			}
 		}
 
+		/// <summary>
+		/// Backup uexisting database.
+		/// </summary>
+		/// <returns></returns>
 		public string Backup()
 		{
-			// Backup existing database
 			Directory.CreateDirectory(Robin.FileLocation.Backup);
 			string Date = DateTime.Now.ToString("yyyy-MM-dd-HHmmss");
 

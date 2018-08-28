@@ -199,18 +199,15 @@ namespace Robin
 					SelectedIDB.CachePlatformData(idbPlatform.RPlatform);
 					SelectedIDB.CachePlatformReleases(idbPlatform.RPlatform);			
 					idbPlatform.CacheDate = DateTime.Now;
+					SelectedIDB.ReportUpdates(true);
+					R.Data.Save(true);
 				}
-
-				//ReportUpdates() calls detect changes, so not necessary in save
 			});
 
-			SelectedIDB.ReportUpdates(true);
-			if (SelectedIDB != IDBs[0])
-			{
-				IDBs[0].ReportUpdates(false);
-			}
-
-			//R.Data.Save(false);
+			//if (SelectedIDB != IDBs[0])
+			//{
+			//	IDBs[0].ReportUpdates(false);
+			//}
 		}
 
 		bool CacheReleasesCanExecute()

@@ -20,6 +20,9 @@ namespace Robin
 {
 	public static class R
 	{
+		/// <summary>
+		/// THis is where the entire application gets its info
+		/// </summary>
 		public static RobinDataEntities Data;
 
 		static R()
@@ -27,7 +30,6 @@ namespace Robin
 			Data = new RobinDataEntities(true);
 		}
 	}
-
 
 	public partial class RobinDataEntities : Entity
 	{

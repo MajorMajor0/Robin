@@ -37,7 +37,6 @@ namespace Robin
 
 		bool disposed;
 
-		const string GBAPIKEY = @"?api_key=561e43b5ca29977bb624d52357764e459e22d3bd";
 		const string GBURL = @"http://www.giantbomb.com/api/";
 		const string DATEFORMAT = @"yyyy-MM-dd hh\:mm\:ss";
 
@@ -73,7 +72,7 @@ namespace Robin
 				XDocument xdoc;
 				Reporter.Report($"Checking GiantBomb for {gbPlatform.Title} releases...");
 
-				string url = $"http://www.giantbomb.com/api/releases/{GBAPIKEY}&filter=date_last_updated:{startDate}|{endDate},platform:{gbPlatform.ID}&field_list=id&sort=id:asc";
+				string url = $"http://www.giantbomb.com/api/releases/?api_key={Keys.GiantBomb}&filter=date_last_updated:{startDate}|{endDate},platform:{gbPlatform.ID}&field_list=id&sort=id:asc";
 
 				if (webClient.SafeDownloadStringDB(url, out string downloadText))
 				{
@@ -101,7 +100,7 @@ namespace Robin
 					for (int i = 0; i <= N_pages; i++)
 					{
 						Reporter.ReportInline(" " + i);
-						url = $"http://www.giantbomb.com/api/releases/{GBAPIKEY}&filter=date_last_updated:{startDate}|{endDate}platform:{gbPlatform.ID}&offset={i * 100}&field_list=id,deck,game,image,region,name,maximum_players,release_date&sort=id:asc";
+						url = $"http://www.giantbomb.com/api/releases/?api_key={Keys.GiantBomb}&filter=date_last_updated:{startDate}|{endDate}platform:{gbPlatform.ID}&offset={i * 100}&field_list=id,deck,game,image,region,name,maximum_players,release_date&sort=id:asc";
 
 						// Put results into the GB Cache database
 						if (webClient.SafeDownloadStringDB(url, out downloadText))
@@ -199,7 +198,7 @@ namespace Robin
 				XDocument xdoc;
 				Reporter.Report("Checking GiantBomb for " + platform.Title + " games");
 
-				var url = @"http://www.giantbomb.com/api/games/" + GBAPIKEY + @"&filter=date_last_updated:" + startDate + "|" + endDate + @",platforms:" + gbPlatform.ID + @"&field_list=id&sort=id:asc";
+				var url = $"http://www.giantbomb.com/api/games/?api_key={Keys.GiantBomb}&filter=date_last_updated:{startDate}|{endDate},platforms:{gbPlatform.ID}&field_list=id&sort=id:asc";
 
 
 				if (webClient.SafeDownloadStringDB(url, out var downloadText))
@@ -225,7 +224,7 @@ namespace Robin
 					{
 						Reporter.ReportInline(i + " ");
 
-						url = @"http://www.giantbomb.com/api/games/" + GBAPIKEY + @"&filter=date_last_updated:" + startDate + "|" + endDate + @",platforms:" + gbPlatform.ID + @"&offset=" + i * 100 + @"&field_list=id,deck,developers,publishers,genres,image,name,release_date&sort=id:asc";
+						url = $"http://www.giantbomb.com/api/games/?api_key={Keys.GiantBomb}&filter=date_last_updated:{startDate}|{endDate},platforms:{gbPlatform.ID}&offset={i * 100}&field_list=id,deck,developers,publishers,genres,image,name,release_date&sort=id:asc";
 
 						// Put results into the GB Cache database
 						if (webClient.SafeDownloadStringDB(url, out downloadText))
@@ -277,16 +276,14 @@ namespace Robin
 		public void CachePlatformData(Platform platform)
 		{
 			GBPlatform gbPlatform = platform.GBPlatform;
-			//DateTime startdate = gbPlatform.CacheDate;
 
-			string url;
 			XDocument xDocument;
 
 			Reporter.Tic("Attempting to cache " + gbPlatform.Title + "...", out int tic1);
 
 			using (WebClient webClient = new WebClient())
 			{
-				url = GBURL + @"platform/" + gbPlatform.ID + "/" + GBAPIKEY;
+				string url = GBURL + $"platform/{gbPlatform.ID}/?api_key ={Keys.GiantBomb}";
 
 				if (webClient.SafeDownloadStringDB(url, out string downloadText))
 				{
