@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Robin", "Robin\Robin.csproj", "{44603014-394A-461F-9001-276A9F91C8AF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Robin.Core", "Robin.Core\Robin.Core.csproj", "{44603014-394A-461F-9001-276A9F91C8AF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Robin.WPF", "RobinWPF\Robin.WPF.csproj", "{31730BC4-6AD7-430B-BD8D-9095A76E1A02}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,22 @@ Global
 		{44603014-394A-461F-9001-276A9F91C8AF}.Release|x64.ActiveCfg = Release|x64
 		{44603014-394A-461F-9001-276A9F91C8AF}.Release|x64.Build.0 = Release|x64
 		{44603014-394A-461F-9001-276A9F91C8AF}.Release|x86.ActiveCfg = Release|Any CPU
+		{31730BC4-6AD7-430B-BD8D-9095A76E1A02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31730BC4-6AD7-430B-BD8D-9095A76E1A02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31730BC4-6AD7-430B-BD8D-9095A76E1A02}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{31730BC4-6AD7-430B-BD8D-9095A76E1A02}.Debug|ARM.Build.0 = Debug|Any CPU
+		{31730BC4-6AD7-430B-BD8D-9095A76E1A02}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{31730BC4-6AD7-430B-BD8D-9095A76E1A02}.Debug|x64.Build.0 = Debug|Any CPU
+		{31730BC4-6AD7-430B-BD8D-9095A76E1A02}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{31730BC4-6AD7-430B-BD8D-9095A76E1A02}.Debug|x86.Build.0 = Debug|Any CPU
+		{31730BC4-6AD7-430B-BD8D-9095A76E1A02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31730BC4-6AD7-430B-BD8D-9095A76E1A02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31730BC4-6AD7-430B-BD8D-9095A76E1A02}.Release|ARM.ActiveCfg = Release|Any CPU
+		{31730BC4-6AD7-430B-BD8D-9095A76E1A02}.Release|ARM.Build.0 = Release|Any CPU
+		{31730BC4-6AD7-430B-BD8D-9095A76E1A02}.Release|x64.ActiveCfg = Release|Any CPU
+		{31730BC4-6AD7-430B-BD8D-9095A76E1A02}.Release|x64.Build.0 = Release|Any CPU
+		{31730BC4-6AD7-430B-BD8D-9095A76E1A02}.Release|x86.ActiveCfg = Release|Any CPU
+		{31730BC4-6AD7-430B-BD8D-9095A76E1A02}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

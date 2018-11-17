@@ -1,0 +1,248 @@
+﻿<!--This file is part of Robin.
+
+Robin is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published
+version 3 of the License, or (at your option) any later version.
+
+Robin is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Robin.  If not, see http://www.gnu.org/licenses/.-->
+<Window x:Name="Statistics_Window"
+		x:Class="Robin.Core.StatisticsWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:scm1="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+		xmlns:local="clr-namespace:Robin.Core"
+		mc:Ignorable="d"
+		Title="Statistics"
+		Width="500"
+		Height="800"
+		Style="{StaticResource WindowStyle1}">
+	<Window.DataContext>
+		<local:StatisticsWindowViewModel />
+	</Window.DataContext>
+	<Window.Resources>
+		<ContextMenu x:Key="ReleaseContextMenu">
+			<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+					  Command="{Binding ShowBoxCommand}" />
+			<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+					  Command="{Binding MatchCommand}" />
+		</ContextMenu>
+	</Window.Resources>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*" />
+			<RowDefinition Height="50" />
+		</Grid.RowDefinitions>
+		<Border x:Name="ContentBorder"
+				Style="{StaticResource CellStyle}">
+			<TabControl Background="Transparent"
+						BorderBrush="Transparent">
+				<TabItem Header="Releases"
+						 Background="Transparent">
+					<StackPanel Orientation="Vertical">
+						<Grid x:Name="ReleaseHeaderGrid"
+							  Margin="6,0,0,0">
+							<Grid.Resources>
+								<Style TargetType="TextBlock"
+									   BasedOn="{StaticResource Heading2}" />
+							</Grid.Resources>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="150" />
+								<ColumnDefinition Width="70" />
+								<ColumnDefinition Width="70" />
+								<ColumnDefinition Width="70" />
+								<ColumnDefinition Width="70" />
+								<ColumnDefinition Width="70" />
+								<ColumnDefinition Width="70" />
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0"
+									   Text="Platform" />
+							<TextBlock  Grid.Column="1"
+										TextAlignment="Right"
+										Text="Releases" />
+							<TextBlock  Grid.Column="3"
+										TextAlignment="Right"
+										Text="Matched" />
+							<TextBlock  Grid.Column="4"
+										TextAlignment="Right"
+										Text="Matched to GDB" />
+							<TextBlock  Grid.Column="5"
+										TextAlignment="Right"
+										Text="Matched to GB" />
+							<TextBlock  Grid.Column="6"
+										TextAlignment="Right"
+										Text="Matched to LB" />
+							<TextBlock  Grid.Column="2"
+										TextAlignment="Right"
+										Text="Has Art" />
+						</Grid>
+
+						<ListView x:Name="ReleaseListview"
+								  HorizontalAlignment="Left"
+								  Background="Transparent"
+								  BorderBrush="White"
+								  BorderThickness="0,1,0,0"
+								  ItemsSource="{Binding Platforms}"
+								  SelectedItem="{Binding SelectedPlatform }">
+							<ListView.ItemTemplate>
+								<DataTemplate>
+									<DataTemplate.Resources>
+										<Style TargetType="TextBlock"
+											   BasedOn="{StaticResource Normal}" />
+									</DataTemplate.Resources>
+									<Grid Tag="{Binding ElementName=Statistics_Window, Path=DataContext}">
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition Width="150" />
+											<ColumnDefinition Width="70" />
+											<ColumnDefinition Width="70" />
+											<ColumnDefinition Width="70" />
+											<ColumnDefinition Width="70" />
+											<ColumnDefinition Width="70" />
+											<ColumnDefinition Width="70" />
+										</Grid.ColumnDefinitions>
+										<Grid.ContextMenu>
+											<ContextMenu>
+												<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+														  Command="{Binding MatchWindowCommand}" />
+											</ContextMenu>
+										</Grid.ContextMenu>
+
+										<TextBlock Grid.Column="0"
+												   Style="{StaticResource Normal}">
+											<TextBlock.Text>
+												<MultiBinding StringFormat="{}{0} {1}">
+													<Binding Path="Manufacturer" />
+													<Binding Path="Title"
+															 TargetNullValue="-" />
+
+												</MultiBinding>
+											</TextBlock.Text>
+										</TextBlock>
+										<TextBlock  Grid.Column="1"
+													HorizontalAlignment="Right"
+													Text="{Binding Releases.Count}" />
+										<TextBlock  Grid.Column="3"
+													HorizontalAlignment="Right"
+													Text="{Binding MatchedReleaseCount}" />
+										<TextBlock  Grid.Column="4"
+													HorizontalAlignment="Right"
+													Text="{Binding MatchedToGamesDB}" />
+										<TextBlock  Grid.Column="5"
+													HorizontalAlignment="Right"
+													Text="{Binding MatchedToGiantBomb}" />
+										<TextBlock  Grid.Column="6"
+													HorizontalAlignment="Right"
+													Text="{Binding MatchedToLaunchBox}" />
+										<TextBlock  Grid.Column="2"
+													HorizontalAlignment="Right"
+													Text="{Binding ReleasesWithArt}" />
+
+									</Grid>
+								</DataTemplate>
+							</ListView.ItemTemplate>
+
+						</ListView>
+					</StackPanel>
+				</TabItem>
+				<TabItem Header="Games"
+						 Background="Transparent">
+					<StackPanel Orientation="Vertical">
+						<Grid x:Name="GameHeaderGrid"
+							  Margin="6,0,0,0">
+							<Grid.Resources>
+								<Style TargetType="TextBlock"
+									   BasedOn="{StaticResource Heading2}" />
+							</Grid.Resources>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="150" />
+								<ColumnDefinition Width="70" />
+								<ColumnDefinition Width="70" />
+								<ColumnDefinition Width="70" />
+
+							</Grid.ColumnDefinitions>
+
+							<TextBlock Grid.Column="0"
+									   Text="Platform" />
+							<TextBlock  Grid.Column="1"
+										TextAlignment="Right"
+										Text="Games" />
+							<TextBlock  Grid.Column="2"
+										TextAlignment="Right"
+										Text="Has Art" />
+							<TextBlock  Grid.Column="3"
+										TextAlignment="Right"
+										Text="Matched" />
+						</Grid >
+
+						<ListView x:Name="GameListview"
+								  HorizontalAlignment="Left"
+								  Background="Transparent"
+								  BorderBrush="White"
+								  BorderThickness="0,1,0,0"
+								  ItemsSource="{Binding Platforms}"
+								  SelectedItem="{Binding SelectedPlatform }">
+							<ListView.ItemTemplate>
+								<DataTemplate>
+									<DataTemplate.Resources>
+										<Style TargetType="TextBlock"
+											   BasedOn="{StaticResource Normal}" />
+									</DataTemplate.Resources>
+									<Grid x:Name="GameContentGrid"
+										  Tag="{Binding ElementName=Statistics_Window, Path=DataContext}">
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition Width="150" />
+											<ColumnDefinition Width="70" />
+											<ColumnDefinition Width="70" />
+											<ColumnDefinition Width="70" />
+										</Grid.ColumnDefinitions>
+										<Grid.ContextMenu>
+											<ContextMenu>
+												<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+														  Command="{Binding MatchWindowCommand}" />
+											</ContextMenu>
+										</Grid.ContextMenu>
+										<TextBlock Grid.Column="0"
+												   Style="{StaticResource Normal}">
+											<TextBlock.Text>
+												<MultiBinding StringFormat="{}{0} {1}">
+													<Binding Path="Manufacturer" />
+													<Binding Path="Title"
+															 TargetNullValue="-" />
+												</MultiBinding>
+											</TextBlock.Text>
+										</TextBlock>
+										<TextBlock  Grid.Column="1"
+													HorizontalAlignment="Right"
+													Text="{Binding Games.Count}" />
+										<TextBlock  Grid.Column="2"
+													HorizontalAlignment="Right"
+													Text="{Binding GamesWithArt}" />
+										<TextBlock  Grid.Column="3"
+													HorizontalAlignment="Right"
+													Text="{Binding MatchedGameCount}" />
+
+									</Grid>
+								</DataTemplate>
+							</ListView.ItemTemplate>
+
+						</ListView>
+					</StackPanel>
+				</TabItem>
+			</TabControl>
+
+		</Border>
+		<Border Style="{StaticResource CellStyle}"
+				Grid.Row="1">
+			<TextBlock x:Name="StatusBlock"
+					   Text="{Binding Path=(local:Reporter.NewsFeed)}"
+					   Style="{StaticResource Normal}" />
+		</Border>
+	</Grid>
+</Window>
