@@ -17,8 +17,8 @@ namespace Robin.Mame
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Rom()
         {
-            this.RomFiles = new HashSet<RomFile>();
             this.Machines = new HashSet<Machine>();
+            this.RomFiles = new HashSet<RomFile>();
         }
     
         public long ID { get; set; }
@@ -31,8 +31,8 @@ namespace Robin.Mame
         public bool Unknown { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<RomFile> RomFiles { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Machine> Machines { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<RomFile> RomFiles { get; set; }
     }
 }

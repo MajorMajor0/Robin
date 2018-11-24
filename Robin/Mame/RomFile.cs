@@ -24,8 +24,8 @@ namespace Robin.Mame
         public string FilePath { get; set; }
         public Nullable<long> Machine_ID { get; set; }
     
+        public virtual Machine Machine { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Rom> Roms { get; set; }
-        public virtual Machine Machine { get; set; }
     }
 }

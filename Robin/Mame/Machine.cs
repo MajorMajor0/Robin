@@ -18,9 +18,9 @@ namespace Robin.Mame
         public Machine()
         {
             this.Children = new HashSet<Machine>();
+            this.RomFiles = new HashSet<RomFile>();
             this.Disks = new HashSet<Disk>();
             this.Roms = new HashSet<Rom>();
-            this.RomFiles = new HashSet<RomFile>();
         }
     
         public long ID { get; set; }
@@ -40,15 +40,15 @@ namespace Robin.Mame
         public bool IsBios { get; set; }
         public bool IsRunnable { get; set; }
     
+        public virtual Machine SampleParent { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Machine> Children { get; set; }
         public virtual Machine Parent { get; set; }
-        public virtual Machine Sample { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<RomFile> RomFiles { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Disk> Disks { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Rom> Roms { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<RomFile> RomFiles { get; set; }
     }
 }

@@ -34,12 +34,8 @@ namespace Robin
 			Reporter.Report("BONUS!");
 			await Task.Run(() =>
 			{
-				int j = 0;
-				for (int i = 0; i < 100 && j < 25; i++, j += 2)
-				{
-					Debug.WriteLine($"i = {i}");
-					Debug.WriteLine($"j = {j}");
-				}
+				Mame.Database mame = new Mame.Database();
+				mame.CacheDataBase3();
 			});
 
 			Reporter.Report("Finished");

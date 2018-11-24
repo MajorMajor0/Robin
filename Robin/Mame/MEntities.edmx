@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="MameModel.Store" Provider="System.Data.SQLite.EF6" ProviderManifestToken="data source=D:\Robin_debug\data\MAME.db3" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="MModel.Store" Provider="System.Data.SQLite.EF6" ProviderManifestToken="data source=D:\Robin_debug\data\MAME.db3" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Disk">
           <Key>
             <PropertyRef Name="ID" />
@@ -42,8 +42,6 @@
           <Property Name="Machine_ID" Type="integer" Nullable="false" />
           <Property Name="Disk_ID" Type="integer" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'main.Machine_Rom' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Machine_Rom">
           <Key>
             <PropertyRef Name="Machine_ID" />
@@ -189,19 +187,14 @@ warning 6002: The table/view 'main.Machine_Rom' does not have a primary key defi
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="MameModelStoreContainer">
+        <EntityContainer Name="MModelStoreContainer">
           <EntitySet Name="Disk" EntityType="Self.Disk" store:Type="Tables" />
           <EntitySet Name="Machine" EntityType="Self.Machine" store:Type="Tables" />
           <EntitySet Name="Machine_Disk" EntityType="Self.Machine_Disk" store:Type="Tables" />
+          <EntitySet Name="Machine_Rom" EntityType="Self.Machine_Rom" store:Type="Tables" />
           <EntitySet Name="Rom" EntityType="Self.Rom" store:Type="Tables" />
           <EntitySet Name="RomFile" EntityType="Self.RomFile" store:Type="Tables" />
           <EntitySet Name="RomFile_Rom" EntityType="Self.RomFile_Rom" store:Type="Tables" />
-          <EntitySet Name="Machine_Rom" EntityType="Self.Machine_Rom" store:Type="Tables">
-            <DefiningQuery>SELECT 
-[Machine_Rom].[Machine_ID] AS [Machine_ID], 
-[Machine_Rom].[Rom_ID] AS [Rom_ID]
-FROM [Machine_Rom] AS [Machine_Rom]</DefiningQuery>
-          </EntitySet>
           <AssociationSet Name="FK_Machine_0_0" Association="Self.FK_Machine_0_0">
             <End Role="Machine" EntitySet="Machine" />
             <End Role="Machine1" EntitySet="Machine" />
@@ -239,10 +232,11 @@ FROM [Machine_Rom] AS [Machine_Rom]</DefiningQuery>
             <End Role="RomFile_Rom" EntitySet="RomFile_Rom" />
           </AssociationSet>
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="MameModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="MModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityType Name="Disk">
           <Key>
             <PropertyRef Name="ID" />
@@ -272,12 +266,12 @@ FROM [Machine_Rom] AS [Machine_Rom]</DefiningQuery>
           <Property Name="IsDevice" Type="Boolean" Nullable="false" />
           <Property Name="IsBios" Type="Boolean" Nullable="false" />
           <Property Name="IsRunnable" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Children" Relationship="Self.FK_Machine_0_0" FromRole="Machine" ToRole="Machine1" />
-          <NavigationProperty Name="Parent" Relationship="Self.FK_Machine_0_0" FromRole="Machine1" ToRole="Machine" />
-          <NavigationProperty Name="Sample" Relationship="Self.FK_Machine_1_0" FromRole="Machine1" ToRole="Machine" />
+          <NavigationProperty Name="SampleParent" Relationship="Self.FK_Machine_0_0" FromRole="Machine1" ToRole="Machine" />
+          <NavigationProperty Name="Children" Relationship="Self.FK_Machine_1_0" FromRole="Machine" ToRole="Machine1" />
+          <NavigationProperty Name="Parent" Relationship="Self.FK_Machine_1_0" FromRole="Machine1" ToRole="Machine" />
+          <NavigationProperty Name="RomFiles" Relationship="Self.FK_RomFile_0_0" FromRole="Machine" ToRole="RomFile" />
           <NavigationProperty Name="Disks" Relationship="Self.Machine_Disk" FromRole="Machine" ToRole="Disk" />
           <NavigationProperty Name="Roms" Relationship="Self.Machine_Rom" FromRole="Machine" ToRole="Rom" />
-          <NavigationProperty Name="RomFiles" Relationship="MameModel.FK_RomFile_0_0" FromRole="Machine" ToRole="RomFile" />
         </EntityType>
         <EntityType Name="Rom">
           <Key>
@@ -290,9 +284,9 @@ FROM [Machine_Rom] AS [Machine_Rom]</DefiningQuery>
           <Property Name="Size" Type="Int64" />
           <Property Name="Status" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Optional" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="RomFiles" Relationship="Self.RomFile_Rom" FromRole="Rom" ToRole="RomFile" />
-          <NavigationProperty Name="Machines" Relationship="Self.Machine_Rom" FromRole="Rom" ToRole="Machine" />
           <Property Name="Unknown" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Machines" Relationship="Self.Machine_Rom" FromRole="Rom" ToRole="Machine" />
+          <NavigationProperty Name="RomFiles" Relationship="Self.RomFile_Rom" FromRole="Rom" ToRole="RomFile" />
         </EntityType>
         <EntityType Name="RomFile">
           <Key>
@@ -300,9 +294,9 @@ FROM [Machine_Rom] AS [Machine_Rom]</DefiningQuery>
           </Key>
           <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="FilePath" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="Roms" Relationship="Self.RomFile_Rom" FromRole="RomFile" ToRole="Rom" />
           <Property Name="Machine_ID" Type="Int64" />
-          <NavigationProperty Name="Machine" Relationship="MameModel.FK_RomFile_0_0" FromRole="RomFile" ToRole="Machine" />
+          <NavigationProperty Name="Machine" Relationship="Self.FK_RomFile_0_0" FromRole="RomFile" ToRole="Machine" />
+          <NavigationProperty Name="Roms" Relationship="Self.RomFile_Rom" FromRole="RomFile" ToRole="Rom" />
         </EntityType>
         <Association Name="FK_Machine_0_0">
           <End Role="Machine" Type="Self.Machine" Multiplicity="0..1" />
@@ -328,17 +322,29 @@ FROM [Machine_Rom] AS [Machine_Rom]</DefiningQuery>
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_RomFile_0_0">
+          <End Role="Machine" Type="Self.Machine" Multiplicity="0..1" />
+          <End Role="RomFile" Type="Self.RomFile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Machine">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="RomFile">
+              <PropertyRef Name="Machine_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="Machine_Disk">
           <End Role="Disk" Type="Self.Disk" Multiplicity="*" />
+          <End Role="Machine" Type="Self.Machine" Multiplicity="*" />
+        </Association>
+        <Association Name="Machine_Rom">
+          <End Role="Rom" Type="Self.Rom" Multiplicity="*" />
           <End Role="Machine" Type="Self.Machine" Multiplicity="*" />
         </Association>
         <Association Name="RomFile_Rom">
           <End Role="RomFile" Type="Self.RomFile" Multiplicity="*" />
           <End Role="Rom" Type="Self.Rom" Multiplicity="*" />
-        </Association>
-        <Association Name="Machine_Rom">
-          <End Role="Rom" Type="Self.Rom" Multiplicity="*" />
-          <End Role="Machine" Type="Self.Machine" Multiplicity="*" />
         </Association>
         <EntityContainer Name="MEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Disks" EntityType="Self.Disk" />
@@ -353,43 +359,31 @@ FROM [Machine_Rom] AS [Machine_Rom]</DefiningQuery>
             <End Role="Machine" EntitySet="Machines" />
             <End Role="Machine1" EntitySet="Machines" />
           </AssociationSet>
+          <AssociationSet Name="FK_RomFile_0_0" Association="Self.FK_RomFile_0_0">
+            <End Role="Machine" EntitySet="Machines" />
+            <End Role="RomFile" EntitySet="RomFiles" />
+          </AssociationSet>
           <AssociationSet Name="Machine_Disk" Association="Self.Machine_Disk">
             <End Role="Disk" EntitySet="Disks" />
+            <End Role="Machine" EntitySet="Machines" />
+          </AssociationSet>
+          <AssociationSet Name="Machine_Rom" Association="Self.Machine_Rom">
+            <End Role="Rom" EntitySet="Roms" />
             <End Role="Machine" EntitySet="Machines" />
           </AssociationSet>
           <AssociationSet Name="RomFile_Rom" Association="Self.RomFile_Rom">
             <End Role="RomFile" EntitySet="RomFiles" />
             <End Role="Rom" EntitySet="Roms" />
           </AssociationSet>
-          <AssociationSet Name="Machine_Rom" Association="Self.Machine_Rom">
-            <End Role="Rom" EntitySet="Roms" />
-            <End Role="Machine" EntitySet="Machines" />
-          </AssociationSet>
-          <AssociationSet Name="FK_RomFile_0_0" Association="MameModel.FK_RomFile_0_0">
-            <End Role="Machine" EntitySet="Machines" />
-            <End Role="RomFile" EntitySet="RomFiles" />
-          </AssociationSet>
         </EntityContainer>
-        <Association Name="FK_RomFile_0_0">
-          <End Type="MameModel.Machine" Role="Machine" Multiplicity="0..1" />
-          <End Type="MameModel.RomFile" Role="RomFile" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Machine">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="RomFile">
-              <PropertyRef Name="Machine_ID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="MameModelStoreContainer" CdmEntityContainer="MEntities">
+        <EntityContainerMapping StorageEntityContainer="MModelStoreContainer" CdmEntityContainer="MEntities">
           <EntitySetMapping Name="Disks">
-            <EntityTypeMapping TypeName="MameModel.Disk">
+            <EntityTypeMapping TypeName="MModel.Disk">
               <MappingFragment StoreEntitySet="Disk">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -398,7 +392,7 @@ FROM [Machine_Rom] AS [Machine_Rom]</DefiningQuery>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Machines">
-            <EntityTypeMapping TypeName="MameModel.Machine">
+            <EntityTypeMapping TypeName="MModel.Machine">
               <MappingFragment StoreEntitySet="Machine">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -420,9 +414,8 @@ FROM [Machine_Rom] AS [Machine_Rom]</DefiningQuery>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Roms">
-            <EntityTypeMapping TypeName="MameModel.Rom">
+            <EntityTypeMapping TypeName="MModel.Rom">
               <MappingFragment StoreEntitySet="Rom">
-                <ScalarProperty Name="Unknown" ColumnName="Unknown" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Region" ColumnName="Region" />
@@ -430,19 +423,20 @@ FROM [Machine_Rom] AS [Machine_Rom]</DefiningQuery>
                 <ScalarProperty Name="Size" ColumnName="Size" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="Optional" ColumnName="Optional" />
+                <ScalarProperty Name="Unknown" ColumnName="Unknown" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="RomFiles">
-            <EntityTypeMapping TypeName="MameModel.RomFile">
+            <EntityTypeMapping TypeName="MModel.RomFile">
               <MappingFragment StoreEntitySet="RomFile">
-                <ScalarProperty Name="Machine_ID" ColumnName="Machine_ID" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="FilePath" ColumnName="FilePath" />
+                <ScalarProperty Name="Machine_ID" ColumnName="Machine_ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <AssociationSetMapping Name="Machine_Disk" TypeName="MameModel.Machine_Disk" StoreEntitySet="Machine_Disk">
+          <AssociationSetMapping Name="Machine_Disk" TypeName="MModel.Machine_Disk" StoreEntitySet="Machine_Disk">
             <EndProperty Name="Disk">
               <ScalarProperty Name="ID" ColumnName="Disk_ID" />
             </EndProperty>
@@ -450,20 +444,20 @@ FROM [Machine_Rom] AS [Machine_Rom]</DefiningQuery>
               <ScalarProperty Name="ID" ColumnName="Machine_ID" />
             </EndProperty>
           </AssociationSetMapping>
-          <AssociationSetMapping Name="RomFile_Rom" TypeName="MameModel.RomFile_Rom" StoreEntitySet="RomFile_Rom">
-            <EndProperty Name="RomFile">
-              <ScalarProperty Name="ID" ColumnName="RomFile_ID" />
-            </EndProperty>
-            <EndProperty Name="Rom">
-              <ScalarProperty Name="ID" ColumnName="Rom_ID" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="Machine_Rom" TypeName="MameModel.Machine_Rom" StoreEntitySet="Machine_Rom">
+          <AssociationSetMapping Name="Machine_Rom" TypeName="MModel.Machine_Rom" StoreEntitySet="Machine_Rom">
             <EndProperty Name="Rom">
               <ScalarProperty Name="ID" ColumnName="Rom_ID" />
             </EndProperty>
             <EndProperty Name="Machine">
               <ScalarProperty Name="ID" ColumnName="Machine_ID" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="RomFile_Rom" TypeName="MModel.RomFile_Rom" StoreEntitySet="RomFile_Rom">
+            <EndProperty Name="RomFile">
+              <ScalarProperty Name="ID" ColumnName="RomFile_ID" />
+            </EndProperty>
+            <EndProperty Name="Rom">
+              <ScalarProperty Name="ID" ColumnName="Rom_ID" />
             </EndProperty>
           </AssociationSetMapping>
         </EntityContainerMapping>

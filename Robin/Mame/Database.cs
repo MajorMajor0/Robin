@@ -13,24 +13,16 @@
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
 
 using System;
-using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Data.Entity;
-using System.Data.SQLite;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using System.Net;
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
+
 using Ionic.Zip;
 
 
@@ -50,12 +42,14 @@ namespace Robin.Mame
 			notNullRegions = R.Data.Regions.Where(x => x.Priority != null).OrderByDescending(x => x.Priority).ToList();
 		}
 
-
-		public void CacheDataBase()
+		/// <summary>
+		/// Legacy function to cache releases from direct MAME output. Caches only working releases. To be deprecated.
+		/// </summary>
+		public void CacheReleases()
 		{
 			Stopwatch Watch = Stopwatch.StartNew();
 			Stopwatch Watch1 = Stopwatch.StartNew();
-	
+
 			List<XElement> machineElements = new List<XElement>();
 
 			Reporter.Report("Getting xml file from MAME...");
@@ -218,6 +212,9 @@ namespace Robin.Mame
 			Reporter.Report("Finished: " + Watch.Elapsed.ToString(@"m\:ss"));
 		}
 
+		/// <summary>
+		/// Cache direct MAME output to local DB cache MAMe.db
+		/// </summary>
 		public void CacheDataBase3()
 		{
 			Stopwatch Watch = Stopwatch.StartNew();
@@ -298,7 +295,7 @@ namespace Robin.Mame
 				Reporter.Toc(tic2);
 			}
 
-			// Add machines
+			// Add machines to local db Cache
 			Reporter.Tic("Adding machines...", out int tic3);
 			M.Data.Machines.AddRange(machines.Select(x => x.Value));
 			Reporter.Toc(tic3);
@@ -307,23 +304,31 @@ namespace Robin.Mame
 			M.Data.Save(false);
 			Reporter.Toc(tic4);
 
-			M.Refresh(true);
 			Reporter.Tic("Storing clones...", out int tic5);
-			foreach (Machine machine in M.Data.Machines.Where(x => x.CloneOf != null))
+			int i = 0;
+			foreach (Machine machine in machines.Values.Where(x => x.CloneOf != null))
 			{
+				Debug.WriteLine($"{machine.Name}, parent = {machine.CloneOf}");
 				if (machines.TryGetValue(machine.CloneOf, out Machine parent))
 				{
 					machine.Parent = parent;
+					Debug.WriteLine($"-Parent assigned {i++}");
 				}
 			}
 			Reporter.Toc(tic5);
 
 			// Find sample based on sampleof stored as temp value
 			Reporter.Tic("Storing samples...", out int tic6);
-			foreach (Machine machine in M.Data.Machines.Where(x => x.SampleOf != null))
+			int j = 0;
+			foreach (Machine machine in machines.Values.Where(x => x.SampleOf != null))
 			{
+				Debug.WriteLine($"{machine.Name}, sample = {machine.SampleOf}");
 				if (machines.TryGetValue(machine.SampleOf, out Machine sampleof))
-					machine.Sample = sampleof;
+				{
+					machine.SampleParent = sampleof;
+					Debug.WriteLine($"-Sample assigned {j++}.");
+				}
+
 			}
 			Reporter.Toc(tic6);
 
