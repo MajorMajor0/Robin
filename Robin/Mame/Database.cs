@@ -213,6 +213,17 @@ namespace Robin.Mame
 		}
 
 		/// <summary>
+		/// Cache releases from local MAME cache to Robin database. Caches only working releases. Creates split sets.
+		/// </summary>
+		public void CacheReleases2()
+		{
+
+
+
+
+		}
+
+		/// <summary>
 		/// Cache direct MAME output to local DB cache MAMe.db
 		/// </summary>
 		public void CacheDataBase3()
@@ -377,6 +388,11 @@ namespace Robin.Mame
 			return Process.Start(mameexe);
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="xelement"></param>
+		/// <param name="release"></param>
 		void ParseReleaseFromElement(XElement xelement, Release release)
 		{
 			release.Publisher = xelement.SafeGetA("manufacturer");

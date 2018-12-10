@@ -24,6 +24,23 @@ namespace Robin
 			get { return (Games as IEnumerable<IDBobject>).Union(Releases as IEnumerable<IDBobject>); }
 		}
 
+		public Collection(IEnumerable<IDBobject> objects) : this()
+		{
+			foreach (IDBobject idbo in objects)
+			{
+				if (idbo is Game)
+				{
+					Games.Add(idbo as Game);
+				}
+
+				else if (idbo is Release)
+				{
+					Releases.Add(idbo as Release);
+				}
+			}
+
+		}
+
 		public void Add(IDBobject idbObject)
 		{
 			if (idbObject is Game)

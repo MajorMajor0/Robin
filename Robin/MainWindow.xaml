@@ -875,7 +875,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										<TextBlock Text="Platforms"
 												   Style="{StaticResource Heading1}" />
 										<ListBox x:Name="EmulatorPlatformListBox"
-												 ItemsSource="{Binding Platforms}"
+												 ItemsSource="{Binding Platforms1}"
 												 SelectedItem="{Binding ElementName=Main_Window, Path=DataContext.SelectedEmulatorPlatform}">
 											<ListBox.ItemTemplate>
 												<DataTemplate>
