@@ -16,6 +16,8 @@ The database includes flags for
 	
 Most of the crap and unplayable have already been marked. But the GUI has tools to keep marking them and save to the database.
 
+Robin also has some wicked-fast filters on all the common metadata, so you can find the best version of the game you want to play pretty fast.
+
 Development has more or less stopped, because teh work is too much for one person and was just too time consuming.But the database is pretty valuable and I wish somebody would make use of it. Please let me know in the issues if you do find a use.
 
 To compile
