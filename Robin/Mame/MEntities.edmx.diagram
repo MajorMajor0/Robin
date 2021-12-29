@@ -4,17 +4,16 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="babae296d68f4a888e4be99577f5ae63" Name="Diagram1" ZoomLevel="86">
-        <EntityTypeShape EntityType="MModel.Disk" Width="1.5" PointX="0.75" PointY="2.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="MModel.Machine" Width="1.5" PointX="3" PointY="1.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="MModel.Rom" Width="1.5" PointX="7.5" PointY="2.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="MModel.RomFile" Width="1.5" PointX="5.25" PointY="2.875" IsExpanded="true" />
-        <AssociationConnector Association="MModel.FK_Machine_0_0" ManuallyRouted="false" />
-        <AssociationConnector Association="MModel.FK_Machine_1_0" ManuallyRouted="false" />
-        <AssociationConnector Association="MModel.FK_RomFile_0_0" ManuallyRouted="false" />
-        <AssociationConnector Association="MModel.Machine_Disk" ManuallyRouted="false" />
-        <AssociationConnector Association="MModel.Machine_Rom" ManuallyRouted="false" />
-        <AssociationConnector Association="MModel.RomFile_Rom" ManuallyRouted="false" />
+      <Diagram DiagramId="e6c4ba90e84740b9801f341aaa0196ef" Name="Diagram1">
+        <EntityTypeShape EntityType="MEntities.Disk" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MEntities.Machine" Width="1.5" PointX="3" PointY="3.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="MEntities.Rom" Width="1.5" PointX="0.75" PointY="4.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="MEntities.RomFile" Width="1.5" PointX="5.75" PointY="1.5" IsExpanded="true" />
+        <AssociationConnector Association="MEntities.FK_Machine_0_0" ManuallyRouted="false" />
+        <AssociationConnector Association="MEntities.FK_Machine_1_0" ManuallyRouted="false" />
+        <AssociationConnector Association="MEntities.Machine_Disk" ManuallyRouted="false" />
+        <AssociationConnector Association="MEntities.Machine_Rom" ManuallyRouted="false" />
+        <AssociationConnector Association="MEntities.RomFile_Rom1" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -14,10 +14,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace Robin
 {
@@ -27,9 +28,9 @@ namespace Robin
 
 		public LocalDB DB => LocalDB.OpenVGDB;
 
-		public DbSet Platforms => R.Data.OVGPlatforms;
+		public IEnumerable<IDBPlatform> Platforms => R.Data.Ovgplatforms;
 
-		public DbSet Releases => R.Data.OVGReleases;
+		public IEnumerable<IDBRelease> Releases => R.Data.Ovgreleases;
 
 		OpenVGDBEntities OVdata;
 
@@ -41,9 +42,9 @@ namespace Robin
 		{
 			Reporter.Tic("Opening Open VGDB cache...", out int tic1);
 
-			R.Data.OVGPlatforms.Load();
-			R.Data.OVGReleases.Load();
-			//R.Data.Releases.Include(x => x.OVGRelease);
+			R.Data.Ovgplatforms.Load();
+			R.Data.Ovgreleases.Load();
+			//R.Data.Releases.Include(x => x.Ovgrelease);
 
 			Reporter.Toc(tic1);
 		}
@@ -52,8 +53,8 @@ namespace Robin
 		{
 			OVdata = new OpenVGDBEntities();
 
-			OVdata.VGDBPLATFORMS.Load();
-			OVdata.VGDBRELEASES.Load();
+			OVdata.VGdbplatforms.Load();
+			OVdata.VGdbreleaseS.Load();
 			OVdata.VGDBROMS.Load();
 			OVdata.VGDBREGIONS.Load();
 		}
@@ -65,13 +66,13 @@ namespace Robin
 				LoadOVData();
 			}
 
-			OVGPlatform ovgPlatform = platform.OVGPlatform;
+			Ovgplatform Ovgplatform = platform.Ovgplatform;
 
-			List<VGDBRELEAS> list = OVdata.VGDBRELEASES.Where(x => x.VGDBROM.systemID == ovgPlatform.ID).ToList();
+			List<VGDBRELEAS> list = OVdata.VGdbreleaseS.Where(x => x.VGDBROM.systemID == Ovgplatform.Id).ToList();
 
 			foreach (VGDBRELEAS vgdbr in list)
 			{
-				ovgPlatform.OVGReleases.Add(vgdbr);
+				Ovgplatform.Ovgreleases.Add(vgdbr);
 			}
 		}
 
@@ -104,8 +105,8 @@ namespace Robin
 					OVGdata.Configuration.LazyLoadingEnabled = false;
 
 					OVGdata.VGDBROMS.Load();
-					OVGdata.VGDBRELEASES.Load();
-					OVGdata.VGDBRELEASES.Include(XamlGeneratedNamespace => XamlGeneratedNamespace.VGDBROM).Load();
+					OVGdata.VGdbreleaseS.Load();
+					OVGdata.VGdbreleaseS.Include(XamlGeneratedNamespace => XamlGeneratedNamespace.VGDBROM).Load();
 
 					List<VGDBROM> atariVgdbRoms = OVGdata.VGDBROMS.Where(x => x.systemID == 3 && !x.romFileName.Contains(@"(Hack)") && !x.romFileName.Contains(@"(208 in 1)") && !x.romFileName.Contains(@"(CCE)") && !x.romFileName.Contains(@"(2600 Screen Search Console)")).OrderBy(x => x.romFileName).ToList();
 					List<Release> newAtariReleases = new List<Release>();
@@ -140,12 +141,12 @@ namespace Robin
 							{
 								Rom rom = gameVgdbRom;
 
-								if (!atariPlatform.Roms.Any(x => x.SHA1 == rom.SHA1))
+								if (!atariPlatform.Roms.Any(x => x.Sha1 == rom.Sha1))
 								{
 									atariPlatform.Roms.Add(rom);
-									foreach (VGDBRELEAS atariVgdbRelease in gameVgdbRom.VGDBRELEASES)
+									foreach (VGDBRELEAS atariVGdbrelease in gameVgdbRom.VGdbreleaseS)
 									{
-										Release release = atariVgdbRelease;
+										Release release = atariVGdbrelease;
 										release.Rom = rom;
 										release.Game = game;
 										newAtariReleases.Add(release);
@@ -178,14 +179,14 @@ namespace Robin
 				Watch.Restart();
 #endif
 			}
-			var ovgReleaseEntries = R.Data.ChangeTracker.Entries<OVGRelease>();
+			var OvgreleaseEntries = R.Data.ChangeTracker.Entries<Ovgrelease>();
 #if DEBUG
 			Debug.WriteLine("Get entries: " + Watch.ElapsedMilliseconds);
 #endif
-			int ovgReleaseAddCount = ovgReleaseEntries.Count(x => x.State == EntityState.Added);
-			int ovgReleaseModCount = ovgReleaseEntries.Count(x => x.State == EntityState.Modified);
+			int OvgreleaseAddCount = OvgreleaseEntries.Count(x => x.State == EntityState.Added);
+			int OvgreleaseModCount = OvgreleaseEntries.Count(x => x.State == EntityState.Modified);
 
-			Reporter.Report("OVGReleases added: " + ovgReleaseAddCount + ", OVGReleases updated: " + ovgReleaseModCount);
+			Reporter.Report("Ovgreleases added: " + OvgreleaseAddCount + ", Ovgreleases updated: " + OvgreleaseModCount);
 		}
 
 		public void Dispose()

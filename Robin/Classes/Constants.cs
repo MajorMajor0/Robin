@@ -26,18 +26,18 @@ namespace Robin
 
 		public const string HEADER_ACCEPT_LANGUAGE = "en-US,en;q=0.5";
 
-		public const long ARCADE_PLATFORM_ID = 1;
+		public const long ARCADE_PlatformId = 1;
 
 		public const long MAME_ID = 5;
 
 		public const long HIGAN_EMULATOR_ID = 4;
 
-		public const long WORLD_REGION_ID = 22;
+		public const long WORLD_RegionId = 22;
 
-		public const long UNKNOWN_REGION_ID = 0;
+		public const long UNKNOWN_RegionId = 0;
 
-		public const long LYNX_PLATFORM_ID = 8;
+		public const long LYNX_PlatformId = 8;
 
-		public const long CHANNELF_PLATFORM_ID = 15;
+		public const long CHANNELF_PlatformId = 15;
 	}
 }

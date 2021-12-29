@@ -89,51 +89,51 @@ namespace Robin
 
 		public IDBRelease SelectedIDBRelease { get; set; }
 
-		public IEnumerable<IDBRelease> IDBReleases => GBReleases.Concat(GDBReleases).Concat(LBReleases);
+		public IEnumerable<IDBRelease> IDBReleases => Gbreleases.Concat(Gdbreleases).Concat(Lbreleases);
 
-		public IEnumerable<IDBRelease> GBReleases
+		public IEnumerable<IDBRelease> Gbreleases
 		{
 			get
 			{
-				if (platform.GBPlatform != null && !string.IsNullOrEmpty(searchTerm))
+				if (platform.Gbplatform != null && !string.IsNullOrEmpty(searchTerm))
 				{
-					return platform.GBPlatform.GBReleases.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
+					return platform.Gbplatform.Gbreleases.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
 				}
 				return Enumerable.Empty<IDBRelease>();
 			}
 		}
 
-		public IEnumerable<IDBRelease> GDBReleases
+		public IEnumerable<IDBRelease> Gdbreleases
 		{
 			get
 			{
-				if (platform.GDBPlatform != null && !string.IsNullOrEmpty(searchTerm))
+				if (platform.Gdbplatform != null && !string.IsNullOrEmpty(searchTerm))
 				{
-					return platform.GDBPlatform.GDBReleases.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
+					return platform.Gdbplatform.Gdbreleases.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
 				}
 				return Enumerable.Empty<IDBRelease>();
 			}
 		}
 
-		public IEnumerable<IDBRelease> LBReleases
+		public IEnumerable<IDBRelease> Lbreleases
 		{
 			get
 			{
-				if (platform.LBPlatform != null && !string.IsNullOrEmpty(searchTerm))
+				if (platform.Lbplatform != null && !string.IsNullOrEmpty(searchTerm))
 				{
-					return platform.LBPlatform.LBReleases.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
+					return platform.Lbplatform.Lbreleases.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
 				}
 				return Enumerable.Empty<IDBRelease>();
 			}
 		}
 
-		//public IEnumerable<IDBRelease> OVGReleases
+		//public IEnumerable<IDBRelease> Ovgreleases
 		//{
 		//	get
 		//	{
-		//		if (platform.OVGPlatform != null && !string.IsNullOrEmpty(searchTerm))
+		//		if (platform.Ovgplatform != null && !string.IsNullOrEmpty(searchTerm))
 		//		{
-		//			return platform.OVGPlatform.OVGReleases.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
+		//			return platform.Ovgplatform.Ovgreleases.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
 		//		}
 		//		return Enumerable.Empty<IDBRelease>();
 		//	}
@@ -175,21 +175,21 @@ namespace Robin
 			switch (db)
 			{
 				case LocalDB.GamesDB:
-					Release.ID_GDB = SelectedIDBRelease?.ID;
+					Release.ID_GDB = SelectedIDBRelease?.Id;
 					break;
 				case LocalDB.GiantBomb:
-					Release.ID_GB = SelectedIDBRelease?.ID;
+					Release.ID_GB = SelectedIDBRelease?.Id;
 					break;
 				case LocalDB.OpenVGDB:
-					Release.ID_OVG = SelectedIDBRelease?.ID;
+					Release.ID_OVG = SelectedIDBRelease?.Id;
 					break;
 				case LocalDB.LaunchBox:
-					Release.ID_LB = SelectedIDBRelease?.ID;
+					Release.ID_LB = SelectedIDBRelease?.Id;
 					break;
 				default:
 					break;
 			}
-			Reporter.Report(Release.Title + " matched to " + db.Description() + " release " + SelectedIDBRelease?.ID + ", " + SelectedIDBRelease?.Title + ".");
+			Reporter.Report(Release.Title + " matched to " + db.Description() + " release " + SelectedIDBRelease?.Id + ", " + SelectedIDBRelease?.Title + ".");
 			OnPropertyChanged("IDBReleases");
 			OnPropertyChanged("UnmatchedReleases");
 		}

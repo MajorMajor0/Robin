@@ -11,7 +11,7 @@
           </Key>
           <Property Name="ID" Type="integer" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="2147483647" />
-          <Property Name="SHA1" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="Sha1" Type="nvarchar" MaxLength="2147483647" />
         </EntityType>
         <EntityType Name="Machine">
           <Key>
@@ -41,10 +41,10 @@
         <EntityType Name="Machine_Rom">
           <Key>
             <PropertyRef Name="Machine_ID" />
-            <PropertyRef Name="MRom_ID" />
+            <PropertyRef Name="MRomId" />
           </Key>
           <Property Name="Machine_ID" Type="integer" Nullable="false" />
-          <Property Name="MRom_ID" Type="integer" Nullable="false" />
+          <Property Name="MRomId" Type="integer" Nullable="false" />
         </EntityType>
         <EntityType Name="Rom">
           <Key>
@@ -100,7 +100,7 @@
               <PropertyRef Name="ID" />
             </Principal>
             <Dependent Role="Machine_Rom">
-              <PropertyRef Name="MRom_ID" />
+              <PropertyRef Name="MRomId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -203,7 +203,7 @@
           </Key>
           <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
-          <Property Name="SHA1" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Sha1" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Machines" Relationship="Mame.Machine_Disk" FromRole="Disk" ToRole="Machine" />
         </EntityType>
         <EntityType Name="Rom">
@@ -252,7 +252,7 @@
           <EntitySetMapping Name="Disks">
             <EntityTypeMapping TypeName="Mame.Disk">
               <MappingFragment StoreEntitySet="Disk">
-                <ScalarProperty Name="SHA1" ColumnName="SHA1" />
+                <ScalarProperty Name="Sha1" ColumnName="Sha1" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
@@ -282,7 +282,7 @@
               <ScalarProperty Name="ID" ColumnName="Machine_ID" />
             </EndProperty>
             <EndProperty Name="Rom">
-              <ScalarProperty Name="ID" ColumnName="MRom_ID" />
+              <ScalarProperty Name="ID" ColumnName="MRomId" />
             </EndProperty>
           </AssociationSetMapping>
           </EntityContainerMapping>

@@ -17,15 +17,15 @@ namespace Robin
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public VGDBROM()
         {
-            this.VGDBRELEASES = new HashSet<VGDBRELEAS>();
+            this.VGdbreleaseS = new HashSet<VGDBRELEAS>();
         }
     
         public long romID { get; set; }
         public long systemID { get; set; }
         public long regionID { get; set; }
         public string romHashCRC { get; set; }
-        public string romHashMD5 { get; set; }
-        public string romHashSHA1 { get; set; }
+        public string romHashMd5 { get; set; }
+        public string romHashSha1 { get; set; }
         public Nullable<long> romSize { get; set; }
         public string romFileName { get; set; }
         public string romExtensionlessFileName { get; set; }
@@ -36,8 +36,8 @@ namespace Robin
         public string romDumpSource { get; set; }
         public Nullable<long> CloneOf { get; set; }
     
-        public virtual VGDBPLATFORM VGDBPLATFORM { get; set; }
+        public virtual VGdbplatform VGdbplatform { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<VGDBRELEAS> VGDBRELEASES { get; set; }
+        public virtual ICollection<VGDBRELEAS> VGdbreleaseS { get; set; }
     }
 }

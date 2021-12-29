@@ -84,7 +84,7 @@ namespace Robin
             //Title = name;
             ////this.File = file;
             ////Region = region;
-            //CRC32 = Crc.CRC32;
+            //Crc32 = Crc.Crc32;
         }
 
         static class Good

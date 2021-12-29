@@ -48,7 +48,7 @@ namespace Robin
 			foreach (Release release in hs)
 			{
 				string s = release.Title;
-				long i = release.ID;
+				long i = release.Id;
 			}
 			Debug.WriteLine($"Straight from DbSet: {watch.ElapsedMilliseconds} elapsed.");
 
@@ -58,7 +58,7 @@ namespace Robin
 		static void MetaTest()
 		{
 			List<Release> releases = R.Data.Releases.ToList();
-			Release release = releases.Find(x => x.ID == 1000);
+			Release release = releases.Find(x => x.Id == 1000);
 			release.Title = "xkcd";
 			Datomatic dat = new Datomatic();
 			dat.ReportUpdates(true);
@@ -67,8 +67,8 @@ namespace Robin
 		static void FindSpeedTest()
 		{
 			Stopwatch watch = Stopwatch.StartNew();
-			Dictionary<long, Release> releases = R.Data.Releases.ToDictionary(x => x.ID, x => x);
-			List<long> list = R.Data.Releases.Select(x => x.ID).ToList();
+			Dictionary<long, Release> releases = R.Data.Releases.ToDictionary(x => x.Id, x => x);
+			List<long> list = R.Data.Releases.Select(x => x.Id).ToList();
 			int yes = 0;
 			int no = 0;
 
@@ -90,13 +90,13 @@ namespace Robin
 
 		static void HashsetSpeedTest()
 		{
-			Platform NES = R.Data.Platforms.FirstOrDefault(x => x.ID == 22);
+			Platform NES = R.Data.Platforms.FirstOrDefault(x => x.Id == 22);
 
 			Stopwatch Watch1 = Stopwatch.StartNew();
-			List<Rom> roms = roms = R.Data.Roms.Where(x => x.Platform_ID == NES.ID).ToList();
+			List<Rom> roms = roms = R.Data.Roms.Where(x => x.PlatformId == NES.Id).ToList();
 			Debug.WriteLine($"List created: {Watch1.ElapsedMilliseconds}."); Watch1.Restart();
 
-			HashSet<string> stringDing = roms.Select(x => x.CRC32) as HashSet<string>;
+			HashSet<string> stringDing = roms.Select(x => x.Crc32) as HashSet<string>;
 			Debug.WriteLine($"Hashset created: {Watch1.ElapsedMilliseconds}."); Watch1.Restart();
 
 
@@ -104,54 +104,54 @@ namespace Robin
 
 		static void TestHash()
 		{
-			Platform NES = R.Data.Platforms.FirstOrDefault(x => x.ID == 22);
+			Platform NES = R.Data.Platforms.FirstOrDefault(x => x.Id == 22);
 			foreach (Rom rom in NES.Roms.Where(x => x.FileName != null))
 			{
-				string crc32a = Audit.GetHash(rom.FilePath, HashOption.CRC32, (int)NES.HeaderLength);
-				string sha1a = Audit.GetHash(rom.FilePath, HashOption.SHA1, (int)NES.HeaderLength);
-				string md5a = Audit.GetHash(rom.FilePath, HashOption.MD5, (int)NES.HeaderLength);
+				string Crc32a = Audit.GetHash(rom.FilePath, HashOption.Crc32, (int)NES.HeaderLength);
+				string Sha1a = Audit.GetHash(rom.FilePath, HashOption.Sha1, (int)NES.HeaderLength);
+				string Md5a = Audit.GetHash(rom.FilePath, HashOption.Md5, (int)NES.HeaderLength);
 
-				string crc32b = rom.CRC32;
-				string sha1b = rom.SHA1;
-				string md5b = rom.MD5;
+				string Crc32b = rom.Crc32;
+				string Sha1b = rom.Sha1;
+				string Md5b = rom.Md5;
 
-				if (crc32a == crc32b && md5a == md5b && sha1a == sha1b)
+				if (Crc32a == Crc32b && Md5a == Md5b && Sha1a == Sha1b)
 				{
-					Debug.WriteLine($"OK - {rom.Title} - {rom.ID}");
+					Debug.WriteLine($"OK - {rom.Title} - {rom.Id}");
 				}
 
 				else
 				{
-					crc32a = Audit.GetHash(rom.FilePath, HashOption.CRC32, 0);
-					sha1a = Audit.GetHash(rom.FilePath, HashOption.SHA1, 0);
-					md5a = Audit.GetHash(rom.FilePath, HashOption.MD5, 0);
+					Crc32a = Audit.GetHash(rom.FilePath, HashOption.Crc32, 0);
+					Sha1a = Audit.GetHash(rom.FilePath, HashOption.Sha1, 0);
+					Md5a = Audit.GetHash(rom.FilePath, HashOption.Md5, 0);
 				}
 
-				if (crc32a == crc32b && md5a == md5b && sha1a == sha1b)
+				if (Crc32a == Crc32b && Md5a == Md5b && Sha1a == Sha1b)
 				{
-					Debug.WriteLine($"OK - {rom.Title} - {rom.ID}");
+					Debug.WriteLine($"OK - {rom.Title} - {rom.Id}");
 				}
 
-				Debug.Assert(crc32a == crc32b || crc32b == null, $"CRC32 failure on {rom.Title} - {rom.ID}");
-				Debug.Assert(sha1a == sha1b || sha1b == null, $"SHA1 failure on {rom.Title} - {rom.ID}");
-				Debug.Assert(md5a == md5b || md5b == null, $"MD5 failure on {rom.Title} - {rom.ID}");
+				Debug.Assert(Crc32a == Crc32b || Crc32b == null, $"Crc32 failure on {rom.Title} - {rom.Id}");
+				Debug.Assert(Sha1a == Sha1b || Sha1b == null, $"Sha1 failure on {rom.Title} - {rom.Id}");
+				Debug.Assert(Md5a == Md5b || Md5b == null, $"Md5 failure on {rom.Title} - {rom.Id}");
 			}
 		}
 
-		static void SetMessMachines()
-		{
-			int i = 0;
-			foreach (string messMachine in messMachines)
-			{
-				Release release = R.Data.Releases.FirstOrDefault(x => x.Rom.FileName != null && x.Rom.FileName.Split('.')[0] == messMachine);
+		//static void SetMessMachines()
+		//{
+		//	int i = 0;
+		//	foreach (string messMachine in messMachines)
+		//	{
+		//		Release release = R.Data.Releases.FirstOrDefault(x => x.Rom.FileName != null && x.Rom.FileName.Split('.')[0] == messMachine);
 
-				if (release != null)
-				{
-					release.Game.IsMess = true;
-					Debug.WriteLine(i++);
-				}
-			}
-		}
+		//		if (release != null)
+		//		{
+		//			release.Game.IsMess = true;
+		//			Debug.WriteLine(i++);
+		//		}
+		//	}
+		//}
 
 		public async static Task DatabaseWindowBonusAsync()
 		{
@@ -177,7 +177,7 @@ namespace Robin
 
 		static void GetMameStatusesAsync()
 		{
-			Platform arcadePlatform = R.Data.Platforms.FirstOrDefault(x => x.ID == CONSTANTS.ARCADE_PLATFORM_ID);
+			Platform arcadePlatform = R.Data.Platforms.FirstOrDefault(x => x.Id == CONSTANTS.ARCADE_PlatformId);
 
 			Stopwatch Watch = Stopwatch.StartNew();
 			Stopwatch Watch1 = Stopwatch.StartNew();

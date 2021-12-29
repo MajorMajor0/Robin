@@ -12,6 +12,8 @@
  * You should have received a copy of the GNU General Public License
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
 
+using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 
@@ -19,7 +21,11 @@ namespace Robin
 {
 	public static class FileLocation
 	{
-		public static string Folder = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+		public static string Folder = Path
+			.GetDirectoryName(Path
+			.GetDirectoryName(Assembly
+				.GetEntryAssembly()
+				.Location));
 		public static class Art
 		{
 			public static string Folder = FileLocation.Folder + @"\Art\";
@@ -53,7 +59,8 @@ namespace Robin
 
 		public static string Marquee = Folder + @"\Emulators\MAME\marquees\";
 
-		public static string Data = Folder + @"\Data\";
+		//public static string Data = Folder + @"\Data\";
+		public static string Data = @"..\data\";
 
 		public static string RobinData = Data + @"RobinData.db3";
 
@@ -74,6 +81,14 @@ namespace Robin
 			Directory.CreateDirectory(Art.Banner);
 			Directory.CreateDirectory(Art.Logo);
 			Directory.CreateDirectory(Art.Console);
+		}
+
+		static FileLocation()
+		{
+			Debug.WriteLine($"Launched from {Environment.CurrentDirectory}");
+			Debug.WriteLine($"Physical location {AppDomain.CurrentDomain.BaseDirectory}");
+			Debug.WriteLine($"AppContext.BaseDir {AppContext.BaseDirectory}");
+			Debug.WriteLine($"Runtime Call {Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName)}");
 		}
 	}
 }

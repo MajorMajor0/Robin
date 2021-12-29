@@ -14,12 +14,14 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data.Entity;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace Robin
 {
-	public interface IDBobject
+	public interface IDBobject : INotifyPropertyChanged
 	{
 		string Title { get; }
 		string MainDisplay { get; }
@@ -35,9 +37,9 @@ namespace Robin
 		int ScrapeArt(ArtType artType, LocalDB localDB);
 	}
 
-	public interface IDBRelease
+	public interface IDBRelease : INotifyPropertyChanged
 	{
-		long ID { get; }
+		long Id { get; }
 		string Title { get; }
 		string Overview { get; }
 		string RegionTitle { get; }
@@ -46,12 +48,14 @@ namespace Robin
 		Region Region { get; }
 
 		DateTime? Date { get; }
+		string BannerPath { get; }
+
 		int ScrapeBoxFront();
 	}
 
 	public interface IDBPlatform
 	{
-		long ID { get; }
+		long Id { get; }
 		string Title { get; }
 		string Manufacturer { get; }
 		DateTime? Date { get; }
@@ -60,6 +64,7 @@ namespace Robin
 		bool Preferred { get; }
 		Platform RPlatform { get; }
 		int MatchedReleaseCount { get; }
+
 	}
 
 	/// <summary>
@@ -69,17 +74,17 @@ namespace Robin
 	{
 		LocalDB DB { get; }
 		string Title { get; }
-		DbSet Platforms { get; }
-		DbSet Releases { get; }
+		IEnumerable<IDBPlatform> Platforms { get; }
+		IEnumerable<IDBRelease> Releases { get; }
 		bool HasRegions { get; }
 
 		/// <summary>
-		/// Update the list of platforms in the local DB cache, GBPlatform, GDBlatform, LBPlatform...
+		/// Update the list of platforms in the local DB cache, Gbplatform, GDBlatform, Lbplatform...
 		/// </summary>
 		void CachePlatforms();
 
 		/// <summary>
-		/// Update the local DB cache of realeases for one platform, inlcluding the list of releases and associated metadata. LBRealease, GBRelease, GDBRelease...
+		/// Update the local DB cache of realeases for one platform, inlcluding the list of releases and associated metadata. LBRealease, Gbrelease, Gdbrelease...
 		/// </summary>
 		/// <param name="platform"></param>
 		void CachePlatformReleases(Platform platform);
@@ -89,7 +94,7 @@ namespace Robin
 		/// </summary>
 		/// <param name="platform"></param>
 		void CachePlatformGames(Platform platform);
-		
+
 		/// <summary>
 		/// Update the local DB cache of platform associated metadata
 		/// </summary>

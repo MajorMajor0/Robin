@@ -362,7 +362,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 											  DataType="{x:Type local:Compares}">
 									<DataGrid Style="{StaticResource DataGridStyle1}"
 											  ItemsSource="{Binding List}"
-											  PreviewMouseWheel="DataGrid_MouseWheel">
+											  PreviewMouseWheel="DataGrID_MouseWheel">
 										<DataGrid.LayoutTransform>
 											<ScaleTransform x:Name="DataGridScale"
 															CenterX="1"
@@ -392,7 +392,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 											  ItemsSource="{Binding Path=(local:Platform.Releases),Mode=OneWay}"
 											  SelectionUnit="FullRow"
 											  SelectedItem="{Binding ElementName=Database_Window, Path=DataContext.SelectedRelease}"
-											  PreviewMouseWheel="DataGrid_MouseWheel"
+											  PreviewMouseWheel="DataGrID_MouseWheel"
                                               Tag="{Binding ElementName=Database_Window, Path=DataContext}">
 										<DataGrid.ContextMenu>
 											<ContextMenu>
@@ -440,10 +440,10 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 								</DataTemplate>
 
 								<DataTemplate x:Name="GDBTemplate"
-											  DataType="{x:Type local:GDBPlatform}">
+											  DataType="{x:Type local:Gdbplatform}">
 									<DataGrid Style="{StaticResource DataGridStyle1}"
 											  ItemsSource="{Binding Path=Releases, Mode=OneWay}"
-											  PreviewMouseWheel="DataGrid_MouseWheel"
+											  PreviewMouseWheel="DataGrID_MouseWheel"
 											  SelectionUnit="FullRow"
 											  SelectedItem="{Binding ElementName=Database_Window, Path=DataContext.SelectedRelease ,Mode=TwoWay}">
 										<DataGrid.Columns>
@@ -466,15 +466,15 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 											<DataGridTextColumn Header="Genre"
 																Binding="{Binding Genre, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Box Front URL"
-																Binding="{Binding BoxFrontURL, TargetNullValue=-}" />
+																Binding="{Binding BoxFrontUrl, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Box Back URL"
-																Binding="{Binding BoxBackURL, TargetNullValue=-}" />
+																Binding="{Binding BoxBackUrl, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Banner URL"
-																Binding="{Binding BannerURL, TargetNullValue=-}" />
+																Binding="{Binding BannerUrl, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Screen URL"
-																Binding="{Binding ScreenURL, TargetNullValue=-}" />
+																Binding="{Binding ScreenUrl, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Logo URL"
-																Binding="{Binding LogoURL, TargetNullValue=-}" />
+																Binding="{Binding LogoUrl, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Coop"
 																Binding="{Binding Coop, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Overview"
@@ -484,10 +484,10 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 								</DataTemplate>
 
 								<DataTemplate x:Name="GBTemplate"
-											  DataType="{x:Type local:GBPlatform}">
+											  DataType="{x:Type local:Gbplatform}">
 									<DataGrid Style="{StaticResource DataGridStyle1}"
 											  ItemsSource="{Binding Path=(local:IDBPlatform.Releases), Mode=OneWay}"
-											  PreviewMouseWheel="DataGrid_MouseWheel"
+											  PreviewMouseWheel="DataGrID_MouseWheel"
 											  SelectedItem="{Binding ElementName=Database_Window, Path=DataContext.SelectedRelease}">
 										<DataGrid.Columns>
 											<DataGridTextColumn Header="ID"
@@ -501,9 +501,9 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 											<DataGridTextColumn Header="Players"
 																Binding="{Binding Players, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Box Front URL"
-																Binding="{Binding BoxURL, TargetNullValue=-}" />
+																Binding="{Binding BoxUrl, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Screen URL"
-																Binding="{Binding ScreenURL, TargetNullValue=-}" />
+																Binding="{Binding ScreenUrl, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Overview"
 																Binding="{Binding Overview, TargetNullValue=-}" />
 										</DataGrid.Columns>
@@ -511,10 +511,10 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 								</DataTemplate>
 
 								<DataTemplate x:Name="LBTemplate"
-											  DataType="{x:Type local:LBPlatform}">
+											  DataType="{x:Type local:Lbplatform}">
 									<DataGrid Style="{StaticResource DataGridStyle1}"
 											  ItemsSource="{Binding Path=(local:IDBPlatform.Releases), Mode=OneWay}"
-											  PreviewMouseWheel="DataGrid_MouseWheel"
+											  PreviewMouseWheel="DataGrID_MouseWheel"
 											  SelectedItem="{Binding ElementName=Database_Window, Path=DataContext.SelectedRelease}">
 										<DataGrid.Columns>
 											<DataGridTextColumn Header="ID"
@@ -534,11 +534,11 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 											<DataGridTextColumn Header="Publisher"
 																Binding="{Binding Publisher, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Video URL"
-																Binding="{Binding VideoURL, TargetNullValue=-}" />
+																Binding="{Binding VideoUrl, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Wiki URL"
-																Binding="{Binding WikiURL, TargetNullValue=-}" />
+																Binding="{Binding WikiUrl, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Images"
-																Binding="{Binding LBImages.Count, TargetNullValue=-}" />
+																Binding="{Binding Lbimages.Count, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Overview"
 																Binding="{Binding Overview, TargetNullValue=-}" />
 										</DataGrid.Columns>
@@ -546,10 +546,10 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 								</DataTemplate>
 
 								<DataTemplate x:Name="OVGTemplate"
-											  DataType="{x:Type local:OVGPlatform}">
+											  DataType="{x:Type local:Ovgplatform}">
 									<DataGrid Style="{StaticResource DataGridStyle1}"
 											  ItemsSource="{Binding Path=(local:IDBPlatform.Releases), Mode=OneWay}"
-											  PreviewMouseWheel="DataGrid_MouseWheel"
+											  PreviewMouseWheel="DataGrID_MouseWheel"
 											  SelectedItem="{Binding ElementName=Database_Window, Path=DataContext.SelectedRelease}">
 										<DataGrid.Columns>
 											<DataGridTextColumn Header="ID"
@@ -569,9 +569,9 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 											<DataGridTextColumn Header="Language"
 																Binding="{Binding Language, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Box Front URL"
-																Binding="{Binding BoxFrontURL, TargetNullValue=-}" />
+																Binding="{Binding BoxFrontUrl, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Box Back URL"
-																Binding="{Binding BoxBackURL, TargetNullValue=-}" />
+																Binding="{Binding BoxBackUrl, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Overview"
 																Binding="{Binding Overview, TargetNullValue=-}" />
 										</DataGrid.Columns>

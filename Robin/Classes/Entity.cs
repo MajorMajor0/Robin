@@ -11,13 +11,16 @@
  * 
  * You should have received a copy of the GNU General Public License
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
- 
+
 using System;
-using System.Data.Entity;
-using System.Data.Entity.Validation;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Windows;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace Robin
 {
@@ -27,14 +30,14 @@ namespace Robin
 
 		public static bool Blocked { get; set; }
 
-		public Entity() : base()
-		{
+		//public Entity() : base()
+		//{
 
-		}
+		//}
 
-		public Entity(string namer) : base(namer)
-		{
-		}
+		//public Entity(string namer) : base(namer)
+		//{
+		//}
 
 		public void Save(bool detectChanges = false)
 		{
@@ -45,7 +48,7 @@ namespace Robin
 				ChangeTracker.DetectChanges();
 			}
 
-			if(ChangeTracker.Entries().Any())
+			if (ChangeTracker.Entries().Any())
 			{
 				backupFile = Backup();
 			}
@@ -55,24 +58,42 @@ namespace Robin
 				int nChanges = SaveChanges();
 				Reporter.Report($"{nChanges} Database changes saved successfully");
 			}
-			catch (DbEntityValidationException dbEx)
-			{
-				foreach (var validationErrors in dbEx.EntityValidationErrors)
-				{
-					foreach (var validationError in validationErrors.ValidationErrors)
-					{
-						Trace.TraceInformation("Property: {0} Error: {1}",
-												validationError.PropertyName,
-												validationError.ErrorMessage);
 
-						Reporter.Report($"Data validation error...\nProperty: {validationError.PropertyName} Error: {validationError.ErrorMessage}");
-					}
-				}
+			catch (DbUpdateConcurrencyException ex)
+			{
+				HandleUpdateException(ex);
+			}
+			catch (DbUpdateException ex)
+			{
+				HandleUpdateException(ex);
 			}
 		}
 
+		private static void HandleUpdateException(DbUpdateException ex)
+		{
+			string entries = string.Empty;
+			int i = 0;
+
+			foreach (var entry in ex.Entries)
+			{
+				Type type = entry.GetType();
+				var props = new List<PropertyInfo>(type.GetProperties());
+
+				entries += $"Entry {i++}:\n";
+				foreach (PropertyInfo prop in props)
+				{
+					entries += $"{prop.Name}:\t{prop.GetValue(entry, null)}\n";
+				}
+				entries += "\n";
+			}
+
+			string message = $"ex.Message\n\nFailed Entries:\n{entries}";
+			Reporter.Report(message);
+
+			MessageBox.Show(message,"Database Update Error",MessageBoxButton.OK);
+		}
 		/// <summary>
-		/// Backup uexisting database.
+		/// Backup existing database.
 		/// </summary>
 		/// <returns></returns>
 		public string Backup()

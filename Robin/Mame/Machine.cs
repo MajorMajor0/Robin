@@ -17,13 +17,12 @@ namespace Robin.Mame
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Machine()
         {
+            this.SampleChildren = new HashSet<Machine>();
             this.Children = new HashSet<Machine>();
-            this.RomFiles = new HashSet<RomFile>();
             this.Disks = new HashSet<Disk>();
             this.Roms = new HashSet<Rom>();
         }
     
-        public long ID { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public string Year { get; set; }
@@ -33,19 +32,19 @@ namespace Robin.Mame
         public string Players { get; set; }
         public string Display { get; set; }
         public string Control { get; set; }
-        public Nullable<long> Parent_ID { get; set; }
-        public Nullable<long> Sample_ID { get; set; }
+        public string Parent_Name { get; set; }
+        public string Sample_Name { get; set; }
         public bool IsMechanical { get; set; }
         public bool IsDevice { get; set; }
         public bool IsBios { get; set; }
         public bool IsRunnable { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Machine> SampleChildren { get; set; }
         public virtual Machine SampleParent { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Machine> Children { get; set; }
         public virtual Machine Parent { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<RomFile> RomFiles { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Disk> Disks { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

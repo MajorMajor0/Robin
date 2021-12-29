@@ -17,7 +17,7 @@ namespace Robin
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public VGDBREGION()
         {
-            this.VGDBRELEASES = new HashSet<VGDBRELEAS>();
+            this.VGdbreleaseS = new HashSet<VGDBRELEAS>();
         }
     
         public long regionID { get; set; }
@@ -27,6 +27,6 @@ namespace Robin
         public string Title_GB { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<VGDBRELEAS> VGDBRELEASES { get; set; }
+        public virtual ICollection<VGDBRELEAS> VGdbreleaseS { get; set; }
     }
 }

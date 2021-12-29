@@ -58,7 +58,7 @@ namespace Robin
 			}
 		}
 
-		 void DataGrid_MouseWheel(object sender, MouseWheelEventArgs e)
+		 void DataGrID_MouseWheel(object sender, MouseWheelEventArgs e)
 		{
 			if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
 			{

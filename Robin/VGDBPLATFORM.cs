@@ -12,10 +12,10 @@ namespace Robin
     using System;
     using System.Collections.Generic;
     
-    public partial class VGDBPLATFORM
+    public partial class VGdbplatform
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public VGDBPLATFORM()
+        public VGdbplatform()
         {
             this.VGDBROMS = new HashSet<VGDBROM>();
         }

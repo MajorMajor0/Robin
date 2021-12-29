@@ -14,7 +14,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -24,6 +23,9 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
+using Microsoft.EntityFrameworkCore;
+
+
 namespace Robin
 {
 	public class Datomatic : IDB
@@ -32,9 +34,9 @@ namespace Robin
 
 		public LocalDB DB => LocalDB.Datomatic;
 
-		public DbSet Platforms => R.Data.Platforms;
+		public IEnumerable<IDBPlatform> Platforms => R.Data.Platforms;
 
-		public DbSet Releases => R.Data.Releases;
+		public IEnumerable<IDBRelease> Releases => R.Data.Releases;
 
 		public Datomatic()
 		{
@@ -107,7 +109,7 @@ namespace Robin
 
 		public void CachePlatformReleases(Platform platform)
 		{
-			if (platform.ID == CONSTANTS.ARCADE_PLATFORM_ID)
+			if (platform.Id == CONSTANTS.ARCADE_PlatformId)
 			{
 				Mame.Database mame = new Mame.Database();
 				mame.CacheReleases();
@@ -236,11 +238,11 @@ namespace Robin
 						// Check if game exists
 						foreach (XElement romElement in romElements)
 						{
-							string romElementSha1 = romElement.SafeGetA(element1: "rom", attribute: "sha1");
+							string romElementSha1 = romElement.SafeGetA(element1: "rom", attribute: "Sha1");
 #if DEBUG
 							Watch2.Restart();
 #endif
-							Release release = platform.Releases.FirstOrDefault(x => x.Rom.SHA1 == romElementSha1);
+							Release release = platform.Releases.FirstOrDefault(x => x.Rom.Sha1 == romElementSha1);
 							if (release != null)
 							{
 								game = release.Game;
@@ -263,18 +265,18 @@ namespace Robin
 						// Check if each rom exists
 						foreach (XElement romElement in romElements)
 						{
-							string romElementSha1 = romElement.SafeGetA(element1: "rom", attribute: "sha1");
+							string romElementSha1 = romElement.SafeGetA(element1: "rom", attribute: "Sha1");
 							if (romElementSha1 == null)
 							{
 								continue; // Malformed element
 							}
 
-							var rom = R.Data.Roms.FirstOrDefault(x => x.SHA1 == romElementSha1);
+							var rom = R.Data.Roms.FirstOrDefault(x => x.Sha1 == romElementSha1);
 
 							// Not found, create a new one
 							if (rom == null)
 							{
-								rom = new Rom();// { Platform_ID = platform.ID };
+								rom = new Rom();// { PlatformId = platform.Id };
 								R.Data.Roms.Add(rom);
 							}
 #if DEBUG
@@ -293,27 +295,27 @@ namespace Robin
 
 								if (releaseRegionTitle == null)
 								{
-									Reporter.Report("Skipped release (SHA1: " + romElementSha1 + ") because the datomatic file lists it with no region");
+									Reporter.Report("Skipped release (Sha1: " + romElementSha1 + ") because the datomatic file lists it with no region");
 									continue;
 								}
 
-								long? regionID = R.Data.Regions.FirstOrDefault(x => (x.Datomatic == releaseRegionTitle) || (x.Title == releaseRegionTitle)).ID;
+								long? regionID = R.Data.Regions.FirstOrDefault(x => (x.Datomatic == releaseRegionTitle) || (x.Title == releaseRegionTitle)).Id;
 
 								if (regionID == null)
 								{
-									Reporter.Report("Skipped Datomatic release (SHA1: " + romElementSha1 + ", Region: " + releaseRegionTitle + ") because the region wasn't recognized. Consider adding this region to the database");
+									Reporter.Report("Skipped Datomatic release (Sha1: " + romElementSha1 + ", Region: " + releaseRegionTitle + ") because the region wasn't recognized. Consider adding this region to the database");
 									continue;
 								}
 #if DEBUG
 								Watch2.Restart();
 #endif
-								Release release = platform.Releases.FirstOrDefault(x => x.Rom_ID == rom.ID && x.Region_ID == regionID);
+								Release release = platform.Releases.FirstOrDefault(x => x.RomId == rom.Id && x.RegionId == regionID);
 								if (release == null)
 								{
 									release = new Release();
 									release.Game = game;
 									release.Rom = rom;
-									release.Region_ID = (long)regionID;
+									release.RegionId = (long)regionID;
 									platform.Releases.Add(release);
 								}
 #if DEBUG
@@ -440,9 +442,9 @@ namespace Robin
 		{
 			// Get rom properties from parent node
 			rom.Source = "Datomatic";
-			rom.CRC32 = romElement.SafeGetA(element1: "rom", attribute: "crc");
-			rom.MD5 = romElement.SafeGetA(element1: "rom", attribute: "md5");
-			rom.SHA1 = romElement.SafeGetA(element1: "rom", attribute: "sha1");
+			rom.Crc32 = romElement.SafeGetA(element1: "rom", attribute: "crc");
+			rom.Md5 = romElement.SafeGetA(element1: "rom", attribute: "Md5");
+			rom.Sha1 = romElement.SafeGetA(element1: "rom", attribute: "Sha1");
 			rom.Size = romElement.SafeGetA(element1: "rom", attribute: "size");
 			rom.Title = romElement.SafeGetA(element1: "rom", attribute: "name");
 			rom.Title = Path.GetFileNameWithoutExtension(rom.Title);
@@ -468,7 +470,7 @@ namespace Robin
 			{
 				// free other managed objects that implement
 				// IDisposable only
-				// R.Data.GBPlatforms.Dispose();
+				// R.Data.Gbplatforms.Dispose();
 			}
 
 			// release any unmanaged objects

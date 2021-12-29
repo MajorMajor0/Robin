@@ -22,7 +22,7 @@ namespace Robin.Mame
     
         public long ID { get; set; }
         public string Name { get; set; }
-        public string SHA1 { get; set; }
+        public string Sha1 { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Machine> Machines { get; set; }

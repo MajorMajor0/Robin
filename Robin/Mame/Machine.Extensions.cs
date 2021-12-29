@@ -11,16 +11,16 @@ namespace Robin.Mame
 {
 	partial class Machine
 	{
-		public string CloneOf { get; set; }
+		//public string CloneOf { get; set; }
 
-		public string SampleOf { get; set; }
+		//public string SampleOf { get; set; }
 
 		public string Title => Regex.Replace(Name, @"\s\(.*\)", "");
 
 
 
 		string parenthesisText;
-		string ParenthesisText
+		public string ParenthesisText
 		{
 			get
 			{
@@ -55,8 +55,8 @@ namespace Robin.Mame
 			Display = xelement.Element("display")?.Attribute("type")?.Value;
 			Control = xelement.Element("input")?.Elements("control")?.FirstOrDefault()?.Attribute("type")?.Value;
 
-			CloneOf = xelement.Attribute("cloneof")?.Value;
-			SampleOf = xelement.Attribute("sampleof")?.Value;
+			Parent_Name = xelement.Attribute("cloneof")?.Value;
+			Sample_Name = xelement.Attribute("sampleof")?.Value;
 
 			IsMechanical = xelement.Attribute("ismechanical")?.Value == "yes";
 			IsBios = xelement.Attribute("isbios")?.Value == "yes";
@@ -102,7 +102,7 @@ namespace Robin.Mame
 		{
 			foreach (Region region in R.Data.Regions)
 			{
-				if (parenthesisText != null && (parenthesisText.Contains(region.Title) || parenthesisText.Contains(region.Datomatic ?? "XXX") || parenthesisText.Contains(region.UNCode ?? "XXX")))
+				if (parenthesisText != null && (parenthesisText.Contains(region.Title) || parenthesisText.Contains(region.Datomatic ?? "XXX") || parenthesisText.Contains(region.Uncode ?? "XXX")))
 				{
 					return region;
 				}

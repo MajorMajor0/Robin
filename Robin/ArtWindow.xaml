@@ -97,13 +97,13 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 
 
 						<Image Style="{StaticResource ImageStyle1}"
-							   Source="{Binding LBRelease.BoxFrontPath, Converter={StaticResource ImageConverter}}"
-							   Visibility="{Binding LBRelease.BoxFrontPath, Converter={StaticResource fileToVisibilityConverter}}" />
+							   Source="{Binding Lbrelease.BoxFrontPath, Converter={StaticResource ImageConverter}}"
+							   Visibility="{Binding Lbrelease.BoxFrontPath, Converter={StaticResource fileToVisibilityConverter}}" />
 
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Box art back: {0}">
-									<Binding Path="LBRelease.BoxBackURL"
+									<Binding Path="Lbrelease.BoxBackUrl"
 											 TargetNullValue="-" />
 								</MultiBinding>
 							</TextBlock.Text>
@@ -111,7 +111,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Box art 3D: {0}">
-									<Binding Path="LBRelease.Box3DURL"
+									<Binding Path="Lbrelease.Box3DURL"
 											 TargetNullValue="-" />
 								</MultiBinding>
 							</TextBlock.Text>
@@ -119,7 +119,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Logo: {0}">
-									<Binding Path="LBRelease.LogoURL"
+									<Binding Path="Lbrelease.LogoUrl"
 											 TargetNullValue="-" />
 								</MultiBinding>
 							</TextBlock.Text>
@@ -127,7 +127,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Banner: {0}">
-									<Binding Path="LBRelease.BannerURL"
+									<Binding Path="Lbrelease.BannerUrl"
 											 TargetNullValue="-" />
 								</MultiBinding>
 							</TextBlock.Text>
@@ -135,7 +135,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Marquee: {0}">
-									<Binding Path="LBRelease.MarqueeURL"
+									<Binding Path="Lbrelease.MarqueeURL"
 											 TargetNullValue="-" />
 								</MultiBinding>
 							</TextBlock.Text>
@@ -143,7 +143,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Screen shot: {0}">
-									<Binding Path="LBRelease.ScreenURL"
+									<Binding Path="Lbrelease.ScreenUrl"
 											 TargetNullValue="-" />
 								</MultiBinding>
 							</TextBlock.Text>
@@ -151,7 +151,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Control panel: {0}">
-									<Binding Path="LBRelease.ControlPanelURL"
+									<Binding Path="Lbrelease.ControlPanelURL"
 											 TargetNullValue="-" />
 								</MultiBinding>
 							</TextBlock.Text>
@@ -159,7 +159,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Control information: {0}">
-									<Binding Path="LBRelease.ControlInformationURL"
+									<Binding Path="Lbrelease.ControlInformationURL"
 											 TargetNullValue="-" />
 								</MultiBinding>
 							</TextBlock.Text>
@@ -167,7 +167,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Cartridge front: {0}">
-									<Binding Path="LBRelease.CartFrontURL"
+									<Binding Path="Lbrelease.CartFrontURL"
 											 TargetNullValue="-" />
 								</MultiBinding>
 							</TextBlock.Text>
@@ -175,7 +175,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Cartridge back: {0}">
-									<Binding Path="LBRelease.CartBackURL"
+									<Binding Path="Lbrelease.CartBackURL"
 											 TargetNullValue="-" />
 								</MultiBinding>
 							</TextBlock.Text>
@@ -183,7 +183,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Cartridge 3D: {0}">
-									<Binding Path="LBRelease.Cart3DURL"
+									<Binding Path="Lbrelease.Cart3DURL"
 											 TargetNullValue="-" />
 								</MultiBinding>
 							</TextBlock.Text>
@@ -202,7 +202,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Box art front: {0}">
-									<Binding Path="GDBRelease.BoxFrontURL"
+									<Binding Path="Gdbrelease.BoxFrontUrl"
 											 TargetNullValue="-" />
 								</MultiBinding>
 							</TextBlock.Text>
@@ -210,7 +210,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Box art back: {0}">
-									<Binding Path="GDBRelease.BoxBackURL"
+									<Binding Path="Gdbrelease.BoxBackUrl"
 											 TargetNullValue="-" />
 								</MultiBinding>
 							</TextBlock.Text>
@@ -218,7 +218,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Banner: {0}">
-									<Binding Path="GDBRelease.BannerURL"
+									<Binding Path="Gdbrelease.BannerUrl"
 											 TargetNullValue="-" />
 								</MultiBinding>
 							</TextBlock.Text>
@@ -226,7 +226,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Screen: {0}">
-									<Binding Path="GDBRelease.ScreenURL"
+									<Binding Path="Gdbrelease.ScreenUrl"
 											 TargetNullValue="-" />
 								</MultiBinding>
 							</TextBlock.Text>
@@ -234,7 +234,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Logo: {0}">
-									<Binding Path="GDBRelease.logoURL"
+									<Binding Path="Gdbrelease.LogoUrl"
 											 TargetNullValue="-" />
 								</MultiBinding>
 							</TextBlock.Text>
@@ -253,7 +253,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Box art: {0}">
-									<Binding Path="GBRelease.BoxURL"
+									<Binding Path="Gbrelease.BoxUrl"
 											 TargetNullValue="-" />
 								</MultiBinding>
 							</TextBlock.Text>
@@ -261,7 +261,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Screen art: {0}">
-									<Binding Path="GBRelease.ScreenURL"
+									<Binding Path="Gbrelease.ScreenUrl"
 											 TargetNullValue="-" />
 								</MultiBinding>
 							</TextBlock.Text>
@@ -280,7 +280,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Box art: {0}">
-									<Binding Path="OVGRelease.BoxFrontURL"
+									<Binding Path="Ovgrelease.BoxFrontUrl"
 											 TargetNullValue="-" />
 								</MultiBinding>
 							</TextBlock.Text>
@@ -288,7 +288,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Screen art: {0}">
-									<Binding Path="OVGRelease.BoxBackURL"
+									<Binding Path="Ovgrelease.BoxBackUrl"
 											 TargetNullValue="-" />
 								</MultiBinding>
 							</TextBlock.Text>
@@ -313,7 +313,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Box art front: {0}">
-									<Binding Path="BoxFrontURL"
+									<Binding Path="BoxFrontUrl"
 											 TargetNullValue="-" />
 								</MultiBinding>
 							</TextBlock.Text>
@@ -321,7 +321,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Box art back: {0}">
-									<Binding Path="BoxBackURL"
+									<Binding Path="BoxBackUrl"
 											 TargetNullValue="-" />
 								</MultiBinding>
 							</TextBlock.Text>
@@ -337,7 +337,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Logo: {0}">
-									<Binding Path="LogoURL"
+									<Binding Path="LogoUrl"
 											 TargetNullValue="-" />
 								</MultiBinding>
 							</TextBlock.Text>
@@ -345,7 +345,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Banner: {0}">
-									<Binding Path="BannerURL"
+									<Binding Path="BannerUrl"
 											 TargetNullValue="-" />
 								</MultiBinding>
 							</TextBlock.Text>
@@ -361,7 +361,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Screen shot: {0}">
-									<Binding Path="ScreenURL"
+									<Binding Path="ScreenUrl"
 											 TargetNullValue="-" />
 								</MultiBinding>
 							</TextBlock.Text>

@@ -18,7 +18,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Data.Entity;
+//using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -48,13 +48,13 @@ namespace Robin
 			}
 		}
 
-		public IList PlatformList
+		public IEnumerable PlatformList
 		{
 			get
 			{
 				if (SelectedIDB != null)
 				{
-					return SelectedIDB.Platforms.Local;
+					return SelectedIDB.Platforms;
 				}
 				return null;
 			}

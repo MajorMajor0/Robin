@@ -38,7 +38,7 @@ namespace Robin
 			{
 				foreach (long id in Properties.Settings.Default.RecentFileIDs)
 				{
-					recentFiles.Enqueue(R.Data.Releases.FirstOrDefault(x => x.ID == id));
+					recentFiles.Enqueue(R.Data.Releases.FirstOrDefault(x => x.Id == id));
 				}
 			}
 		}
@@ -61,7 +61,7 @@ namespace Robin
 
 		public static void Save()
 		{
-			Properties.Settings.Default.RecentFileIDs = RecentFiles.Select(x => x.ID).ToList();
+			Properties.Settings.Default.RecentFileIDs = RecentFiles.Select(x => x.Id).ToList();
 		}
 
 		public static event EventHandler RecentFilesChanged;

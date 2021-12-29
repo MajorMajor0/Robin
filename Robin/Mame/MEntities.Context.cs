@@ -13,17 +13,13 @@ namespace Robin.Mame
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class MEntities : Entity
+    public partial class Entities : Entity
     {
-        public MEntities()
-            : base("name=MEntities")
-        {
-        }
+        //public Entities()
+        //    : base("name=Entities")
+        //{
+        //}
     
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        {
-            throw new UnintentionalCodeFirstException();
-        }
     
         public virtual DbSet<Disk> Disks { get; set; }
         public virtual DbSet<Machine> Machines { get; set; }

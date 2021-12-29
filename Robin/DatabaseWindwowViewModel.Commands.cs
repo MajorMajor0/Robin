@@ -80,15 +80,15 @@ namespace Robin
 				return;
 			}
 
-			Platform RPlatform = R.Data.Platforms.FirstOrDefault(x => x.ID == idbPlatform.ID);
+			Platform RPlatform = R.Data.Platforms.FirstOrDefault(x => x.Id == idbPlatform.Id);
 
-			OVGRelease ovgrelease;
+			Ovgrelease Ovgrelease;
 			foreach (Release release in RPlatform.Releases)
 			{
-				ovgrelease = R.Data.OVGReleases.FirstOrDefault(x => x.SHA1 == release.Rom.SHA1 && x.Region_ID == release.Region_ID && (x.BoxFrontURL != null || x.BoxBackURL != null));
-				if (ovgrelease != null)
+				Ovgrelease = R.Data.Ovgreleases.FirstOrDefault(x => x.Sha1 == release.Rom.Sha1 && x.RegionId == release.RegionId && (x.BoxFrontUrl != null || x.BoxBackUrl != null));
+				if (Ovgrelease != null)
 				{
-					release.ID_OVG = ovgrelease.ID;
+					release.ID_OVG = Ovgrelease.Id;
 				}
 			}
 		}
@@ -116,7 +116,7 @@ namespace Robin
 							i_db = Comparator.List[i_comp].DBIndex;
 
 							// Assign the rom in the current compare to the game in the current compare
-							Comparator.RReleases[i_r].ID_GDB = Comparator.DBreleases[i_db].ID;
+							Comparator.RReleases[i_r].ID_GDB = Comparator.DBreleases[i_db].Id;
 							Comparator.List.RemoveAt(i_comp);
 						}
 						break;
@@ -127,7 +127,7 @@ namespace Robin
 							i_db = Comparator.List[i_comp].DBIndex;
 
 							// Assign the rom in the current compare to the game in the current compare
-							Comparator.RReleases[i_r].ID_GB = Comparator.DBreleases[i_db].ID;
+							Comparator.RReleases[i_r].ID_GB = Comparator.DBreleases[i_db].Id;
 							Comparator.List.RemoveAt(i_comp);
 						}
 						break;
@@ -138,7 +138,7 @@ namespace Robin
 							i_db = Comparator.List[i_comp].DBIndex;
 
 							// Assign the rom in the current compare to the game in the current compare
-							Comparator.RReleases[i_r].ID_LB = Comparator.DBreleases[i_db].ID;
+							Comparator.RReleases[i_r].ID_LB = Comparator.DBreleases[i_db].Id;
 							Comparator.List.RemoveAt(i_comp);
 						}
 						break;

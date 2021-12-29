@@ -11,24 +11,13 @@
  * 
  * You should have received a copy of the GNU General Public License
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
- 
-using System;
+
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data.Entity;
+//using System.Data.Entity;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Robin
 {
@@ -37,19 +26,19 @@ namespace Robin
 	/// </summary>
 	public partial class MergeWindow : Window, INotifyPropertyChanged
 	{
-		public IEnumerable<LBPlatform> LBPlatformList
+		public IEnumerable<Lbplatform> LbplatformList
 		{
 			get
 			{
 				if (searchTerm != null)
 				{
-					return R.Data.LBPlatforms.Local.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm, RegexOptions.IgnoreCase));
+					return R.Data.Lbplatforms.Local.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm, RegexOptions.IgnoreCase));
 				}
-				return R.Data.LBPlatforms.Local;
+				return R.Data.Lbplatforms.Local;
 			}
 		}
 
-		public LBPlatform SelectedLBPlatform { get; set; }
+		public Lbplatform SelectedLbplatform { get; set; }
 
 		string searchTerm;
 
@@ -65,7 +54,7 @@ namespace Robin
 				if (searchTerm != value)
 				{
 					searchTerm = value;
-					OnPropertyChanged("LBPlatformList");
+					OnPropertyChanged("LbplatformList");
 				}
 			}
 		}
@@ -101,7 +90,7 @@ namespace Robin
 
 		 bool MergeCanExecute()
 		{
-			return SelectedLBPlatform != null;
+			return SelectedLbplatform != null;
 		}
 
 

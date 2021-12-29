@@ -15,12 +15,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data.Entity;
+//using System.Data.Entity;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace Robin
 {
@@ -215,7 +217,7 @@ namespace Robin
 		bool MarkSelectedPlatformEmulatorPreferredCanExecute()
 		{
 			return SelectedDB is Platform && SelectedPlatformEmulator != null &&
-				   (SelectedDB as Platform).PreferredEmulator_ID != SelectedPlatformEmulator.ID;
+				   (SelectedDB as Platform).PreferredEmulatorId != SelectedPlatformEmulator.Id;
 		}
 
 
@@ -229,7 +231,7 @@ namespace Robin
 		bool MarkSelectedEmulatorPlatformPreferredCanExecute()
 		{
 			return SelectedDB is Emulator && SelectedEmulatorPlatform != null &&
-				   (SelectedDB as Emulator).ID != SelectedEmulatorPlatform.PreferredEmulator_ID;
+				   (SelectedDB as Emulator).Id != SelectedEmulatorPlatform.PreferredEmulatorId;
 		}
 
 
@@ -488,10 +490,10 @@ namespace Robin
 				{
 					Reporter.Report("Opening databases...");
 
-					R.Data.GDBReleases.Load();
-					R.Data.GBReleases.Load();
-					R.Data.OVGReleases.Load();
-					R.Data.LBReleases.Include(x => x.LBImages).Load();
+					R.Data.Gdbreleases.Load();
+					R.Data.Gbreleases.Load();
+					R.Data.Ovgreleases.Load();
+					R.Data.Lbreleases.Include(x => x.Lbimages).Load();
 
 					Reporter.Report("Scraping art files...");
 
@@ -573,7 +575,7 @@ namespace Robin
 				{
 					Reporter.Report("Opening databases...");
 
-					R.Data.GDBPlatforms.Load();
+					R.Data.Gdbplatforms.Load();
 
 					Reporter.Report("Scraping art files...");
 
@@ -674,10 +676,10 @@ namespace Robin
 			{
 				Reporter.Report("Opening local cache...");
 
-				R.Data.GBReleases.Load();
-				R.Data.GDBReleases.Load();
-				R.Data.OVGReleases.Load();
-				R.Data.LBReleases.Include(x => x.LBGame).Load();
+				R.Data.Gbreleases.Load();
+				R.Data.Gdbreleases.Load();
+				R.Data.Ovgreleases.Load();
+				R.Data.Lbreleases.Include(x => x.Lbgame).Load();
 				Reporter.ReportInline(Watch.Elapsed.ToString("ss") + " s");
 				Watch.Restart();
 

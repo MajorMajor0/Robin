@@ -25,9 +25,9 @@ namespace Robin
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<VGDBPLATFORM> VGDBPLATFORMS { get; set; }
+        public virtual DbSet<VGdbplatform> VGdbplatforms { get; set; }
         public virtual DbSet<VGDBREGION> VGDBREGIONS { get; set; }
-        public virtual DbSet<VGDBRELEAS> VGDBRELEASES { get; set; }
+        public virtual DbSet<VGDBRELEAS> VGdbreleaseS { get; set; }
         public virtual DbSet<VGDBROM> VGDBROMS { get; set; }
     }
 }
