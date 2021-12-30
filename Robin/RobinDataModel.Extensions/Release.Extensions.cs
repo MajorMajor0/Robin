@@ -133,7 +133,7 @@ namespace Robin
 
 
 		bool preferred;
-		
+
 		[NotMapped]
 		public bool Preferred
 		{
@@ -159,13 +159,15 @@ namespace Robin
 		public bool MatchedToSomething => ID_GB != null || ID_GDB != null || ID_LB != null || ID_OVG != null;
 
 		[NotMapped]
-		public bool HasArt => File.Exists(BoxFrontThumbPath) || File.Exists(LogoPath) || File.Exists(MarqueePath);
+		public bool HasArt => Catalog.Art.Contains(BoxFrontThumbPath)
+			|| Catalog.Art.Contains(LogoPath)
+			|| Catalog.Art.Contains(MarqueePath);
 
 		[NotMapped]
 		public bool Included => HasFile && HasEmulator;
 
 		[NotMapped]
-		public bool HasFile => File.Exists(FilePath);
+		public bool HasFile => Catalog.Roms.Contains(FilePath);
 
 		[NotMapped]
 		public bool HasEmulator => Platform.Emulators.Any(x => x.Included);
@@ -196,16 +198,16 @@ namespace Robin
 			{
 				if (PlatformId == CONSTANTS.ARCADE_PlatformId)
 				{
-					if (File.Exists(LogoPath)) { BorderThickness = 0; OnPropertyChanged("BorderThickness"); return LogoPath; }
-					if (File.Exists(MarqueePath)) { BorderThickness = 1; OnPropertyChanged("BorderThickness"); return MarqueePath; }
-					if (File.Exists(BoxFrontThumbPath)) { BorderThickness = 1; OnPropertyChanged("BorderThickness"); return BoxFrontThumbPath; }
+					if (Catalog.Art.Contains(LogoPath)) { BorderThickness = 0; OnPropertyChanged("BorderThickness"); return LogoPath; }
+					if (Catalog.Art.Contains(MarqueePath)) { BorderThickness = 1; OnPropertyChanged("BorderThickness"); return MarqueePath; }
+					if (Catalog.Art.Contains(BoxFrontThumbPath)) { BorderThickness = 1; OnPropertyChanged("BorderThickness"); return BoxFrontThumbPath; }
 				}
 
 				else
 				{
-					if (File.Exists(BoxFrontThumbPath)) { BorderThickness = 1; OnPropertyChanged("BorderThickness"); return BoxFrontThumbPath; }
-					if (File.Exists(LogoPath)) { BorderThickness = 0; OnPropertyChanged("BorderThickness"); return LogoPath; }
-					if (File.Exists(MarqueePath)) { BorderThickness = 1; OnPropertyChanged("BorderThickness"); return MarqueePath; }
+					if (Catalog.Art.Contains(BoxFrontThumbPath)) { BorderThickness = 1; OnPropertyChanged("BorderThickness"); return BoxFrontThumbPath; }
+					if (Catalog.Art.Contains(LogoPath)) { BorderThickness = 0; OnPropertyChanged("BorderThickness"); return LogoPath; }
+					if (Catalog.Art.Contains(MarqueePath)) { BorderThickness = 1; OnPropertyChanged("BorderThickness"); return MarqueePath; }
 				}
 
 				BorderThickness = 0;
@@ -759,7 +761,8 @@ namespace Robin
 						emulator = Platform.PreferredEmulator;
 					}
 
-					Reporter.Report("Launching " + Title + " using " + emulator.Title);
+					Reporter.Report($"Launching {Title} using {emulator.Title}");
+
 					emulatorProcess.StartInfo.CreateNoWindow = false;
 					emulatorProcess.StartInfo.UseShellExecute = false;
 					emulatorProcess.StartInfo.RedirectStandardOutput = true;

@@ -31,14 +31,38 @@ namespace Robin
 	{
 		public async static Task MainWindowBonusAsync()
 		{
-			Reporter.Report("BONUS!");
-			await Task.Run(() =>
-			{
-				Mame.Database mame = new Mame.Database();
-				mame.CacheDataBase3();
-			});
+			//Reporter.Report("BONUS!");
+			//await Task.Run(() =>
+			//{
+			//	Stopwatch watch = Stopwatch.StartNew();
 
-			Reporter.Report("Finished");
+			//	//DirectoryInfo di = new(FileLocation.Art.Folder);
+			//	//watch.Stop();
+			//	//Debug.WriteLine($"Directory info: {watch.ElapsedMilliseconds:f3}");
+
+			//	//watch.Restart();
+			//	//var x = di.GetFiles("", SearchOption.AllDirectories);
+			//	//watch.Stop();
+			//	//Debug.WriteLine($"Get files: {watch.ElapsedMilliseconds:f3}");
+
+			//	//watch.Restart();
+			//	//var x = di.EnumerateFiles("", SearchOption.AllDirectories);
+			//	//watch.Stop();
+			//	//Debug.WriteLine($"Get files: {watch.ElapsedMilliseconds:f3}");
+
+			//	watch.Restart();
+			//	var x = Directory.GetFiles(FileLocation.Art.Folder, "", SearchOption.AllDirectories);
+			//	watch.Stop();
+			//	Debug.WriteLine($"Get files: {watch.ElapsedMilliseconds:f3}");
+
+			//	watch.Restart();
+			//	var y = x.ToHashSet();
+			//	watch.Stop();
+			//	Debug.WriteLine($"Hashset: {watch.ElapsedMilliseconds:f3}\n");
+
+			//});
+
+			//Reporter.Report("Finished");
 		}
 
 		static void ForEachSpeedTest()

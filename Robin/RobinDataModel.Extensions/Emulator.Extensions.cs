@@ -23,33 +23,30 @@ namespace Robin
 	public partial class Emulator : IDBobject
 	{
 		[NotMapped]
-		public string FilePath
-		{
-			get { return FileLocation.Emulators + FileName; }
-		}
+		public string FilePath => FileLocation.Emulators + FileName;
+
 		[NotMapped]
-		public bool HasArt
-		{
-			get { return File.Exists(ImageFile); }
-		}
+		public bool HasArt => Catalog.Images.Contains(ImageFile);
+
 		[NotMapped]
-		public bool Included
-		{
-			get { return File.Exists(FilePath); }
-		}
+		public bool Included => Catalog.Emulators.Contains(FilePath);
+
 		[NotMapped]
 		public bool Preferred
 		{
 			set { }
-			get { return true; }
+			get => true;
 		}
+
 		[NotMapped]
 		public string ImageFile
 		{
-			get { return FileLocation.Images + Image; }
+			get => FileLocation.Images + Image;
 		}
+
 		[NotMapped]
 		public string MainDisplay => ImageFile;
+
 		[NotMapped]
 		public string WhyCantIPlay
 		{
@@ -62,6 +59,7 @@ namespace Robin
 				return Title + " can't launch because the exe file is missing. Place it in the correct folder or drag it to the emulator icon.";
 			}
 		}
+
 		[NotMapped]
 		public bool Unlicensed => false;
 

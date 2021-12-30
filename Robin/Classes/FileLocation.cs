@@ -21,56 +21,55 @@ namespace Robin
 {
 	public static class FileLocation
 	{
-		public static string Folder = Path
+		public static string Folder { get; } = Path
 			.GetDirectoryName(Path
 			.GetDirectoryName(Assembly
 				.GetEntryAssembly()
 				.Location));
 		public static class Art
 		{
-			public static string Folder = FileLocation.Folder + @"\Art\";
-			public static string BoxFront = Folder + @"BoxFront\";
-			public static string BoxFrontThumbs = Folder + @"BoxFront\Thumbs\";
-			public static string BoxBack = Folder + @"BoxBack\";
-			public static string Cabinet = Folder + @"Cabinet\";
-			public static string Banner = Folder + @"Banner\";
-			public static string Flyer = Folder + @"Flyer\";
-			public static string Logo = Folder + @"Logo\";
-			public static string Screen = Folder + @"Screen\";
-
-			public static string Console = Folder + @"Console\";
+			public static string Folder { get; } = FileLocation.Folder + @"\Art\";
+			public static string BoxFront { get; } = Folder + @"BoxFront\";
+			public static string BoxFrontThumbs { get; } = Folder + @"BoxFront\Thumbs\";
+			public static string BoxBack { get; } = Folder + @"BoxBack\";
+			public static string Cabinet { get; } = Folder + @"Cabinet\";
+			public static string Banner { get; } = Folder + @"Banner\";
+			public static string Flyer { get; } = Folder + @"Flyer\";
+			public static string Logo { get; } = Folder + @"Logo\";
+			public static string Screen { get; } = Folder + @"Screen\";
+			public static string Console { get; } = Folder + @"Console\";
 		}
 
-		public static string Images = Folder + @"\Images\";
+		public static string Images { get; } = Folder + @"\Images\";
 
-		public static string Roms = Folder + @"\Roms\";
+		public static string Roms { get; } = Folder + @"\Roms\";
 
-		public static string RomsBackup = Folder + @"\Roms\Backup\";
+		public static string RomsBackup { get; } = Folder + @"\Roms\Backup\";
 
-		public static string HiganRoms = Roms + @"Higan\";
+		public static string HiganRoms { get; } = Roms + @"Higan\";
 
-		public static string Emulators = Folder + @"\Emulators\";
+		public static string Emulators { get; } = Folder + @"\Emulators\";
 
-		public static string SaveStates = Folder + @"\SaveStates\";
+		public static string SaveStates { get; } = Folder + @"\SaveStates\";
 
-		public static string Backup = Folder + @"\data\backup\";
+		public static string Backup { get; } = Folder + @"\data\backup\";
 
-		public static string MAME = Folder + @"\Emulators\MAME\mame64.exe";
+		public static string MAME { get; } = Folder + @"\Emulators\MAME\mame64.exe";
 
-		public static string Marquee = Folder + @"\Emulators\MAME\marquees\";
+		public static string Marquee { get; } = Folder + @"\Emulators\MAME\marquees\";
 
 		//public static string Data = Folder + @"\Data\";
-		public static string Data = @"..\data\";
+		public static string Data { get; } = @"..\data\";
 
-		public static string RobinData = Data + @"RobinData.db3";
+		public static string RobinData { get; } = Data + @"RobinData.db3";
 
-		public static string MameData = Data + @"MAME.db3";
+		public static string MameData { get; } = Data + @"MAME.db3";
 
-		public static string Temp = Folder + @"\Temp\";
+		public static string Temp { get; } = Folder + @"\Temp\";
 
-		public static string HandyConverter = Emulators + @"Handy\make_lnx.exe";
+		public static string HandyConverter { get; } = Emulators + @"Handy\make_lnx.exe";
 
-		public static string Flags = Images + @"Flags\";
+		public static string Flags { get; } = Images + @"Flags\";
 
 		public static void CreateDirectories()
 		{

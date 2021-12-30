@@ -147,9 +147,9 @@ namespace Robin
 
 	public class AutoFilterReleases : AutoFilterCollection
 	{
-		List<Release> sourceCollection;
+		private readonly List<Release> sourceCollection;
 
-		List<Release> filteredCollection;
+		private List<Release> filteredCollection;
 
 		public override int SourceCount => sourceCollection.Count;
 
@@ -339,9 +339,9 @@ namespace Robin
 
 	public class AutoFilterGames : AutoFilterCollection
 	{
-		List<Game> sourceCollection;
+		private readonly List<Game> sourceCollection;
 
-		List<Game> filteredCollection;
+		private List<Game> filteredCollection;
 
 		public override int SourceCount => sourceCollection.Count;
 

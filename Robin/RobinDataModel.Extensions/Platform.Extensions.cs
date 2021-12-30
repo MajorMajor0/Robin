@@ -109,7 +109,7 @@ namespace Robin
 		}
 		
 		[NotMapped]
-		public bool HasArt => File.Exists(BoxFrontPath);
+		public bool HasArt => Catalog.Art.Contains(BoxFrontPath);
 		
 		[NotMapped]
 		public bool IsCrap { get; set; }
@@ -251,67 +251,6 @@ namespace Robin
 
 			return 0;
 		}
-
-
-
-
-
-
-		//public int ScrapeArt(LocalDB localDB)
-		//{
-		//	// TODO: Add other db options for art
-		//	WebClient webclient = new WebClient();
-		//	Stopwatch Watch = Stopwatch.StartNew();
-
-		//	if (BoxFrontUrl != null && !File.Exists(BoxFrontPath))
-		//	{
-		//		Reporter.Report("  Box front...");
-		//		webclient.DownloadFileFromDB(BoxFrontUrl, BoxFrontPath);
-		//		OnPropertyChanged("BoxFrontPath");
-		//		Reporter.ReportInline(Watch.Elapsed.ToString("ss"));
-		//	}
-		//	Watch.Restart();
-
-		//	if (BoxBackUrl != null && !File.Exists(BoxBackPath))
-		//	{
-		//		Reporter.Report("  Box back...");
-		//		webclient.DownloadFileFromDB(BoxBackUrl, BoxBackPath);
-		//		OnPropertyChanged("BoxBackPath");
-		//		Reporter.ReportInline(Watch.Elapsed.ToString("ss") + " s");
-		//	}
-		//	Watch.Restart();
-
-		//	if (BannerUrl != null && !File.Exists(BannerPath))
-		//	{
-		//		Reporter.Report("  Banner...");
-		//		webclient.DownloadFileFromDB(BannerUrl, BannerPath);
-		//		OnPropertyChanged("BannerPath");
-		//		Reporter.ReportInline(Watch.Elapsed.ToString("ss") + " s");
-		//	}
-		//	Watch.Restart();
-
-		//	if (ConsoleUrl != null && !File.Exists(ConsolePath))
-		//	{
-		//		Reporter.Report("  Console...");
-		//		webclient.DownloadFileFromDB(ConsoleUrl, ConsolePath);
-		//		OnPropertyChanged("ConsolePath");
-		//		OnPropertyChanged("MainDisplay");
-		//		Reporter.ReportInline(Watch.Elapsed.ToString("ss") + " s");
-		//	}
-		//	Watch.Restart();
-
-		//	if (ControllerUrl != null && !File.Exists(ControllerPath))
-		//	{
-		//		Reporter.Report("  Controller...");
-		//		webclient.DownloadFileFromDB(ControllerUrl, ControllerPath);
-		//		OnPropertyChanged("ControllerFile");
-		//		Reporter.ReportInline(Watch.Elapsed.ToString("ss") + " s");
-		//	}
-		//	Watch.Restart();
-
-		//	//TODO: Make the return integers make sense across all scrapeart functions
-		//	return 0;
-		//}
 
 		public async void GetReleaseDirectoryAsync(string[] paths)
 		{

@@ -185,7 +185,7 @@ namespace Robin
 
 		 void CreateThumbnails()
 		{
-			Stopwatch Watch = new Stopwatch();
+			Stopwatch Watch = new();
 			Watch.Start();
 			int i = 0;
 

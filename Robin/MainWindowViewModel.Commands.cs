@@ -42,13 +42,14 @@ namespace Robin
 		void About()
 		{
 			AboutBox aboutBox = new AboutBox();
+			aboutBox.Show();
 		}
 
 		public Command HelpCommand { get; set; }
 
 		void Help()
 		{
-			Process.Start(@"http://robinemu.org/help/");
+			//Process.Start(@"http://robinemu.org/help/");
 		}
 
 

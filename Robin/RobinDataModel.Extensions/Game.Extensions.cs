@@ -25,13 +25,13 @@ namespace Robin
 	{
 		[NotMapped]
 		public string Title => Releases[0].Title;
-		
+
 		[NotMapped]
 		public string Year => Releases[0].Year;
-		
+
 		[NotMapped]
 		List<string> genreList;
-		
+
 		[NotMapped]
 		public List<string> GenreList
 		{
@@ -44,13 +44,13 @@ namespace Robin
 				return genreList;
 			}
 		}
-		
+
 		[NotMapped]
 		public Platform Platform => Releases[0].Platform;
-		
+
 		[NotMapped]
 		public string PlatformTitle => Platform.Title;
-		
+
 		[NotMapped]
 		public long PlatformId => Releases[0].PlatformId;
 
@@ -69,7 +69,7 @@ namespace Robin
 		}
 
 		List<string> regionsList;
-		
+
 		[NotMapped]
 		public List<string> RegionsList
 		{
@@ -82,27 +82,29 @@ namespace Robin
 				return regionsList;
 			}
 		}
-		
+
 		[NotMapped]
 		public DateTime? Date => Releases[0].Date;
 
 		[NotMapped]
 		public long PlayCount => Releases.Sum(x => x.PlayCount);
-		
+
 		[NotMapped]
 		public bool Included => Releases.Any(x => x.Included);
-		
+
 		[NotMapped]
 		public bool HasEmulator => Platform.Emulators.Any(x => x.Included);
-		
+
 		[NotMapped]
 		public bool HasRelease => Releases.Any(x => x.Included);
-		
+
 		[NotMapped]
 		public bool MatchedToSomething => Releases.Any(x => x.MatchedToSomething);
-		
+
 		[NotMapped]
-		public bool HasArt => File.Exists(BoxFrontThumbPath) || File.Exists(LogoPath) || File.Exists(MarqueePath);
+		public bool HasArt => Catalog.Art.Contains(BoxFrontThumbPath)
+			|| Catalog.Art.Contains(LogoPath)
+			|| Catalog.Art.Contains(MarqueePath);
 
 		[NotMapped]
 		public string WhyCantIPlay
@@ -121,7 +123,7 @@ namespace Robin
 		}
 
 		int borderThickness = 1;
-		
+
 		[NotMapped]
 		public int BorderThickness
 		{
@@ -153,17 +155,17 @@ namespace Robin
 					case AppSettings.DisplayOption.Default:
 						if (PlatformId == CONSTANTS.ARCADE_PlatformId)
 						{
-							if (File.Exists(LogoPath))
+							if (Catalog.Art.Contains(LogoPath))
 							{
 								BorderThickness = 0;
 								return LogoPath;
 							}
-							if (File.Exists(MarqueePath))
+							if (Catalog.Art.Contains(MarqueePath))
 							{
 								BorderThickness = 1;
 								return MarqueePath;
 							}
-							if (File.Exists(BoxFrontThumbPath))
+							if (Catalog.Art.Contains(BoxFrontThumbPath))
 							{
 								BorderThickness = 1;
 								return BoxFrontThumbPath;
@@ -172,46 +174,46 @@ namespace Robin
 
 						else
 						{
-							if (File.Exists(BoxFrontThumbPath))
+							if (Catalog.Art.Contains(BoxFrontThumbPath))
 							{
 								BorderThickness = 1;
 								return BoxFrontThumbPath;
 							}
-							if (File.Exists(LogoPath))
+							if (Catalog.Art.Contains(LogoPath))
 							{
 								BorderThickness = 0;
 								return LogoPath;
 							}
-							//if (File.Exists(MarqueePath))
-							//{
-							//	BorderThickness = 1;
-							//	return MarqueePath;
-							//}
+							if (Catalog.Art.Contains(MarqueePath))
+							{
+								BorderThickness = 1;
+								return MarqueePath;
+							}
 						}
 						break;
 					case AppSettings.DisplayOption.BoxFront:
-						if (File.Exists(BoxFrontThumbPath))
+						if (Catalog.Art.Contains(BoxFrontThumbPath))
 						{
 							BorderThickness = 1;
 							return BoxFrontThumbPath;
 						}
 						break;
 					case AppSettings.DisplayOption.BoxBack:
-						if (File.Exists(BoxBackPath))
+						if (Catalog.Art.Contains(BoxBackPath))
 						{
 							BorderThickness = 1;
 							return BoxBackPath;
 						}
 						break;
 					case AppSettings.DisplayOption.Screen:
-						if (File.Exists(ScreenPath))
+						if (Catalog.Art.Contains(ScreenPath))
 						{
 							BorderThickness = 1;
 							return ScreenPath;
 						}
 						break;
 					case AppSettings.DisplayOption.Banner:
-						if (File.Exists(BannerPath))
+						if (Catalog.Art.Contains(BannerPath))
 						{
 							BorderThickness = 0;
 							return BannerPath;
@@ -230,7 +232,7 @@ namespace Robin
 			}
 		}
 
-		string boxFrontPath;	
+		string boxFrontPath;
 		[NotMapped]
 		public string BoxFrontPath
 		{
@@ -240,7 +242,7 @@ namespace Robin
 				{
 					foreach (Release release in Releases)
 					{
-						if (File.Exists(release.BoxFrontPath))
+						if (Catalog.Art.Contains(release.BoxFrontPath))
 						{
 							boxFrontPath = release.BoxFrontPath;
 							break;
@@ -252,7 +254,7 @@ namespace Robin
 			}
 		}
 
-		string boxFrontThumbPath;	
+		string boxFrontThumbPath;
 		[NotMapped]
 		public string BoxFrontThumbPath
 		{
@@ -262,7 +264,7 @@ namespace Robin
 				{
 					foreach (Release release in Releases)
 					{
-						if (File.Exists(release.BoxFrontThumbPath))
+						if (Catalog.Art.Contains(release.BoxFrontThumbPath))
 						{
 							boxFrontThumbPath = release.BoxFrontThumbPath;
 							break;
@@ -279,28 +281,28 @@ namespace Robin
 			// TODO this should probably go through all realeases looking for a file
 			get { return Releases[0].BoxBackPath; }
 		}
-		
+
 		[NotMapped]
 		public string BannerPath
 		{
 			// TODO this should probably go through all realeases looking for a file
 			get { return Releases[0].BannerPath; }
 		}
-		
+
 		[NotMapped]
 		public string ScreenPath
 		{
 			// TODO this should probably go through all realeases looking for a file
 			get { return Releases[0].ScreenPath; }
 		}
-		
+
 		[NotMapped]
 		public string LogoPath
 		{
 			// TODO this should probably go through all realeases looking for a file
 			get { return Releases[0].LogoPath; }
 		}
-		
+
 		[NotMapped]
 		public string MarqueePath
 		{
@@ -309,7 +311,7 @@ namespace Robin
 		}
 
 		private Release preferredRelease;
-		
+
 		[NotMapped]
 		public Release PreferredRelease
 		{
@@ -328,7 +330,7 @@ namespace Robin
 				return preferredRelease;
 			}
 		}
-		
+
 		[NotMapped]
 		public bool Preferred
 		{

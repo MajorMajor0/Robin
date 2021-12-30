@@ -131,9 +131,9 @@ namespace Robin
 			var path = value as string;
 			try
 			{
-				if (path != null && File.Exists(path))
+				if (path != null && (Catalog.Images.Contains(path) || Catalog.Art.Contains(path)))
 				{
-					BitmapImage bitmap = new BitmapImage();
+					BitmapImage bitmap = new();
 					bitmap.BeginInit();
 					bitmap.CacheOption = BitmapCacheOption.OnLoad;
 					bitmap.UriSource = new Uri(path);
@@ -241,7 +241,7 @@ namespace Robin
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
 			string filePath = (string)(value ?? "");
-			if (File.Exists(filePath))
+			if (Catalog.Images.Contains(filePath) || Catalog.Art.Contains(filePath))
 			{
 				return Visibility.Visible;
 			}

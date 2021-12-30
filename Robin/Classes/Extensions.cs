@@ -14,20 +14,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Xml.Linq;
 using System.Collections.ObjectModel;
-using System.Net;
-using System.IO;
+using System.ComponentModel;
 using System.Diagnostics;
-//using System.Data.Entity;
-//using System.Data.Entity.Validation;
-using System.Text.RegularExpressions;
-using System.Windows.Media.Imaging;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Net;
 using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Windows.Media.Imaging;
+using System.Xml.Linq;
 
 namespace Robin
 {
@@ -44,6 +42,12 @@ namespace Robin
 				list[k] = list[n];
 				list[n] = value;
 			}
+		}
+
+		public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source)
+		{
+			Random rnd = new();
+			return source.OrderBy((item) => rnd.Next());
 		}
 
 		public static BitmapImage ToBitmapImage(this Bitmap bitmap)
