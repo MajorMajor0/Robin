@@ -50,7 +50,7 @@ namespace Robin
 				}
 				Debug.WriteLine(i++);
 			}
-			R.Data.Save();
+			R.Save();
             // TODO Report total
         }
 
@@ -74,7 +74,7 @@ namespace Robin
 					}
 				}
 
-				R.Data.Save();
+				R.Save();
                 // TODO Report total
             });
 		}

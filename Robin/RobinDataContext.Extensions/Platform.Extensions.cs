@@ -25,8 +25,6 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Microsoft.EntityFrameworkCore;
-
 
 namespace Robin
 {
@@ -348,7 +346,7 @@ namespace Robin
 										File.Move(matchedRom.FilePath, FileLocation.RomsBackup + matchedRom.FileName);
 									}
 
-									if (matchedRom.PlatformId == CONSTANTS.LYNX_PlatformId)
+									if (matchedRom.PlatformId == CONSTANTS.PlatformId.Lynx)
 									{
 										//TODO: This looks pretty shady
 										string tempFile = "lnxtmp.lyx";
@@ -409,7 +407,7 @@ namespace Robin
 							File.Move(matchedRom.FilePath, FileLocation.RomsBackup + matchedRom.FileName);
 						}
 
-						if (matchedRom.PlatformId == CONSTANTS.LYNX_PlatformId)
+						if (matchedRom.PlatformId == CONSTANTS.PlatformId.Lynx)
 						{
 							string tempFile = "lnxtmp.lyx";
 							string tempFile2 = "lnxtmp.lnx";

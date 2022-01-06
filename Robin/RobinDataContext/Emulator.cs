@@ -8,6 +8,7 @@ namespace Robin
 	{
 		public Emulator()
 		{
+			Cores = new HashSet<Core>();
 			Platforms = new HashSet<Platform>();
 			Platforms1 = new HashSet<Platform>();
 		}
@@ -55,8 +56,8 @@ namespace Robin
 			set { rating = value; OnPropertyChanged(nameof(Rating)); }
 		}
 
+		public virtual ICollection<Core> Cores { get; set; }
 		public virtual ICollection<Platform> Platforms { get; set; }
-
 		public virtual ICollection<Platform> Platforms1 { get; set; }
 
 

@@ -119,7 +119,7 @@ namespace Robin
 		 void Main_Window_Closing(object sender, CancelEventArgs e)
 		{
 			(DataContext as MainWindowViewModel).SaveSettings();
-			R.Data.Save(true);
+			R.Save(true);
 			
 		}
 

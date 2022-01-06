@@ -201,7 +201,7 @@ namespace Robin
 
 		static void GetMameStatusesAsync()
 		{
-			Platform arcadePlatform = R.Data.Platforms.FirstOrDefault(x => x.Id == CONSTANTS.ARCADE_PlatformId);
+			Platform arcadePlatform = R.Data.Platforms.FirstOrDefault(x => x.Id == CONSTANTS.PlatformId.Arcade);
 
 			Stopwatch Watch = Stopwatch.StartNew();
 			Stopwatch Watch1 = Stopwatch.StartNew();

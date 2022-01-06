@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.12
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Robin", "Robin\Robin.csproj", "{44603014-394A-461F-9001-276A9F91C8AF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "UnitTest\UnitTest.csproj", "{2538A198-46DF-416B-A804-379954C59FB6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Robin", "Robin\Robin.csproj", "{44603014-394A-461F-9001-276A9F91C8AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,22 +33,6 @@ Global
 		{44603014-394A-461F-9001-276A9F91C8AF}.Release|x64.ActiveCfg = Release|x64
 		{44603014-394A-461F-9001-276A9F91C8AF}.Release|x64.Build.0 = Release|x64
 		{44603014-394A-461F-9001-276A9F91C8AF}.Release|x86.ActiveCfg = Release|Any CPU
-		{2538A198-46DF-416B-A804-379954C59FB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2538A198-46DF-416B-A804-379954C59FB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2538A198-46DF-416B-A804-379954C59FB6}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{2538A198-46DF-416B-A804-379954C59FB6}.Debug|ARM.Build.0 = Debug|Any CPU
-		{2538A198-46DF-416B-A804-379954C59FB6}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{2538A198-46DF-416B-A804-379954C59FB6}.Debug|x64.Build.0 = Debug|Any CPU
-		{2538A198-46DF-416B-A804-379954C59FB6}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{2538A198-46DF-416B-A804-379954C59FB6}.Debug|x86.Build.0 = Debug|Any CPU
-		{2538A198-46DF-416B-A804-379954C59FB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2538A198-46DF-416B-A804-379954C59FB6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2538A198-46DF-416B-A804-379954C59FB6}.Release|ARM.ActiveCfg = Release|Any CPU
-		{2538A198-46DF-416B-A804-379954C59FB6}.Release|ARM.Build.0 = Release|Any CPU
-		{2538A198-46DF-416B-A804-379954C59FB6}.Release|x64.ActiveCfg = Release|Any CPU
-		{2538A198-46DF-416B-A804-379954C59FB6}.Release|x64.Build.0 = Release|Any CPU
-		{2538A198-46DF-416B-A804-379954C59FB6}.Release|x86.ActiveCfg = Release|Any CPU
-		{2538A198-46DF-416B-A804-379954C59FB6}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

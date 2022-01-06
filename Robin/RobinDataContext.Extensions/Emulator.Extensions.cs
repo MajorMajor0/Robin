@@ -101,15 +101,15 @@ namespace Robin
 
 					if (release != null)
 					{
-						if (Id == CONSTANTS.HIGAN_EMULATOR_ID)
+						if (Id == CONSTANTS.EmulatorId.Higan)
 						{
 							emulatorProcess.StartInfo.Arguments = @"""" + FileLocation.HiganRoms + release.Platform.HiganRomFolder + @"\" + Path.GetFileNameWithoutExtension(release.Rom.FileName) + release.Platform.HiganExtension + @"""";
 						}
 
 						// Strip out .xls if system = MAME
-						if (Id == CONSTANTS.MAME_ID)
+						if (Id == CONSTANTS.EmulatorId.Mame)
 						{
-							if (release.Platform.Id == CONSTANTS.CHANNELF_PlatformId)
+							if (release.Platform.Id == CONSTANTS.PlatformId.ChannelF)
 							{
 								emulatorProcess.StartInfo.Arguments = "channelf -cart " + @"""" + release.FilePath + @"""";// + " -skip_gameinfo -nowindow";
 							}

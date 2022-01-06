@@ -6,18 +6,14 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Robin
 {
-	public partial class RobinDataEntities : Entity
+	public partial class RobinDataContext : DbContext
 	{
-		public RobinDataEntities()
+		public RobinDataContext()
 		{
 		}
 
-		//public RobinDataEntities(DbContextOptions<RobinDataEntities> options)
-		//    : base(options)
-		//{
-		//}
-
 		public virtual DbSet<Collection> Collections { get; set; }
+		public virtual DbSet<Core> Cores { get; set; }
 		public virtual DbSet<Emulator> Emulators { get; set; }
 		public virtual DbSet<Game> Games { get; set; }
 		public virtual DbSet<Gbgame> Gbgames { get; set; }
@@ -44,7 +40,11 @@ namespace Robin
 			if (!optionsBuilder.IsConfigured)
 			{
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-				optionsBuilder.UseSqlite($"DataSource={FileLocation}");
+				//optionsBuilder.UseSqlite($"DataSource={R.FileLocation}");
+
+				string path = @"C:\Robin_debug\data\RobinData.db3";
+				optionsBuilder.UseSqlite($"DataSource={path}");
+				optionsBuilder.UseModel(RobinDataContextModel.Instance);
 			}
 		}
 
@@ -101,6 +101,45 @@ namespace Robin
 							j.IndexerProperty<long>("CollectionId").HasColumnName("Collection_ID");
 
 							j.IndexerProperty<long>("ReleaseId").HasColumnName("Release_ID");
+						});
+			});
+
+			modelBuilder.Entity<Core>(entity =>
+			{
+				entity.ToTable("Core");
+
+				entity.HasIndex(e => e.Id, "IX_Core_ID")
+					.IsUnique();
+
+				entity.Property(e => e.Id)
+					.ValueGeneratedNever()
+					.HasColumnName("ID");
+
+				entity.Property(e => e.EmulatorId).HasColumnName("Emulator_ID");
+
+				entity.Property(e => e.FileName).IsRequired();
+
+				entity.Property(e => e.Title).IsRequired();
+
+				entity.HasOne(d => d.Emulator)
+					.WithMany(p => p.Cores)
+					.HasForeignKey(d => d.EmulatorId);
+
+				entity.HasMany(d => d.Platforms)
+					.WithMany(p => p.Cores)
+					.UsingEntity<Dictionary<string, object>>(
+						"CorePlatform",
+						l => l.HasOne<Platform>().WithMany().HasForeignKey("PlatformId"),
+						r => r.HasOne<Core>().WithMany().HasForeignKey("CoreId"),
+						j =>
+						{
+							j.HasKey("CoreId", "PlatformId");
+
+							j.ToTable("Core_Platform");
+
+							j.IndexerProperty<long>("CoreId").HasColumnName("Core_ID");
+
+							j.IndexerProperty<long>("PlatformId").HasColumnName("Platform_ID");
 						});
 			});
 

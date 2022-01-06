@@ -153,7 +153,7 @@ namespace Robin
 				switch (AppSettings.DisplayChoice)
 				{
 					case AppSettings.DisplayOption.Default:
-						if (PlatformId == CONSTANTS.ARCADE_PlatformId)
+						if (PlatformId == CONSTANTS.PlatformId.Arcade)
 						{
 							if (Catalog.Art.Contains(LogoPath))
 							{

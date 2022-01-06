@@ -200,7 +200,7 @@ namespace Robin
 					SelectedIDB.CachePlatformReleases(idbPlatform.RPlatform);			
 					idbPlatform.CacheDate = DateTime.Now;
 					SelectedIDB.ReportUpdates(true);
-					R.Data.Save(true);
+					R.Save(true);
 				}
 			});
 
@@ -220,7 +220,7 @@ namespace Robin
 
 		void WriteDB()
 		{
-			R.Data.Save(true);
+			R.Save(true);
 		}
 
 

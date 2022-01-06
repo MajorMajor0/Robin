@@ -151,7 +151,7 @@ namespace Robin
 		public static TitledCollection<Result> AuditRoms(Platform platform)
 		{
 			;
-			if (platform.Id == CONSTANTS.ARCADE_PlatformId)
+			if (platform.Id == CONSTANTS.PlatformId.Arcade)
 			{
 				// return Mame.Database.AuditRoms();
 				return null;

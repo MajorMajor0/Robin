@@ -300,12 +300,12 @@ namespace Robin
 
 					if (regionText == null)
 					{
-						regionID = CONSTANTS.UNKNOWN_RegionId;
+						regionID = CONSTANTS.RegionId.Unk;
 					}
 
 					else if (!RegionDictionary.TryGetValue(regionText, out regionID))
 					{
-						regionID = CONSTANTS.UNKNOWN_RegionId;
+						regionID = CONSTANTS.RegionId.Unk;
 						Reporter.Report($"Couldn't find {regionText} in LB image dictionary.");
 					}
 #if DEBUG
@@ -375,12 +375,12 @@ namespace Robin
 					long regionID;
 					if (regionText == null)
 					{
-						regionID = CONSTANTS.UNKNOWN_RegionId;
+						regionID = CONSTANTS.RegionId.Unk;
 					}
 
 					else if (!RegionDictionary.TryGetValue(regionText, out regionID))
 					{
-						regionID = CONSTANTS.UNKNOWN_RegionId;
+						regionID = CONSTANTS.RegionId.Unk;
 						Reporter.Report("Couldn't find {regionText} in the region dictionary.");
 					}
 #if DEBUG

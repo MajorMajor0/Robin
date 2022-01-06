@@ -196,7 +196,7 @@ namespace Robin
 		{
 			get
 			{
-				if (PlatformId == CONSTANTS.ARCADE_PlatformId)
+				if (PlatformId == CONSTANTS.PlatformId.Arcade)
 				{
 					if (Catalog.Art.Contains(LogoPath)) { BorderThickness = 0; OnPropertyChanged("BorderThickness"); return LogoPath; }
 					if (Catalog.Art.Contains(MarqueePath)) { BorderThickness = 1; OnPropertyChanged("BorderThickness"); return MarqueePath; }
@@ -220,7 +220,7 @@ namespace Robin
 		public string Year => Date?.Year.ToString();
 
 		[NotMapped]
-		public string TitleAndRegion => Title + " " + Version + " (" + Region.Title + ")";
+		public string TitleAndRegion => $"{Title} {Version} ({Region.Title})";
 
 		[NotMapped]
 		public string PlatformTitle => Platform.Title;
@@ -287,7 +287,7 @@ namespace Robin
 						url = Ovgrelease?.BoxFrontUrl;
 					}
 
-					if (string.IsNullOrEmpty(url) && (Game.Releases.Count == 1 || RegionId == CONSTANTS.UNKNOWN_RegionId) && !string.IsNullOrEmpty(Gdbrelease?.BoxFrontUrl))
+					if (string.IsNullOrEmpty(url) && (Game.Releases.Count == 1 || RegionId == CONSTANTS.RegionId.Unk) && !string.IsNullOrEmpty(Gdbrelease?.BoxFrontUrl))
 					{
 						url = Gdbrelease?.BoxFrontUrl.Replace(@"boxart/", @"boxart/thumb/");
 					}
@@ -327,7 +327,7 @@ namespace Robin
 						url = Ovgrelease?.BoxBackUrl;
 					}
 
-					if (string.IsNullOrEmpty(url) && (Game.Releases.Count == 1 || RegionId == CONSTANTS.UNKNOWN_RegionId) && !string.IsNullOrEmpty(Gdbrelease?.BoxBackUrl))
+					if (string.IsNullOrEmpty(url) && (Game.Releases.Count == 1 || RegionId == CONSTANTS.RegionId.Unk) && !string.IsNullOrEmpty(Gdbrelease?.BoxBackUrl))
 					{
 						url = Gdbrelease?.BoxBackUrl.Replace(@"boxart/", @"boxart/thumb/");
 					}
@@ -365,7 +365,7 @@ namespace Robin
 						url = Gbrelease?.ScreenUrl;
 					}
 
-					if (string.IsNullOrEmpty(url) && (Game.Releases.Count == 1 || RegionId == CONSTANTS.UNKNOWN_RegionId) && !string.IsNullOrEmpty(Gdbrelease?.ScreenUrl))
+					if (string.IsNullOrEmpty(url) && (Game.Releases.Count == 1 || RegionId == CONSTANTS.RegionId.Unk) && !string.IsNullOrEmpty(Gdbrelease?.ScreenUrl))
 					{
 						url = Gdbrelease?.ScreenUrl;
 					}
@@ -442,25 +442,25 @@ namespace Robin
 
 
 		[NotMapped]
-		public string BoxFrontPath => FileLocation.Art.BoxFront + Id + "R-BXF.jpg";
+		public string BoxFrontPath => $"{FileLocation.Art.BoxFront}{Id}R-BXF.jpg";
 
 		[NotMapped]
-		public string BoxFrontThumbPath => FileLocation.Art.BoxFrontThumbs + Id + "R-BXF.jpg";
+		public string BoxFrontThumbPath => $"{FileLocation.Art.BoxFrontThumbs}{Id}R-BXF.jpg";
 
 		[NotMapped]
-		public string BoxBackPath => FileLocation.Art.BoxBack + Id + "R-BXB.jpg";
+		public string BoxBackPath => $"{FileLocation.Art.BoxBack}{Id}R-BXB.jpg";
 
 		[NotMapped]
-		public string ScreenPath => FileLocation.Art.Screen + Id + "R-SCR.jpg";
+		public string ScreenPath => $"{FileLocation.Art.Screen}{Id}R-SCR.jpg";
 
 		[NotMapped]
-		public string BannerPath => FileLocation.Art.Banner + Id + "R-BNR.jpg";
+		public string BannerPath => $"{FileLocation.Art.Banner}{Id}R-BNR.jpg";
 
 		[NotMapped]
-		public string LogoPath => FileLocation.Art.Logo + Id + "R-LGO.jpg";
+		public string LogoPath => $"{FileLocation.Art.Logo}{Id}R-LGO.jpg";
 
 		[NotMapped]
-		public string MarqueePath => PlatformId == 1 ? FileLocation.Marquee + Rom.FileName.Replace(".zip", ".png") : null;
+		public string MarqueePath => PlatformId == 1 ? $"{FileLocation.Marquee}{Rom.FileName.Replace(".zip", ".png")}" : null;
 
 		[NotMapped]
 		public string Flag => Region.Flag;
@@ -753,69 +753,71 @@ namespace Robin
 		{
 			await Task.Run(() =>
 			{
-				using (Process emulatorProcess = new Process())
+				using Process emulatorProcess = new Process();
+				// Choose default emulator if necessary
+				if (emulator == null || !Platform.Emulators.Contains(emulator))
 				{
-					// Choose default emulator if necessary
-					if (emulator == null || !Platform.Emulators.Contains(emulator))
-					{
-						emulator = Platform.PreferredEmulator;
-					}
+					emulator = Platform.PreferredEmulator;
+				}
 
-					Reporter.Report($"Launching {Title} using {emulator.Title}");
+				Reporter.Report($"Launching {Title} using {emulator.Title}");
 
-					emulatorProcess.StartInfo.CreateNoWindow = false;
-					emulatorProcess.StartInfo.UseShellExecute = false;
-					emulatorProcess.StartInfo.RedirectStandardOutput = true;
-					emulatorProcess.StartInfo.RedirectStandardError = true;
-					emulatorProcess.StartInfo.WorkingDirectory = Path.GetDirectoryName(emulator.FilePath);
+				emulatorProcess.StartInfo.CreateNoWindow = false;
+				emulatorProcess.StartInfo.UseShellExecute = false;
+				emulatorProcess.StartInfo.RedirectStandardOutput = true;
+				emulatorProcess.StartInfo.RedirectStandardError = true;
+				emulatorProcess.StartInfo.WorkingDirectory = Path.GetDirectoryName(emulator.FilePath);
 
-					emulatorProcess.StartInfo.FileName = emulator.FilePath;
+				emulatorProcess.StartInfo.FileName = emulator.FilePath;
 
-					if (emulator.Id == CONSTANTS.HIGAN_EMULATOR_ID)
-					{
-						emulatorProcess.StartInfo.Arguments = @"""" + FileLocation.HiganRoms + Platform.HiganRomFolder + @"\" + Path.GetFileNameWithoutExtension(Rom.FileName) + Platform.HiganExtension + @"""";
-					}
+				switch (emulator.Id)
+				{
+					case CONSTANTS.EmulatorId.Higan:
+						emulatorProcess.StartInfo.Arguments = $"\"{FileLocation.HiganRoms}{Platform.HiganRomFolder}\\{Path.GetFileNameWithoutExtension(Rom.FileName)}{Platform.HiganExtension}\"";
+						break;
 
-					// Strip out .xls if system = MAME
-					if (emulator.Id == CONSTANTS.MAME_ID)
-					{
-						if (Platform.Id == CONSTANTS.CHANNELF_PlatformId)
+					case CONSTANTS.EmulatorId.Mame:
+						if (Platform.Id == CONSTANTS.PlatformId.ChannelF)
 						{
-							emulatorProcess.StartInfo.Arguments = "channelf -cart " + @"""" + FilePath + @"""";// + " -skip_gameinfo -nowindow";
+							emulatorProcess.StartInfo.Arguments = $"channelf -cart \"{FilePath}\" -skip_gameinfo -nowindow";
 						}
 						else
 						{
+							// Strip out .xls if system = MAME
 							emulatorProcess.StartInfo.Arguments = Path.GetFileNameWithoutExtension(Rom.FileName);
 						}
-					}
+						break;
+					case CONSTANTS.EmulatorId.Retroarch:
+						string coreFile = Platform.Cores[0].FilePath;
 
-					else
-					{
-						emulatorProcess.StartInfo.Arguments = FilePath;
-					}
-
-					try
-					{
-						emulatorProcess.Start();
-						emulatorProcess.PriorityClass = ProcessPriorityClass.High;
-
-						if (!IsAdult && IsGame)
-						{
-							PlayCount++;
-						}
-
-					}
-					catch (Exception)
-					{
-						// TODO: report something usefull here if the process fails to start
-					}
+						emulatorProcess.StartInfo.Arguments = $"{emulator.Parameters} \"{coreFile}\" \"{FilePath}\"";
+						break;
 
 
-					string output = emulatorProcess.StandardOutput.ReadToEnd();
-					string error = emulatorProcess.StandardError.ReadToEnd();
-					Reporter.Report(output);
-					Reporter.Report(error);
+					default:
+						emulatorProcess.StartInfo.Arguments = $"{emulator.Parameters} {FilePath}";
+						break;
 				}
+
+				try
+				{
+					emulatorProcess.Start();
+					emulatorProcess.PriorityClass = ProcessPriorityClass.High;
+
+					if (!IsAdult && IsGame)
+					{
+						PlayCount++;
+					}
+				}
+				catch (Exception)
+				{
+					// TODO: report something usefull here if the process fails to start
+				}
+
+				string output = emulatorProcess.StandardOutput.ReadToEnd();
+				string error = emulatorProcess.StandardError.ReadToEnd();
+				Reporter.Report(output);
+				Reporter.Report(error);
 			});
 		}
 

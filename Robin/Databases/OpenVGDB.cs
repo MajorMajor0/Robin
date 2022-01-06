@@ -160,7 +160,7 @@ namespace Robin
 					newAtariReleases = newAtariReleases.OrderBy(x => x.Title).ToList();
 					atariPlatform.Releases.AddRange(newAtariReleases);
 
-					R.Data.Save();
+					R.Save();
 					//TODO Report total removed
 				});
 			}

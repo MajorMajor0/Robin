@@ -9,11 +9,9 @@
 
 namespace Robin.Mame
 {
-    using System;
-    using System.Data.Entity;
-    using System.Data.Entity.Infrastructure;
+    using Microsoft.EntityFrameworkCore;
     
-    public partial class Entities : Entity
+    public partial class Entities : DbContext
     {
         //public Entities()
         //    : base("name=Entities")

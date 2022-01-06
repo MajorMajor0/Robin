@@ -16,28 +16,34 @@
 
 namespace Robin
 {
-    class CONSTANTS
-    {
-        public const string VERSION = @"Robin 0.0";
+	public struct CONSTANTS
+	{
+		public const string VERSION = @"Robin 0.0";
 
-        public const string HEADER_ACCEPT = @"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
+		public const string HEADER_ACCEPT = @"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
 
-        public const string HEADER_ACCEPT_ENCODING = @"gzip, deflate, br";
+		public const string HEADER_ACCEPT_ENCODING = @"gzip, deflate, br";
 
 		public const string HEADER_ACCEPT_LANGUAGE = "en-US,en;q=0.5";
 
-		public const long ARCADE_PlatformId = 1;
+		public struct PlatformId
+		{
+			public const long Arcade = 1;
+			public const long Lynx = 8;
+			public const long ChannelF = 15;
+		}
 
-		public const long MAME_ID = 5;
+		public struct EmulatorId
+		{
+			public const long Mame = 5;
+			public const long Retroarch = 18;
+			public const long Higan = 4;
+		}
 
-		public const long HIGAN_EMULATOR_ID = 4;
-
-		public const long WORLD_RegionId = 22;
-
-		public const long UNKNOWN_RegionId = 0;
-
-		public const long LYNX_PlatformId = 8;
-
-		public const long CHANNELF_PlatformId = 15;
+		public struct RegionId
+		{
+			public const long World = 22;
+			public const long Unk = 0;
+		}
 	}
 }

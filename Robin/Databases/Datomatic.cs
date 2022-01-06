@@ -109,7 +109,7 @@ namespace Robin
 
 		public void CachePlatformReleases(Platform platform)
 		{
-			if (platform.Id == CONSTANTS.ARCADE_PlatformId)
+			if (platform.Id == CONSTANTS.PlatformId.Arcade)
 			{
 				Mame.Database mame = new Mame.Database();
 				mame.CacheReleases();

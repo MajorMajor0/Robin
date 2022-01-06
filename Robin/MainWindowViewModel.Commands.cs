@@ -32,8 +32,8 @@ namespace Robin
 
 		void SaveDataBase()
 		{
-			R.Data.Save(true);
-			Mame.M.Data.Save(true);
+			R.Save(true);
+			//Mame.M.Data.Save(true);
 		}
 
 
@@ -698,7 +698,7 @@ namespace Robin
 
 			Datomatic datomatic = new Datomatic();
 			datomatic.ReportUpdates(true);
-			R.Data.Save(false);
+			R.Save(false);
 		}
 
 		bool GetAllDataCanExecute()

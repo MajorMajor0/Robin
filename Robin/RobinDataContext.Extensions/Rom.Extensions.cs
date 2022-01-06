@@ -34,7 +34,7 @@ namespace Robin
 
 		public void StoreFileName(string extension)
 		{
-			if (PlatformId != CONSTANTS.ARCADE_PlatformId)
+			if (PlatformId != CONSTANTS.PlatformId.Arcade)
 			{
 				string washed = Regex.Replace(Title, @"\A(A |The |La |El )", "");
 

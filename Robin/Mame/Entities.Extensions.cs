@@ -20,46 +20,46 @@ namespace Robin.Mame
 {
 	public static class M
 	{
-		public static Entities Data;
+		//public static Entities Data;
 
-		static M()
-		{
-			Data = new Entities(false);
-		}
+		//static M()
+		//{
+		//	Data = new Entities(false);
+		//}
 
-		public static void Refresh(bool load)
-		{
-			Data = new Entities(load);
-		}
+		//public static void Refresh(bool load)
+		//{
+		//	Data = new Entities(load);
+		//}
 	}
 
 
-	public partial class Entities : Entity
-	{
-		string dbName = "MameDataModel";
-		string dataSource = Robin.FileLocation.MameData;
+	//public partial class Entities : Entity
+	//{
+	//	string dbName = "MameDataModel";
+	//	string dataSource = Robin.FileLocation.MameData;
 
-		public override string FileLocation => Robin.FileLocation.MameData;
+	//	public override string FileLocation => Robin.FileLocation.MameData;
 
-		public Entities(bool load)
-		{
-			//string connectionString = $"metadata=res://*/{dbName}.csdl|res://*/{dbName}.ssdl|res://*/{dbName}.msl;provider=System.Data.SQLite.EF6;data source = {dataSource}";
-			//Database.Connection.ConnectionString = connectionString;
-			//Configuration.LazyLoadingEnabled = false;
-			//Configuration.AutoDetectChangesEnabled = false;
+	//	public Entities(bool load)
+	//	{
+	//		//string connectionString = $"metadata=res://*/{dbName}.csdl|res://*/{dbName}.ssdl|res://*/{dbName}.msl;provider=System.Data.SQLite.EF6;data source = {dataSource}";
+	//		//Database.Connection.ConnectionString = connectionString;
+	//		//Configuration.LazyLoadingEnabled = false;
+	//		//Configuration.AutoDetectChangesEnabled = false;
 
-			ChangeTracker.LazyLoadingEnabled = false;
-			ChangeTracker.AutoDetectChangesEnabled = false;
+	//		ChangeTracker.LazyLoadingEnabled = false;
+	//		ChangeTracker.AutoDetectChangesEnabled = false;
 		
 
-			if (load)
-			{
-				Reporter.Tic("Loading MAME...", out int tic1);
-				Machines.Include(x => x.Disks).Include(x => x.Roms).Load();
-				Reporter.Toc(tic1);
-			}
+	//		if (load)
+	//		{
+	//			Reporter.Tic("Loading MAME...", out int tic1);
+	//			Machines.Include(x => x.Disks).Include(x => x.Roms).Load();
+	//			Reporter.Toc(tic1);
+	//		}
 
-		}
+	//	}
 
-	}
+	//}
 }
