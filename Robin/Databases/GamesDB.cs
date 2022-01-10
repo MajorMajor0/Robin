@@ -20,20 +20,23 @@ using System.Xml.Linq;
 using System.Globalization;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using System.Windows;
 
 namespace Robin
 {
 	class GamesDB : IDB
 	{
-		string baseUrl = @"http://legacy.thegamesdb.net/api/";
+		private readonly string baseUrl = @"http://legacy.thegamesdb.net/api/";
 
 		public string Title => "Games DB";
 
 		public LocalDB DB => LocalDB.GamesDB;
 
-		public IEnumerable<IDBPlatform> Platforms => R.Data.Gdbplatforms;
+		public IEnumerable<IDBPlatform> Platforms =>
+			R.Data.Gdbplatforms.Local.ToObservableCollection();
 
-		public IEnumerable<IDBRelease> Releases => R.Data.Gdbreleases;
+		public IEnumerable<IDBRelease> Releases =>
+			R.Data.Gdbreleases.Local.ToObservableCollection();
 
 		public bool HasRegions => false;
 
@@ -41,11 +44,28 @@ namespace Robin
 
 		public GamesDB()
 		{
-			Reporter.Tic("Opening Games DB cache...", out int tic1);
+			Stopwatch watch = Stopwatch.StartNew();
 
-			R.Data.Gdbplatforms.Load();
-			R.Data.Gdbreleases.Load();
-			Reporter.Toc(tic1);
+			Stopwatch watch2 = Stopwatch.StartNew();
+			try
+			{
+				Reporter.Tic("Opening Games DB cache...", out int tic1);
+
+				R.Data.Gdbplatforms.Load();
+				R.Data.Gdbreleases.Load();
+				Reporter.Toc(tic1);
+			}
+			catch (InvalidOperationException ex)
+			{
+				MessageBox.Show(ex.Message, $"Problem Opening GamesDB from RobinData", MessageBoxButton.OK);
+			}
+			catch (Microsoft.Data.Sqlite.SqliteException ex)
+			{
+				MessageBox.Show(ex.Message, "Sqlite Exception loading GamesDB", MessageBoxButton.OK);
+			}
+
+
+			Reporter.Report($"GamesDB loaded {watch.Elapsed.TotalSeconds:F1} s.");
 		}
 		/// <summary>
 		/// Implement IDB.CachePlatfomrReleases(). Go out to gamesdb.com and cache all known releases for the specified platform. Update the list of releases and store metadata for each one.

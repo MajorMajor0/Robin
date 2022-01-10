@@ -12,16 +12,15 @@
  * You should have received a copy of the GNU General Public License
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
 
+using Microsoft.EntityFrameworkCore;
+
 using System;
 using System.Collections.Generic;
-//using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
-using System.Text;
+using System.Windows;
 using System.Xml.Linq;
-
-using Microsoft.EntityFrameworkCore;
 
 namespace Robin
 {
@@ -31,9 +30,11 @@ namespace Robin
 
 		public LocalDB DB { get { return LocalDB.GiantBomb; } }
 
-		public IEnumerable<IDBPlatform> Platforms => R.Data.Gbplatforms;
+		public IEnumerable<IDBPlatform> Platforms =>
+			R.Data.Gbplatforms.Local.ToObservableCollection();
 
-		public IEnumerable<IDBRelease> Releases => R.Data.Gbreleases;
+		public IEnumerable<IDBRelease> Releases =>
+			R.Data.Gbreleases.Local.ToObservableCollection();
 
 		public bool HasRegions => true;
 
@@ -44,12 +45,27 @@ namespace Robin
 
 		public GiantBomb()
 		{
-			Reporter.Tic("Opening GiantBomb cache...", out int tic1);
 
-			R.Data.Gbplatforms.Load();
-			R.Data.Gbreleases.Load();
-			R.Data.Gbgames.Load();
-			Reporter.Toc(tic1);
+			Stopwatch watch = Stopwatch.StartNew();
+
+			Stopwatch watch2 = Stopwatch.StartNew();
+			try
+			{
+				Reporter.Tic("Opening GiantBomb cache...", out int tic1);
+
+				R.Data.Gbplatforms.Load();
+				R.Data.Gbreleases.Load();
+				R.Data.Gbgames.Load();
+				Reporter.Toc(tic1);
+			}
+			catch (InvalidOperationException ex)
+			{
+				MessageBox.Show(ex.Message, $"Problem Opening GiantBomb from RobinData", MessageBoxButton.OK);
+			}
+			catch (Microsoft.Data.Sqlite.SqliteException ex)
+			{
+				MessageBox.Show(ex.Message, "Sqlite Exception loading GiantBomb", MessageBoxButton.OK);
+			}
 		}
 
 		public void CachePlatformReleases(Platform platform)

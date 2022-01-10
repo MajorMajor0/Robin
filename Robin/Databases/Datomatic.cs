@@ -12,6 +12,8 @@
  * You should have received a copy of the GNU General Public License
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
 
+using Microsoft.EntityFrameworkCore;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,10 +22,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Xml.Linq;
-
-using Microsoft.EntityFrameworkCore;
 
 
 namespace Robin
@@ -34,9 +33,11 @@ namespace Robin
 
 		public LocalDB DB => LocalDB.Datomatic;
 
-		public IEnumerable<IDBPlatform> Platforms => R.Data.Platforms;
+		public IEnumerable<IDBPlatform> Platforms =>
+			R.Data.Platforms.Local.ToObservableCollection();
 
-		public IEnumerable<IDBRelease> Releases => R.Data.Releases;
+		public IEnumerable<IDBRelease> Releases =>
+			R.Data.Releases.Local.ToObservableCollection();
 
 		public Datomatic()
 		{

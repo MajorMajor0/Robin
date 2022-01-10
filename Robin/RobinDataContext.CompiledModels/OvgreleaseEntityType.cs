@@ -115,7 +115,7 @@ namespace Robin
                 typeof(long),
                 propertyInfo: typeof(Ovgrelease).GetProperty("OvgplatformId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(Ovgrelease).GetField("<OvgplatformId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
-            ovgplatformId.AddAnnotation("Relational:ColumnName", "OvgPlatformId");
+            ovgplatformId.AddAnnotation("Relational:ColumnName", "OVGPlatform_ID");
 
             var publisher = runtimeEntityType.AddProperty(
                 "Publisher",
@@ -147,7 +147,7 @@ namespace Robin
                 fieldInfo: typeof(Ovgrelease).GetField("<RegionId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 nullable: true,
                 valueGenerated: ValueGenerated.OnAdd);
-            regionId.AddAnnotation("Relational:ColumnName", "RegionId");
+            regionId.AddAnnotation("Relational:ColumnName", "Region_ID");
             regionId.AddAnnotation("Relational:DefaultValueSql", "0");
 
             var serial = runtimeEntityType.AddProperty(

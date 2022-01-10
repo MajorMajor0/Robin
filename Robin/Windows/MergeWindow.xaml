@@ -1,0 +1,89 @@
+﻿<!--This file is part of Robin.
+
+Robin is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published
+version 3 of the License, or (at your option) any later version.
+
+Robin is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Robin.  If not, see http://www.gnu.org/licenses/.-->
+
+<Window x:Class="Robin.MergeWindow"
+		x:Name="Merge_Window"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:local="clr-namespace:Robin"
+		mc:Ignorable="d"
+		Title="Merge Platforms"
+		SizeToContent="Height"
+		Width="300"
+		Style="{StaticResource WindowStyle1}">
+	<Grid>
+		<Border Style="{StaticResource CellStyle}">
+			<StackPanel>
+				<TextBlock Style="{StaticResource Normal}"
+						   FontSize="13"
+						   Margin="0,0,0,10">
+					Robin found a new platform title in the latest Launchbox database. Use the textbox to search keywords in Launchbox platforms Robin already knows about to decide whether to add this platform or merge it with an existing one.
+				</TextBlock>
+				<StackPanel Orientation="Horizontal"
+							Margin="0,0,0,10">
+					<TextBlock Text="New found title:  "
+							   Style="{StaticResource Normal}" />
+					<TextBlock Text="{Binding NewTitle}"
+							   Style="{StaticResource Normal}"
+							   TextDecorations="Underline" />
+				</StackPanel>
+				<DockPanel Height="30"
+						   Margin="0,0,0,10">
+					<TextBlock Style="{StaticResource Normal}"
+							   Text="Search term:  "
+							   VerticalAlignment="Center" />
+					<TextBox HorizontalAlignment="Stretch"
+							 VerticalAlignment="Stretch"
+							 VerticalContentAlignment="Center"
+							 Padding="5,0,0,0"
+							 FontFamily="{StaticResource NormalFontFamily}"
+							 FontSize="{StaticResource NormalFontSize}"
+							 Text="{Binding SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+				</DockPanel>
+
+				<ListBox x:Name="LbplatformListbox"
+						 BorderBrush="{StaticResource Normal_Brush}"
+						 Height="200"
+						 ScrollViewer.CanContentScroll="True"
+						 ItemsSource="{Binding LbplatformList}"
+						 SelectedItem="{Binding SelectedLbplatform}">
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Style="{StaticResource Normal}"
+									   Text="{Binding Title}"
+									   Tag="{Binding DataContext}" />
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+				<DockPanel LastChildFill="False"
+						   Margin="0,10,0,0">
+
+					<Button Style="{StaticResource CButtonStyle}"
+							Command="{Binding MergeCommand}"
+							Width="100"
+							Height="30"
+							DockPanel.Dock="Left" />
+
+					<Button Style="{StaticResource CButtonStyle}"
+							Command="{Binding AddCommand}"
+							Width="100"
+							Height="30"
+							DockPanel.Dock="Right" />
+				</DockPanel>
+			</StackPanel>
+		</Border>
+	</Grid>
+</Window>

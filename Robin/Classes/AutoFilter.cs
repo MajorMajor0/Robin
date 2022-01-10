@@ -12,15 +12,15 @@
  * You should have received a copy of the GNU General Public License
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
 
+using Robin.Properties;
+
+using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.ComponentModel;
 using System.Diagnostics;
-using System;
+using System.Linq;
 using System.Text.RegularExpressions;
-using System.Collections;
-using Robin.Properties;
-using System.Collections.ObjectModel;
 
 namespace Robin
 {
@@ -60,7 +60,7 @@ namespace Robin
 
 		public virtual int SourceCount { get; }
 
-		internal Settings Settings => Properties.Settings.Default;
+		internal static Settings Settings => Settings.Default;
 
 		public AutoFilterCollection()
 		{
@@ -147,11 +147,11 @@ namespace Robin
 
 	public class AutoFilterReleases : AutoFilterCollection
 	{
-		private readonly List<Release> sourceCollection;
+		private readonly IEnumerable<Release> sourceCollection;
 
 		private List<Release> filteredCollection;
 
-		public override int SourceCount => sourceCollection.Count;
+		public override int SourceCount => sourceCollection.Count();
 
 		public override IList FilteredCollection => filteredCollection;
 
@@ -169,7 +169,7 @@ namespace Robin
 		public BoolFilter IsGameFilter { get; }
 		public BoolFilter AdultFilter { get; }
 
-		public AutoFilterReleases(List<Release> _sourceCollection, string _title)
+		public AutoFilterReleases(IEnumerable<Release> _sourceCollection, string _title)
 		{
 			title = _title;
 			sourceCollection = _sourceCollection.OrderBy(x => x.Platform.Id).ThenBy(x => x.Title).ToList(); ;
@@ -339,11 +339,11 @@ namespace Robin
 
 	public class AutoFilterGames : AutoFilterCollection
 	{
-		private readonly List<Game> sourceCollection;
+		private readonly IEnumerable<Game> sourceCollection;
 
 		private List<Game> filteredCollection;
 
-		public override int SourceCount => sourceCollection.Count;
+		public override int SourceCount => sourceCollection.Count();
 
 		public override IList FilteredCollection => filteredCollection;
 
@@ -362,7 +362,7 @@ namespace Robin
 		public BoolFilter AdultFilter { get; }
 		public BoolFilter MessFilter { get; }
 
-		public AutoFilterGames(List<Game> _sourceCollection, string _title)
+		public AutoFilterGames(IEnumerable<Game> _sourceCollection, string _title)
 		{
 			title = _title;
 
@@ -559,11 +559,11 @@ namespace Robin
 
 	public class AutoFilterPlatforms : AutoFilterCollection
 	{
-		List<Platform> sourceCollection;
+		IEnumerable<Platform> sourceCollection;
 
 		List<Platform> filteredCollection;
 
-		public override int SourceCount => sourceCollection.Count;
+		public override int SourceCount => sourceCollection.Count();
 
 		public override IList FilteredCollection => filteredCollection;
 
@@ -576,7 +576,7 @@ namespace Robin
 		public BoolFilter IncludedFilter { get; }
 		public BoolFilter PreferreddFilter { get; }
 
-		public AutoFilterPlatforms(List<Platform> _sourceCollection, string _title)
+		public AutoFilterPlatforms(IEnumerable<Platform> _sourceCollection, string _title)
 		{
 			title = _title;
 			sourceCollection = _sourceCollection;
@@ -655,11 +655,11 @@ namespace Robin
 
 	public class AutoFilterEmulators : AutoFilterCollection
 	{
-		List<Emulator> sourceCollection;
+		IEnumerable<Emulator> sourceCollection;
 
 		List<Emulator> filteredCollection;
 
-		public override int SourceCount => sourceCollection.Count;
+		public override int SourceCount => sourceCollection.Count();
 
 		public override IList FilteredCollection => filteredCollection;
 
@@ -669,7 +669,7 @@ namespace Robin
 
 		public BoolFilter CrapFilter { get; }
 
-		public AutoFilterEmulators(List<Emulator> _sourceCollection, string _title)
+		public AutoFilterEmulators(IEnumerable<Emulator> _sourceCollection, string _title)
 		{
 			title = _title;
 			sourceCollection = _sourceCollection;

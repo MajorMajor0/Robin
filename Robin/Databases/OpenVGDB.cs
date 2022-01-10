@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -28,9 +29,11 @@ namespace Robin
 
 		public LocalDB DB => LocalDB.OpenVGDB;
 
-		public IEnumerable<IDBPlatform> Platforms => R.Data.Ovgplatforms;
+		public IEnumerable<IDBPlatform> Platforms 
+			=> R.Data.Ovgplatforms.Local.ToObservableCollection();
 
-		public IEnumerable<IDBRelease> Releases => R.Data.Ovgreleases;
+		public IEnumerable<IDBRelease> Releases 
+			=> R.Data.Ovgreleases.Local.ToObservableCollection();
 
 		OpenVGDBEntities OVdata;
 
@@ -40,13 +43,27 @@ namespace Robin
 
 		public OpenVGDB()
 		{
-			Reporter.Tic("Opening Open VGDB cache...", out int tic1);
+			Stopwatch watch = Stopwatch.StartNew();
 
-			R.Data.Ovgplatforms.Load();
-			R.Data.Ovgreleases.Load();
-			//R.Data.Releases.Include(x => x.Ovgrelease);
+			Stopwatch watch2 = Stopwatch.StartNew();
+			try
+			{
+				Reporter.Tic("Opening Open VGDB cache...", out int tic1);
 
-			Reporter.Toc(tic1);
+				R.Data.Ovgplatforms.Load();
+				R.Data.Ovgreleases.Load();
+				//R.Data.Releases.Include(x => x.Ovgrelease);
+
+				Reporter.Toc(tic1);
+			}
+			catch (InvalidOperationException ex)
+			{
+				MessageBox.Show(ex.Message, $"Problem Opening Open VGDB from RobinData", MessageBoxButton.OK);
+			}
+			catch (Microsoft.Data.Sqlite.SqliteException ex)
+			{
+				MessageBox.Show(ex.Message, "Sqlite Exception loading Open VGDB", MessageBoxButton.OK);
+			}
 		}
 
 		void LoadOVData()

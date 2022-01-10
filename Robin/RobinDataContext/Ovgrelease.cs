@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Robin
 {
@@ -12,6 +13,8 @@ namespace Robin
 
         public long Id { get; set; }
         public long? RegionId { get; set; }
+
+        [Column("OVGPlatform_ID")]
         public long OvgplatformId { get; set; }
         public string Title { get; set; }
         public string Overview { get; set; }

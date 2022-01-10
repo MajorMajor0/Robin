@@ -49,14 +49,14 @@ namespace Robin
                 propertyInfo: typeof(Lbimage).GetProperty("LbreleaseId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(Lbimage).GetField("<LbreleaseId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 nullable: true);
-            lbreleaseId.AddAnnotation("Relational:ColumnName", "Lbrelease_ID");
+            lbreleaseId.AddAnnotation("Relational:ColumnName", "LBRelease_ID");
 
             var regionId = runtimeEntityType.AddProperty(
                 "RegionId",
                 typeof(long),
                 propertyInfo: typeof(Lbimage).GetProperty("RegionId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(Lbimage).GetField("<RegionId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
-            regionId.AddAnnotation("Relational:ColumnName", "RegionId");
+            regionId.AddAnnotation("Relational:ColumnName", "Region_ID");
 
             var type = runtimeEntityType.AddProperty(
                 "Type",

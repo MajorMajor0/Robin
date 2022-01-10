@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Robin
 {
@@ -15,6 +16,8 @@ namespace Robin
 		public string Title { get; set; }
 		public long? RegionId { get; set; }
 		public string Overview { get; set; }
+
+		[Column("GBGame_ID")]
 		public long? GbgameId { get; set; }
 		public string Players { get; set; }
 		public long GbplatformId { get; set; }

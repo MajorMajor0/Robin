@@ -79,7 +79,7 @@ namespace Robin
                 typeof(long),
                 propertyInfo: typeof(Gdbrelease).GetProperty("GdbplatformId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(Gdbrelease).GetField("<GdbplatformId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
-            gdbplatformId.AddAnnotation("Relational:ColumnName", "GdbplatformId");
+            gdbplatformId.AddAnnotation("Relational:ColumnName", "GDBPlatform_ID");
 
             var genre = runtimeEntityType.AddProperty(
                 "Genre",

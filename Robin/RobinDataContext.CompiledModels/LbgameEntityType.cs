@@ -54,7 +54,7 @@ namespace Robin
                 typeof(long),
                 propertyInfo: typeof(Lbgame).GetProperty("LbplatformId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(Lbgame).GetField("<LbplatformId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
-            lbplatformId.AddAnnotation("Relational:ColumnName", "LbplatformId");
+            lbplatformId.AddAnnotation("Relational:ColumnName", "LBPlatform_ID");
 
             var overview = runtimeEntityType.AddProperty(
                 "Overview",

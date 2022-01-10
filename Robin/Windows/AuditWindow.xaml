@@ -1,0 +1,248 @@
+﻿<!--This file is part of Robin.
+
+Robin is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published
+version 3 of the License, or (at your option) any later version.
+
+Robin is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Robin.  If not, see http://www.gnu.org/licenses/.-->
+<Window x:Name="Audit_Window"
+		x:Class="Robin.AuditWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:scm1="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+		xmlns:local="clr-namespace:Robin"
+		mc:Ignorable="d"
+		Title="Audit Window"
+		Width="600"
+		Height="800"
+		Style="{StaticResource WindowStyle1}">
+	<Window.DataContext>
+		<local:AuditWindowViewModel />
+	</Window.DataContext>
+	<Window.Resources>
+
+		<ContextMenu x:Key="ReleaseContextMenu">
+			<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+					  Command="{Binding ShowBoxCommand}" />
+			<MenuItem Style="{StaticResource CContextMenuItemStyle}"
+					  Command="{Binding MatchCommand}" />
+		</ContextMenu>
+	</Window.Resources>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*" />
+			<RowDefinition Height="50" />
+		</Grid.RowDefinitions>
+		<Border x:Name="ContentBorder"
+				Style="{StaticResource CellStyle}">
+			<Grid x:Name="ContentGrid">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="*" />
+				</Grid.RowDefinitions>
+				<Grid  HorizontalAlignment="Stretch">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="30" />
+						<RowDefinition Height="100" />
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="200" />
+						<ColumnDefinition Width="70" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+
+					<TextBlock Text="Platforms"
+							   Style="{StaticResource Heading0}" />
+					<ListBox ItemsSource="{Binding PlatformList}"
+							 Grid.Row="1"
+							 Height="100"
+							 Background="Transparent"
+							 BorderBrush="Transparent"
+							 SelectedItem="{Binding SelectedPlatform}"
+							 ScrollViewer.CanContentScroll="True">
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<TextBlock Text="{Binding Title}"
+										   Style="{StaticResource Normal}" />
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+
+					<StackPanel x:Name="ButtonsStackPanel"
+								Grid.Column="1"
+								Grid.Row="1"
+								HorizontalAlignment="Center">
+						<Button Style="{StaticResource CButtonStyle}"
+								Command="{Binding AuditCommand}"
+								Height="25"
+								Width="60"
+								HorizontalAlignment="Left">
+
+						</Button>
+					</StackPanel>
+					<TextBlock Text="Audit Results"
+							   Style="{StaticResource Heading0}"
+							   Grid.Column="2" />
+					<ListBox x:Name="AuditResultsListBox"
+							 ItemsSource="{Binding AuditResultsCollection}"
+							 SelectedItem="{Binding SelectedAuditResults, Mode=TwoWay}"
+							 Grid.Row="1"
+							 Grid.Column="2"
+							 Height="100"
+							 Background="Transparent"
+							 BorderBrush="Transparent"
+							 ScrollViewer.CanContentScroll="True">
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<TextBlock Text="{Binding Title}"
+										   Style="{StaticResource Normal}" />
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+
+				</Grid>
+
+				<StackPanel Grid.Row="1"
+							Visibility="{Binding SelectedAuditResult, Converter={StaticResource NullToVisibilityConverter}}">
+					<TextBlock Text="Audit Summary"
+							   Style="{StaticResource Heading0}"
+							   Margin="0,20,0,0" />
+					<TextBlock x:Name="TotalBlock"
+							   Margin="7,0,0,0"
+							   Style="{StaticResource Normal}">
+						<TextBlock.Text>
+							<MultiBinding StringFormat="{}Total Results: {0}">
+								<Binding ElementName="AuditResultsListBox" Path="SelectedItem.Count"
+										 FallbackValue="0" />
+							</MultiBinding>
+						</TextBlock.Text>
+					</TextBlock>
+
+					<TextBlock x:Name="GoodBlock"
+							   Margin="7,0,0,0"
+							   Style="{StaticResource Normal}">
+						<TextBlock.Text>
+							<MultiBinding StringFormat="{}Good Results: {0}">
+								<Binding Path="GoodCount"
+										 FallbackValue="0" />
+							</MultiBinding>
+						</TextBlock.Text>
+					</TextBlock>
+
+					<TextBlock  x:Name="MissingBlock"
+								Style="{StaticResource Heading0}"
+								Margin="0,20,0,0">
+						<TextBlock.Text>
+							<MultiBinding StringFormat="{}Missing ROMs ({0})">
+								<Binding Path="MissingCount"
+										 FallbackValue="0" />
+							</MultiBinding>
+						</TextBlock.Text>
+					</TextBlock>
+					<ListView x:Name="MissingResultsListView"
+							  ItemsSource="{Binding MissingResults}"
+							  Background="Transparent"
+							  BorderBrush="Transparent"
+							  MaxHeight="200"
+							  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+						<ListView.ItemTemplate>
+							<DataTemplate>
+								<TextBlock Style="{StaticResource Normal}">
+									<TextBlock.Text>
+										<MultiBinding StringFormat="{}{0}, {1}">
+											<Binding Path="Rom.FileName"
+													 FallbackValue="0" />
+											<Binding Path="Rom.Title"
+													 FallbackValue="0" />
+										</MultiBinding>
+									</TextBlock.Text>
+								</TextBlock>
+							</DataTemplate>
+						</ListView.ItemTemplate>
+					</ListView>
+
+					<TextBlock  x:Name="BadBlock"
+								Style="{StaticResource Heading0}"
+								Margin="0,20,0,0">
+						<TextBlock.Text>
+							<MultiBinding StringFormat="{}ROMs with problems that could be fixed ({0})">
+								<Binding Path="BadCount"
+										 FallbackValue="0" />
+							</MultiBinding>
+						</TextBlock.Text>
+					</TextBlock>
+					<ListView x:Name="BadResultsListView"
+							  ItemsSource="{Binding BadResults}"
+							  Background="Transparent"
+							  BorderBrush="Transparent"
+							  MaxHeight="200"
+							  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+						<ListView.ItemTemplate>
+							<DataTemplate>
+								<TextBlock Style="{StaticResource Normal}">
+									<TextBlock.Text>
+										<MultiBinding StringFormat="{}{0}, {1}">
+											<Binding Path="Rom.FileName"
+													 FallbackValue="0" />
+											<Binding Path="Rom.Title"
+													 FallbackValue="0" />
+										</MultiBinding>
+									</TextBlock.Text>
+								</TextBlock>
+							</DataTemplate>
+						</ListView.ItemTemplate>
+					</ListView>
+					<TextBlock  x:Name="BestBlock"
+								Style="{StaticResource Heading0}"
+								Margin="0,20,0,0">
+						<TextBlock.Text>
+							<MultiBinding StringFormat="{}ROMs with problems, but no better are available ({0})">
+								<Binding Path="BestCount"
+										 FallbackValue="0" />
+							</MultiBinding>
+						</TextBlock.Text>
+					</TextBlock>
+					<ListView x:Name="BestResultsListView"
+							  ItemsSource="{Binding BestResults}"
+							  Background="Transparent"
+							  BorderBrush="Transparent"
+							  MaxHeight="200"
+							  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+						<ListView.ItemTemplate>
+							<DataTemplate>
+								<TextBlock Style="{StaticResource Normal}">
+									<TextBlock.Text>
+										<MultiBinding StringFormat="{}{0}, {1}">
+											<Binding Path="Rom.FileName"
+													 FallbackValue="0" />
+											<Binding Path="Rom.Title"
+													 FallbackValue="0" />
+										</MultiBinding>
+									</TextBlock.Text>
+								</TextBlock>
+							</DataTemplate>
+						</ListView.ItemTemplate>
+
+					</ListView>
+				</StackPanel>
+			</Grid>
+
+		</Border>
+		<Border x:Name="ReporterBorder"
+				Style="{StaticResource CellStyle}"
+				Grid.Row="1">
+
+			<TextBlock x:Name="ReporterBlock"
+					   Text="{Binding Path=(local:Reporter.NewsFeed)}"
+					   Style="{StaticResource Normal}" />
+		</Border>
+	</Grid>
+</Window>

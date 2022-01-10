@@ -73,6 +73,12 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Releases\**" />
+    <EmbeddedResource Remove="Releases\**" />
+    <None Remove="Releases\**" />
+    <Page Remove="Releases\**" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Update="Collection.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
@@ -142,7 +148,7 @@
     <Compile Update="Match.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Update="OpenVGDBModel.Context.cs">
+    <Compile Update="OpenVgdb\OpenVGDBModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>OpenVGDBModel.Context.tt</DependentUpon>
@@ -188,16 +194,16 @@
     <Compile Update="URL.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Update="VGdbplatform.cs">
+    <Compile Update="OpenVgdb\VGDBPLATFORM.cs">
       <DependentUpon>OpenVGDBModel.tt</DependentUpon>
     </Compile>
-    <Compile Update="VGDBREGION.cs">
+    <Compile Update="OpenVgdb\VGDBREGION.cs">
       <DependentUpon>OpenVGDBModel.tt</DependentUpon>
     </Compile>
-    <Compile Update="VGDBRELEAS.cs">
+    <Compile Update="OpenVgdb\VGDBRELEAS.cs">
       <DependentUpon>OpenVGDBModel.tt</DependentUpon>
     </Compile>
-    <Compile Update="VGDBROM.cs">
+    <Compile Update="OpenVgdb\VGDBROM.cs">
       <DependentUpon>OpenVGDBModel.tt</DependentUpon>
     </Compile>
   </ItemGroup>
@@ -213,19 +219,12 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Update="RobinData.db3">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
     <None Update="RobinDataModel.edmx.diagram">
       <DependentUpon>RobinDataModel.edmx</DependentUpon>
     </None>
     <Resource Include="Images\SNES-CART">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-    <EntityDeploy Include="OpenVGDBModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>OpenVGDBModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
     <None Update="OpenVGDBModel.edmx.diagram">
       <DependentUpon>OpenVGDBModel.edmx</DependentUpon>
     </None>
@@ -313,10 +312,6 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Bricelam.EntityFrameworkCore.Pluralizer" Version="1.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -331,11 +326,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
-    <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.3.261602">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
     <PackageReference Include="DotNetZip" Version="1.16.0" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.115.5" />
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.0" />
@@ -374,12 +366,18 @@
     <None Remove="SplashScreen1.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="robin.ico" />
+  </ItemGroup>
+  <ItemGroup>
     <SplashScreen Include="SplashScreen1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </SplashScreen>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="RobinDataContext.CompiledModels\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="App.xaml" />
   </ItemGroup>
   <PropertyGroup />
   <PropertyGroup>
@@ -392,5 +390,6 @@
     <GenerateDocumentationFile>False</GenerateDocumentationFile>
     <BaseIntermediateOutputPath></BaseIntermediateOutputPath>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <ApplicationIcon>robin.ico</ApplicationIcon>
   </PropertyGroup>
 </Project>

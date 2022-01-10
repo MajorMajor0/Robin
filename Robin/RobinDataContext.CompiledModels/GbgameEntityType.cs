@@ -56,7 +56,7 @@ namespace Robin
                 propertyInfo: typeof(Gbgame).GetProperty("GbplatformId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(Gbgame).GetField("<GbplatformId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 nullable: true);
-            gbplatformId.AddAnnotation("Relational:ColumnName", "GbplatformId");
+            gbplatformId.AddAnnotation("Relational:ColumnName", "GBPlatform_ID");
 
             var genre = runtimeEntityType.AddProperty(
                 "Genre",

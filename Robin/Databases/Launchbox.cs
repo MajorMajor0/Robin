@@ -12,6 +12,8 @@
  * You should have received a copy of the GNU General Public License
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
 
+using Microsoft.EntityFrameworkCore;
+
 using System;
 using System.Collections.Generic;
 //using System.Data.Entity;
@@ -21,11 +23,8 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Xml.Linq;
-
-using Microsoft.EntityFrameworkCore;
 
 namespace Robin
 {
@@ -46,9 +45,11 @@ namespace Robin
 
 		public LocalDB DB => LocalDB.LaunchBox;
 
-		public IEnumerable<IDBPlatform> Platforms => R.Data.Lbplatforms;
+		public IEnumerable<IDBPlatform> Platforms =>
+			R.Data.Lbplatforms.Local.ToObservableCollection();
 
-		public IEnumerable<IDBRelease> Releases => R.Data.Lbreleases;
+		public IEnumerable<IDBRelease> Releases =>
+			R.Data.Lbreleases.Local.ToObservableCollection();
 
 		public bool HasRegions => true;
 
@@ -59,14 +60,25 @@ namespace Robin
 
 		public Launchbox()
 		{
-			Reporter.Tic("Loading LaunchBox local cache...", out int tic1);
+			try
+			{
+				Reporter.Tic("Loading LaunchBox local cache...", out int tic1);
 
-			R.Data.Lbplatforms.Load();
-			R.Data.Lbimages.Load();
-			R.Data.Lbreleases.Load();
-			R.Data.Lbgames.Load();
+				R.Data.Lbplatforms.Load();
+				R.Data.Lbimages.Load();
+				R.Data.Lbreleases.Load();
+				R.Data.Lbgames.Load();
 
-			Reporter.Toc(tic1);
+				Reporter.Toc(tic1);
+			}
+			catch (InvalidOperationException ex)
+			{
+				MessageBox.Show(ex.Message, $"Problem Opening GamesDB from RobinData", MessageBoxButton.OK);
+			}
+			catch (Microsoft.Data.Sqlite.SqliteException ex)
+			{
+				MessageBox.Show(ex.Message, "Sqlite Exception loading LaunchBox", MessageBoxButton.OK);
+			}
 		}
 
 		/// <summary>

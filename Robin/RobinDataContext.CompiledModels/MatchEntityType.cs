@@ -56,7 +56,7 @@ namespace Robin
                 fieldInfo: typeof(Match).GetField("<RegionId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 nullable: true,
                 valueGenerated: ValueGenerated.OnAdd);
-            regionId.AddAnnotation("Relational:ColumnName", "RegionId");
+            regionId.AddAnnotation("Relational:ColumnName", "Region_ID");
             regionId.AddAnnotation("Relational:DefaultValueSql", "0");
 
             var sha1 = runtimeEntityType.AddProperty(

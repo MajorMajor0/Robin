@@ -49,14 +49,14 @@ namespace Robin
                 propertyInfo: typeof(Gbrelease).GetProperty("GbgameId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(Gbrelease).GetField("<GbgameId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 nullable: true);
-            gbgameId.AddAnnotation("Relational:ColumnName", "GbgameId");
+            gbgameId.AddAnnotation("Relational:ColumnName", "GBGame_ID");
 
             var gbplatformId = runtimeEntityType.AddProperty(
                 "GbplatformId",
                 typeof(long),
                 propertyInfo: typeof(Gbrelease).GetProperty("GbplatformId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(Gbrelease).GetField("<GbplatformId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
-            gbplatformId.AddAnnotation("Relational:ColumnName", "GbplatformId");
+            gbplatformId.AddAnnotation("Relational:ColumnName", "GBPlatform_ID");
 
             var overview = runtimeEntityType.AddProperty(
                 "Overview",
@@ -79,7 +79,7 @@ namespace Robin
                 fieldInfo: typeof(Gbrelease).GetField("<RegionId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 nullable: true,
                 valueGenerated: ValueGenerated.OnAdd);
-            regionId.AddAnnotation("Relational:ColumnName", "RegionId");
+            regionId.AddAnnotation("Relational:ColumnName", "Region_ID");
             regionId.AddAnnotation("Relational:DefaultValueSql", "0");
 
             var screenUrl = runtimeEntityType.AddProperty(
