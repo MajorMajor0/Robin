@@ -930,9 +930,6 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 				Grid.Column="1"
 				Grid.Row="1"
 				Style="{StaticResource CellStyle}">
-			<!--<ContentControl x:Name="MainControl">
-				z
-			</ContentControl>-->
 
 			<local:BindableSelectionListView x:Name="MainList"
 											 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -1037,13 +1034,13 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
                                     Converter={StaticResource ImageConverter},
                                     FallbackValue={StaticResource ArtNotFoundImage},
                                     TargetNullValue={StaticResource ArtNotFoundImage}}" />
-						<Setter Property="Effect">
+						<!--<Setter Property="Effect">
 							<Setter.Value>
 								<DropShadowEffect Color="Black"
 												  Direction="-50"
 												  ShadowDepth="15" />
 							</Setter.Value>
-						</Setter>
+						</Setter>-->
 						<Style.Triggers>
 							<DataTrigger Binding="{Binding DataContext.Included, RelativeSource={RelativeSource AncestorType=StackPanel}}"
 										 Value="False">

@@ -267,7 +267,7 @@ namespace Robin
 			}
 			else
 			{
-				return (value as decimal?) * 15 - 1;
+				return (value as double?) * 15 - 1;
 			}
 		}
 
@@ -279,16 +279,16 @@ namespace Robin
 
 	public class RatingColorConverter : IValueConverter
 	{
-		SolidColorBrush gold = new SolidColorBrush(Colors.Gold);
-		SolidColorBrush silver = new SolidColorBrush(Colors.Silver);
-		SolidColorBrush bronze = new SolidColorBrush((Color)ColorConverter.ConvertFromString(@"#CD7F32"));
+		private readonly SolidColorBrush gold = new(Colors.Gold);
+		private readonly SolidColorBrush silver = new(Colors.Silver);
+		private readonly SolidColorBrush bronze = new((Color)ColorConverter.ConvertFromString(@"#CD7F32"));
 		//SolidColorBrush copper = new SolidColorBrush((Color)ColorConverter.ConvertFromString(@"#8C5B53"));
-		SolidColorBrush white = new SolidColorBrush(Colors.White);
+		private readonly SolidColorBrush white = new(Colors.White);
 		//SolidColorBrush transparent = new SolidColorBrush(Colors.Transparent);
 
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			decimal? rating = value as decimal?;
+			double? rating = value as double?;
 
 			if (rating == null)
 			{
