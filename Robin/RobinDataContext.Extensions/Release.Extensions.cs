@@ -24,7 +24,7 @@ using System.Threading.Tasks;
 
 namespace Robin
 {
-	public partial class Release : IDBobject, IDBRelease
+	public partial class Release : IDbObject, IDbRelease
 	{
 		public Release(long platform, string title, long? ID_gdb,
 			long? ID_gb, long? game_id, Region region)

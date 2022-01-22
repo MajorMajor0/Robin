@@ -29,10 +29,10 @@ namespace Robin
 
 		public LocalDB DB => LocalDB.OpenVGDB;
 
-		public IEnumerable<IDBPlatform> Platforms 
+		public IEnumerable<IDbPlatform> Platforms 
 			=> R.Data.Ovgplatforms.Local.ToObservableCollection();
 
-		public IEnumerable<IDBRelease> Releases 
+		public IEnumerable<IDbRelease> Releases 
 			=> R.Data.Ovgreleases.Local.ToObservableCollection();
 
 		OpenVGDBEntities OVdata;
@@ -107,7 +107,7 @@ namespace Robin
 			Reporter.Report("Open VGDB uses Robin's platforms and does not need platform data cached.");
 		}
 
-		public void CachePlatformGames(Platform platform)
+		public void CachePlatformGamesAsync(Platform platform)
 		{
 			Reporter.Report("GamesDB does not have games and releases--try caching releases");
 		}

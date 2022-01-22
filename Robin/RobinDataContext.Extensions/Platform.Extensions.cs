@@ -28,7 +28,7 @@ using System.Threading.Tasks;
 
 namespace Robin
 {
-	public partial class Platform : IDBobject, IDBPlatform
+	public partial class Platform : IDbObject, IDbPlatform
 	{
 		[NotMapped]
 		public IEnumerable<Game> Games => Releases.Select(x => x.Game).Distinct();
@@ -152,7 +152,7 @@ namespace Robin
 		public string ControllerPath => FileLocation.Art.Console + Id + "P-CTRL.jpg";
 
 		[NotMapped]
-		IList IDBPlatform.Releases => Releases.ToList();
+		IList IDbPlatform.Releases => Releases.ToList();
 
 		public void GetGames()
 		{

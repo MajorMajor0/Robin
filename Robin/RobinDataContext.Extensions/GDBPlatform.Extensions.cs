@@ -18,7 +18,7 @@ using System.Linq;
 
 namespace Robin
 {
-	public partial class Gdbplatform : IDBPlatform
+	public partial class Gdbplatform : IDbPlatform
 	{
 		[NotMapped]
 		public IList Releases => Gdbreleases.ToList();

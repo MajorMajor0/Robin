@@ -32,10 +32,10 @@ namespace Robin
 
 		public LocalDB DB => LocalDB.GamesDB;
 
-		public IEnumerable<IDBPlatform> Platforms =>
+		public IEnumerable<IDbPlatform> Platforms =>
 			R.Data.Gdbplatforms.Local.ToObservableCollection();
 
-		public IEnumerable<IDBRelease> Releases =>
+		public IEnumerable<IDbRelease> Releases =>
 			R.Data.Gdbreleases.Local.ToObservableCollection();
 
 		public bool HasRegions => false;
@@ -284,7 +284,7 @@ namespace Robin
 			}
 		}
 
-		public void CachePlatformGames(Platform platform)
+		public void CachePlatformGamesAsync(Platform platform)
 		{
 			Reporter.Report("GamesDB does not have games and releases--try caching releases");
 		}

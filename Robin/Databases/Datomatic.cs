@@ -33,10 +33,10 @@ namespace Robin
 
 		public LocalDB DB => LocalDB.Datomatic;
 
-		public IEnumerable<IDBPlatform> Platforms =>
+		public IEnumerable<IDbPlatform> Platforms =>
 			R.Data.Platforms.Local.ToObservableCollection();
 
-		public IEnumerable<IDBRelease> Releases =>
+		public IEnumerable<IDbRelease> Releases =>
 			R.Data.Releases.Local.ToObservableCollection();
 
 		public Datomatic()
@@ -89,7 +89,7 @@ namespace Robin
 			Reporter.Report("It is not possible to cache platforms for Robin/Datomatic");
 		}
 
-		public void CachePlatformGames(Platform platform)
+		public void CachePlatformGamesAsync(Platform platform)
 		{
 			Reporter.Report("It is not possible to cache games for Robin/Datomatic, only releases");
 		}

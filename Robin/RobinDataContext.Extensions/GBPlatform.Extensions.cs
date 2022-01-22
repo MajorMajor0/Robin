@@ -19,7 +19,7 @@ using System.Linq;
 
 namespace Robin
 {
-	public partial class Gbplatform : IDBPlatform
+	public partial class Gbplatform : IDbPlatform
 	{
 		[NotMapped]
 		public IList Releases => Gbreleases.ToList();
@@ -57,6 +57,6 @@ namespace Robin
 		public string Manufacturer => null;
 
 		[NotMapped]
-		DateTime IDBPlatform.CacheDate { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		DateTime IDbPlatform.CacheDate { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 	}
 }

@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace Robin
 {
-	public partial class Gdbrelease : IDBRelease
+	public partial class Gdbrelease : IDbRelease
 	{
 		public Gdbrelease()
 		{

@@ -110,7 +110,7 @@ namespace Robin
 			{
 				for (int i = 0; i < MainList.SelectedItems.Count; i++)
 				{
-					IDBobject idbObject = MainList.SelectedItems[i] as IDBobject;
+					IDbObject idbObject = MainList.SelectedItems[i] as IDbObject;
 					collection.Add(idbObject);
 				}
 

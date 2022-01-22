@@ -16,6 +16,7 @@ namespace Robin
         public long? ID_OVG { get; set; }
         public long? ID_LBG { get; set; }
         public long? ID_LB { get; set; }
+        public long? ID_MB { get; set; }
         public long? GameId { get; set; }
         public long PlatformId { get; set; }
         public long RegionId { get; set; }
@@ -31,6 +32,7 @@ namespace Robin
         public virtual Gbrelease Gbrelease { get; set; }
         public virtual Gdbrelease Gdbrelease { get; set; }
         public virtual Lbrelease Lbrelease { get; set; }
+        public virtual Mbrelease Mbrelease { get; set; }
         public virtual Lbgame Lbgame { get; set; }
         public virtual Ovgrelease Ovgrelease { get; set; }
         public virtual Platform Platform { get; set; }

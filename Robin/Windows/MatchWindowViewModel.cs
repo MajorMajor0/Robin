@@ -87,11 +87,11 @@ namespace Robin
 			}
 		}
 
-		public IDBRelease SelectedIDBRelease { get; set; }
+		public IDbRelease SelectedIDBRelease { get; set; }
 
-		public IEnumerable<IDBRelease> IDBReleases => Gbreleases.Concat(Gdbreleases).Concat(Lbreleases);
+		public IEnumerable<IDbRelease> IDBReleases => Gbreleases.Concat(Gdbreleases).Concat(Lbreleases);
 
-		public IEnumerable<IDBRelease> Gbreleases
+		public IEnumerable<IDbRelease> Gbreleases
 		{
 			get
 			{
@@ -99,11 +99,11 @@ namespace Robin
 				{
 					return platform.Gbplatform.Gbreleases.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
 				}
-				return Enumerable.Empty<IDBRelease>();
+				return Enumerable.Empty<IDbRelease>();
 			}
 		}
 
-		public IEnumerable<IDBRelease> Gdbreleases
+		public IEnumerable<IDbRelease> Gdbreleases
 		{
 			get
 			{
@@ -111,11 +111,11 @@ namespace Robin
 				{
 					return platform.Gdbplatform.Gdbreleases.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
 				}
-				return Enumerable.Empty<IDBRelease>();
+				return Enumerable.Empty<IDbRelease>();
 			}
 		}
 
-		public IEnumerable<IDBRelease> Lbreleases
+		public IEnumerable<IDbRelease> Lbreleases
 		{
 			get
 			{
@@ -123,7 +123,7 @@ namespace Robin
 				{
 					return platform.Lbplatform.Lbreleases.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
 				}
-				return Enumerable.Empty<IDBRelease>();
+				return Enumerable.Empty<IDbRelease>();
 			}
 		}
 

@@ -23,6 +23,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Windows.Media.Imaging;
 using System.Xml.Linq;
@@ -73,7 +74,7 @@ namespace Robin
 			{
 				webclient.SetStandardHeaders();
 				DBTimers.Wait(url);
-				Debug.WriteLine("Hit DB at: " + url + "  " + DateTime.Now);
+				Debug.WriteLine($"Hit DB at: {url} {DateTime.Now}");
 				webclient.DownloadFile(url, fileName);
 				return true;
 			}
@@ -88,7 +89,7 @@ namespace Robin
 					Debug.WriteLine(ex.TargetSite);
 					Debug.WriteLine(ex.Status);
 					Debug.WriteLine(ex.HResult);
-					Reporter.Warn("Failure getting " + url + ". The website responded:");
+					Reporter.Warn($"Failure getting {url}. The website responded:");
 					Reporter.Report(response);
 				}
 				return false;
@@ -169,7 +170,7 @@ namespace Robin
 
 			if (input.Length > 1)
 			{
-				return char.ToUpper(input[0]) + input.Substring(1);
+				return $"{char.ToUpper(input[0])}{input[1..]}";
 			}
 
 			return input.ToUpper();
@@ -476,5 +477,28 @@ namespace Robin
 			var description = ((DescriptionAttribute)attribute).Description;
 			return description;
 		}
+
+		public static DateTime? GetMbDate(this JsonElement element)
+		{
+			var strings = element.GetString().Split("-");
+			int[] ints = new int[strings.Length];
+
+			for (int i = 0; i < strings.Length; i++)
+			{
+				if (!int.TryParse(strings[i], out ints[i]))
+				{
+					return null;
+				}
+			}
+
+			return strings.Length switch
+			{
+				1 => new DateTime(ints[0], 1, 1),
+				2 => new DateTime(ints[0], ints[1], 1),
+				3 => new DateTime(ints[0], ints[1], ints[2]),
+				_ => null,
+			};
+		}
+
 	}
 }

@@ -30,10 +30,10 @@ namespace Robin
 
 		public LocalDB DB { get { return LocalDB.GiantBomb; } }
 
-		public IEnumerable<IDBPlatform> Platforms =>
+		public IEnumerable<IDbPlatform> Platforms =>
 			R.Data.Gbplatforms.Local.ToObservableCollection();
 
-		public IEnumerable<IDBRelease> Releases =>
+		public IEnumerable<IDbRelease> Releases =>
 			R.Data.Gbreleases.Local.ToObservableCollection();
 
 		public bool HasRegions => true;
@@ -45,10 +45,6 @@ namespace Robin
 
 		public GiantBomb()
 		{
-
-			Stopwatch watch = Stopwatch.StartNew();
-
-			Stopwatch watch2 = Stopwatch.StartNew();
 			try
 			{
 				Reporter.Tic("Opening GiantBomb cache...", out int tic1);
@@ -77,7 +73,7 @@ namespace Robin
 		/// Implement IDB.CachePlatfomrReleases(). Go out to giantbomb.com and cache all known releases for the specified platform. Update the list of releases and store metadata for each one.
 		/// </summary>
 		/// <param name="platform">Robin.Platform associated with the Gbplatform to cache.</param>
-		public void CachePlatformReleases(Platform platform, bool reset = false)
+		public static void CachePlatformReleases(Platform platform, bool reset = false)
 		{
 			using (WebClient webClient = new WebClient())
 			{
@@ -198,12 +194,12 @@ namespace Robin
 			}// end using webclient
 		}
 
-		public void CachePlatformGames(Platform platform)
+		public void CachePlatformGamesAsync(Platform platform)
 		{
 			CachePlatformGames(platform, false);
 		}
 
-		public void CachePlatformGames(Platform platform, bool reset = false)
+		public static void CachePlatformGames(Platform platform, bool reset = false)
 		{
 			Gbplatform Gbplatform = platform.Gbplatform;
 			string startDate = reset ? @"1900-01-01 01:01:01" : Gbplatform.CacheDate.ToString(DATEFORMAT);
@@ -214,7 +210,7 @@ namespace Robin
 				int N_results;
 				bool haveResults;
 				XDocument xdoc;
-				Reporter.Report("Checking GiantBomb for " + platform.Title + " games");
+				Reporter.Report($"Checking GiantBomb for {platform.Title} games");
 
 				var url = $"http://www.giantbomb.com/api/games/?api_key={Keys.GiantBomb}&filter=date_last_updated:{startDate}|{endDate},platforms:{Gbplatform.Id}&field_list=id&sort=id:asc";
 
@@ -299,32 +295,31 @@ namespace Robin
 
 			Reporter.Tic("Attempting to cache " + Gbplatform.Title + "...", out int tic1);
 
-			using (WebClient webClient = new WebClient())
+			using WebClient webClient = new();
+
+			string url = GBURL + $"platform/{Gbplatform.Id}/?api_key ={Keys.GiantBomb}";
+
+			if (webClient.SafeDownloadStringDB(url, out string downloadText))
 			{
-				string url = GBURL + $"platform/{Gbplatform.Id}/?api_key ={Keys.GiantBomb}";
+				xDocument = XDocument.Parse(downloadText);
 
-				if (webClient.SafeDownloadStringDB(url, out string downloadText))
+				Gbplatform.Title = xDocument.SafeGetB("results", "name");
+				Gbplatform.Abbreviation = xDocument.SafeGetB("results", "abbreviation");
+				if (long.TryParse(xDocument.SafeGetB("results", "company"), out long company))
 				{
-					xDocument = XDocument.Parse(downloadText);
-
-					Gbplatform.Title = xDocument.SafeGetB("results", "name");
-					Gbplatform.Abbreviation = xDocument.SafeGetB("results", "abbreviation");
-					if (long.TryParse(xDocument.SafeGetB("results", "company"), out long company))
-					{
-						Gbplatform.Company = company;
-					}
-					Gbplatform.Deck = xDocument.SafeGetB("results", "deck");
-					Gbplatform.Price = xDocument.SafeGetB("results", "original_price");
-					Gbplatform.Date = DateTimeRoutines.SafeGetDate(xDocument.SafeGetB("results", "release_date"));
-					Reporter.Toc(tic1);
+					Gbplatform.Company = company;
 				}
+				Gbplatform.Deck = xDocument.SafeGetB("results", "deck");
+				Gbplatform.Price = xDocument.SafeGetB("results", "original_price");
+				Gbplatform.Date = DateTimeRoutines.SafeGetDate(xDocument.SafeGetB("results", "release_date"));
+				Reporter.Toc(tic1);
+			}
 
-				else
-				{
-					Reporter.Toc(tic1, "Error communicating with GiantBomb.");
-				}
-
-			}// end using webclient
+			else
+			{
+				Reporter.Toc(tic1, "Error communicating with GiantBomb.");
+			}
+			// end using webclient
 		}
 
 		public void CachePlatforms()

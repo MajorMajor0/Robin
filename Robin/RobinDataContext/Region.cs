@@ -8,6 +8,7 @@ namespace Robin
         public Region()
         {
             Gbreleases = new HashSet<Gbrelease>();
+            Mbreleases = new HashSet<Mbrelease>();
             Lbreleases = new HashSet<Lbrelease>();
             Ovgreleases = new HashSet<Ovgrelease>();
             Releases = new HashSet<Release>();
@@ -25,6 +26,7 @@ namespace Robin
 
         public virtual ICollection<Gbrelease> Gbreleases { get; set; }
         public virtual ICollection<Lbrelease> Lbreleases { get; set; }
+        public virtual ICollection<Mbrelease> Mbreleases { get; set; }
         public virtual ICollection<Ovgrelease> Ovgreleases { get; set; }
         public virtual ICollection<Release> Releases { get; set; }
     }

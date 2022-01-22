@@ -17,6 +17,7 @@ namespace Robin
 		/// This is where the entire application gets its info
 		/// </summary>
 		public static RobinDataContext Data { get; }
+		public static bool Trash { get; internal set; }
 
 		static R()
 		{
@@ -62,8 +63,6 @@ namespace Robin
 
 		public static void Save(bool detectChanges = false)
 		{
-			string backupFile;
-
 			if (detectChanges)
 			{
 				Data.ChangeTracker.DetectChanges();
@@ -71,7 +70,7 @@ namespace Robin
 
 			if (Data.ChangeTracker.Entries().Any())
 			{
-				backupFile = Backup();
+				Backup();
 			}
 
 			try
@@ -116,26 +115,23 @@ namespace Robin
 		/// <summary>
 		/// Backup existing database.
 		/// </summary>
-		/// <returns></returns>
-		public static string Backup()
+		public static void Backup()
 		{
 			Directory.CreateDirectory(Robin.FileLocation.Backup);
 			string Date = DateTime.Now.ToString("yyyy-MM-dd-HHmmss");
 
 			string CurrentFile = FileLocation;
 
-			string backupFile = Robin.FileLocation.Backup + Path.GetFileNameWithoutExtension(CurrentFile) + Date + Path.GetExtension(CurrentFile);
+			string backupFile = $"{Robin.FileLocation.Backup}{Path.GetFileNameWithoutExtension(CurrentFile)}{Date}{Path.GetExtension(CurrentFile)}";
 			try
 			{
 				File.Copy(CurrentFile, backupFile);
-				Reporter.Report("DB file backed up to " + backupFile);
-				return backupFile;
+				Reporter.Report($"DB file backed up to {backupFile}");
 			}
 			catch (Exception ex)
 			{
 				Reporter.Report("Failed to backup file.");
 				Reporter.Report(ex.Message);
-				return null;
 			}
 		}
 	}

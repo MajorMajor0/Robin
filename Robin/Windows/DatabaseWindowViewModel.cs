@@ -46,8 +46,8 @@ namespace Robin
 
 		public IList SelectedPlatforms { get; set; }
 
-		public IDBPlatform SelectedPlatform { get; set; }
-		public IDBRelease SelectedRelease { get; set; }
+		public IDbPlatform SelectedPlatform { get; set; }
+		public IDbRelease SelectedRelease { get; set; }
 
 
 		public ObservableCollection<Compares> ComparisonResults { get; set; }

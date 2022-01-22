@@ -44,8 +44,8 @@ namespace Robin
 		{
 			if (PlatformList.SelectedItems.Count > 0)
 			{
-				DatabaseGrid.DataContext = (PlatformList.SelectedItem as IDBPlatform);
-				CountBlock.DataContext = (PlatformList.SelectedItem as IDBPlatform).Releases;
+				DatabaseGrid.DataContext = (PlatformList.SelectedItem as IDbPlatform);
+				CountBlock.DataContext = (PlatformList.SelectedItem as IDbPlatform).Releases;
 			}
 		}
 

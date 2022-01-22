@@ -7,6 +7,8 @@ namespace Robin
     {
         public long Id { get; set; }
         public long? IdGb { get; set; }
+        public long? IdMb { get; set; }
+        public long? IdLb { get; set; }
         public long? IdGdb { get; set; }
         public long? IdOvg { get; set; }
         public string Sha1 { get; set; }

@@ -19,7 +19,7 @@ using System.Linq;
 
 namespace Robin
 {
-	public partial class Ovgplatform : IDBPlatform
+	public partial class Ovgplatform : IDbPlatform
 	{
 		[NotMapped]
 		public IList Releases => Ovgreleases.ToList();

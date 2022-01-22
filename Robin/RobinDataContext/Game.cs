@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace Robin
 {
-	public partial class Game : IDBobject
+	public partial class Game : IDbObject
 	{
 		public Game()
 		{
@@ -18,6 +18,13 @@ namespace Robin
 		{
 			get => isGame;
 			set { isGame = value; OnPropertyChanged(nameof(IsGame)); }
+		}
+
+		private bool isMess;
+		public bool IsMess
+		{
+			get => isMess;
+			set { isMess = value; OnPropertyChanged(nameof(IsMess)); }
 		}
 
 		private bool isCrap;
@@ -61,12 +68,6 @@ namespace Robin
 			set { rating = value; OnPropertyChanged(nameof(Rating)); }
 		}
 
-		private bool isMess;
-		public bool IsMess
-		{
-			get => isMess;
-			set { isMess = value; OnPropertyChanged(nameof(IsMess)); }
-		}
 
 		public virtual IList<Release> Releases { get; set; }
 

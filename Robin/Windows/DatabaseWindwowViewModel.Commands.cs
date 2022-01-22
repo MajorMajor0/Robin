@@ -29,15 +29,15 @@ namespace Robin
 		{
 			if (SelectedPlatforms != null && SelectedPlatforms.Count > 0)
 			{
-				List<IDBPlatform> list = new List<IDBPlatform>();
-				foreach (IDBPlatform platform in SelectedPlatforms)
+				List<IDbPlatform> list = new List<IDbPlatform>();
+				foreach (IDbPlatform platform in SelectedPlatforms)
 				{
 					list.Add(platform);
 				}
 
 				if (SelectedIDB.DB == LocalDB.OpenVGDB)
 				{
-					foreach (IDBPlatform platform in list)
+					foreach (IDbPlatform platform in list)
 					{
 						Reporter.Report("Comparing " + platform.Releases.Count + " Robin " + platform.Title + " games to OVG.");
 
@@ -47,7 +47,7 @@ namespace Robin
 
 				else
 				{
-					foreach (IDBPlatform idbPlatform in list)
+					foreach (IDbPlatform idbPlatform in list)
 					{
 						Compares comparator = new Compares(SelectedIDB.DB, idbPlatform);
 						comparator.Title += "-" + ComparisonResults.Count;
@@ -71,7 +71,7 @@ namespace Robin
 			return SelectedIDB != null && !(SelectedIDB is Datomatic) && SelectedPlatform != null;
 		}
 
-		void CompareToOVGDB(IDBPlatform idbPlatform)
+		void CompareToOVGDB(IDbPlatform idbPlatform)
 		{
 			// There are no results in OVGDB for arcade, so skip it
 			if (idbPlatform.Title.Contains("Arcade"))
@@ -183,9 +183,9 @@ namespace Robin
 		async void CacheReleases()
 		{
 			// Cache platforms to cache in case selection changes during operation
-			List<IDBPlatform> IDBPlatforms = new List<IDBPlatform>();
+			List<IDbPlatform> IDBPlatforms = new List<IDbPlatform>();
 
-			foreach (IDBPlatform idbPlatform in SelectedPlatforms)
+			foreach (IDbPlatform idbPlatform in SelectedPlatforms)
 			{
 				IDBPlatforms.Add(idbPlatform);
 			}
@@ -194,7 +194,7 @@ namespace Robin
 
 			await Task.Run(() =>
 			{
-				foreach (IDBPlatform idbPlatform in IDBPlatforms)
+				foreach (IDbPlatform idbPlatform in IDBPlatforms)
 				{
 					SelectedIDB.CachePlatformData(idbPlatform.RPlatform);
 					SelectedIDB.CachePlatformReleases(idbPlatform.RPlatform);			

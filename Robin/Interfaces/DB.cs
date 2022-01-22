@@ -17,11 +17,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-using Microsoft.EntityFrameworkCore;
-
 namespace Robin
 {
-	public interface IDBobject : INotifyPropertyChanged
+	public interface IDbObject : INotifyPropertyChanged
 	{
 		string Title { get; }
 		string MainDisplay { get; }
@@ -37,7 +35,7 @@ namespace Robin
 		int ScrapeArt(ArtType artType, LocalDB localDB);
 	}
 
-	public interface IDBRelease : INotifyPropertyChanged
+	public interface IDbRelease : INotifyPropertyChanged
 	{
 		long Id { get; }
 		string Title { get; }
@@ -53,7 +51,7 @@ namespace Robin
 		int ScrapeBoxFront();
 	}
 
-	public interface IDBPlatform
+	public interface IDbPlatform
 	{
 		long Id { get; }
 		string Title { get; }
@@ -74,8 +72,8 @@ namespace Robin
 	{
 		LocalDB DB { get; }
 		string Title { get; }
-		IEnumerable<IDBPlatform> Platforms { get; }
-		IEnumerable<IDBRelease> Releases { get; }
+		IEnumerable<IDbPlatform> Platforms { get; }
+		IEnumerable<IDbRelease> Releases { get; }
 		bool HasRegions { get; }
 
 		/// <summary>
@@ -93,7 +91,7 @@ namespace Robin
 		/// Update the local DB cache of games for one platform, inlcluding the list o games and associated metadata.
 		/// </summary>
 		/// <param name="platform"></param>
-		void CachePlatformGames(Platform platform);
+		void CachePlatformGamesAsync(Platform platform);
 
 		/// <summary>
 		/// Update the local DB cache of platform associated metadata
@@ -129,6 +127,8 @@ namespace Robin
 		[Description("Datomatic")]
 		Datomatic,
 		[Description("Robin")]
+		MobyGames,
+		[Description("MobyGames")]
 		Robin
 	}
 

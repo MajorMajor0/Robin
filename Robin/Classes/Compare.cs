@@ -24,7 +24,7 @@ namespace Robin
     {
         public ObservableCollection<Compare> List { get; set; }
         public List<Release> RReleases { get; set; }
-        public List<IDBRelease> DBreleases { get; set; }
+        public List<IDbRelease> DBreleases { get; set; }
         public LocalDB Database { get; set; }
 
         string _title;
@@ -40,16 +40,16 @@ namespace Robin
             Database = LocalDB.Unknown;
         }
 
-        public Compares(LocalDB db, IDBPlatform idbPlatform)
+        public Compares(LocalDB db, IDbPlatform idbPlatform)
         {
             Platform platform;
             List = new ObservableCollection<Compare>();
             Database = db;
             Title = idbPlatform.Title + " - " + Enum.GetName(typeof(LocalDB), db);
-            DBreleases = new List<IDBRelease>();
+            DBreleases = new List<IDbRelease>();
             RReleases = new List<Release>();
 
-            foreach (IDBRelease idbRelease in idbPlatform.Releases)
+            foreach (IDbRelease idbRelease in idbPlatform.Releases)
             {
                 DBreleases.Add(idbRelease);
             }
@@ -93,7 +93,7 @@ namespace Robin
 
             bool goAhead = !ConsiderRegion;
             Release release;
-            IDBRelease dbRelease;
+            IDbRelease dbRelease;
 
             int N_r = RReleases.Count;
 

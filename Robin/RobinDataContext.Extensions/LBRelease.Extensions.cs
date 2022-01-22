@@ -21,7 +21,7 @@ using System.Net;
 
 namespace Robin
 {
-	public partial class Lbrelease : IDBRelease
+	public partial class Lbrelease : IDbRelease
 	{
 		[NotMapped]
 		public LocalDB LocalDB => LocalDB.LaunchBox;

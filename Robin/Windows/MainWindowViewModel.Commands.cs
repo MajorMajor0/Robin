@@ -163,7 +163,7 @@ namespace Robin
 		{
 			IList idbList = SelectedDBs;
 
-			foreach (IDBobject idbObject in idbList)
+			foreach (IDbObject idbObject in idbList)
 			{
 				idbObject.IsCrap = value;
 			}
@@ -498,13 +498,13 @@ namespace Robin
 
 					Reporter.Report("Scraping art files...");
 
-					List<IDBobject> list = new List<IDBobject>();
+					List<IDbObject> list = new List<IDbObject>();
 
 					// Cache selected items in case the user changes them during scrape
 					// If items are selected, cache them
 					if (selected)
 					{
-						foreach (IDBobject idbObject in SelectedDBs)
+						foreach (IDbObject idbObject in SelectedDBs)
 						{
 							list.Add(idbObject);
 						}
@@ -580,13 +580,13 @@ namespace Robin
 
 					Reporter.Report("Scraping art files...");
 
-					List<IDBobject> list = new List<IDBobject>();
+					List<IDbObject> list = new List<IDbObject>();
 
 					// Cache selected items in case the user changes them during scrape
 					// If items are selected, cache them
 					if (selected)
 					{
-						foreach (IDBobject idbObject in SelectedDBs)
+						foreach (IDbObject idbObject in SelectedDBs)
 						{
 							list.Add(idbObject);
 						}
@@ -642,14 +642,14 @@ namespace Robin
 		/// <param name="db"></param>
 		/// <param name="artType"></param>
 		/// <returns></returns>
-		int GetArtSub(List<IDBobject> list, ArtType artType, LocalDB localDB)
+		int GetArtSub(List<IDbObject> list, ArtType artType, LocalDB localDB)
 		{
 			int misCount;
 			int tryCount = 0;
 			do
 			{
 				misCount = 0;
-				foreach (IDBobject idbObject in list)
+				foreach (IDbObject idbObject in list)
 				{
 					if (tokenSource.Token.IsCancellationRequested)
 					{
@@ -732,7 +732,7 @@ namespace Robin
 			int N = SelectedDBs.Count;
 			for (int i = N - 1; i >= 0; i--)
 			{
-				IDBobject idbObject = SelectedDBs[i] as IDBobject;
+				IDbObject idbObject = SelectedDBs[i] as IDbObject;
 				(MainBigSelection as Collection).Remove(idbObject);
 			}
 		}

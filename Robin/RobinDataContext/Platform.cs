@@ -17,6 +17,7 @@ namespace Robin
 		public byte[] LastDate { get; set; }
 		public long? ID_GDB { get; set; }
 		public long? ID_GB { get; set; }
+		public long? ID_MB { get; set; }
 		public long? ID_LB { get; set; }
 
 		private long preferredEmulatorId;
@@ -62,6 +63,7 @@ namespace Robin
 		public virtual Gbplatform Gbplatform { get; set; }
 		public virtual Gdbplatform Gdbplatform { get; set; }
 		public virtual Lbplatform Lbplatform { get; set; }
+		public virtual Mbplatform Mbplatform { get; set; }
 		public virtual Emulator PreferredEmulator { get; set; }
 
 		public virtual List<Release> Releases { get; set; }

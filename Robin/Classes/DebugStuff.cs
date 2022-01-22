@@ -16,14 +16,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace Robin
 {
@@ -31,38 +29,12 @@ namespace Robin
 	{
 		public async static Task MainWindowBonusAsync()
 		{
-			//Reporter.Report("BONUS!");
-			//await Task.Run(() =>
-			//{
-			//	Stopwatch watch = Stopwatch.StartNew();
+			MobyGames mbg = new();
+			R.Data.Mbplatforms.Load();
 
-			//	//DirectoryInfo di = new(FileLocation.Art.Folder);
-			//	//watch.Stop();
-			//	//Debug.WriteLine($"Directory info: {watch.ElapsedMilliseconds:f3}");
+			Platform platform = R.Data.Platforms.FirstOrDefault(x => x.Id == 22);
 
-			//	//watch.Restart();
-			//	//var x = di.GetFiles("", SearchOption.AllDirectories);
-			//	//watch.Stop();
-			//	//Debug.WriteLine($"Get files: {watch.ElapsedMilliseconds:f3}");
-
-			//	//watch.Restart();
-			//	//var x = di.EnumerateFiles("", SearchOption.AllDirectories);
-			//	//watch.Stop();
-			//	//Debug.WriteLine($"Get files: {watch.ElapsedMilliseconds:f3}");
-
-			//	watch.Restart();
-			//	var x = Directory.GetFiles(FileLocation.Art.Folder, "", SearchOption.AllDirectories);
-			//	watch.Stop();
-			//	Debug.WriteLine($"Get files: {watch.ElapsedMilliseconds:f3}");
-
-			//	watch.Restart();
-			//	var y = x.ToHashSet();
-			//	watch.Stop();
-			//	Debug.WriteLine($"Hashset: {watch.ElapsedMilliseconds:f3}\n");
-
-			//});
-
-			//Reporter.Report("Finished");
+			mbg.CachePlatformGamesAsync(platform);
 		}
 
 		static void ForEachSpeedTest()

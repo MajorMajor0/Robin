@@ -23,7 +23,7 @@ using System.Net;
 
 namespace Robin
 {
-	public partial class Gbrelease : IDBRelease
+	public partial class Gbrelease : IDbRelease
 	{
 		[NotMapped]
 		public LocalDB LocalDB => LocalDB.GiantBomb;

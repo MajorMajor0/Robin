@@ -100,8 +100,8 @@ namespace Robin
 			}
 		}
 
-		IDBobject selectedDB;
-		public IDBobject SelectedDB
+		IDbObject selectedDB;
+		public IDbObject SelectedDB
 		{
 			get { return selectedDB; }
 			set
@@ -152,12 +152,16 @@ namespace Robin
 		public MainWindowViewModel()
 		{
 			Stopwatch watch = Stopwatch.StartNew();
+			R.Trash = true;
+			Reporter.Report($"Trash: {watch.Elapsed.TotalSeconds:f1}");
+			watch.Restart();
+
 			MainBigList = new ObservableCollection<object>
 			{
-				(releaseCollection = new AutoFilterReleases(R.Data.Releases, "Releases")),
-				(gameCollection = new AutoFilterGames(R.Data.Games, "Games")),
-				(platformCollection = new AutoFilterPlatforms(R.Data.Platforms, "Platforms")),
-				(emulatorCollection = new AutoFilterEmulators(R.Data.Emulators, "Emulators")),
+				(releaseCollection = new AutoFilterReleases(R.Data.Releases.Local, "Releases")),
+				(gameCollection = new AutoFilterGames(R.Data.Games.Local, "Games")),
+				(platformCollection = new AutoFilterPlatforms(R.Data.Platforms.Local, "Platforms")),
+				(emulatorCollection = new AutoFilterEmulators(R.Data.Emulators.Local, "Emulators")),
 				(CollectionList = new CollectionList("Collections"))
 			};
 			Reporter.Report($"Filters created: {watch.Elapsed.TotalSeconds:f1}");

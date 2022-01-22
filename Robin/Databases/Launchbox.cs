@@ -45,10 +45,10 @@ namespace Robin
 
 		public LocalDB DB => LocalDB.LaunchBox;
 
-		public IEnumerable<IDBPlatform> Platforms =>
+		public IEnumerable<IDbPlatform> Platforms =>
 			R.Data.Lbplatforms.Local.ToObservableCollection();
 
-		public IEnumerable<IDBRelease> Releases =>
+		public IEnumerable<IDbRelease> Releases =>
 			R.Data.Lbreleases.Local.ToObservableCollection();
 
 		public bool HasRegions => true;
@@ -207,7 +207,7 @@ namespace Robin
 			Reporter.Toc(tic1, "all platforms cached.");
 		}
 
-		public void CachePlatformGames(Platform platform)
+		public void CachePlatformGamesAsync(Platform platform)
 		{
 			if (launchboxFile == null)
 			{
@@ -278,7 +278,7 @@ namespace Robin
 		public void CachePlatformReleases(Platform platform)
 		{
 			Reporter.Tic($"Cache {platform.Lbplatform.Title} releases begun...", out int tic1);
-			CachePlatformGames(platform);
+			CachePlatformGamesAsync(platform);
 
 			if (launchboxFile == null)
 			{

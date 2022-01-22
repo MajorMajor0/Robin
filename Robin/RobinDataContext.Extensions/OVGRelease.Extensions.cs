@@ -20,7 +20,7 @@ using System.Net;
 
 namespace Robin
 {
-	public partial class Ovgrelease : IDBRelease
+	public partial class Ovgrelease : IDbRelease
 	{
 		[NotMapped]
 		public LocalDB LocalDB => LocalDB.OpenVGDB;

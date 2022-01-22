@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 
 namespace Robin
 {
-	public partial class Emulator : IDBobject
+	public partial class Emulator : IDbObject
 	{
 		[NotMapped]
 		public string FilePath => FileLocation.Emulators + FileName;

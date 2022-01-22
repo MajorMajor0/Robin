@@ -11,17 +11,18 @@
  * 
  * You should have received a copy of the GNU General Public License
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
- 
+
 using System.Diagnostics;
 
 namespace Robin
 {
 	public class DBTimers
 	{
-		public static DBTimer GamesDB { get; set; } = new DBTimer(1000);
-		public static DBTimer GiantBomb { get; set; } = new DBTimer(1100);
-		public static DBTimer GameFAQ { get; set; } = new DBTimer(1500);
-		public static DBTimer LaunchBox { get; set; } = new DBTimer(1000);
+		public static DBTimer GamesDB { get; set; } = new(1000);
+		public static DBTimer GiantBomb { get; set; } = new(1100);
+		public static DBTimer GameFAQ { get; set; } = new(1500);
+		public static DBTimer LaunchBox { get; set; } = new(1000);
+		public static DBTimer MobyGames { get; set; } = new(1100);
 
 		public static void Wait(string url)
 		{
@@ -48,22 +49,26 @@ namespace Robin
 				LaunchBox.Wait();
 				return;
 			}
+			if (url.ToLower().Contains("mobygames.com"))
+			{
+				MobyGames.Wait();
+				return;
+			}
 		}
 
 		public class DBTimer : Stopwatch
 		{
-			public int WaitTime;
+			public int WaitTime { get; set; }
 
-			public DBTimer(int threshold)
+			public DBTimer(int time)
 			{
-				WaitTime = threshold;
+				WaitTime = time;
 				Start();
 			}
 
 			public void Wait()
 			{
 				while (ElapsedMilliseconds < WaitTime) { }
-
 				Restart();
 			}
 		}

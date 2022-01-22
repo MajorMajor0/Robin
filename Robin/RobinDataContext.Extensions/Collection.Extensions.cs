@@ -21,14 +21,14 @@ namespace Robin
 	public partial class Collection
 	{
 		[NotMapped]
-		public IEnumerable<IDBobject> FilteredCollection
+		public IEnumerable<IDbObject> FilteredCollection
 		{
-			get { return (Games as IEnumerable<IDBobject>).Union(Releases as IEnumerable<IDBobject>); }
+			get { return (Games as IEnumerable<IDbObject>).Union(Releases as IEnumerable<IDbObject>); }
 		}
 
-		public Collection(IEnumerable<IDBobject> objects) : this()
+		public Collection(IEnumerable<IDbObject> objects) : this()
 		{
-			foreach (IDBobject idbo in objects)
+			foreach (IDbObject idbo in objects)
 			{
 				if (idbo is Game)
 				{
@@ -43,7 +43,7 @@ namespace Robin
 
 		}
 
-		public void Add(IDBobject idbObject)
+		public void Add(IDbObject idbObject)
 		{
 			if (idbObject is Game)
 			{
@@ -57,7 +57,7 @@ namespace Robin
 			}
 		}
 
-		public void Remove(IDBobject idbObject)
+		public void Remove(IDbObject idbObject)
 		{
 			if (idbObject is Game)
 			{
