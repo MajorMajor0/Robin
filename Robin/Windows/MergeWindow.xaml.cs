@@ -26,19 +26,19 @@ namespace Robin
 	/// </summary>
 	public partial class MergeWindow : Window, INotifyPropertyChanged
 	{
-		public IEnumerable<Lbplatform> LbplatformList
+		public IEnumerable<LBPlatform> LBPlatformList
 		{
 			get
 			{
 				if (searchTerm != null)
 				{
-					return R.Data.Lbplatforms.Local.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm, RegexOptions.IgnoreCase));
+					return R.Data.LBPlatforms.Local.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm, RegexOptions.IgnoreCase));
 				}
-				return R.Data.Lbplatforms.Local;
+				return R.Data.LBPlatforms.Local;
 			}
 		}
 
-		public Lbplatform SelectedLbplatform { get; set; }
+		public LBPlatform SelectedLBPlatform { get; set; }
 
 		string searchTerm;
 
@@ -54,7 +54,7 @@ namespace Robin
 				if (searchTerm != value)
 				{
 					searchTerm = value;
-					OnPropertyChanged("LbplatformList");
+					OnPropertyChanged("LBPlatformList");
 				}
 			}
 		}
@@ -90,7 +90,7 @@ namespace Robin
 
 		 bool MergeCanExecute()
 		{
-			return SelectedLbplatform != null;
+			return SelectedLBPlatform != null;
 		}
 
 

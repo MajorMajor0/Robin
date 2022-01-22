@@ -19,13 +19,13 @@ using System.Linq;
 
 namespace Robin
 {
-	public partial class Ovgplatform : IDbPlatform
+	public partial class OVGPlatform : IDbPlatform
 	{
 		[NotMapped]
-		public IList Releases => Ovgreleases.ToList();
+		public IList Releases => OVGReleases.ToList();
 
 		[NotMapped]
-		public Platform RPlatform => R.Data.Platforms.FirstOrDefault(x => x.Id == Id);
+		public Platform RPlatform => R.Data.Platforms.FirstOrDefault(x => x.ID == ID);
 
 		[NotMapped]
 		public int MatchedReleaseCount

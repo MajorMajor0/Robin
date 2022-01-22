@@ -46,16 +46,16 @@ namespace Robin
 		public LocalDB DB => LocalDB.LaunchBox;
 
 		public IEnumerable<IDbPlatform> Platforms =>
-			R.Data.Lbplatforms.Local.ToObservableCollection();
+			R.Data.LBPlatforms.Local.ToObservableCollection();
 
 		public IEnumerable<IDbRelease> Releases =>
-			R.Data.Lbreleases.Local.ToObservableCollection();
+			R.Data.LBReleases.Local.ToObservableCollection();
 
 		public bool HasRegions => true;
 
 		XDocument launchboxFile;
 
-		static string LaunchBoxDataZipFile = FileLocation.Data + "LBdata.zip";
+		static readonly string LaunchBoxDataZipFile = FileLocation.Data + "LBdata.zip";
 
 
 		public Launchbox()
@@ -64,10 +64,10 @@ namespace Robin
 			{
 				Reporter.Tic("Loading LaunchBox local cache...", out int tic1);
 
-				R.Data.Lbplatforms.Load();
-				R.Data.Lbimages.Load();
-				R.Data.Lbreleases.Load();
-				R.Data.Lbgames.Load();
+				R.Data.LBPlatforms.Load();
+				R.Data.LBImages.Load();
+				R.Data.LBReleases.Load();
+				R.Data.LBGames.Load();
 
 				Reporter.Toc(tic1);
 			}
@@ -86,7 +86,7 @@ namespace Robin
 		/// </summary>
 		void GetLaunchBoxFile()
 		{
-			using (WebClient webclient = new WebClient())
+			using (WebClient webclient = new())
 			{
 				if (File.Exists(LaunchBoxDataZipFile) && (File.GetLastWriteTime(LaunchBoxDataZipFile).Date == DateTime.Today))
 				{
@@ -104,11 +104,9 @@ namespace Robin
 			Reporter.Tic("Extracting info from zip file...", out int tic2);
 			try
 			{
-				using (ZipArchive archive = ZipFile.Open(LaunchBoxDataZipFile, ZipArchiveMode.Read))
-				using (var dattext = archive.GetEntry("Metadata.xml").Open())
-				{
-					launchboxFile = XDocument.Load(dattext);
-				}
+				using ZipArchive archive = ZipFile.Open(LaunchBoxDataZipFile, ZipArchiveMode.Read);
+				using var dattext = archive.GetEntry("Metadata.xml").Open();
+				launchboxFile = XDocument.Load(dattext);
 			}
 
 			catch (InvalidDataException)
@@ -127,9 +125,9 @@ namespace Robin
 		}
 
 		/// <summary>
-		/// Cache data for a selected Lbplatforms in the local database from an xml file downloaded from Launchbox.
+		/// Cache data for a selected LBPlatforms in the local database from an xml file downloaded from Launchbox.
 		/// </summary>
-		/// <param name="platform">Robin.Platform associated with the Lbplatform to cache.</param>
+		/// <param name="platform">Robin.Platform associated with the LBPlatform to cache.</param>
 		public void CachePlatformData(Platform platform)
 		{
 			Reporter.Tic($"Caching data for {platform.Title}...", out int tic1);
@@ -138,11 +136,11 @@ namespace Robin
 				GetLaunchBoxFile();
 			}
 
-			// Create a dictionary of existing Lbplatforms to speed lookups
-			Dictionary<string, Lbplatform> platformDictionary = R.Data.Lbplatforms.ToDictionary(x => x.Title);
+			// Create a dictionary of existing LBPlatforms to speed lookups
+			Dictionary<string, LBPlatform> platformDictionary = R.Data.LBPlatforms.ToDictionary(x => x.Title);
 
-			// Create a Hashset of Lbplatforms to store any new Lbplatforms that we discover
-			HashSet<Lbplatform> newLbplatforms = new HashSet<Lbplatform>();
+			// Create a Hashset of LBPlatforms to store any new LBPlatforms that we discover
+			HashSet<LBPlatform> newLBPlatforms = new();
 
 			foreach (XElement platformElement in platformElements)
 			{
@@ -157,23 +155,23 @@ namespace Robin
 #if DEBUG
 				Stopwatch watch1 = Stopwatch.StartNew();
 #endif
-				// Check whether the Lbplatform exists before trying to add it. Lbplatforms have no ID, so check by title. If the title isn't found, this might be because the Lbplatform is new or because the title has been changed. The merge window lets the user decide.
-				if (!platformDictionary.TryGetValue(tempTitle, out Lbplatform Lbplatform))
+				// Check whether the LBPlatform exists before trying to add it. LBPlatforms have no ID, so check by title. If the title isn't found, this might be because the LBPlatform is new or because the title has been changed. The merge window lets the user decide.
+				if (!platformDictionary.TryGetValue(tempTitle, out LBPlatform LBPlatform))
 				{
-					Lbplatform = new Lbplatform();
+					LBPlatform = new LBPlatform();
 
 					Application.Current.Dispatcher.Invoke(() =>
 					{
-						MergeWindow mergeWindow = new MergeWindow(tempTitle);
+						MergeWindow mergeWindow = new(tempTitle);
 
 						switch (mergeWindow.ShowDialog())
 						{
 							case true: // Merge the new platform with existing
-								Lbplatform = mergeWindow.SelectedLbplatform;
+								LBPlatform = mergeWindow.SelectedLBPlatform;
 								break;
 
 							case false: // Add the new platform
-								newLbplatforms.Add(Lbplatform);
+								newLBPlatforms.Add(LBPlatform);
 								break;
 
 							default:
@@ -185,25 +183,25 @@ namespace Robin
 				Debug.WriteLine("PB: " + watch1.ElapsedMilliseconds); watch1.Restart();
 #endif
 				// Whether the LBPlatorm is new or old, overwrite everything with the newest data
-				Lbplatform.Title = tempTitle;
-				Lbplatform.Date = DateTimeRoutines.SafeGetDate(platformElement.SafeGetA("Date"));
-				Lbplatform.Developer = platformElement.Element("Developer")?.Value ?? Lbplatform.Developer;
-				Lbplatform.Manufacturer = platformElement.Element("Manufacturer")?.Value ?? Lbplatform.Manufacturer;
-				Lbplatform.Cpu = platformElement.Element("Cpu")?.Value ?? Lbplatform.Cpu;
-				Lbplatform.Memory = platformElement.Element("Memory")?.Value ?? Lbplatform.Memory;
-				Lbplatform.Graphics = platformElement.Element("Graphics")?.Value ?? Lbplatform.Graphics;
-				Lbplatform.Sound = platformElement.Element("Sound")?.Value ?? Lbplatform.Sound;
-				Lbplatform.Display = platformElement.Element("Display")?.Value ?? Lbplatform.Display;
-				Lbplatform.Media = platformElement.Element("Media")?.Value ?? Lbplatform.Media;
-				Lbplatform.Display = platformElement.Element("Display")?.Value ?? Lbplatform.Display;
-				Lbplatform.Controllers = platformElement.Element("MaxControllers")?.Value ?? Lbplatform.Controllers;
-				Lbplatform.Category = platformElement.Element("Category")?.Value ?? Lbplatform.Category;
+				LBPlatform.Title = tempTitle;
+				LBPlatform.Date = DateTimeRoutines.SafeGetDate(platformElement.SafeGetA("Date"));
+				LBPlatform.Developer = platformElement.Element("Developer")?.Value ?? LBPlatform.Developer;
+				LBPlatform.Manufacturer = platformElement.Element("Manufacturer")?.Value ?? LBPlatform.Manufacturer;
+				LBPlatform.Cpu = platformElement.Element("Cpu")?.Value ?? LBPlatform.Cpu;
+				LBPlatform.Memory = platformElement.Element("Memory")?.Value ?? LBPlatform.Memory;
+				LBPlatform.Graphics = platformElement.Element("Graphics")?.Value ?? LBPlatform.Graphics;
+				LBPlatform.Sound = platformElement.Element("Sound")?.Value ?? LBPlatform.Sound;
+				LBPlatform.Display = platformElement.Element("Display")?.Value ?? LBPlatform.Display;
+				LBPlatform.Media = platformElement.Element("Media")?.Value ?? LBPlatform.Media;
+				LBPlatform.Display = platformElement.Element("Display")?.Value ?? LBPlatform.Display;
+				LBPlatform.Controllers = platformElement.Element("MaxControllers")?.Value ?? LBPlatform.Controllers;
+				LBPlatform.Category = platformElement.Element("Category")?.Value ?? LBPlatform.Category;
 #if DEBUG
 				Debug.WriteLine("PC: " + watch1.ElapsedMilliseconds); watch1.Restart();
 #endif
 			}
 
-			R.Data.Lbplatforms.AddRange(newLbplatforms);
+			R.Data.LBPlatforms.AddRange(newLBPlatforms);
 			Reporter.Toc(tic1, "all platforms cached.");
 		}
 
@@ -215,14 +213,14 @@ namespace Robin
 			}
 
 			// Create a dictionary of existing Games to speed lookups
-			Dictionary<long, Lbgame> existingLbgameDict = R.Data.Lbgames.ToDictionary(x => x.Id);
+			Dictionary<long, LBGame> existingLBGameDict = R.Data.LBGames.ToDictionary(x => x.ID);
 
-			// Create a Hashset of Lbgames to store any new Lbgames that we discover
-			HashSet<Lbgame> newLbgames = new HashSet<Lbgame>();
+			// Create a Hashset of LBGames to store any new LBGames that we discover
+			HashSet<LBGame> newLBGames = new();
 
-			List<XElement> platformGameElements = gameElementLookupByPlatform[platform.Lbplatform.Title].ToList();
+			List<XElement> platformGameElements = gameElementLookupByPlatform[platform.LBPlatform.Title].ToList();
 			int gameCount = platformGameElements.Count;
-			Reporter.Report($"Found {gameCount} {platform.Lbplatform.Title} games in LaunchBox zip file.");
+			Reporter.Report($"Found {gameCount} {platform.LBPlatform.Title} games in LaunchBox zip file.");
 			int j = 0;
 
 			foreach (XElement gameElement in platformGameElements)
@@ -230,7 +228,7 @@ namespace Robin
 				// Reporting only
 				if ((gameCount / 10) != 0 && ++j % (gameCount / 10) == 0)
 				{
-					Reporter.Report("  Working " + j + " / " + gameCount + " " + platform.Lbplatform.Title + " games in the LaunchBox database.");
+					Reporter.Report("  Working " + j + " / " + gameCount + " " + platform.LBPlatform.Title + " games in the LaunchBox database.");
 				}
 
 				string title = gameElement.Element("Name")?.Value;
@@ -242,18 +240,18 @@ namespace Robin
 				}
 
 				// Check if the game alredy exists in the local cache before trying to add it
-				if (!existingLbgameDict.TryGetValue(id, out Lbgame Lbgame))
+				if (!existingLBGameDict.TryGetValue(id, out LBGame LBGame))
 				{
-					Lbgame = new Lbgame { Id = id };
-					newLbgames.Add(Lbgame);
-					Debug.WriteLine("New game: " + Lbgame.Title);
+					LBGame = new LBGame { ID = id };
+					newLBGames.Add(LBGame);
+					Debug.WriteLine("New game: " + LBGame.Title);
 				}
 
 				// If a game has changed platforms, catch it and zero out match
-				if (Lbgame.LbplatformId != platform.Lbplatform.Id)
+				if (LBGame.LBPlatformId != platform.LBPlatform.ID)
 				{
-					Lbgame.Lbplatform = platform.Lbplatform;
-					Release release = R.Data.Releases.FirstOrDefault(x => x.ID_LB == Lbgame.Id);
+					LBGame.LBPlatform = platform.LBPlatform;
+					Release release = R.Data.Releases.FirstOrDefault(x => x.ID_LB == LBGame.ID);
 					if (release != null)
 					{
 						release.ID_LB = null;
@@ -261,23 +259,23 @@ namespace Robin
 				}
 
 				// Set or overwrite game properties
-				Lbgame.Title = title;
-				Lbgame.Date = DateTimeRoutines.SafeGetDateTime(gameElement.SafeGetA("ReleaseDate") ?? gameElement.SafeGetA("ReleaseYear") + @"-01-01 00:00:00");
+				LBGame.Title = title;
+				LBGame.Date = DateTimeRoutines.SafeGetDateTime(gameElement.SafeGetA("ReleaseDate") ?? gameElement.SafeGetA("ReleaseYear") + @"-01-01 00:00:00");
 
-				Lbgame.Overview = gameElement.Element("Overview")?.Value ?? Lbgame.Overview;
-				Lbgame.Genres = gameElement.Element("Genres")?.Value ?? Lbgame.Genres;
-				Lbgame.Developer = gameElement.Element("Developer")?.Value ?? Lbgame.Developer;
-				Lbgame.Publisher = gameElement.Element("Publisher")?.Value ?? Lbgame.Publisher;
-				Lbgame.VideoUrl = gameElement.Element("VideoUrl")?.Value ?? Lbgame.VideoUrl;
-				Lbgame.WikiUrl = gameElement.Element("WikipediaURL")?.Value ?? Lbgame.WikiUrl;
-				Lbgame.Players = gameElement.Element("MaxPlayers")?.Value ?? Lbgame.Players;
+				LBGame.Overview = gameElement.Element("Overview")?.Value ?? LBGame.Overview;
+				LBGame.Genres = gameElement.Element("Genres")?.Value ?? LBGame.Genres;
+				LBGame.Developer = gameElement.Element("Developer")?.Value ?? LBGame.Developer;
+				LBGame.Publisher = gameElement.Element("Publisher")?.Value ?? LBGame.Publisher;
+				LBGame.VideoUrl = gameElement.Element("VideoUrl")?.Value ?? LBGame.VideoUrl;
+				LBGame.WikiUrl = gameElement.Element("WikipediaURL")?.Value ?? LBGame.WikiUrl;
+				LBGame.Players = gameElement.Element("MaxPlayers")?.Value ?? LBGame.Players;
 			}
-			R.Data.Lbgames.AddRange(newLbgames);
+			R.Data.LBGames.AddRange(newLBGames);
 		}
 
 		public void CachePlatformReleases(Platform platform)
 		{
-			Reporter.Tic($"Cache {platform.Lbplatform.Title} releases begun...", out int tic1);
+			Reporter.Tic($"Cache {platform.LBPlatform.Title} releases begun...", out int tic1);
 			CachePlatformGamesAsync(platform);
 
 			if (launchboxFile == null)
@@ -285,24 +283,24 @@ namespace Robin
 				GetLaunchBoxFile();
 			}
 
-			// Create a dictionary of existing Lbreleases to speed lookups
-			//Dictionary<long, Lbrelease> existingLbreleaseDict = R.Data.Lbreleases.ToDictionary(x => x.Id);
+			// Create a dictionary of existing LBReleases to speed lookups
+			//Dictionary<long, LBRelease> existingLBReleaseDict = R.Data.LBReleases.ToDictionary(x => x.ID);
 
-			// Create a Hashset of Lbreleases to store any new Lbreleases that we discover
-			//HashSet<Lbrelease> newLbreleases = new HashSet<Lbrelease>();
+			// Create a Hashset of LBReleases to store any new LBReleases that we discover
+			//HashSet<LBRelease> newLBReleases = new HashSet<LBRelease>();
 
-			int gameCount = platform.Lbplatform.Lbgames.Count;
+			int gameCount = platform.LBPlatform.LBGames.Count;
 			int j = 0;
 
-			foreach (Lbgame Lbgame in platform.Lbplatform.Lbgames)
+			foreach (LBGame LBGame in platform.LBPlatform.LBGames)
 			{
 				// Reporting only
 				if ((gameCount / 10) != 0 && ++j % (gameCount / 10) == 0)
 				{
-					Reporter.Report($"  Working {j} / {gameCount} {platform.Lbplatform.Title} games.");
+					Reporter.Report($"  Working {j} / {gameCount} {platform.LBPlatform.Title} games.");
 				}
 
-				var gameReleaseElements = releaseElementLookupByGameID[Lbgame.Id.ToString()];
+				var gameReleaseElements = releaseElementLookupByGameID[LBGame.ID.ToString()];
 
 				// Cache releases for this game from the launchbox file
 				foreach (XElement releaseElement in gameReleaseElements)
@@ -323,22 +321,22 @@ namespace Robin
 #if DEBUG
 					Stopwatch watch1 = Stopwatch.StartNew();
 #endif
-					Lbrelease Lbrelease = Lbgame.Lbreleases.FirstOrDefault(x => x.RegionId == regionID);
+					LBRelease LBRelease = LBGame.LBReleases.FirstOrDefault(x => x.RegionId == regionID);
 #if DEBUG
 					Debug.WriteLine($"RA: " + watch1.ElapsedMilliseconds); watch1.Restart();
 #endif
-					if (Lbrelease == null)
+					if (LBRelease == null)
 					{
-						Lbrelease = new Lbrelease();
-						Lbgame.Lbreleases.Add(Lbrelease);
-						Lbrelease.RegionId = regionID;
+						LBRelease = new LBRelease();
+						LBGame.LBReleases.Add(LBRelease);
+						LBRelease.RegionId = regionID;
 					}
 
-					Lbrelease.Title = releaseElement.Element("AlternateName").Value;
+					LBRelease.Title = releaseElement.Element("AlternateName").Value;
 				}
 			}
 			CachePlatformImages(platform);
-			Reporter.Toc(tic1, $"Cache {platform.Lbplatform.Title} releases finished.");
+			Reporter.Toc(tic1, $"Cache {platform.LBPlatform.Title} releases finished.");
 		}
 
 		public void CachePlatformImages(Platform platform)
@@ -350,23 +348,23 @@ namespace Robin
 #if DEBUG
 			int i = 0;
 #endif
-			Dictionary<string, Lbimage> existingLbimageDict = R.Data.Lbimages.ToDictionary(x => x.FileName);
+			Dictionary<string, LBImage> existingLBImageDict = R.Data.LBImages.ToDictionary(x => x.FileName);
 
-			Reporter.Report("Caching " + platform.Lbplatform.Title + " images.");
+			Reporter.Report("Caching " + platform.LBPlatform.Title + " images.");
 			int j = 0;
-			int gameCount = platform.Lbplatform.Lbgames.Count;
+			int gameCount = platform.LBPlatform.LBGames.Count;
 
-			foreach (Lbgame Lbgame in platform.Lbplatform.Lbgames)
+			foreach (LBGame LBGame in platform.LBPlatform.LBGames)
 			{
 				// Reporting only
 				if ((gameCount / 10) != 0 && ++j % (gameCount / 10) == 0)
 				{
-					Reporter.Report($"  Working {j} / {gameCount} {platform.Lbplatform.Title} games in the local cache.");
+					Reporter.Report($"  Working {j} / {gameCount} {platform.LBPlatform.Title} games in the local cache.");
 				}
 #if DEBUG
 				Stopwatch watch1 = Stopwatch.StartNew();
 #endif
-				var gameImageElements = imageElementLookupByGameID[Lbgame.Id.ToString()];
+				var gameImageElements = imageElementLookupByGameID[LBGame.ID.ToString()];
 #if DEBUG
 				Debug.WriteLine("Game: " + watch1.ElapsedMilliseconds); watch1.Restart();
 #endif
@@ -376,12 +374,12 @@ namespace Robin
 					string fileName = imageElement.Element("FileName")?.Value;
 
 					// Check if image already exists in the local cache before creating a new one. Whether new or old, overwrite properties.
-					if (!existingLbimageDict.TryGetValue(fileName, out Lbimage Lbimage))
+					if (!existingLBImageDict.TryGetValue(fileName, out LBImage LBImage))
 					{
-						Lbimage = new Lbimage { FileName = fileName };
+						LBImage = new LBImage { FileName = fileName };
 					}
 
-					Lbimage.Type = imageElement.Element("Type")?.Value ?? Lbimage.Type;
+					LBImage.Type = imageElement.Element("Type")?.Value ?? LBImage.Type;
 
 					string regionText = imageElement.Element("Region")?.Value;
 					long regionID;
@@ -399,13 +397,13 @@ namespace Robin
 					Debug.WriteLine("IB: " + watch1.ElapsedMilliseconds); watch1.Restart();
 #endif
 					// Create a release to hold the image or attach it to it
-					Lbrelease Lbrelease = Lbgame.Lbreleases.FirstOrDefault(x => x.RegionId == regionID);
-					if (Lbrelease == null)
+					LBRelease LBRelease = LBGame.LBReleases.FirstOrDefault(x => x.RegionId == regionID);
+					if (LBRelease == null)
 					{
-						Lbrelease = new Lbrelease();
-						Lbgame.Lbreleases.Add(Lbrelease);
-						Lbrelease.RegionId = regionID;
-						Lbrelease.Title = Lbgame.Title;
+						LBRelease = new LBRelease();
+						LBGame.LBReleases.Add(LBRelease);
+						LBRelease.RegionId = regionID;
+						LBRelease.Title = LBGame.Title;
 					}
 #if DEBUG
 					Debug.WriteLine("IC: " + watch1.ElapsedMilliseconds); watch1.Restart();
@@ -413,9 +411,9 @@ namespace Robin
 					// This is a hack to avoid trying to add the image to multiple releases, which will bonk
 					// because the foreign key relation is 1 or 0. The correct answer is to make this many-to-many,
 					// but that seems like a pain in the ass since there are very few images related to more than one release.
-					if (Lbimage.Lbrelease == null)
+					if (LBImage.LBRelease == null)
 					{
-						Lbrelease.Lbimages.Add(Lbimage);
+						LBRelease.LBImages.Add(LBImage);
 					}
 
 #if DEBUG
@@ -448,27 +446,27 @@ namespace Robin
 				Watch.Restart();
 #endif
 			}
-			var LbreleaseEntries = R.Data.ChangeTracker.Entries<Lbrelease>();
-			var LbimageEntries = R.Data.ChangeTracker.Entries<Lbimage>();
-			var LbgameEntries = R.Data.ChangeTracker.Entries<Lbgame>();
+			var LBReleaseEntries = R.Data.ChangeTracker.Entries<LBRelease>();
+			var LBImageEntries = R.Data.ChangeTracker.Entries<LBImage>();
+			var LBGameEntries = R.Data.ChangeTracker.Entries<LBGame>();
 #if DEBUG
 			Debug.WriteLine("Get entries: " + Watch.ElapsedMilliseconds);
 #endif
-			int LbreleaseAddCount = LbreleaseEntries.Count(x => x.State == EntityState.Added);
+			int LBReleaseAddCount = LBReleaseEntries.Count(x => x.State == EntityState.Added);
 
-			int LbimageAddCount = LbimageEntries.Count(x => x.State == EntityState.Added);
-			int LbgameAddCount = LbgameEntries.Count(x => x.State == EntityState.Added);
+			int LBImageAddCount = LBImageEntries.Count(x => x.State == EntityState.Added);
+			int LBGameAddCount = LBGameEntries.Count(x => x.State == EntityState.Added);
 
-			int LbreleaseModCount = LbreleaseEntries.Count(x => x.State == EntityState.Modified);
-			int LbimageModCount = LbimageEntries.Count(x => x.State == EntityState.Modified);
-			int LbgameModCount = LbgameEntries.Count(x => x.State == EntityState.Modified);
+			int LBReleaseModCount = LBReleaseEntries.Count(x => x.State == EntityState.Modified);
+			int LBImageModCount = LBImageEntries.Count(x => x.State == EntityState.Modified);
+			int LBGameModCount = LBGameEntries.Count(x => x.State == EntityState.Modified);
 
-			Reporter.Report("Lbreleases added: " + LbreleaseAddCount + ", Lbreleases updated: " + LbreleaseModCount);
-			Reporter.Report("Lbimages added: " + LbimageAddCount + ", Lbimages updated: " + LbimageModCount);
-			Reporter.Report("Lbgames added: " + LbgameAddCount + ", Lbgames updated: " + LbgameModCount);
+			Reporter.Report("LBReleases added: " + LBReleaseAddCount + ", LBReleases updated: " + LBReleaseModCount);
+			Reporter.Report("LBImages added: " + LBImageAddCount + ", LBImages updated: " + LBImageModCount);
+			Reporter.Report("LBGames added: " + LBGameAddCount + ", LBGames updated: " + LBGameModCount);
 		}
 
-		public static Dictionary<string, long> RegionDictionary = new Dictionary<string, long>
+		public static Dictionary<string, long> RegionDictionary = new()
 		{
 			{ "Asia", 1 },
 			{ "Australia", 2 },

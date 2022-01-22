@@ -3,14 +3,14 @@ using System.Collections.Generic;
 
 namespace Robin
 {
-    public partial class Lbplatform
+    public partial class LBPlatform
     {
-        public Lbplatform()
+        public LBPlatform()
         {
-            Lbgames = new HashSet<Lbgame>();
+            LBGames = new HashSet<LBGame>();
         }
 
-        public long Id { get; set; }
+        public long ID { get; set; }
         public string Title { get; set; }
         public string Category { get; set; }
         public string Developer { get; set; }
@@ -26,6 +26,6 @@ namespace Robin
         public DateTime CacheDate { get; set; }
 
         public virtual Platform Platform { get; set; }
-        public virtual ICollection<Lbgame> Lbgames { get; set; }
+        public virtual ICollection<LBGame> LBGames { get; set; }
     }
 }

@@ -19,7 +19,7 @@ namespace Robin
 {
 	class StatisticsWindowViewModel
 	{
-		public ObservableCollection<Platform> Platforms => new ObservableCollection<Platform>(R.Data.Platforms.Local.Where(x => x.Preferred));
+		public ObservableCollection<Platform> Platforms => new(R.Data.Platforms.Local.Where(x => x.Preferred));
 
 		public Platform SelectedPlatform { get; set; }
 
@@ -35,7 +35,7 @@ namespace Robin
 		{
 			Release release = SelectedPlatform.Releases.FirstOrDefault(x => !x.HasArt) ?? SelectedPlatform.Releases.FirstOrDefault();
 
-			MatchWindow matchWindow = new MatchWindow(release);
+			MatchWindow matchWindow = new(release);
 		}
 
 		bool MatchWindowCanExecute()

@@ -21,7 +21,7 @@ using System.Net;
 
 namespace Robin
 {
-	public partial class Lbrelease : IDbRelease
+	public partial class LBRelease : IDbRelease
 	{
 		[NotMapped]
 		public LocalDB LocalDB => LocalDB.LaunchBox;
@@ -30,44 +30,44 @@ namespace Robin
 		public string RegionTitle => Region.Title;
 
 		[NotMapped]
-		public string Overview => Lbgame.Overview;
+		public string Overview => LBGame.Overview;
 
 		[NotMapped]
-		public DateTime? Date => Lbgame.Date;
+		public DateTime? Date => LBGame.Date;
 
 		[NotMapped]
-		public string Developer => Lbgame.Developer;
+		public string Developer => LBGame.Developer;
 
 		[NotMapped]
-		public string Publisher => Lbgame.Publisher;
+		public string Publisher => LBGame.Publisher;
 
 		[NotMapped]
-		public string Players => Lbgame.Players;
+		public string Players => LBGame.Players;
 
 		[NotMapped]
-		public string BannerPath => FileLocation.Temp + "LBR-" + Id + "-BNR.jpg";
-
-		[NotMapped] 
-		public string Box3DPath => FileLocation.Temp + "LBR-" + Id + "-BX3.jpg";
+		public string BannerPath => FileLocation.Temp + "LBR-" + ID + "-BNR.jpg";
 
 		[NotMapped] 
-		public string BoxBackPath => FileLocation.Temp + "LBR-" + Id + "-BXB.jpg";
+		public string Box3DPath => FileLocation.Temp + "LBR-" + ID + "-BX3.jpg";
+
+		[NotMapped] 
+		public string BoxBackPath => FileLocation.Temp + "LBR-" + ID + "-BXB.jpg";
 		[NotMapped]
-		public string BoxFrontPath => FileLocation.Temp + "LBR-" + Id + "-BXF.jpg";
+		public string BoxFrontPath => FileLocation.Temp + "LBR-" + ID + "-BXF.jpg";
 		[NotMapped]
-		public string Cart3DPath => FileLocation.Temp + "LBR-" + Id + "-C3D.jpg";
+		public string Cart3DPath => FileLocation.Temp + "LBR-" + ID + "-C3D.jpg";
 		[NotMapped]
-		public string CartBackPath => FileLocation.Temp + "LBR-" + Id + "-CB.jpg";
+		public string CartBackPath => FileLocation.Temp + "LBR-" + ID + "-CB.jpg";
 		[NotMapped]
-		public string CartFrontPath => FileLocation.Temp + "LBR-" + Id + "-CF.jpg";
+		public string CartFrontPath => FileLocation.Temp + "LBR-" + ID + "-CF.jpg";
 		[NotMapped]
-		public string ControlPanelPath => FileLocation.Temp + "LBR-" + Id + "-BXF.jpg";
+		public string ControlPanelPath => FileLocation.Temp + "LBR-" + ID + "-BXF.jpg";
 		[NotMapped]
-		public string LogoPath => FileLocation.Temp + "LBR-" + Id + "-LGO.jpg";
+		public string LogoPath => FileLocation.Temp + "LBR-" + ID + "-LGO.jpg";
 		[NotMapped]
-		public string MarqueePath => FileLocation.Temp + "LBR-" + Id + "-MAR.jpg";
+		public string MarqueePath => FileLocation.Temp + "LBR-" + ID + "-MAR.jpg";
 		[NotMapped]
-		public string ScreenPath => FileLocation.Temp + "LBR-" + Id + "-SCR.jpg";
+		public string ScreenPath => FileLocation.Temp + "LBR-" + ID + "-SCR.jpg";
 
 		[NotMapped]
 		public string BannerUrl => GetURL("Banner");
@@ -96,11 +96,11 @@ namespace Robin
 
 		string GetURL(string type)
 		{
-			Lbimage Lbimage = Lbimages.FirstOrDefault(x => x.Type == type);
+			LBImage LBImage = LBImages.FirstOrDefault(x => x.Type == type);
 
-			if (Lbimage != null)
+			if (LBImage != null)
 			{
-				return Launchbox.IMAGESURL + Lbimage.FileName;
+				return Launchbox.IMAGESURL + LBImage.FileName;
 			}
 
 			else
@@ -111,7 +111,7 @@ namespace Robin
 
 		public int ScrapeBanner()
 		{
-			using (WebClient webclient = new WebClient())
+			using (WebClient webclient = new())
 			{
 				if (!File.Exists(BannerPath))
 				{
@@ -147,7 +147,7 @@ namespace Robin
 
 		public int ScrapeBox3D()
 		{
-			using (WebClient webclient = new WebClient())
+			using (WebClient webclient = new())
 			{
 				if (!File.Exists(Box3DPath))
 				{
@@ -183,7 +183,7 @@ namespace Robin
 
 		public int ScrapeBoxBack()
 		{
-			using (WebClient webclient = new WebClient())
+			using (WebClient webclient = new())
 			{
 				if (!File.Exists(BoxBackPath))
 				{
@@ -219,7 +219,7 @@ namespace Robin
 
 		public int ScrapeBoxFront()
 		{
-			using (WebClient webclient = new WebClient())
+			using (WebClient webclient = new())
 			{
 				if (!File.Exists(BoxFrontPath))
 				{
@@ -255,7 +255,7 @@ namespace Robin
 
 		public int ScrapeCart3D()
 		{
-			using (WebClient webclient = new WebClient())
+			using (WebClient webclient = new())
 			{
 				if (!File.Exists(Cart3DPath))
 				{
@@ -291,7 +291,7 @@ namespace Robin
 
 		public int ScrapeCartFront()
 		{
-			using (WebClient webclient = new WebClient())
+			using (WebClient webclient = new())
 			{
 				if (!File.Exists(CartFrontPath))
 				{
@@ -327,7 +327,7 @@ namespace Robin
 
 		public int ScrapeControlPanel()
 		{
-			using (WebClient webclient = new WebClient())
+			using (WebClient webclient = new())
 			{
 				if (!File.Exists(ControlPanelPath))
 				{
@@ -363,7 +363,7 @@ namespace Robin
 
 		public int ScrapeLogo()
 		{
-			using (WebClient webclient = new WebClient())
+			using (WebClient webclient = new())
 			{
 				if (!File.Exists(LogoPath))
 				{
@@ -399,7 +399,7 @@ namespace Robin
 
 		public int ScrapeMarquee()
 		{
-			using (WebClient webclient = new WebClient())
+			using (WebClient webclient = new())
 			{
 				if (!File.Exists(MarqueePath))
 				{
@@ -435,7 +435,7 @@ namespace Robin
 
 		public int ScrapeScreen()
 		{
-			using (WebClient webclient = new WebClient())
+			using (WebClient webclient = new())
 			{
 				if (!File.Exists(ScreenPath))
 				{

@@ -26,7 +26,7 @@ namespace Robin
 	{
 		public static int Limit => Properties.Settings.Default.RecentFileLimit;
 
-		static Queue<Release> recentFiles;
+		static readonly Queue<Release> recentFiles;
 
 		public static IEnumerable<Release> RecentFiles => recentFiles.Reverse();
 
@@ -38,7 +38,7 @@ namespace Robin
 			{
 				foreach (long id in Properties.Settings.Default.RecentFileIDs)
 				{
-					recentFiles.Enqueue(R.Data.Releases.FirstOrDefault(x => x.Id == id));
+					recentFiles.Enqueue(R.Data.Releases.FirstOrDefault(x => x.ID == id));
 				}
 			}
 		}
@@ -61,7 +61,7 @@ namespace Robin
 
 		public static void Save()
 		{
-			Properties.Settings.Default.RecentFileIDs = RecentFiles.Select(x => x.Id).ToList();
+			Properties.Settings.Default.RecentFileIDs = RecentFiles.Select(x => x.ID).ToList();
 		}
 
 		public static event EventHandler RecentFilesChanged;

@@ -145,7 +145,7 @@ namespace Robin
 			var debugItemBrush = new SolidColorBrush(Colors.Blue);
 			PresentationTraceSources.DataBindingSource.Switch.Level = SourceLevels.Critical;
 
-			Button bonusButton = new Button
+			Button bonusButton = new()
 			{
 				Content = "BONUS!",
 				Width = 50,
@@ -157,7 +157,7 @@ namespace Robin
 			SearchBox_DockPanel.Children.Add(bonusButton);
 
 			CreateThumbnailsCommand = new RelayCommand(CreateThumbnails);
-			MenuItem createThumbs = new MenuItem
+			MenuItem createThumbs = new()
 			{
 				Header = "Create thumbnails",
 				ToolTip = "Create a thumbnail for every release that doesn't have one.",
@@ -167,7 +167,7 @@ namespace Robin
 			ArtMenuItem.Items.Add(createThumbs);
 
 			SetFactoryDBCommand = new RelayCommand(SetFactoryDB);
-			MenuItem setFactoryDB = new MenuItem
+			MenuItem setFactoryDB = new()
 			{
 				Header = "Set factory database",
 				ToolTip = "Erase all custom settings from database.",

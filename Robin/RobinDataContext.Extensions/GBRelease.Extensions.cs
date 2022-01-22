@@ -23,7 +23,7 @@ using System.Net;
 
 namespace Robin
 {
-	public partial class Gbrelease : IDbRelease
+	public partial class GBRelease : IDbRelease
 	{
 		[NotMapped]
 		public LocalDB LocalDB => LocalDB.GiantBomb;
@@ -32,31 +32,31 @@ namespace Robin
 		public string RegionTitle => Region.Title;
 
 		[NotMapped]
-		public string BoxFrontPath => FileLocation.Temp + Id + "GBR-BXF.jpg";
+		public string BoxFrontPath => FileLocation.Temp + ID + "GBR-BXF.jpg";
 
 		[NotMapped]
-		public string ScreenPath => FileLocation.Temp + Id + "GBR-SCR.jpg";
+		public string ScreenPath => FileLocation.Temp + ID + "GBR-SCR.jpg";
 
 		[NotMapped]
 		public string BannerPath => null;
 
 
-		public static List<Gbrelease> GetGames(Platform platform)
+		public static List<GBRelease> GetGames(Platform platform)
 		{
-			R.Data.Gbreleases.Load();
+			R.Data.GBReleases.Load();
 			R.Data.Regions.Load();
-			return R.Data.Gbreleases.Where(x => x.GbplatformId == platform.ID_GB).ToList();
+			return R.Data.GBReleases.Where(x => x.GBPlatformId == platform.ID_GB).ToList();
 		}
 
 		public int ScrapeBoxFront()
 		{
-			using (WebClient webclient = new WebClient())
+			using (WebClient webclient = new())
 			{
 				if (!File.Exists(BoxFrontPath))
 				{
 					if (BoxUrl != null)
 					{
-						Reporter.Report("Getting front box art for Gbrelease " + Title + "...");
+						Reporter.Report("Getting front box art for GBRelease " + Title + "...");
 
 						if (webclient.DownloadFileFromDB(BoxUrl, BoxFrontPath))
 						{
@@ -96,13 +96,13 @@ namespace Robin
 
 		public int ScrapeScreen()
 		{
-			using (WebClient webclient = new WebClient())
+			using (WebClient webclient = new())
 			{
 				if (!File.Exists(ScreenPath))
 				{
 					if (ScreenUrl != null)
 					{
-						Reporter.Report("Getting screen shot for Gbrelease " + Title + "...");
+						Reporter.Report("Getting screen shot for GBRelease " + Title + "...");
 
 						if (webclient.DownloadFileFromDB(ScreenUrl, ScreenPath))
 						{

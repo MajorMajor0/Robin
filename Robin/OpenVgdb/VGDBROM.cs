@@ -36,7 +36,7 @@ namespace Robin
         public string romDumpSource { get; set; }
         public Nullable<long> CloneOf { get; set; }
     
-        public virtual VGdbplatform VGdbplatform { get; set; }
+        public virtual VGDBPlatform VGDBPlatform { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<VGDBRELEAS> VGdbreleaseS { get; set; }
     }

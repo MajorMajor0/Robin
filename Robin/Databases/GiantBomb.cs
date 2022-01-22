@@ -31,10 +31,10 @@ namespace Robin
 		public LocalDB DB { get { return LocalDB.GiantBomb; } }
 
 		public IEnumerable<IDbPlatform> Platforms =>
-			R.Data.Gbplatforms.Local.ToObservableCollection();
+			R.Data.GBPlatforms.Local.ToObservableCollection();
 
 		public IEnumerable<IDbRelease> Releases =>
-			R.Data.Gbreleases.Local.ToObservableCollection();
+			R.Data.GBReleases.Local.ToObservableCollection();
 
 		public bool HasRegions => true;
 
@@ -49,9 +49,9 @@ namespace Robin
 			{
 				Reporter.Tic("Opening GiantBomb cache...", out int tic1);
 
-				R.Data.Gbplatforms.Load();
-				R.Data.Gbreleases.Load();
-				R.Data.Gbgames.Load();
+				R.Data.GBPlatforms.Load();
+				R.Data.GBReleases.Load();
+				R.Data.GBGames.Load();
 				Reporter.Toc(tic1);
 			}
 			catch (InvalidOperationException ex)
@@ -72,126 +72,125 @@ namespace Robin
 		/// <summary>
 		/// Implement IDB.CachePlatfomrReleases(). Go out to giantbomb.com and cache all known releases for the specified platform. Update the list of releases and store metadata for each one.
 		/// </summary>
-		/// <param name="platform">Robin.Platform associated with the Gbplatform to cache.</param>
+		/// <param name="platform">Robin.Platform associated with the GBPlatform to cache.</param>
 		public static void CachePlatformReleases(Platform platform, bool reset = false)
 		{
-			using (WebClient webClient = new WebClient())
+			using WebClient webClient = new();
+			GBPlatform GBPlatform = platform.GBPlatform;
+			string startDate = reset ? @"1900-01-01 01:01:01" : GBPlatform.CacheDate.ToString(DATEFORMAT);
+			string endDate = DateTime.Now.ToString(DATEFORMAT);
+
+			int N_results;
+			bool haveResults;
+			XDocument xdoc;
+			Reporter.Report($"Checking GiantBomb for {GBPlatform.Title} releases...");
+
+			string url = $"http://www.giantbomb.com/api/releases/?api_key={Keys.GiantBomb}&filter=date_last_updated:{startDate}|{endDate},platform:{GBPlatform.ID}&field_list=id&sort=id:asc";
+
+			if (webClient.SafeDownloadStringDB(url, out string downloadText))
 			{
-				Gbplatform Gbplatform = platform.Gbplatform;
-				string startDate = reset ? @"1900-01-01 01:01:01" : Gbplatform.CacheDate.ToString(DATEFORMAT);
-				string endDate = DateTime.Now.ToString(DATEFORMAT);
+				xdoc = XDocument.Parse(downloadText);
+				haveResults = int.TryParse(xdoc.SafeGetB("number_of_total_results"), out N_results);
+			}
+			else
+			{
+				Reporter.Warn("Error communicating with GiantBomb.");
+				return;
+			}
 
-				int N_results;
-				bool haveResults;
-				XDocument xdoc;
-				Reporter.Report($"Checking GiantBomb for {Gbplatform.Title} releases...");
+			// If there are results, go through them
+			if (haveResults && N_results != 0)
+			{
+				Dictionary<long, GBRelease> existingGBReleaseDict = R.Data.GBReleases.ToDictionary(x => x.ID);
+				ILookup<long?, Release> releaseLookupByGB_ID = R.Data.Releases.Where(x => x.ID_GB != null).ToLookup(x => x.ID_GB);
+				HashSet<GBRelease> newGBReleases = new();
 
-				string url = $"http://www.giantbomb.com/api/releases/?api_key={Keys.GiantBomb}&filter=date_last_updated:{startDate}|{endDate},platform:{Gbplatform.Id}&field_list=id&sort=id:asc";
+				int N_pages = N_results / 100;
+				Reporter.Report($"Found {N_results} {GBPlatform.Title} releases in GiantBomb");
 
-				if (webClient.SafeDownloadStringDB(url, out string downloadText))
+				// Just do the first page again to save code then go through the rest of the results
+				Reporter.Report("Loading sheet ");
+				for (int i = 0; i <= N_pages; i++)
 				{
-					xdoc = XDocument.Parse(downloadText);
-					haveResults = int.TryParse(xdoc.SafeGetB("number_of_total_results"), out N_results);
-				}
-				else
-				{
-					Reporter.Warn("Error communicating with GiantBomb.");
-					return;
-				}
+					Reporter.ReportInline(" " + i);
+					url = $"http://www.giantbomb.com/api/releases/?api_key={Keys.GiantBomb}&filter=date_last_updated:{startDate}|{endDate}platform:{GBPlatform.ID}&offset={i * 100}&field_list=id,deck,game,image,region,name,maximum_players,release_date&sort=id:asc";
 
-				// If there are results, go through them
-				if (haveResults && N_results != 0)
-				{
-					Dictionary<long, Gbrelease> existingGbreleaseDict = R.Data.Gbreleases.ToDictionary(x => x.Id);
-					ILookup<long?, Release> releaseLookupByGB_ID = R.Data.Releases.Where(x => x.ID_GB != null).ToLookup(x => x.ID_GB);
-					HashSet<Gbrelease> newGbreleases = new HashSet<Gbrelease>();
-
-					int N_pages = N_results / 100;
-					Reporter.Report($"Found {N_results} {Gbplatform.Title} releases in GiantBomb");
-
-					// Just do the first page again to save code then go through the rest of the results
-					Reporter.Report("Loading sheet ");
-					for (int i = 0; i <= N_pages; i++)
+					// Put results into the GB Cache database
+					if (webClient.SafeDownloadStringDB(url, out downloadText))
 					{
-						Reporter.ReportInline(" " + i);
-						url = $"http://www.giantbomb.com/api/releases/?api_key={Keys.GiantBomb}&filter=date_last_updated:{startDate}|{endDate}platform:{Gbplatform.Id}&offset={i * 100}&field_list=id,deck,game,image,region,name,maximum_players,release_date&sort=id:asc";
+						xdoc = XDocument.Parse(downloadText);
 
-						// Put results into the GB Cache database
-						if (webClient.SafeDownloadStringDB(url, out downloadText))
+						foreach (XElement element in xdoc.Root.Element("results").Elements("release"))
 						{
-							xdoc = XDocument.Parse(downloadText);
-
-							foreach (XElement element in xdoc.Root.Element("results").Elements("release"))
+							// If the ID XML value was found
+							if (int.TryParse(element.SafeGetA("id"), out int id))
 							{
-								// If the ID XML value was found
-								if (int.TryParse(element.SafeGetA("id"), out int id))
+								// Don't create this game if the title is null
+								string title = element.SafeGetA("name");
+								if (string.IsNullOrEmpty(title))
 								{
-									// Don't create this game if the title is null
-									string title = element.SafeGetA("name");
-									if (string.IsNullOrEmpty(title))
-									{
-										continue;
-									}
+									continue;
+								}
 
-									// Check if Gbrelease is in database prior to this update, else add it
-									if (!existingGbreleaseDict.TryGetValue(id, out Gbrelease Gbrelease))
-									{
-										Gbrelease = new Gbrelease { Id = id, Gbplatform = platform.Gbplatform };
-										newGbreleases.Add(Gbrelease);
-									}
+								// Check if GBRelease is in database prior to this update, else add it
+								if (!existingGBReleaseDict.TryGetValue(id, out GBRelease GBRelease))
+								{
+									GBRelease = new GBRelease { ID = id, GBPlatform = platform.GBPlatform };
+									newGBReleases.Add(GBRelease);
+								}
 
-									// If a release has changed platforms, catch it and zero out match
-									if (Gbrelease.GbplatformId != Gbplatform.Id)
-									{
-										Gbrelease.GbplatformId = Gbplatform.Id;
+								// If a release has changed platforms, catch it and zero out match
+								if (GBRelease.GBPlatformId != GBPlatform.ID)
+								{
+									GBRelease.GBPlatformId = GBPlatform.ID;
 
-										if (releaseLookupByGB_ID[Gbrelease.Id].Any())
+									if (releaseLookupByGB_ID[GBRelease.ID].Any())
+									{
+										foreach (Release release in releaseLookupByGB_ID[GBRelease.ID])
 										{
-											foreach (Release release in releaseLookupByGB_ID[Gbrelease.Id])
-											{
-												release.ID_GB = null;
-											}
+											release.ID_GB = null;
 										}
 									}
-
-									Gbrelease.Title = title;
-									Gbrelease.Overview = element.SafeGetA("deck");
-									if (int.TryParse(element.SafeGetA("game", "id"), out id))
-									{
-										Gbrelease.GbgameId = id;
-									}
-									if (int.TryParse(element.SafeGetA("maximum_players"), out id))
-									{
-										Gbrelease.Players = id.ToString();
-									}
-
-									Gbrelease.GbplatformId = Gbplatform.Id;
-									if (int.TryParse(element.SafeGetA("region", "id"), out id))
-									{
-										Gbrelease.Region = R.Data.Regions.FirstOrDefault(x => x.IdGb == id) ?? R.Data.Regions.FirstOrDefault(x => x.Title.Contains("Unk"));
-									}
-
-									Gbrelease.Date = DateTimeRoutines.SafeGetDate(element.SafeGetA("release_date"));
-									Gbrelease.BoxUrl = element.SafeGetA("image", "medium_url");
-									Gbrelease.ScreenUrl = element.SafeGetA("image", "screen_url");
 								}
+
+								GBRelease.Title = title;
+								GBRelease.Overview = element.SafeGetA("deck");
+								if (int.TryParse(element.SafeGetA("game", "id"), out id))
+								{
+									GBRelease.GBGameId = id;
+								}
+								if (int.TryParse(element.SafeGetA("maximum_players"), out id))
+								{
+									GBRelease.Players = id.ToString();
+								}
+
+								GBRelease.GBPlatformId = GBPlatform.ID;
+								if (int.TryParse(element.SafeGetA("region", "id"), out id))
+								{
+									GBRelease.Region = R.Data.Regions.FirstOrDefault(x => x.IdGb == id) ?? R.Data.Regions.FirstOrDefault(x => x.Title.Contains("Unk"));
+								}
+
+								GBRelease.Date = DateTimeRoutines.SafeGetDate(element.SafeGetA("release_date"));
+								GBRelease.BoxUrl = element.SafeGetA("image", "medium_url");
+								GBRelease.ScreenUrl = element.SafeGetA("image", "screen_url");
 							}
 						}
-						else
-						{
-							Reporter.Warn("Failure connecting to GiantBomb");
-							return;
-						}
 					}
-					R.Data.Gbreleases.AddRange(newGbreleases);
-					Reporter.ReportInline("Finished.");
+					else
+					{
+						Reporter.Warn("Failure connecting to GiantBomb");
+						return;
+					}
 				}
-				else
-				{
-					Reporter.Report("No releases returned by GiantBomb");
-					return;
-				}
-			}// end using webclient
+				R.Data.GBReleases.AddRange(newGBReleases);
+				Reporter.ReportInline("Finished.");
+			}
+			else
+			{
+				Reporter.Report("No releases returned by GiantBomb");
+				return;
+			}
+			// end using webclient
 		}
 
 		public void CachePlatformGamesAsync(Platform platform)
@@ -201,86 +200,85 @@ namespace Robin
 
 		public static void CachePlatformGames(Platform platform, bool reset = false)
 		{
-			Gbplatform Gbplatform = platform.Gbplatform;
-			string startDate = reset ? @"1900-01-01 01:01:01" : Gbplatform.CacheDate.ToString(DATEFORMAT);
+			GBPlatform GBPlatform = platform.GBPlatform;
+			string startDate = reset ? @"1900-01-01 01:01:01" : GBPlatform.CacheDate.ToString(DATEFORMAT);
 			string endDate = DateTime.Now.ToString(DATEFORMAT);
 
-			using (WebClient webClient = new WebClient())
+			using WebClient webClient = new();
+			int N_results;
+			bool haveResults;
+			XDocument xdoc;
+			Reporter.Report($"Checking GiantBomb for {platform.Title} games");
+
+			var url = $"http://www.giantbomb.com/api/games/?api_key={Keys.GiantBomb}&filter=date_last_updated:{startDate}|{endDate},platforms:{GBPlatform.ID}&field_list=id&sort=id:asc";
+
+
+			if (webClient.SafeDownloadStringDB(url, out var downloadText))
 			{
-				int N_results;
-				bool haveResults;
-				XDocument xdoc;
-				Reporter.Report($"Checking GiantBomb for {platform.Title} games");
+				xdoc = XDocument.Parse(downloadText);
+				haveResults = int.TryParse(xdoc.SafeGetB("number_of_total_results"), out N_results);
+			}
+			else
+			{
+				Reporter.Report("Error communicating with GiantBomb.");
+				return;
+			}
 
-				var url = $"http://www.giantbomb.com/api/games/?api_key={Keys.GiantBomb}&filter=date_last_updated:{startDate}|{endDate},platforms:{Gbplatform.Id}&field_list=id&sort=id:asc";
+			// If there are results, go through them
+			if (haveResults && N_results != 0)
+			{
+				int N_pages = N_results / 100;
+				Reporter.Report("Found " + N_results + " games in GiantBomb");
 
-
-				if (webClient.SafeDownloadStringDB(url, out var downloadText))
+				Reporter.Report("Loading sheet ");
+				// Just do the first page again to save code then go through the rest of the results
+				for (int i = 0; i <= N_pages; i++)
 				{
-					xdoc = XDocument.Parse(downloadText);
-					haveResults = int.TryParse(xdoc.SafeGetB("number_of_total_results"), out N_results);
-				}
-				else
-				{
-					Reporter.Report("Error communicating with GiantBomb.");
-					return;
-				}
+					Reporter.ReportInline(i + " ");
 
-				// If there are results, go through them
-				if (haveResults && N_results != 0)
-				{
-					int N_pages = N_results / 100;
-					Reporter.Report("Found " + N_results + " games in GiantBomb");
+					url = $"http://www.giantbomb.com/api/games/?api_key={Keys.GiantBomb}&filter=date_last_updated:{startDate}|{endDate},platforms:{GBPlatform.ID}&offset={i * 100}&field_list=id,deck,developers,publishers,genres,image,name,release_date&sort=id:asc";
 
-					Reporter.Report("Loading sheet ");
-					// Just do the first page again to save code then go through the rest of the results
-					for (int i = 0; i <= N_pages; i++)
+					// Put results into the GB Cache database
+					if (webClient.SafeDownloadStringDB(url, out downloadText))
 					{
-						Reporter.ReportInline(i + " ");
-
-						url = $"http://www.giantbomb.com/api/games/?api_key={Keys.GiantBomb}&filter=date_last_updated:{startDate}|{endDate},platforms:{Gbplatform.Id}&offset={i * 100}&field_list=id,deck,developers,publishers,genres,image,name,release_date&sort=id:asc";
-
-						// Put results into the GB Cache database
-						if (webClient.SafeDownloadStringDB(url, out downloadText))
+						xdoc = XDocument.Parse(downloadText);
+						foreach (XElement element in xdoc.Root.Element("results").Elements("game"))
 						{
-							xdoc = XDocument.Parse(downloadText);
-							foreach (XElement element in xdoc.Root.Element("results").Elements("game"))
+							// If the ID XML value was found
+							if (int.TryParse(element.SafeGetA("id"), out var intCatcher))
 							{
-								// If the ID XML value was found
-								if (int.TryParse(element.SafeGetA("id"), out var intCatcher))
+								GBGame GBGame = R.Data.GBGames.FirstOrDefault(x => x.ID == intCatcher);
+
+								if (GBGame == null)
 								{
-									Gbgame Gbgame = R.Data.Gbgames.FirstOrDefault(x => x.Id == intCatcher);
-
-									if (Gbgame == null)
-									{
-										Gbgame = new Gbgame { Id = intCatcher };
-										Gbplatform.Gbgames.Add(Gbgame);
-									}
-
-									Gbgame.Title = element.SafeGetA("name");
-									Gbgame.Overview = element.SafeGetA("deck");
-									Gbgame.GbplatformId = Gbplatform.Id;
-									Gbgame.Date = DateTimeRoutines.SafeGetDate(element.SafeGetA("release_date"));
-									Gbgame.BoxFrontUrl = element.SafeGetA("image", "medium_url");
-									Gbgame.ScreenUrl = element.SafeGetA("image", "screen_url");
+									GBGame = new GBGame { ID = intCatcher };
+									GBPlatform.GBGames.Add(GBGame);
 								}
+
+								GBGame.Title = element.SafeGetA("name");
+								GBGame.Overview = element.SafeGetA("deck");
+								GBGame.GBPlatformId = GBPlatform.ID;
+								GBGame.Date = DateTimeRoutines.SafeGetDate(element.SafeGetA("release_date"));
+								GBGame.BoxFrontUrl = element.SafeGetA("image", "medium_url");
+								GBGame.ScreenUrl = element.SafeGetA("image", "screen_url");
 							}
 						}
-						else
-						{
-							Reporter.Warn("Failure connecting to GiantBomb");
-							return;
-						}
 					}
+					else
+					{
+						Reporter.Warn("Failure connecting to GiantBomb");
+						return;
+					}
+				}
 
-					Reporter.Report("Finished.");
-				}
-				else
-				{
-					Reporter.Report("No results returned by GiantBomb");
-					return;
-				}
-			}// end using webclient
+				Reporter.Report("Finished.");
+			}
+			else
+			{
+				Reporter.Report("No results returned by GiantBomb");
+				return;
+			}
+			// end using webclient
 		}
 
 		/// <summary>
@@ -289,29 +287,29 @@ namespace Robin
 		/// <param name="platform">Robin.Platform associated with the DBPlatorm to update.</param>
 		public void CachePlatformData(Platform platform)
 		{
-			Gbplatform Gbplatform = platform.Gbplatform;
+			GBPlatform GBPlatform = platform.GBPlatform;
 
 			XDocument xDocument;
 
-			Reporter.Tic("Attempting to cache " + Gbplatform.Title + "...", out int tic1);
+			Reporter.Tic("Attempting to cache " + GBPlatform.Title + "...", out int tic1);
 
 			using WebClient webClient = new();
 
-			string url = GBURL + $"platform/{Gbplatform.Id}/?api_key ={Keys.GiantBomb}";
+			string url = GBURL + $"platform/{GBPlatform.ID}/?api_key ={Keys.GiantBomb}";
 
 			if (webClient.SafeDownloadStringDB(url, out string downloadText))
 			{
 				xDocument = XDocument.Parse(downloadText);
 
-				Gbplatform.Title = xDocument.SafeGetB("results", "name");
-				Gbplatform.Abbreviation = xDocument.SafeGetB("results", "abbreviation");
+				GBPlatform.Title = xDocument.SafeGetB("results", "name");
+				GBPlatform.Abbreviation = xDocument.SafeGetB("results", "abbreviation");
 				if (long.TryParse(xDocument.SafeGetB("results", "company"), out long company))
 				{
-					Gbplatform.Company = company;
+					GBPlatform.Company = company;
 				}
-				Gbplatform.Deck = xDocument.SafeGetB("results", "deck");
-				Gbplatform.Price = xDocument.SafeGetB("results", "original_price");
-				Gbplatform.Date = DateTimeRoutines.SafeGetDate(xDocument.SafeGetB("results", "release_date"));
+				GBPlatform.Deck = xDocument.SafeGetB("results", "deck");
+				GBPlatform.Price = xDocument.SafeGetB("results", "original_price");
+				GBPlatform.Date = DateTimeRoutines.SafeGetDate(xDocument.SafeGetB("results", "release_date"));
 				Reporter.Toc(tic1);
 			}
 
@@ -324,7 +322,7 @@ namespace Robin
 
 		public void CachePlatforms()
 		{
-			// TODO Get list of platforms from giantbom and cache in Gbplatforms
+			// TODO Get list of platforms from giantbom and cache in GBPlatforms
 			Reporter.Report("Cache platforms not yet implemented for GiantBomb");
 		}
 
@@ -348,19 +346,19 @@ namespace Robin
 #endif
 			}
 
-			var GbreleaseEntries = R.Data.ChangeTracker.Entries<Gbrelease>();
-			var GbgameEntries = R.Data.ChangeTracker.Entries<Gbgame>();
+			var GBReleaseEntries = R.Data.ChangeTracker.Entries<GBRelease>();
+			var GBGameEntries = R.Data.ChangeTracker.Entries<GBGame>();
 #if DEBUG
 			Debug.WriteLine("Get entries: " + Watch.ElapsedMilliseconds);
 #endif
-			int GbreleaseAddCount = GbreleaseEntries.Count(x => x.State == EntityState.Added);
-			int GbreleaseModCount = GbreleaseEntries.Count(x => x.State == EntityState.Modified);
+			int GBReleaseAddCount = GBReleaseEntries.Count(x => x.State == EntityState.Added);
+			int GBReleaseModCount = GBReleaseEntries.Count(x => x.State == EntityState.Modified);
 
-			int GbgameAddCount = GbgameEntries.Count(x => x.State == EntityState.Added);
-			int GbgameModCount = GbgameEntries.Count(x => x.State == EntityState.Modified);
+			int GBGameAddCount = GBGameEntries.Count(x => x.State == EntityState.Added);
+			int GBGameModCount = GBGameEntries.Count(x => x.State == EntityState.Modified);
 
-			Reporter.Report("Gbreleases added: " + GbreleaseAddCount + ", Gbreleases updated: " + GbreleaseModCount);
-			Reporter.Report("Gbgames added: " + GbgameAddCount + ", Gbgames updated: " + GbgameModCount);
+			Reporter.Report("GBReleases added: " + GBReleaseAddCount + ", GBReleases updated: " + GBReleaseModCount);
+			Reporter.Report("GBGames added: " + GBGameAddCount + ", GBGames updated: " + GBGameModCount);
 		}
 
 		public void Dispose()
@@ -383,7 +381,7 @@ namespace Robin
 			{
 				// free other managed objects that implement
 				// IDisposable only
-				/*                R.Data.Gbplatforms.Dispose()*/
+				/*                R.Data.GBPlatforms.Dispose()*/
 
 			}
 

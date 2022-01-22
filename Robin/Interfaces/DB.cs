@@ -37,7 +37,7 @@ namespace Robin
 
 	public interface IDbRelease : INotifyPropertyChanged
 	{
-		long Id { get; }
+		long ID { get; }
 		string Title { get; }
 		string Overview { get; }
 		string RegionTitle { get; }
@@ -53,7 +53,7 @@ namespace Robin
 
 	public interface IDbPlatform
 	{
-		long Id { get; }
+		long ID { get; }
 		string Title { get; }
 		string Manufacturer { get; }
 		DateTime? Date { get; }
@@ -77,12 +77,12 @@ namespace Robin
 		bool HasRegions { get; }
 
 		/// <summary>
-		/// Update the list of platforms in the local DB cache, Gbplatform, GDBlatform, Lbplatform...
+		/// Update the list of platforms in the local DB cache, GBPlatform, GDBlatform, LBPlatform...
 		/// </summary>
 		void CachePlatforms();
 
 		/// <summary>
-		/// Update the local DB cache of realeases for one platform, inlcluding the list of releases and associated metadata. LBRealease, Gbrelease, Gdbrelease...
+		/// Update the local DB cache of realeases for one platform, inlcluding the list of releases and associated metadata. LBRealease, GBRelease, Gdbrelease...
 		/// </summary>
 		/// <param name="platform"></param>
 		void CachePlatformReleases(Platform platform);

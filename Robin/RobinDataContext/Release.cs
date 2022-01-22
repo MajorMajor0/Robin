@@ -10,7 +10,7 @@ namespace Robin
             Collections = new HashSet<Collection>();
         }
 
-        public long Id { get; set; }
+        public long ID { get; set; }
         public long? ID_GB { get; set; }
         public long? ID_GDB { get; set; }
         public long? ID_OVG { get; set; }
@@ -29,12 +29,12 @@ namespace Robin
         public long PlayCount { get; set; }
 
         public virtual Game Game { get; set; }
-        public virtual Gbrelease Gbrelease { get; set; }
+        public virtual GBRelease GBRelease { get; set; }
         public virtual Gdbrelease Gdbrelease { get; set; }
-        public virtual Lbrelease Lbrelease { get; set; }
+        public virtual LBRelease LBRelease { get; set; }
         public virtual Mbrelease Mbrelease { get; set; }
-        public virtual Lbgame Lbgame { get; set; }
-        public virtual Ovgrelease Ovgrelease { get; set; }
+        public virtual LBGame LBGame { get; set; }
+        public virtual OVGRelease OVGRelease { get; set; }
         public virtual Platform Platform { get; set; }
         public virtual Region Region { get; set; }
         public virtual Rom Rom { get; set; }

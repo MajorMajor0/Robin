@@ -3,22 +3,22 @@ using System.Collections.Generic;
 
 namespace Robin
 {
-    public partial class Lbrelease
+    public partial class LBRelease
     {
-        public Lbrelease()
+        public LBRelease()
         {
-            Lbimages = new HashSet<Lbimage>();
+            LBImages = new HashSet<LBImage>();
             Releases = new HashSet<Release>();
         }
 
-        public long Id { get; set; }
-        public long LbgameId { get; set; }
+        public long ID { get; set; }
+        public long LBGameId { get; set; }
         public long RegionId { get; set; }
         public string Title { get; set; }
 
-        public virtual Lbgame Lbgame { get; set; }
+        public virtual LBGame LBGame { get; set; }
         public virtual Region Region { get; set; }
-        public virtual ICollection<Lbimage> Lbimages { get; set; }
+        public virtual ICollection<LBImage> LBImages { get; set; }
         public virtual ICollection<Release> Releases { get; set; }
     }
 }

@@ -22,7 +22,7 @@ namespace Robin
     {
         public void ParseGood(string filename)
         {
-            Release ROM = new Release();
+            Release ROM = new();
 
             // Load static list of region codes and good codes
             //Regions Regions = new Regions();

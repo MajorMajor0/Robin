@@ -3,24 +3,24 @@ using System.Collections.Generic;
 
 namespace Robin
 {
-    public partial class Mbgame
+    public partial class MBGame
     {
-        public Mbgame()
+        public MBGame()
         {
             Mbreleases = new HashSet<Mbrelease>();
-            Mbgenres = new HashSet<Mbgenre>();
+            MBGenres = new HashSet<MBGenre>();
 
         }
 
-        public long Id { get; set; }
-        public long MbplatformId { get; set; }
+        public long ID { get; set; }
+        public long MBPlatformId { get; set; }
         public string Title { get; set; }
         public string Overview { get; set; }
         public DateTime? Date { get; set; }
 
-        public virtual Mbplatform Mbplatform { get; set; }
+        public virtual MBPlatform MBPlatform { get; set; }
         public virtual ICollection<Mbrelease> Mbreleases { get; set; }
 
-        public virtual ICollection<Mbgenre> Mbgenres { get; set; }
+        public virtual ICollection<MBGenre> MBGenres { get; set; }
     }
 }

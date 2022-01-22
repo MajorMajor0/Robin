@@ -104,16 +104,16 @@
     <Compile Update="Game.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Update="Gbgame.cs">
+    <Compile Update="GBGame.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Update="Gbplatform.cs">
+    <Compile Update="GBPlatform.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Update="Gbrelease.cs">
+    <Compile Update="GBRelease.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Update="Gdbplatform.cs">
+    <Compile Update="GDBPlatform.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
     <Compile Update="Gdbrelease.cs">
@@ -122,16 +122,16 @@
     <Compile Update="Language.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Update="Lbgame.cs">
+    <Compile Update="LBGame.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Update="Lbimage.cs">
+    <Compile Update="LBImage.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Update="Lbplatform.cs">
+    <Compile Update="LBPlatform.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Update="Lbrelease.cs">
+    <Compile Update="LBRelease.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
     <Compile Update="Mame\MEntities.Designer.cs">
@@ -163,10 +163,10 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>OpenVGDBModel.edmx</DependentUpon>
     </Compile>
-    <Compile Update="Ovgplatform.cs">
+    <Compile Update="OVGPlatform.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Update="Ovgrelease.cs">
+    <Compile Update="OVGRelease.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
     <Compile Update="Platform.cs">
@@ -194,7 +194,7 @@
     <Compile Update="URL.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Update="OpenVgdb\VGDBPLATFORM.cs">
+    <Compile Update="OpenVgdb\VGDBPlatform.cs">
       <DependentUpon>OpenVGDBModel.tt</DependentUpon>
     </Compile>
     <Compile Update="OpenVgdb\VGDBREGION.cs">

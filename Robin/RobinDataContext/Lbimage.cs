@@ -3,15 +3,15 @@ using System.Collections.Generic;
 
 namespace Robin
 {
-    public partial class Lbimage
+    public partial class LBImage
     {
-        public long Id { get; set; }
+        public long ID { get; set; }
         public string Type { get; set; }
         public string FileName { get; set; }
         public string Lbregion { get; set; }
         public long RegionId { get; set; }
-        public long? LbreleaseId { get; set; }
+        public long? LBReleaseId { get; set; }
 
-        public virtual Lbrelease Lbrelease { get; set; }
+        public virtual LBRelease LBRelease { get; set; }
     }
 }

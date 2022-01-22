@@ -13,7 +13,7 @@ namespace Robin
 			Platforms1 = new HashSet<Platform>();
 		}
 
-		public long Id { get; set; }
+		public long ID { get; set; }
 
 		public string Title { get; set; }
 

@@ -172,7 +172,7 @@ namespace Robin
 		public AutoFilterReleases(IEnumerable<Release> _sourceCollection, string _title)
 		{
 			title = _title;
-			sourceCollection = _sourceCollection.OrderBy(x => x.Platform.Id).ThenBy(x => x.Title).ToList(); ;
+			sourceCollection = _sourceCollection.OrderBy(x => x.Platform.ID).ThenBy(x => x.Title).ToList(); ;
 
 			StringFilters.Add(PublisherFilter = new StringFilter("Publisher", () => Update(), Settings.ReleaseFilterPublisher));
 			StringFilters.Add(GenreFilter = new StringFilter("Genre", () => Update(), Settings.ReleaseFilterGenre));
@@ -559,7 +559,7 @@ namespace Robin
 
 	public class AutoFilterPlatforms : AutoFilterCollection
 	{
-		IEnumerable<Platform> sourceCollection;
+		private readonly IEnumerable<Platform> sourceCollection;
 
 		List<Platform> filteredCollection;
 
@@ -655,7 +655,7 @@ namespace Robin
 
 	public class AutoFilterEmulators : AutoFilterCollection
 	{
-		IEnumerable<Emulator> sourceCollection;
+		readonly IEnumerable<Emulator> sourceCollection;
 
 		List<Emulator> filteredCollection;
 
@@ -731,7 +731,7 @@ namespace Robin
 	// This is one filter and all of it's distinct values, e.g., Region, containing Japan, USA etc.
 	public class StringFilter : INotifyPropertyChanged
 	{
-		Action Callback;
+		readonly Action Callback;
 
 		public string Name { get; set; }
 
@@ -808,7 +808,7 @@ namespace Robin
 		// The parent is the autofilter collection, roms, games, platforms
 		public string Name { get; set; }
 
-		Action Callback;
+		readonly Action Callback;
 
 		public bool IsSet => _value != null;
 

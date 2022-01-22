@@ -57,7 +57,7 @@ namespace Robin
             switch (db)
             {
                 case LocalDB.GamesDB:
-                    platform = R.Data.Platforms.FirstOrDefault(x => x.ID_GDB == idbPlatform.Id);
+                    platform = R.Data.Platforms.FirstOrDefault(x => x.ID_GDB == idbPlatform.ID);
                     if (platform != null)
                     {
                         RReleases = new List<Release>(platform.Releases.Where(x => x.ID_GDB == null && x.IsGame));
@@ -65,7 +65,7 @@ namespace Robin
                     break;
 
                 case LocalDB.GiantBomb:
-                    platform = R.Data.Platforms.FirstOrDefault(x => x.ID_GB == idbPlatform.Id);
+                    platform = R.Data.Platforms.FirstOrDefault(x => x.ID_GB == idbPlatform.ID);
                     if (platform != null)
                     {
                         RReleases = new List<Release>(platform.Releases.Where(x => x.ID_GB == null && x.IsGame));
@@ -73,7 +73,7 @@ namespace Robin
                     break;
 
                 case LocalDB.LaunchBox:
-                    platform = R.Data.Platforms.FirstOrDefault(x => x.ID_LB == idbPlatform.Id);
+                    platform = R.Data.Platforms.FirstOrDefault(x => x.ID_LB == idbPlatform.ID);
                     if (platform != null)
                     {
                         RReleases = new List<Release>(platform.Releases.Where(x => x.ID_LB == null && x.IsGame));
@@ -88,7 +88,7 @@ namespace Robin
             List.Clear();
 
             // List for storing matches
-            List<Compare> Matches = new List<Compare>();
+            List<Compare> Matches = new();
             int distance;
 
             bool goAhead = !ConsiderRegion;
@@ -123,7 +123,7 @@ namespace Robin
                         distance = LevenshteinDistance.Compute(release.Title.Wash(), dbRelease.Title.Wash());
 
                         // Add the current rom/game to a list of matches for consideration
-                        Matches.Add(new Compare(distance, dbRelease.Id, i_db, dbRelease.Title, release.Title, i_r, release.Region.Title, dbRelease.RegionTitle));
+                        Matches.Add(new Compare(distance, dbRelease.ID, i_db, dbRelease.Title, release.Title, i_r, release.Region.Title, dbRelease.RegionTitle));
 
                         // If the current match is perfect, store it and check the accept box. Stop looking through the regions.
                         if (Matches.Last().Distance == 0)

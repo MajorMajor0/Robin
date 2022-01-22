@@ -18,7 +18,7 @@ using System.Linq;
 
 namespace Robin
 {
-	public partial class Lbgame
+	public partial class LBGame
 	{
 		[NotMapped]
 		public string RegionTitle { get; set; }
@@ -27,6 +27,6 @@ namespace Robin
 		public Region Region => null;
 
 		[NotMapped]
-		public IEnumerable<Lbimage> Lbimages => Lbreleases.SelectMany(x => x.Lbimages);
+		public IEnumerable<LBImage> LBImages => LBReleases.SelectMany(x => x.LBImages);
 	}
 }

@@ -19,13 +19,13 @@ using System.Linq;
 
 namespace Robin
 {
-	public partial class Gbplatform : IDbPlatform
+	public partial class GBPlatform : IDbPlatform
 	{
 		[NotMapped]
-		public IList Releases => Gbreleases.ToList();
+		public IList Releases => GBReleases.ToList();
 		
 		[NotMapped]
-		public Platform RPlatform => R.Data.Platforms.FirstOrDefault((System.Linq.Expressions.Expression<Func<Platform, bool>>)(x => x.ID_GB == this.Id));
+		public Platform RPlatform => R.Data.Platforms.FirstOrDefault((System.Linq.Expressions.Expression<Func<Platform, bool>>)(x => x.ID_GB == this.ID));
 		
 		[NotMapped]
 		public int MatchedReleaseCount

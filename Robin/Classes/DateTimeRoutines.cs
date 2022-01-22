@@ -312,19 +312,19 @@ namespace Robin
 				if (!TryParseTime(str, default_format, out parsed_time, null))
 					return false;
 
-				DateTime date_time = new DateTime(DefaultDate.Year, DefaultDate.Month, DefaultDate.Day, parsed_time.DateTime.Hour, parsed_time.DateTime.Minute, parsed_time.DateTime.Second);
+				DateTime date_time = new(DefaultDate.Year, DefaultDate.Month, DefaultDate.Day, parsed_time.DateTime.Hour, parsed_time.DateTime.Minute, parsed_time.DateTime.Second);
 				parsed_date_time = new ParsedDateTime(-1, -1, parsed_time.IndexOfTime, parsed_time.LengthOfTime, date_time, parsed_time.UtcOffset);
 			}
 			else
 			{
 				if (!TryParseTime(str, default_format, out parsed_time, parsed_date))
 				{
-					DateTime date_time = new DateTime(parsed_date.DateTime.Year, parsed_date.DateTime.Month, parsed_date.DateTime.Day, 0, 0, 0);
+					DateTime date_time = new(parsed_date.DateTime.Year, parsed_date.DateTime.Month, parsed_date.DateTime.Day, 0, 0, 0);
 					parsed_date_time = new ParsedDateTime(parsed_date.IndexOfDate, parsed_date.LengthOfDate, -1, -1, date_time);
 				}
 				else
 				{
-					DateTime date_time = new DateTime(parsed_date.DateTime.Year, parsed_date.DateTime.Month, parsed_date.DateTime.Day, parsed_time.DateTime.Hour, parsed_time.DateTime.Minute, parsed_time.DateTime.Second);
+					DateTime date_time = new(parsed_date.DateTime.Year, parsed_date.DateTime.Month, parsed_date.DateTime.Day, parsed_time.DateTime.Hour, parsed_time.DateTime.Minute, parsed_time.DateTime.Second);
 					parsed_date_time = new ParsedDateTime(parsed_date.IndexOfDate, parsed_date.LengthOfDate, parsed_time.IndexOfTime, parsed_time.LengthOfTime, date_time, parsed_time.UtcOffset);
 				}
 			}
@@ -405,7 +405,7 @@ namespace Robin
 			else if (string.Compare(m.Groups["ampm"].Value, "AM", true) == 0 && hour == 12)
 				hour -= 12;
 
-			DateTime date_time = new DateTime(1, 1, 1, hour, minute, second);
+			DateTime date_time = new(1, 1, 1, hour, minute, second);
 
 			if (m.Groups["offset_hh"].Success)
 			{
@@ -413,7 +413,7 @@ namespace Robin
 				int offset_mm = 0;
 				if (m.Groups["offset_mm"].Success)
 					offset_mm = int.Parse(m.Groups["offset_mm"].Value);
-				TimeSpan utc_offset = new TimeSpan(offset_hh, offset_mm, 0);
+				TimeSpan utc_offset = new(offset_hh, offset_mm, 0);
 				if (m.Groups["offset_sign"].Value == "-")
 					utc_offset = -utc_offset;
 				parsed_time = new ParsedDateTime(-1, -1, m.Index, m.Length, date_time, utc_offset);

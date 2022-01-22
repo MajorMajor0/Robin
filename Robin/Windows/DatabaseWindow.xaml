@@ -440,7 +440,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 								</DataTemplate>
 
 								<DataTemplate x:Name="GDBTemplate"
-											  DataType="{x:Type local:Gdbplatform}">
+											  DataType="{x:Type local:GDBPlatform}">
 									<DataGrid Style="{StaticResource DataGridStyle1}"
 											  ItemsSource="{Binding Path=Releases, Mode=OneWay}"
 											  PreviewMouseWheel="DataGrID_MouseWheel"
@@ -484,7 +484,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 								</DataTemplate>
 
 								<DataTemplate x:Name="GBTemplate"
-											  DataType="{x:Type local:Gbplatform}">
+											  DataType="{x:Type local:GBPlatform}">
 									<DataGrid Style="{StaticResource DataGridStyle1}"
 											  ItemsSource="{Binding Path=(local:IDBPlatform.Releases), Mode=OneWay}"
 											  PreviewMouseWheel="DataGrID_MouseWheel"
@@ -511,7 +511,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 								</DataTemplate>
 
 								<DataTemplate x:Name="LBTemplate"
-											  DataType="{x:Type local:Lbplatform}">
+											  DataType="{x:Type local:LBPlatform}">
 									<DataGrid Style="{StaticResource DataGridStyle1}"
 											  ItemsSource="{Binding Path=(local:IDBPlatform.Releases), Mode=OneWay}"
 											  PreviewMouseWheel="DataGrID_MouseWheel"
@@ -538,7 +538,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 											<DataGridTextColumn Header="Wiki URL"
 																Binding="{Binding WikiUrl, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Images"
-																Binding="{Binding Lbimages.Count, TargetNullValue=-}" />
+																Binding="{Binding LBImages.Count, TargetNullValue=-}" />
 											<DataGridTextColumn Header="Overview"
 																Binding="{Binding Overview, TargetNullValue=-}" />
 										</DataGrid.Columns>
@@ -546,7 +546,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 								</DataTemplate>
 
 								<DataTemplate x:Name="OVGTemplate"
-											  DataType="{x:Type local:Ovgplatform}">
+											  DataType="{x:Type local:OVGPlatform}">
 									<DataGrid Style="{StaticResource DataGridStyle1}"
 											  ItemsSource="{Binding Path=(local:IDBPlatform.Releases), Mode=OneWay}"
 											  PreviewMouseWheel="DataGrID_MouseWheel"

@@ -44,7 +44,7 @@ namespace Robin
 			}
 		}
 
-		Platform platform => Release.Platform;
+		private Platform platform => Release.Platform;
 
 		public List<Release> UnmatchedReleases => platform.Releases.Where(x => !x.HasArt && x.IsGame).ToList();
 
@@ -89,15 +89,15 @@ namespace Robin
 
 		public IDbRelease SelectedIDBRelease { get; set; }
 
-		public IEnumerable<IDbRelease> IDBReleases => Gbreleases.Concat(Gdbreleases).Concat(Lbreleases);
+		public IEnumerable<IDbRelease> IDBReleases => GBReleases.Concat(Gdbreleases).Concat(LBReleases);
 
-		public IEnumerable<IDbRelease> Gbreleases
+		public IEnumerable<IDbRelease> GBReleases
 		{
 			get
 			{
-				if (platform.Gbplatform != null && !string.IsNullOrEmpty(searchTerm))
+				if (platform.GBPlatform != null && !string.IsNullOrEmpty(searchTerm))
 				{
-					return platform.Gbplatform.Gbreleases.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
+					return platform.GBPlatform.GBReleases.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
 				}
 				return Enumerable.Empty<IDbRelease>();
 			}
@@ -107,33 +107,33 @@ namespace Robin
 		{
 			get
 			{
-				if (platform.Gdbplatform != null && !string.IsNullOrEmpty(searchTerm))
+				if (platform.GDBPlatform != null && !string.IsNullOrEmpty(searchTerm))
 				{
-					return platform.Gdbplatform.Gdbreleases.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
+					return platform.GDBPlatform.Gdbreleases.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
 				}
 				return Enumerable.Empty<IDbRelease>();
 			}
 		}
 
-		public IEnumerable<IDbRelease> Lbreleases
+		public IEnumerable<IDbRelease> LBReleases
 		{
 			get
 			{
-				if (platform.Lbplatform != null && !string.IsNullOrEmpty(searchTerm))
+				if (platform.LBPlatform != null && !string.IsNullOrEmpty(searchTerm))
 				{
-					return platform.Lbplatform.Lbreleases.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
+					return platform.LBPlatform.LBReleases.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
 				}
 				return Enumerable.Empty<IDbRelease>();
 			}
 		}
 
-		//public IEnumerable<IDBRelease> Ovgreleases
+		//public IEnumerable<IDBRelease> OVGReleases
 		//{
 		//	get
 		//	{
-		//		if (platform.Ovgplatform != null && !string.IsNullOrEmpty(searchTerm))
+		//		if (platform.OVGPlatform != null && !string.IsNullOrEmpty(searchTerm))
 		//		{
-		//			return platform.Ovgplatform.Ovgreleases.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
+		//			return platform.OVGPlatform.OVGReleases.Where(x => x != null && Regex.IsMatch(x.Title, SearchTerm.Replace(@"*", @".*"), RegexOptions.IgnoreCase));
 		//		}
 		//		return Enumerable.Empty<IDBRelease>();
 		//	}
@@ -150,9 +150,9 @@ namespace Robin
 		public MatchWindowViewModel(Release release)
 		{
 			this.Release = release;
-			new Launchbox();
-			new GiantBomb();
-			new GamesDB();
+			_ = new Launchbox();
+			_ = new GiantBomb();
+			_ = new GamesDB();
 			MatchCommand = new Command(Match, MatchCanExecute, "Match", "Match the selected release to " + release.Title + ".");
 			ShowBoxCommand = new Command(ShowBox, "Show box art", "Show box front art for this selection.");
 			NextCommand = new Command(Next, NextCanExecute, @">", "Move to the next unmatched release in this platform.");
@@ -175,21 +175,21 @@ namespace Robin
 			switch (db)
 			{
 				case LocalDB.GamesDB:
-					Release.ID_GDB = SelectedIDBRelease?.Id;
+					Release.ID_GDB = SelectedIDBRelease?.ID;
 					break;
 				case LocalDB.GiantBomb:
-					Release.ID_GB = SelectedIDBRelease?.Id;
+					Release.ID_GB = SelectedIDBRelease?.ID;
 					break;
 				case LocalDB.OpenVGDB:
-					Release.ID_OVG = SelectedIDBRelease?.Id;
+					Release.ID_OVG = SelectedIDBRelease?.ID;
 					break;
 				case LocalDB.LaunchBox:
-					Release.ID_LB = SelectedIDBRelease?.Id;
+					Release.ID_LB = SelectedIDBRelease?.ID;
 					break;
 				default:
 					break;
 			}
-			Reporter.Report(Release.Title + " matched to " + db.Description() + " release " + SelectedIDBRelease?.Id + ", " + SelectedIDBRelease?.Title + ".");
+			Reporter.Report(Release.Title + " matched to " + db.Description() + " release " + SelectedIDBRelease?.ID + ", " + SelectedIDBRelease?.Title + ".");
 			OnPropertyChanged("IDBReleases");
 			OnPropertyChanged("UnmatchedReleases");
 		}

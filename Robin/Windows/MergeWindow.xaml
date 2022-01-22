@@ -54,12 +54,12 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 							 Text="{Binding SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 				</DockPanel>
 
-				<ListBox x:Name="LbplatformListbox"
+				<ListBox x:Name="LBPlatformListbox"
 						 BorderBrush="{StaticResource Normal_Brush}"
 						 Height="200"
 						 ScrollViewer.CanContentScroll="True"
-						 ItemsSource="{Binding LbplatformList}"
-						 SelectedItem="{Binding SelectedLbplatform}">
+						 ItemsSource="{Binding LBPlatformList}"
+						 SelectedItem="{Binding SelectedLBPlatform}">
 					<ListBox.ItemTemplate>
 						<DataTemplate>
 							<TextBlock Style="{StaticResource Normal}"

@@ -11,7 +11,7 @@ namespace Robin
 			Collections = new HashSet<Collection>();
 		}
 
-		public long Id { get; set; }
+		public long ID { get; set; }
 
 		private bool isGame;
 		public bool IsGame

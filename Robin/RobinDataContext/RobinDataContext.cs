@@ -16,23 +16,23 @@ namespace Robin
 		public virtual DbSet<Core> Cores { get; set; }
 		public virtual DbSet<Emulator> Emulators { get; set; }
 		public virtual DbSet<Game> Games { get; set; }
-		public virtual DbSet<Gbgame> Gbgames { get; set; }
-		public virtual DbSet<Gbplatform> Gbplatforms { get; set; }
-		public virtual DbSet<Gbrelease> Gbreleases { get; set; }
-		public virtual DbSet<Gdbplatform> Gdbplatforms { get; set; }
+		public virtual DbSet<GBGame> GBGames { get; set; }
+		public virtual DbSet<GBPlatform> GBPlatforms { get; set; }
+		public virtual DbSet<GBRelease> GBReleases { get; set; }
+		public virtual DbSet<GDBPlatform> GDBPlatforms { get; set; }
 		public virtual DbSet<Gdbrelease> Gdbreleases { get; set; }
 		public virtual DbSet<Language> Languages { get; set; }
-		public virtual DbSet<Lbgame> Lbgames { get; set; }
-		public virtual DbSet<Lbimage> Lbimages { get; set; }
-		public virtual DbSet<Lbplatform> Lbplatforms { get; set; }
-		public virtual DbSet<Lbrelease> Lbreleases { get; set; }
+		public virtual DbSet<LBGame> LBGames { get; set; }
+		public virtual DbSet<LBImage> LBImages { get; set; }
+		public virtual DbSet<LBPlatform> LBPlatforms { get; set; }
+		public virtual DbSet<LBRelease> LBReleases { get; set; }
 		public virtual DbSet<Match> Matches { get; set; }
-		public virtual DbSet<Mbgame> Mbgames { get; set; }
-		public virtual DbSet<Mbgenre> Mbgenres { get; set; }
-		public virtual DbSet<Mbplatform> Mbplatforms { get; set; }
+		public virtual DbSet<MBGame> MBGames { get; set; }
+		public virtual DbSet<MBGenre> MBGenres { get; set; }
+		public virtual DbSet<MBPlatform> MBPlatforms { get; set; }
 		public virtual DbSet<Mbrelease> Mbreleases { get; set; }
-		public virtual DbSet<Ovgplatform> Ovgplatforms { get; set; }
-		public virtual DbSet<Ovgrelease> Ovgreleases { get; set; }
+		public virtual DbSet<OVGPlatform> OVGPlatforms { get; set; }
+		public virtual DbSet<OVGRelease> OVGReleases { get; set; }
 		public virtual DbSet<Platform> Platforms { get; set; }
 		public virtual DbSet<Region> Regions { get; set; }
 		public virtual DbSet<Release> Releases { get; set; }
@@ -59,10 +59,10 @@ namespace Robin
 			{
 				entity.ToTable("Collection");
 
-				entity.HasIndex(e => e.Id, "IX_Collection_ID")
+				entity.HasIndex(e => e.ID, "IX_Collection_ID")
 					.IsUnique();
 
-				entity.Property(e => e.Id).HasColumnName("ID");
+				entity.Property(e => e.ID).HasColumnName("ID");
 
 				entity.Property(e => e.Title).IsRequired();
 
@@ -113,10 +113,10 @@ namespace Robin
 			{
 				entity.ToTable("Core");
 
-				entity.HasIndex(e => e.Id, "IX_Core_ID")
+				entity.HasIndex(e => e.ID, "IX_Core_ID")
 					.IsUnique();
 
-				entity.Property(e => e.Id)
+				entity.Property(e => e.ID)
 					.ValueGeneratedNever()
 					.HasColumnName("ID");
 
@@ -152,10 +152,10 @@ namespace Robin
 			{
 				entity.ToTable("Emulator");
 
-				entity.HasIndex(e => e.Id, "IX_Emulator_ID")
+				entity.HasIndex(e => e.ID, "IX_Emulator_ID")
 					.IsUnique();
 
-				entity.Property(e => e.Id)
+				entity.Property(e => e.ID)
 					.ValueGeneratedNever()
 					.HasColumnName("ID");
 
@@ -173,12 +173,12 @@ namespace Robin
 			{
 				entity.ToTable("Game");
 
-				entity.HasIndex(e => e.Id, "IX_Game_ID")
+				entity.HasIndex(e => e.ID, "IX_Game_ID")
 					.IsUnique();
 
-				entity.HasIndex(e => e.Id, "GID");
+				entity.HasIndex(e => e.ID, "GID");
 
-				entity.Property(e => e.Id).HasColumnName("ID");
+				entity.Property(e => e.ID).HasColumnName("ID");
 
 				entity.Property(e => e.IsAdult)
 					.IsRequired()
@@ -213,11 +213,11 @@ namespace Robin
 					.HasDefaultValueSql("0");
 			});
 
-			modelBuilder.Entity<Gbgame>(entity =>
+			modelBuilder.Entity<GBGame>(entity =>
 			{
 				entity.ToTable("GBGame");
 
-				entity.Property(e => e.Id)
+				entity.Property(e => e.ID)
 					.ValueGeneratedNever()
 					.HasColumnName("ID");
 
@@ -225,24 +225,24 @@ namespace Robin
 
 				entity.Property(e => e.Date).HasColumnType("DATETIME");
 
-				entity.Property(e => e.GbplatformId).HasColumnName("GBPlatform_ID");
+				entity.Property(e => e.GBPlatformId).HasColumnName("GBPlatform_ID");
 
 				entity.Property(e => e.ScreenUrl).HasColumnName("ScreenUrl");
 
-				entity.HasOne(d => d.Gbplatform)
-					.WithMany(p => p.Gbgames)
-					.HasForeignKey(d => d.GbplatformId)
+				entity.HasOne(d => d.GBPlatform)
+					.WithMany(p => p.GBGames)
+					.HasForeignKey(d => d.GBPlatformId)
 					.OnDelete(DeleteBehavior.Cascade);
 			});
 
-			modelBuilder.Entity<Gbplatform>(entity =>
+			modelBuilder.Entity<GBPlatform>(entity =>
 			{
 				entity.ToTable("GBPlatform");
 
-				entity.HasIndex(e => e.Id, "IX_GBPlatform_ID")
+				entity.HasIndex(e => e.ID, "IX_GBPlatform_ID")
 					.IsUnique();
 
-				entity.Property(e => e.Id)
+				entity.Property(e => e.ID)
 					.ValueGeneratedNever()
 					.HasColumnName("ID");
 
@@ -256,14 +256,14 @@ namespace Robin
 				entity.Property(e => e.Title).IsRequired();
 			});
 
-			modelBuilder.Entity<Gbrelease>(entity =>
+			modelBuilder.Entity<GBRelease>(entity =>
 			{
 				entity.ToTable("GBRelease");
 
-				entity.HasIndex(e => e.Id, "IX_GBRelease_ID")
+				entity.HasIndex(e => e.ID, "IX_GBRelease_ID")
 					.IsUnique();
 
-				entity.Property(e => e.Id)
+				entity.Property(e => e.ID)
 					.ValueGeneratedNever()
 					.HasColumnName("ID");
 
@@ -271,9 +271,9 @@ namespace Robin
 
 				entity.Property(e => e.Date).HasColumnType("DATETIME");
 
-				entity.Property(e => e.GbgameId).HasColumnName("GBGame_ID");
+				entity.Property(e => e.GBGameId).HasColumnName("GBGame_ID");
 
-				entity.Property(e => e.GbplatformId).HasColumnName("GBPlatform_ID");
+				entity.Property(e => e.GBPlatformId).HasColumnName("GBPlatform_ID");
 
 				entity.Property(e => e.RegionId)
 					.HasColumnName("Region_ID")
@@ -283,28 +283,28 @@ namespace Robin
 
 				entity.Property(e => e.Title).IsRequired();
 
-				entity.HasOne(d => d.Gbgame)
-					.WithMany(p => p.Gbreleases)
-					.HasForeignKey(d => d.GbgameId).HasAnnotation("Column", "GBGame_ID")
+				entity.HasOne(d => d.GBGame)
+					.WithMany(p => p.GBReleases)
+					.HasForeignKey(d => d.GBGameId).HasAnnotation("Column", "GBGame_ID")
 					.OnDelete(DeleteBehavior.SetNull);
 
-				entity.HasOne(d => d.Gbplatform)
-					.WithMany(p => p.Gbreleases)
-					.HasForeignKey(d => d.GbplatformId);
+				entity.HasOne(d => d.GBPlatform)
+					.WithMany(p => p.GBReleases)
+					.HasForeignKey(d => d.GBPlatformId);
 
 				entity.HasOne(d => d.Region)
-					.WithMany(p => p.Gbreleases)
+					.WithMany(p => p.GBReleases)
 					.HasForeignKey(d => d.RegionId);
 			});
 
-			modelBuilder.Entity<Gdbplatform>(entity =>
+			modelBuilder.Entity<GDBPlatform>(entity =>
 			{
 				entity.ToTable("GDBPlatform");
 
-				entity.HasIndex(e => e.Id, "IX_GDBPlatform_ID")
+				entity.HasIndex(e => e.ID, "IX_GDBPlatform_ID")
 					.IsUnique();
 
-				entity.Property(e => e.Id)
+				entity.Property(e => e.ID)
 					.ValueGeneratedNever()
 					.HasColumnName("ID");
 
@@ -334,10 +334,10 @@ namespace Robin
 			{
 				entity.ToTable("GDBRelease");
 
-				entity.HasIndex(e => e.Id, "IX_GDBRelease_ID")
+				entity.HasIndex(e => e.ID, "IX_GDBRelease_ID")
 					.IsUnique();
 
-				entity.Property(e => e.Id)
+				entity.Property(e => e.ID)
 					.ValueGeneratedNever()
 					.HasColumnName("ID");
 
@@ -351,7 +351,7 @@ namespace Robin
 
 				entity.Property(e => e.Date).HasColumnType("DATETIME");
 
-				entity.Property(e => e.GdbplatformId).HasColumnName("GDBPlatform_ID");
+				entity.Property(e => e.GDBPlatformId).HasColumnName("GDBPlatform_ID");
 
 				entity.Property(e => e.LogoUrl).HasColumnName("LogoUrl");
 
@@ -359,9 +359,9 @@ namespace Robin
 
 				entity.Property(e => e.ScreenUrl).HasColumnName("ScreenUrl");
 
-				entity.HasOne(d => d.Gdbplatform)
+				entity.HasOne(d => d.GDBPlatform)
 					.WithMany(p => p.Gdbreleases)
-					.HasForeignKey(d => d.GdbplatformId);
+					.HasForeignKey(d => d.GDBPlatformId);
 			});
 
 			modelBuilder.Entity<Language>(entity =>
@@ -374,7 +374,7 @@ namespace Robin
 				entity.HasIndex(e => e.Title, "IX_Language_Title")
 					.IsUnique();
 
-				entity.Property(e => e.Id)
+				entity.Property(e => e.ID)
 					.HasColumnType("integer")
 					.HasColumnName("ID");
 
@@ -387,20 +387,20 @@ namespace Robin
 					.HasColumnType("text");
 			});
 
-			modelBuilder.Entity<Lbgame>(entity =>
+			modelBuilder.Entity<LBGame>(entity =>
 			{
 				entity.ToTable("LBGame");
 
-				entity.HasIndex(e => e.Id, "IX_LBGame_ID")
+				entity.HasIndex(e => e.ID, "IX_LBGame_ID")
 					.IsUnique();
 
-				entity.Property(e => e.Id)
+				entity.Property(e => e.ID)
 					.ValueGeneratedNever()
 					.HasColumnName("ID");
 
 				entity.Property(e => e.Date).HasColumnType("DATETIME");
 
-				entity.Property(e => e.LbplatformId).HasColumnName("LBPlatform_ID");
+				entity.Property(e => e.LBPlatformId).HasColumnName("LBPlatform_ID");
 
 				entity.Property(e => e.Title).IsRequired();
 
@@ -408,22 +408,22 @@ namespace Robin
 
 				entity.Property(e => e.WikiUrl).HasColumnName("WikiUrl");
 
-				entity.HasOne(d => d.Lbplatform)
-					.WithMany(p => p.Lbgames)
-					.HasForeignKey(d => d.LbplatformId);
+				entity.HasOne(d => d.LBPlatform)
+					.WithMany(p => p.LBGames)
+					.HasForeignKey(d => d.LBPlatformId);
 			});
 
-			modelBuilder.Entity<Lbimage>(entity =>
+			modelBuilder.Entity<LBImage>(entity =>
 			{
 				entity.ToTable("LBImages");
 
 				entity.HasIndex(e => e.FileName, "IX_LBImages_FileName")
 					.IsUnique();
 
-				entity.HasIndex(e => e.Id, "IX_LBImages_ID")
+				entity.HasIndex(e => e.ID, "IX_LBImages_ID")
 					.IsUnique();
 
-				entity.Property(e => e.Id).HasColumnName("ID");
+				entity.Property(e => e.ID).HasColumnName("ID");
 
 				entity.Property(e => e.FileName)
 					.IsRequired()
@@ -431,26 +431,26 @@ namespace Robin
 
 				entity.Property(e => e.Lbregion).HasColumnName("LBRegion");
 
-				entity.Property(e => e.LbreleaseId).HasColumnName("LBRelease_ID");
+				entity.Property(e => e.LBReleaseId).HasColumnName("LBRelease_ID");
 
 				entity.Property(e => e.RegionId).HasColumnName("Region_ID");
 
 				entity.Property(e => e.Type).IsRequired();
 
-				entity.HasOne(d => d.Lbrelease)
-					.WithMany(p => p.Lbimages)
-					.HasForeignKey(d => d.LbreleaseId)
+				entity.HasOne(d => d.LBRelease)
+					.WithMany(p => p.LBImages)
+					.HasForeignKey(d => d.LBReleaseId)
 					.OnDelete(DeleteBehavior.Cascade);
 			});
 
-			modelBuilder.Entity<Lbplatform>(entity =>
+			modelBuilder.Entity<LBPlatform>(entity =>
 			{
 				entity.ToTable("LBPlatform");
 
-				entity.HasIndex(e => e.Id, "IX_LBPlatform_ID")
+				entity.HasIndex(e => e.ID, "IX_LBPlatform_ID")
 					.IsUnique();
 
-				entity.Property(e => e.Id).HasColumnName("ID");
+				entity.Property(e => e.ID).HasColumnName("ID");
 
 				entity.Property(e => e.CacheDate)
 					.IsRequired()
@@ -462,25 +462,25 @@ namespace Robin
 				entity.Property(e => e.Title).IsRequired();
 			});
 
-			modelBuilder.Entity<Lbrelease>(entity =>
+			modelBuilder.Entity<LBRelease>(entity =>
 			{
 				entity.ToTable("LBRelease");
 
-				entity.HasIndex(e => e.Id, "IX_LBRelease_ID")
+				entity.HasIndex(e => e.ID, "IX_LBRelease_ID")
 					.IsUnique();
 
-				entity.Property(e => e.Id).HasColumnName("ID");
+				entity.Property(e => e.ID).HasColumnName("ID");
 
-				entity.Property(e => e.LbgameId).HasColumnName("LBGame_ID");
+				entity.Property(e => e.LBGameId).HasColumnName("LBGame_ID");
 
 				entity.Property(e => e.RegionId).HasColumnName("Region_ID");
 
-				entity.HasOne(d => d.Lbgame)
-					.WithMany(p => p.Lbreleases)
-					.HasForeignKey(d => d.LbgameId);
+				entity.HasOne(d => d.LBGame)
+					.WithMany(p => p.LBReleases)
+					.HasForeignKey(d => d.LBGameId);
 
 				entity.HasOne(d => d.Region)
-					.WithMany(p => p.Lbreleases)
+					.WithMany(p => p.LBReleases)
 					.HasForeignKey(d => d.RegionId)
 					.OnDelete(DeleteBehavior.ClientSetNull);
 			});
@@ -489,10 +489,10 @@ namespace Robin
 			{
 				entity.ToTable("Match");
 
-				entity.HasIndex(e => e.Id, "IX_Match_ID")
+				entity.HasIndex(e => e.ID, "IX_Match_ID")
 					.IsUnique();
 
-				entity.Property(e => e.Id)
+				entity.Property(e => e.ID)
 					.ValueGeneratedNever()
 					.HasColumnName("ID");
 
@@ -513,49 +513,49 @@ namespace Robin
 					.HasColumnName("Sha1");
 			});
 
-			modelBuilder.Entity<Mbgame>(entity =>
+			modelBuilder.Entity<MBGame>(entity =>
 			{
 				entity.ToTable("MBGame");
 
-				entity.Property(e => e.Id)
+				entity.Property(e => e.ID)
 					.ValueGeneratedNever()
 					.HasColumnName("ID");
 
 				entity.Property(e => e.Date).HasColumnType("DATETIME");
 
-				entity.Property(e => e.MbplatformId).HasColumnName("MBPlatform_ID");
+				entity.Property(e => e.MBPlatformId).HasColumnName("MBPlatform_ID");
 
-				entity.HasOne(d => d.Mbplatform)
-					.WithMany(p => p.Mbgames)
-					.HasForeignKey(d => d.MbplatformId).HasAnnotation("Column", "MBPlatform_ID")
+				entity.HasOne(d => d.MBPlatform)
+					.WithMany(p => p.MBGames)
+					.HasForeignKey(d => d.MBPlatformId).HasAnnotation("Column", "MBPlatform_ID")
 					.OnDelete(DeleteBehavior.Cascade);
 
-				entity.HasMany(d => d.Mbgenres)
-				   .WithMany(p => p.Mbgames)
+				entity.HasMany(d => d.MBGenres)
+				   .WithMany(p => p.MBGames)
 				   .UsingEntity<Dictionary<string, object>>(
-					   "MbgenreMbgame",
-					   l => l.HasOne<Mbgenre>().WithMany().HasForeignKey("MbgenreId").HasAnnotation("Column", "MBGenre_ID"),
-					   r => r.HasOne<Mbgame>().WithMany().HasForeignKey("MbgameId").HasAnnotation("Column", "MBGame_ID"),
+					   "MBGenreMBGame",
+					   l => l.HasOne<MBGenre>().WithMany().HasForeignKey("MBGenreId").HasAnnotation("Column", "MBGenre_ID"),
+					   r => r.HasOne<MBGame>().WithMany().HasForeignKey("MBGameId").HasAnnotation("Column", "MBGame_ID"),
 					   j =>
 					   {
-						   j.HasKey("MbgameId", "MbgenreId");
+						   j.HasKey("MBGameId", "MBGenreId");
 
 						   j.ToTable("MBGenre_MBGame");
 
-						   j.IndexerProperty<long>("MbgameId").HasColumnName("MBGame_ID");
+						   j.IndexerProperty<long>("MBGameId").HasColumnName("MBGame_ID");
 
-						   j.IndexerProperty<long>("MbgenreId").HasColumnName("MBGenre_ID");
+						   j.IndexerProperty<long>("MBGenreId").HasColumnName("MBGenre_ID");
 					   });
 			});
 
-			modelBuilder.Entity<Mbgenre>(entity =>
+			modelBuilder.Entity<MBGenre>(entity =>
 			{
 				entity.ToTable("MBGenre");
 
-				entity.HasIndex(e => e.Id, "IX_MBGenre_ID")
+				entity.HasIndex(e => e.ID, "IX_MBGenre_ID")
 					.IsUnique();
 
-				entity.Property(e => e.Id)
+				entity.Property(e => e.ID)
 					.ValueGeneratedNever()
 					.HasColumnName("ID");
 
@@ -568,14 +568,14 @@ namespace Robin
 				entity.Property(e => e.Name).IsRequired();
 			});
 
-			modelBuilder.Entity<Mbplatform>(entity =>
+			modelBuilder.Entity<MBPlatform>(entity =>
 			{
 				entity.ToTable("MBPlatform");
 
-				entity.HasIndex(e => e.Id, "IX_MBPlatform_ID")
+				entity.HasIndex(e => e.ID, "IX_MBPlatform_ID")
 					.IsUnique();
 
-				entity.Property(e => e.Id)
+				entity.Property(e => e.ID)
 					.ValueGeneratedNever()
 					.HasColumnName("ID");
 
@@ -593,10 +593,10 @@ namespace Robin
 			{
 				entity.ToTable("MBRelease");
 
-				entity.HasIndex(e => e.Id, "IX_MBRelease_ID")
+				entity.HasIndex(e => e.ID, "IX_MBRelease_ID")
 					.IsUnique();
 
-				entity.Property(e => e.Id)
+				entity.Property(e => e.ID)
 					.ValueGeneratedNever()
 					.HasColumnName("ID");
 
@@ -604,9 +604,9 @@ namespace Robin
 
 				entity.Property(e => e.Date).HasColumnType("DATETIME");
 
-				entity.Property(e => e.MbgameId).HasColumnName("MBGame_ID");
+				entity.Property(e => e.MBGameId).HasColumnName("MBGame_ID");
 
-				entity.Property(e => e.MbplatformId).HasColumnName("MBPlatform_ID");
+				entity.Property(e => e.MBPlatformId).HasColumnName("MBPlatform_ID");
 
 				entity.Property(e => e.RegionId)
 					.HasColumnName("Region_ID")
@@ -616,45 +616,45 @@ namespace Robin
 
 				entity.Property(e => e.Title).IsRequired();
 
-				entity.HasOne(d => d.Mbgame)
+				entity.HasOne(d => d.MBGame)
 					.WithMany(p => p.Mbreleases)
-					.HasForeignKey(d => d.MbgameId).HasAnnotation("Column", "MBGame_ID")
+					.HasForeignKey(d => d.MBGameId).HasAnnotation("Column", "MBGame_ID")
 					.OnDelete(DeleteBehavior.SetNull);
 
-				entity.HasOne(d => d.Mbplatform)
+				entity.HasOne(d => d.MBPlatform)
 					.WithMany(p => p.Mbreleases)
-					.HasForeignKey(d => d.MbplatformId).HasAnnotation("Column", "MBPlatform_ID");
+					.HasForeignKey(d => d.MBPlatformId).HasAnnotation("Column", "MBPlatform_ID");
 
 				entity.HasOne(d => d.Region)
 					.WithMany(p => p.Mbreleases)
 					.HasForeignKey(d => d.RegionId);
 			});
 
-			modelBuilder.Entity<Ovgplatform>(entity =>
+			modelBuilder.Entity<OVGPlatform>(entity =>
 			{
 				entity.ToTable("OVGPlatform");
 
-				entity.HasIndex(e => e.Id, "IX_OVGPlatform_ID")
+				entity.HasIndex(e => e.ID, "IX_OVGPlatform_ID")
 					.IsUnique();
 
 				entity.HasIndex(e => e.Title, "IX_OVGPlatform_Title")
 					.IsUnique();
 
-				entity.Property(e => e.Id)
+				entity.Property(e => e.ID)
 					.ValueGeneratedNever()
 					.HasColumnName("ID");
 
 				entity.Property(e => e.Title).IsRequired();
 			});
 
-			modelBuilder.Entity<Ovgrelease>(entity =>
+			modelBuilder.Entity<OVGRelease>(entity =>
 			{
 				entity.ToTable("OVGRelease");
 
-				entity.HasIndex(e => e.Id, "IX_OVGRelease_ID")
+				entity.HasIndex(e => e.ID, "IX_OVGRelease_ID")
 					.IsUnique();
 
-				entity.Property(e => e.Id).HasColumnName("ID");
+				entity.Property(e => e.ID).HasColumnName("ID");
 
 				entity.Property(e => e.BoxBackUrl).HasColumnName("BoxBackUrl");
 
@@ -666,7 +666,7 @@ namespace Robin
 
 				entity.Property(e => e.Md5).HasColumnName("Md5");
 
-				entity.Property(e => e.OvgplatformId).HasColumnName("OVGPlatform_ID");
+				entity.Property(e => e.OVGPlatformId).HasColumnName("OVGPlatform_ID");
 
 				entity.Property(e => e.ReferenceImageUrl).HasColumnName("ReferenceImageURL");
 
@@ -678,12 +678,12 @@ namespace Robin
 
 				entity.Property(e => e.Sha1).HasColumnName("Sha1");
 
-				entity.HasOne(d => d.Ovgplatform)
-					.WithMany(p => p.Ovgreleases)
-					.HasForeignKey(d => d.OvgplatformId);
+				entity.HasOne(d => d.OVGPlatform)
+					.WithMany(p => p.OVGReleases)
+					.HasForeignKey(d => d.OVGPlatformId);
 
 				entity.HasOne(d => d.Region)
-					.WithMany(p => p.Ovgreleases)
+					.WithMany(p => p.OVGReleases)
 					.HasForeignKey(d => d.RegionId);
 			});
 
@@ -700,7 +700,7 @@ namespace Robin
 				entity.HasIndex(e => e.HiganRomFolder, "IX_Platform_HiganRomFolder")
 					.IsUnique();
 
-				entity.HasIndex(e => e.Id, "IX_Platform_ID")
+				entity.HasIndex(e => e.ID, "IX_Platform_ID")
 					.IsUnique();
 
 				entity.HasIndex(e => e.ID_GB, "IX_PlatformID_GB")
@@ -718,9 +718,9 @@ namespace Robin
 				entity.HasIndex(e => e.Title, "IX_Platform_Title")
 					.IsUnique();
 
-				entity.HasIndex(e => e.Id, "PID");
+				entity.HasIndex(e => e.ID, "PID");
 
-				entity.Property(e => e.Id).HasColumnName("ID");
+				entity.Property(e => e.ID).HasColumnName("ID");
 
 				entity.Property(e => e.CacheDate)
 					.IsRequired()
@@ -762,22 +762,22 @@ namespace Robin
 					.HasColumnType("NUMERIC")
 					.HasDefaultValueSql("0");
 
-				entity.HasOne(d => d.Gbplatform)
+				entity.HasOne(d => d.GBPlatform)
 					.WithOne(p => p.Platform)
 					.HasForeignKey<Platform>(d => d.ID_GB)
 					.OnDelete(DeleteBehavior.SetNull);
 
-				entity.HasOne(d => d.Gdbplatform)
+				entity.HasOne(d => d.GDBPlatform)
 					.WithOne(p => p.Platform)
 					.HasForeignKey<Platform>(d => d.ID_GDB)
 					.OnDelete(DeleteBehavior.SetNull);
 
-				entity.HasOne(d => d.Mbplatform)
+				entity.HasOne(d => d.MBPlatform)
 					.WithOne(p => p.Platform)
 					.HasForeignKey<Platform>(d => d.ID_MB)
 					.OnDelete(DeleteBehavior.SetNull);
 
-				entity.HasOne(d => d.Lbplatform)
+				entity.HasOne(d => d.LBPlatform)
 					.WithOne(p => p.Platform)
 					.HasForeignKey<Platform>(d => d.ID_LB)
 					.OnDelete(DeleteBehavior.SetNull);
@@ -819,7 +819,7 @@ namespace Robin
 				entity.HasIndex(e => e.Uncode, "IX_Region_UNCode")
 					.IsUnique();
 
-				entity.Property(e => e.Id)
+				entity.Property(e => e.ID)
 					.HasColumnType("integer")
 					.HasColumnName("ID");
 
@@ -842,12 +842,12 @@ namespace Robin
 			{
 				entity.ToTable("Release");
 
-				entity.HasIndex(e => e.Id, "IX_Release_ID")
+				entity.HasIndex(e => e.ID, "IX_Release_ID")
 					.IsUnique();
 
-				entity.HasIndex(e => e.Id, "RID");
+				entity.HasIndex(e => e.ID, "RID");
 
-				entity.Property(e => e.Id).HasColumnName("ID");
+				entity.Property(e => e.ID).HasColumnName("ID");
 
 				entity.Property(e => e.Date).HasColumnType("DATETIME");
 
@@ -883,7 +883,7 @@ namespace Robin
 					.HasForeignKey(d => d.GameId)
 					.OnDelete(DeleteBehavior.Cascade);
 
-				entity.HasOne(d => d.Gbrelease)
+				entity.HasOne(d => d.GBRelease)
 					.WithMany(p => p.Releases)
 					.HasForeignKey(d => d.ID_GB)
 					.OnDelete(DeleteBehavior.SetNull);
@@ -898,17 +898,17 @@ namespace Robin
 					.HasForeignKey(d => d.ID_GDB)
 					.OnDelete(DeleteBehavior.SetNull);
 
-				entity.HasOne(d => d.Lbrelease)
+				entity.HasOne(d => d.LBRelease)
 					.WithMany(p => p.Releases)
 					.HasForeignKey(d => d.ID_LB)
 					.OnDelete(DeleteBehavior.SetNull);
 
-				entity.HasOne(d => d.Lbgame)
+				entity.HasOne(d => d.LBGame)
 					.WithMany(p => p.Releases)
 					.HasForeignKey(d => d.ID_LBG)
 					.OnDelete(DeleteBehavior.SetNull);
 
-				entity.HasOne(d => d.Ovgrelease)
+				entity.HasOne(d => d.OVGRelease)
 					.WithMany(p => p.Releases)
 					.HasForeignKey(d => d.ID_OVG)
 					.OnDelete(DeleteBehavior.SetNull);
@@ -938,7 +938,7 @@ namespace Robin
 				entity.HasIndex(e => e.FileName, "IX_Rom_FileName")
 					.IsUnique();
 
-				entity.HasIndex(e => e.Id, "IX_RomId")
+				entity.HasIndex(e => e.ID, "IX_RomId")
 					.IsUnique();
 
 				entity.HasIndex(e => e.Md5, "IX_Rom_Md5")
@@ -947,7 +947,7 @@ namespace Robin
 				entity.HasIndex(e => e.Sha1, "IX_Rom_Sha1")
 					.IsUnique();
 
-				entity.Property(e => e.Id).HasColumnName("ID");
+				entity.Property(e => e.ID).HasColumnName("ID");
 
 				entity.Property(e => e.Crc32).HasColumnName("Crc32");
 
@@ -962,10 +962,10 @@ namespace Robin
 			{
 				entity.ToTable("URL");
 
-				entity.HasIndex(e => e.Id, "IX_URL_ID")
+				entity.HasIndex(e => e.ID, "IX_URL_ID")
 					.IsUnique();
 
-				entity.Property(e => e.Id)
+				entity.Property(e => e.ID)
 					.ValueGeneratedNever()
 					.HasColumnName("ID");
 			});

@@ -29,7 +29,7 @@ namespace Robin
 		{
 			if (SelectedPlatforms != null && SelectedPlatforms.Count > 0)
 			{
-				List<IDbPlatform> list = new List<IDbPlatform>();
+				List<IDbPlatform> list = new();
 				foreach (IDbPlatform platform in SelectedPlatforms)
 				{
 					list.Add(platform);
@@ -49,7 +49,7 @@ namespace Robin
 				{
 					foreach (IDbPlatform idbPlatform in list)
 					{
-						Compares comparator = new Compares(SelectedIDB.DB, idbPlatform);
+						Compares comparator = new(SelectedIDB.DB, idbPlatform);
 						comparator.Title += "-" + ComparisonResults.Count;
 
 						Reporter.Report("Comparing " + idbPlatform.Releases.Count + " Robin " + idbPlatform.Title + " games to " + Enum.GetName(typeof(LocalDB), SelectedIDB.DB) + ".");
@@ -68,7 +68,7 @@ namespace Robin
 
 		bool CompareCanExecute()
 		{
-			return SelectedIDB != null && !(SelectedIDB is Datomatic) && SelectedPlatform != null;
+			return SelectedIDB != null && (SelectedIDB is not Datomatic) && SelectedPlatform != null;
 		}
 
 		void CompareToOVGDB(IDbPlatform idbPlatform)
@@ -80,15 +80,15 @@ namespace Robin
 				return;
 			}
 
-			Platform RPlatform = R.Data.Platforms.FirstOrDefault(x => x.Id == idbPlatform.Id);
+			Platform RPlatform = R.Data.Platforms.FirstOrDefault(x => x.ID == idbPlatform.ID);
 
-			Ovgrelease Ovgrelease;
+			OVGRelease OVGRelease;
 			foreach (Release release in RPlatform.Releases)
 			{
-				Ovgrelease = R.Data.Ovgreleases.FirstOrDefault(x => x.Sha1 == release.Rom.Sha1 && x.RegionId == release.RegionId && (x.BoxFrontUrl != null || x.BoxBackUrl != null));
-				if (Ovgrelease != null)
+				OVGRelease = R.Data.OVGReleases.FirstOrDefault(x => x.Sha1 == release.Rom.Sha1 && x.RegionId == release.RegionId && (x.BoxFrontUrl != null || x.BoxBackUrl != null));
+				if (OVGRelease != null)
 				{
-					release.ID_OVG = Ovgrelease.Id;
+					release.ID_OVG = OVGRelease.ID;
 				}
 			}
 		}
@@ -116,7 +116,7 @@ namespace Robin
 							i_db = Comparator.List[i_comp].DBIndex;
 
 							// Assign the rom in the current compare to the game in the current compare
-							Comparator.RReleases[i_r].ID_GDB = Comparator.DBreleases[i_db].Id;
+							Comparator.RReleases[i_r].ID_GDB = Comparator.DBreleases[i_db].ID;
 							Comparator.List.RemoveAt(i_comp);
 						}
 						break;
@@ -127,7 +127,7 @@ namespace Robin
 							i_db = Comparator.List[i_comp].DBIndex;
 
 							// Assign the rom in the current compare to the game in the current compare
-							Comparator.RReleases[i_r].ID_GB = Comparator.DBreleases[i_db].Id;
+							Comparator.RReleases[i_r].ID_GB = Comparator.DBreleases[i_db].ID;
 							Comparator.List.RemoveAt(i_comp);
 						}
 						break;
@@ -138,7 +138,7 @@ namespace Robin
 							i_db = Comparator.List[i_comp].DBIndex;
 
 							// Assign the rom in the current compare to the game in the current compare
-							Comparator.RReleases[i_r].ID_LB = Comparator.DBreleases[i_db].Id;
+							Comparator.RReleases[i_r].ID_LB = Comparator.DBreleases[i_db].ID;
 							Comparator.List.RemoveAt(i_comp);
 						}
 						break;
@@ -156,7 +156,7 @@ namespace Robin
 
 		void ArtWindow()
 		{
-			ArtWindow artWindow = new ArtWindow(SelectedRelease as Release);
+			_ = new ArtWindow(SelectedRelease as Release);
 		}
 
 		bool ArtWindowCanExecute()
@@ -169,7 +169,7 @@ namespace Robin
 
 		void MatchWindow()
 		{
-			MatchWindow matchWindow = new MatchWindow(SelectedRelease as Release);
+			_= new MatchWindow(SelectedRelease as Release);
 		}
 
 		bool MatchWindowCanExecute()
@@ -183,7 +183,7 @@ namespace Robin
 		async void CacheReleases()
 		{
 			// Cache platforms to cache in case selection changes during operation
-			List<IDbPlatform> IDBPlatforms = new List<IDbPlatform>();
+			List<IDbPlatform> IDBPlatforms = new();
 
 			foreach (IDbPlatform idbPlatform in SelectedPlatforms)
 			{

@@ -4,14 +4,14 @@ using System.ComponentModel;
 
 namespace Robin
 {
-	public partial class Gdbplatform : INotifyPropertyChanged
+	public partial class GDBPlatform : INotifyPropertyChanged
 	{
-		public Gdbplatform()
+		public GDBPlatform()
 		{
 			Gdbreleases = new HashSet<Gdbrelease>();
 		}
 
-		public long Id { get; set; }
+		public long ID { get; set; }
 		public string Title { get; set; }
 
 		public string Developer { get; set; }

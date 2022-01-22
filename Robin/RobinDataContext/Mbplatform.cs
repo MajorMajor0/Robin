@@ -3,15 +3,15 @@ using System.Collections.Generic;
 
 namespace Robin
 {
-    public partial class Mbplatform
+    public partial class MBPlatform
     {
-        public Mbplatform()
+        public MBPlatform()
         {
-            Mbgames = new HashSet<Mbgame>();
+            MBGames = new HashSet<MBGame>();
             Mbreleases = new HashSet<Mbrelease>();
         }
 
-        public long Id { get; set; }
+        public long ID { get; set; }
         public string Title { get; set; }
         //public string Abbreviation { get; set; }
         //public long? Company { get; set; }
@@ -23,7 +23,7 @@ namespace Robin
         public virtual Platform Platform { get; set; }
 
 
-        public virtual ICollection<Mbgame> Mbgames { get; set; }
+        public virtual ICollection<MBGame> MBGames { get; set; }
         public virtual ICollection<Mbrelease> Mbreleases { get; set; }
     }
 }

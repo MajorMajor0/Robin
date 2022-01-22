@@ -41,7 +41,7 @@ namespace Robin
 
 		void About()
 		{
-			AboutBox aboutBox = new AboutBox();
+			AboutBox aboutBox = new();
 			aboutBox.Show();
 		}
 
@@ -80,7 +80,7 @@ namespace Robin
 
 		void ReporterWindow()
 		{
-			new ReporterWindow();
+			_ = new ReporterWindow();
 		}
 
 
@@ -88,14 +88,14 @@ namespace Robin
 
 		void DatabaseWindow()
 		{
-			new DatabaseWindow();
+			_ = new DatabaseWindow();
 		}
 
 		public Command ArtWindowCommand { get; set; }
 
 		void ArtWindow()
 		{
-			new ArtWindow(SelectedDB as Release);
+			_ = new ArtWindow(SelectedDB as Release);
 		}
 
 		bool ArtWindowCanExecute()
@@ -107,7 +107,7 @@ namespace Robin
 
 		void StatisticsWindow()
 		{
-			new StatisticsWindow();
+			_ = new StatisticsWindow();
 		}
 
 
@@ -116,7 +116,7 @@ namespace Robin
 		void OptionsWindow()
 		{
 			SaveSettings();
-			OptionsWindow optionsWindow = new OptionsWindow();
+			OptionsWindow optionsWindow = new();
 			optionsWindow.Closed += new EventHandler(OptionsWindowClosed);
 		}
 
@@ -181,7 +181,7 @@ namespace Robin
 
 		bool MarkPreferredCanExecute()
 		{
-			return SelectedDB != null && !(SelectedDB is Emulator) && !(SelectedDB is Game) && !SelectedDB.Preferred;
+			return SelectedDB != null && (SelectedDB is not Emulator) && (SelectedDB is not Game) && !SelectedDB.Preferred;
 		}
 
 		void MarkNotPreferred()
@@ -191,7 +191,7 @@ namespace Robin
 
 		bool MarkNotPreferredCanExecute()
 		{
-			return SelectedDB != null && !(SelectedDB is Emulator) && SelectedDB.Preferred;
+			return SelectedDB != null && (SelectedDB is not Emulator) && SelectedDB.Preferred;
 		}
 
 
@@ -218,7 +218,7 @@ namespace Robin
 		bool MarkSelectedPlatformEmulatorPreferredCanExecute()
 		{
 			return SelectedDB is Platform && SelectedPlatformEmulator != null &&
-				   (SelectedDB as Platform).PreferredEmulatorId != SelectedPlatformEmulator.Id;
+				   (SelectedDB as Platform).PreferredEmulatorId != SelectedPlatformEmulator.ID;
 		}
 
 
@@ -232,7 +232,7 @@ namespace Robin
 		bool MarkSelectedEmulatorPlatformPreferredCanExecute()
 		{
 			return SelectedDB is Emulator && SelectedEmulatorPlatform != null &&
-				   (SelectedDB as Emulator).Id != SelectedEmulatorPlatform.PreferredEmulatorId;
+				   (SelectedDB as Emulator).ID != SelectedEmulatorPlatform.PreferredEmulatorId;
 		}
 
 
@@ -481,24 +481,24 @@ namespace Robin
 			try
 			{
 				// Cache the art count prior to scraping to find out how many we get
-				int boxFrontCount = Directory.GetFiles(FileLocation.Art.BoxFront).Count();
-				int boxBackCount = Directory.GetFiles(FileLocation.Art.BoxBack).Count();
-				int bannerCount = Directory.GetFiles(FileLocation.Art.Banner).Count();
-				int screenCount = Directory.GetFiles(FileLocation.Art.Screen).Count();
-				int logoCount = Directory.GetFiles(FileLocation.Art.Logo).Count();
+				int boxFrontCount = Directory.GetFiles(FileLocation.Art.BoxFront).Length;
+				int boxBackCount = Directory.GetFiles(FileLocation.Art.BoxBack).Length;
+				int bannerCount = Directory.GetFiles(FileLocation.Art.Banner).Length;
+				int screenCount = Directory.GetFiles(FileLocation.Art.Screen).Length;
+				int logoCount = Directory.GetFiles(FileLocation.Art.Logo).Length;
 
 				await Task.Run(() =>
 				{
 					Reporter.Report("Opening databases...");
 
 					R.Data.Gdbreleases.Load();
-					R.Data.Gbreleases.Load();
-					R.Data.Ovgreleases.Load();
-					R.Data.Lbreleases.Include(x => x.Lbimages).Load();
+					R.Data.GBReleases.Load();
+					R.Data.OVGReleases.Load();
+					R.Data.LBReleases.Include(x => x.LBImages).Load();
 
 					Reporter.Report("Scraping art files...");
 
-					List<IDbObject> list = new List<IDbObject>();
+					List<IDbObject> list = new();
 
 					// Cache selected items in case the user changes them during scrape
 					// If items are selected, cache them
@@ -544,11 +544,11 @@ namespace Robin
 					}
 				});
 
-				boxFrontCount = Directory.GetFiles(FileLocation.Art.BoxFront).Count() - boxFrontCount;
-				boxBackCount = Directory.GetFiles(FileLocation.Art.BoxBack).Count() - boxBackCount;
-				bannerCount = Directory.GetFiles(FileLocation.Art.Banner).Count() - bannerCount;
-				screenCount = Directory.GetFiles(FileLocation.Art.Screen).Count() - screenCount;
-				logoCount = Directory.GetFiles(FileLocation.Art.Logo).Count() - logoCount;
+				boxFrontCount = Directory.GetFiles(FileLocation.Art.BoxFront).Length - boxFrontCount;
+				boxBackCount = Directory.GetFiles(FileLocation.Art.BoxBack).Length - boxBackCount;
+				bannerCount = Directory.GetFiles(FileLocation.Art.Banner).Length - bannerCount;
+				screenCount = Directory.GetFiles(FileLocation.Art.Screen).Length - screenCount;
+				logoCount = Directory.GetFiles(FileLocation.Art.Logo).Length - logoCount;
 
 				Reporter.Report($"Added {boxFrontCount} box front art images.");
 				Reporter.Report($"Added {boxBackCount} box back art images.");
@@ -570,17 +570,17 @@ namespace Robin
 			try
 			{
 				// Cache the number of art files so we can see how many we got
-				int platformArtCount = Directory.GetFiles(FileLocation.Art.Console).Count();
+				int platformArtCount = Directory.GetFiles(FileLocation.Art.Console).Length;
 
 				await Task.Run(() =>
 				{
 					Reporter.Report("Opening databases...");
 
-					R.Data.Gdbplatforms.Load();
+					R.Data.GDBPlatforms.Load();
 
 					Reporter.Report("Scraping art files...");
 
-					List<IDbObject> list = new List<IDbObject>();
+					List<IDbObject> list = new();
 
 					// Cache selected items in case the user changes them during scrape
 					// If items are selected, cache them
@@ -677,10 +677,10 @@ namespace Robin
 			{
 				Reporter.Report("Opening local cache...");
 
-				R.Data.Gbreleases.Load();
+				R.Data.GBReleases.Load();
 				R.Data.Gdbreleases.Load();
-				R.Data.Ovgreleases.Load();
-				R.Data.Lbreleases.Include(x => x.Lbgame).Load();
+				R.Data.OVGReleases.Load();
+				R.Data.LBReleases.Include(x => x.LBGame).Load();
 				Reporter.ReportInline(Watch.Elapsed.ToString("ss") + " s");
 				Watch.Restart();
 
@@ -696,7 +696,7 @@ namespace Robin
 				}
 			});
 
-			Datomatic datomatic = new Datomatic();
+			Datomatic datomatic = new();
 			datomatic.ReportUpdates(true);
 			R.Save(false);
 		}
@@ -711,7 +711,7 @@ namespace Robin
 
 		void AddCollection()
 		{
-			Collection collection = new Collection
+			Collection collection = new()
 			{
 				Title = "New friggin collection",
 				Type = "Game"
@@ -773,7 +773,7 @@ namespace Robin
 
 		void AuditRoms()
 		{
-			new AuditWindow();
+			_ = new AuditWindow();
 		}
 
 		void InitializeCommands()

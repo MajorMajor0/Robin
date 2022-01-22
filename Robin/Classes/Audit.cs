@@ -44,7 +44,7 @@ namespace Robin
 		/// <returns></returns>
 		public static Result GetResultFromMameLine(string line)
 		{
-			Result returner = new Result();
+			Result returner = new();
 
 			// Standardize line format
 			line = line.Replace("romset ", "").Replace(" is", "").Replace(" available", "");
@@ -88,7 +88,7 @@ namespace Robin
 		public static string GetHash(string file, HashOption hashOption = HashOption.Sha1, int headerlength = 0)
 		{
 			string hash;
-			using (FileStream stream = new FileStream(file, FileMode.Open, FileAccess.Read))
+			using (FileStream stream = new(file, FileMode.Open, FileAccess.Read))
 			{
 				hash = GetHash(stream, hashOption, headerlength);
 			}
@@ -136,7 +136,7 @@ namespace Robin
 					break;
 
 				case HashOption.Sha1:
-					SHA1Managed managedSha1 = new SHA1Managed();
+					SHA1Managed managedSha1 = new();
 					byte[] shaBuffer = managedSha1.ComputeHash(buffer);
 					foreach (byte b in shaBuffer)
 					{
@@ -151,7 +151,7 @@ namespace Robin
 		public static TitledCollection<Result> AuditRoms(Platform platform)
 		{
 			;
-			if (platform.Id == CONSTANTS.PlatformId.Arcade)
+			if (platform.ID == CONSTANTS.PlatformId.Arcade)
 			{
 				// return Mame.Database.AuditRoms();
 				return null;
@@ -169,10 +169,10 @@ namespace Robin
 		/// <returns>A list of Audit.Result </returns>
 		static TitledCollection<Result> AuditNonMameRoms(Platform platform)
 		{
-			TitledCollection<Result> returner = new TitledCollection<Result>(platform.Title);
+			TitledCollection<Result> returner = new(platform.Title);
 
 			// Record all files in the directory to keep track of which have been audited
-			HashSet<string> files = new HashSet<string>(Directory.GetFiles(platform.RomDirectory));
+			HashSet<string> files = new(Directory.GetFiles(platform.RomDirectory));
 
 			int headerLength = (int)platform.HeaderLength;
 			int romCount = platform.Roms.Count;
@@ -243,15 +243,15 @@ namespace Robin
 
 			// Then go through all files in the folder not checked yet and mark as superfluous
 			Reporter.Tic("Creating hash sets...", out int tic2);
-			HashSet<string> crcs = new HashSet<string>(returner.Select(x => x.Crc32));
-			HashSet<string> Sha1s = new HashSet<string>(returner.Select(x => x.Sha1));
-			HashSet<string> Md5s = new HashSet<string>(returner.Select(x => x.Md5));
+			HashSet<string> crcs = new(returner.Select(x => x.Crc32));
+			HashSet<string> Sha1s = new(returner.Select(x => x.Sha1));
+			HashSet<string> Md5s = new(returner.Select(x => x.Md5));
 			Reporter.Toc(tic2);
 
 			Reporter.Tic("Auditing orpan files on disks...", out int tic3);
 			foreach (string file in files)
 			{
-				Result result = new Result
+				Result result = new()
 				{
 					Status = Status.Extra,
 					FilePath = file

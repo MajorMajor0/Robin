@@ -21,7 +21,7 @@ namespace Robin
 	/// </summary>
 	public partial class ArtWindow : Window
 	{
-		ArtWindowViewModel AWVM;
+		readonly ArtWindowViewModel AWVM;
 
 		public ArtWindow(Release release)
 		{

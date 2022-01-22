@@ -4,18 +4,18 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Robin
 {
-    public partial class Ovgrelease
+    public partial class OVGRelease
     {
-        public Ovgrelease()
+        public OVGRelease()
         {
             Releases = new HashSet<Release>();
         }
 
-        public long Id { get; set; }
+        public long ID { get; set; }
         public long? RegionId { get; set; }
 
         [Column("OVGPlatform_ID")]
-        public long OvgplatformId { get; set; }
+        public long OVGPlatformId { get; set; }
         public string Title { get; set; }
         public string Overview { get; set; }
         public string Developer { get; set; }
@@ -35,7 +35,7 @@ namespace Robin
         public string ReferenceImageUrl { get; set; }
         public DateTime? Date { get; set; }
 
-        public virtual Ovgplatform Ovgplatform { get; set; }
+        public virtual OVGPlatform OVGPlatform { get; set; }
         public virtual Region Region { get; set; }
         public virtual ICollection<Release> Releases { get; set; }
     }

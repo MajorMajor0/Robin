@@ -5,7 +5,7 @@ namespace Robin
 {
     public partial class Url
     {
-        public long Id { get; set; }
+        public long ID { get; set; }
         public string BoxFront { get; set; }
         public string BoxBack { get; set; }
         public string Box3D { get; set; }

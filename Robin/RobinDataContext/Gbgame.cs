@@ -4,16 +4,16 @@ using System.ComponentModel;
 
 namespace Robin
 {
-	public partial class Gbgame
+	public partial class GBGame
 	{
-		public Gbgame()
+		public GBGame()
 		{
-			Gbreleases = new HashSet<Gbrelease>();
+			GBReleases = new HashSet<GBRelease>();
 		}
 
-		public long Id { get; set; }
+		public long ID { get; set; }
 
-		public long? GbplatformId { get; set; }
+		public long? GBPlatformId { get; set; }
 
 		public string Title { get; set; }
 
@@ -31,7 +31,7 @@ namespace Robin
 
 		public string ScreenUrl { get; set; }
 
-		public virtual Gbplatform Gbplatform { get; set; }
-		public virtual ICollection<Gbrelease> Gbreleases { get; set; }
+		public virtual GBPlatform GBPlatform { get; set; }
+		public virtual ICollection<GBRelease> GBReleases { get; set; }
 	}
 }

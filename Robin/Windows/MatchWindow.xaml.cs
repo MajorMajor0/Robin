@@ -23,7 +23,7 @@ namespace Robin
 	/// </summary>
 	public partial class MatchWindow : Window
 	{
-		MatchWindowViewModel MWVM;
+		readonly MatchWindowViewModel MWVM;
 
 		public MatchWindow(Release release)
 		{

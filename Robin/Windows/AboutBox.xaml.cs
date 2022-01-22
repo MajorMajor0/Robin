@@ -36,7 +36,7 @@ namespace Robin
     /// </summary>
     public partial class AboutBox : Window
     {
-        List<string> references;
+		readonly List<string> references;
 
         Assembly assembly => Assembly.GetExecutingAssembly();
 

@@ -5,7 +5,7 @@ namespace Robin
 {
     public partial class Match
     {
-        public long Id { get; set; }
+        public long ID { get; set; }
         public long? IdGb { get; set; }
         public long? IdMb { get; set; }
         public long? IdLb { get; set; }

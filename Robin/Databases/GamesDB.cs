@@ -33,7 +33,7 @@ namespace Robin
 		public LocalDB DB => LocalDB.GamesDB;
 
 		public IEnumerable<IDbPlatform> Platforms =>
-			R.Data.Gdbplatforms.Local.ToObservableCollection();
+			R.Data.GDBPlatforms.Local.ToObservableCollection();
 
 		public IEnumerable<IDbRelease> Releases =>
 			R.Data.Gdbreleases.Local.ToObservableCollection();
@@ -46,12 +46,11 @@ namespace Robin
 		{
 			Stopwatch watch = Stopwatch.StartNew();
 
-			Stopwatch watch2 = Stopwatch.StartNew();
 			try
 			{
 				Reporter.Tic("Opening Games DB cache...", out int tic1);
 
-				R.Data.Gdbplatforms.Load();
+				R.Data.GDBPlatforms.Load();
 				R.Data.Gdbreleases.Load();
 				Reporter.Toc(tic1);
 			}
@@ -70,21 +69,21 @@ namespace Robin
 		/// <summary>
 		/// Implement IDB.CachePlatfomrReleases(). Go out to gamesdb.com and cache all known releases for the specified platform. Update the list of releases and store metadata for each one.
 		/// </summary>
-		/// <param name="platform">Robin.Platform associated with the Gdbplatform to cache.</param>
+		/// <param name="platform">Robin.Platform associated with the GDBPlatform to cache.</param>
 		public void CachePlatformReleases(Platform platform)
 		{
 			Reporter.Tic($"Getting {platform.Title} release list from Games DB...", out int tic1);
-			Gdbplatform Gdbplatform = platform.Gdbplatform;
+			GDBPlatform GDBPlatform = platform.GDBPlatform;
 
 			// Update list of Gdbreleases for this platform from xml file
-			using (WebClient webclient = new WebClient())
+			using (WebClient webclient = new())
 			{
 				// API to get xml file containing all gamesdb releases for this platform.
-				string url = $"{baseUrl}GetPlatformGames.php?platform=" + Gdbplatform.Id;
+				string url = $"{baseUrl}GetPlatformGames.php?platform={GDBPlatform.ID}";
 
 				// Put existing Gdbreleases in a dictionary for lookup performance
-				var existingGdbreleaseDict = R.Data.Gdbreleases.ToDictionary(x => x.Id);
-				HashSet<Gdbrelease> newGdbreleases = new HashSet<Gdbrelease>();
+				var existingGdbreleaseDict = R.Data.Gdbreleases.ToDictionary(x => x.ID);
+				HashSet<Gdbrelease> newGdbreleases = new();
 
 				if (webclient.SafeDownloadStringDB(url, out string downloadText))
 				{
@@ -103,7 +102,7 @@ namespace Robin
 						long id = long.Parse(element.Element("id")?.Value);
 						if (!existingGdbreleaseDict.TryGetValue(id, out Gdbrelease Gdbrelease))
 						{
-							Gdbrelease = new Gdbrelease { Id = id };
+							Gdbrelease = new Gdbrelease { ID = id };
 							newGdbreleases.Add(Gdbrelease);
 						}
 
@@ -111,9 +110,9 @@ namespace Robin
 						Gdbrelease.Date = DateTimeRoutines.SafeGetDate(element.SafeGetA("ReleaseDate") ?? "01-01-1901");
 
 						// If a release has changed platforms, catch it and zero out match
-						if (Gdbrelease.GdbplatformId != Gdbplatform.Id)
+						if (Gdbrelease.GDBPlatformId != GDBPlatform.ID)
 						{
-							Gdbrelease.GdbplatformId = Gdbplatform.Id;
+							Gdbrelease.GDBPlatformId = GDBPlatform.ID;
 							Release release = R.Data.Releases.FirstOrDefault(x => x.ID_GDB == id);
 							if (release != null)
 							{
@@ -122,7 +121,7 @@ namespace Robin
 						}
 					}
 				}
-				Gdbplatform.Gdbreleases.UnionWith(newGdbreleases);
+				GDBPlatform.Gdbreleases.UnionWith(newGdbreleases);
 				Reporter.Toc(tic1);
 			}
 
@@ -130,11 +129,11 @@ namespace Robin
 			int waitTimeHolder = DBTimers.GamesDB.WaitTime;
 			DBTimers.GamesDB.WaitTime = 1;
 
-			int releaseCount = Gdbplatform.Gdbreleases.Count;
+			int releaseCount = GDBPlatform.Gdbreleases.Count;
 			int i = 0;
 
 			// Cache metadata for each individual game
-			foreach (Gdbrelease Gdbrelease in Gdbplatform.Gdbreleases)
+			foreach (Gdbrelease Gdbrelease in GDBPlatform.Gdbreleases)
 			{
 				if (releaseCount / 10 != 0 && i++ % (releaseCount / 10) == 0)
 				{
@@ -154,32 +153,32 @@ namespace Robin
 		{
 			Reporter.Tic("Getting " + platform.Title + " data from Games DB...", out int tic1);
 
-			Gdbplatform Gdbplatform = platform.Gdbplatform;
+			GDBPlatform GDBPlatform = platform.GDBPlatform;
 
 			XDocument xdoc;
 			string url;
 
 			string urlbase = $"{baseUrl}GetPlatform.php?id=";
-			using (WebClient webclient = new WebClient())
+			using (WebClient webclient = new())
 			{
 				// Assemble the platformsdb url from the platform data and the base API url
-				url = urlbase + Gdbplatform.Id;
+				url = urlbase + GDBPlatform.ID;
 
 				// Pull down the xml file containing platform data from gamesdb
 				if (webclient.SafeDownloadStringDB(url, out string downloadtext))
 				{
 					xdoc = XDocument.Parse(downloadtext);
 
-					Gdbplatform.Title = xdoc.SafeGetB("Platform", "Platform");
-					Gdbplatform.Developer = xdoc.SafeGetB("Platform", "developer");
-					Gdbplatform.Manufacturer = xdoc.SafeGetB("Platform", "manufacturer");
-					Gdbplatform.Cpu = xdoc.SafeGetB("Platform", "cpu");
-					Gdbplatform.Sound = xdoc.SafeGetB("Platform", "sound");
-					Gdbplatform.Display = xdoc.SafeGetB("Platform", "display");
-					Gdbplatform.Media = xdoc.SafeGetB("Platform", "media");
-					Gdbplatform.Controllers = xdoc.SafeGetB("Platform", "maxcontrollers");
-					Gdbplatform.Rating = double.Parse(xdoc.SafeGetB("Platform", "rating") ?? "0");
-					Gdbplatform.Overview = xdoc.SafeGetB("Platform", "overview");
+					GDBPlatform.Title = xdoc.SafeGetB("Platform", "Platform");
+					GDBPlatform.Developer = xdoc.SafeGetB("Platform", "developer");
+					GDBPlatform.Manufacturer = xdoc.SafeGetB("Platform", "manufacturer");
+					GDBPlatform.Cpu = xdoc.SafeGetB("Platform", "cpu");
+					GDBPlatform.Sound = xdoc.SafeGetB("Platform", "sound");
+					GDBPlatform.Display = xdoc.SafeGetB("Platform", "display");
+					GDBPlatform.Media = xdoc.SafeGetB("Platform", "media");
+					GDBPlatform.Controllers = xdoc.SafeGetB("Platform", "maxcontrollers");
+					GDBPlatform.Rating = double.Parse(xdoc.SafeGetB("Platform", "rating") ?? "0");
+					GDBPlatform.Overview = xdoc.SafeGetB("Platform", "overview");
 
 					string BaseImageUrl = xdoc.SafeGetB("baseImgUrl");
 
@@ -191,17 +190,17 @@ namespace Robin
 						string ConsoleUrl = xdoc.SafeGetB("Platform", "Images", "consoleart");
 						string ControllerUrl = xdoc.SafeGetB("Platform", "Images", "controllerart");
 
-						Gdbplatform.BoxFrontUrl = BoxFrontUrl != null ? BaseImageUrl + BoxFrontUrl : null;
-						Gdbplatform.BoxBackUrl = BoxBackUrl != null ? BaseImageUrl + BoxBackUrl : null;
-						Gdbplatform.BannerUrl = BannerUrl != null ? BaseImageUrl + BannerUrl : null;
-						Gdbplatform.ConsoleUrl = ConsoleUrl != null ? BaseImageUrl + ConsoleUrl : null;
-						Gdbplatform.ControllerUrl = ControllerUrl != null ? BaseImageUrl + ControllerUrl : null;
+						GDBPlatform.BoxFrontUrl = BoxFrontUrl != null ? BaseImageUrl + BoxFrontUrl : null;
+						GDBPlatform.BoxBackUrl = BoxBackUrl != null ? BaseImageUrl + BoxBackUrl : null;
+						GDBPlatform.BannerUrl = BannerUrl != null ? BaseImageUrl + BannerUrl : null;
+						GDBPlatform.ConsoleUrl = ConsoleUrl != null ? BaseImageUrl + ConsoleUrl : null;
+						GDBPlatform.ControllerUrl = ControllerUrl != null ? BaseImageUrl + ControllerUrl : null;
 					}
 
 				}
 				else
 				{
-					Reporter.Warn("Failure getting " + Gdbplatform.Title + " data from Games DB.");
+					Reporter.Warn("Failure getting " + GDBPlatform.Title + " data from Games DB.");
 				}
 			}
 			Reporter.Toc(tic1);
@@ -214,73 +213,71 @@ namespace Robin
 		public void CacheReleaseData(Gdbrelease Gdbrelease)
 		{
 			// URL of gamesdb API to cache metadata for one release
-			string url = $"{baseUrl}GetGame.php?id=" + Gdbrelease.Id;
-			using (WebClient webclient = new WebClient())
+			string url = $"{baseUrl}GetGame.php?id=" + Gdbrelease.ID;
+			using WebClient webclient = new();
+			// Pull down the xml file containing game data from gamesdb
+			if (webclient.SafeDownloadStringDB(url, out string downloadText))
 			{
-				// Pull down the xml file containing game data from gamesdb
-				if (webclient.SafeDownloadStringDB(url, out string downloadText))
+				XDocument xDocument = XDocument.Parse(downloadText);
+
+				Gdbrelease.Title = xDocument.SafeGetB("Game", "GameTitle") ?? Gdbrelease.Title;
+				Gdbrelease.Developer = xDocument.SafeGetB("Game", "Developer") ?? Gdbrelease.Developer;
+				Gdbrelease.Publisher = xDocument.SafeGetB("Game", "Publisher") ?? Gdbrelease.Publisher;
+				Gdbrelease.Players = xDocument.SafeGetB("Game", "Players") ?? Gdbrelease.Players;
+				Gdbrelease.Overview = xDocument.SafeGetB("Game", "Overview") ?? Gdbrelease.Overview;
+
+				Gdbrelease.Rating = double.Parse(xDocument.SafeGetB("Game", "Rating") ?? "0", CultureInfo.InvariantCulture);
+				Gdbrelease.Genre = string.Join(",", xDocument.Root.Descendants("genre").Select(x => x.Value));
+				Gdbrelease.Date = DateTimeRoutines.SafeGetDate(xDocument.SafeGetB("Game", "ReleaseDate"));
+
+				string coop = xDocument.SafeGetB("Game", "Co-op");
+				if ((coop != null) && ((coop.ToLower() == "true") || (coop.ToLower() == "yes")))
 				{
-					XDocument xDocument = XDocument.Parse(downloadText);
-
-					Gdbrelease.Title = xDocument.SafeGetB("Game", "GameTitle") ?? Gdbrelease.Title;
-					Gdbrelease.Developer = xDocument.SafeGetB("Game", "Developer") ?? Gdbrelease.Developer;
-					Gdbrelease.Publisher = xDocument.SafeGetB("Game", "Publisher") ?? Gdbrelease.Publisher;
-					Gdbrelease.Players = xDocument.SafeGetB("Game", "Players") ?? Gdbrelease.Players;
-					Gdbrelease.Overview = xDocument.SafeGetB("Game", "Overview") ?? Gdbrelease.Overview;
-
-					Gdbrelease.Rating = double.Parse(xDocument.SafeGetB("Game", "Rating") ?? "0", CultureInfo.InvariantCulture);
-					Gdbrelease.Genre = string.Join(",", xDocument.Root.Descendants("genre").Select(x => x.Value));
-					Gdbrelease.Date = DateTimeRoutines.SafeGetDate(xDocument.SafeGetB("Game", "ReleaseDate"));
-
-					string coop = xDocument.SafeGetB("Game", "Co-op");
-					if ((coop != null) && ((coop.ToLower() == "true") || (coop.ToLower() == "yes")))
-					{
-						Gdbrelease.Coop = true;
-					}
-					else
-					{
-						Gdbrelease.Coop = false;
-					}
-
-					string BaseImageUrl = xDocument.SafeGetB("baseImgUrl");
-
-					if (BaseImageUrl != null)
-					{
-						url = xDocument.SafeGetBoxArt("front");
-						if (url != null)
-						{
-							Gdbrelease.BoxFrontUrl = BaseImageUrl + url;
-						}
-
-						url = xDocument.SafeGetBoxArt("back");
-						if (url != null)
-						{
-							Gdbrelease.BoxBackUrl = BaseImageUrl + url;
-						}
-
-						url = xDocument.SafeGetB("Game", "Images", "banner");
-						if (url != null)
-						{
-							Gdbrelease.BannerUrl = BaseImageUrl + url;
-						}
-
-						url = xDocument.SafeGetB("Game", "Images", "screenshot", "original");
-						if (url != null)
-						{
-							Gdbrelease.ScreenUrl = BaseImageUrl + url;
-						}
-
-						url = xDocument.SafeGetB("Game", "Images", "clearlogo");
-						if (url != null)
-						{
-							Gdbrelease.LogoUrl = BaseImageUrl + url;
-						}
-					}
+					Gdbrelease.Coop = true;
 				}
 				else
 				{
-					Reporter.Report("Failure getting " + Gdbrelease.Title + ", ID " + Gdbrelease.Id + " from Games DB.");
+					Gdbrelease.Coop = false;
 				}
+
+				string BaseImageUrl = xDocument.SafeGetB("baseImgUrl");
+
+				if (BaseImageUrl != null)
+				{
+					url = xDocument.SafeGetBoxArt("front");
+					if (url != null)
+					{
+						Gdbrelease.BoxFrontUrl = BaseImageUrl + url;
+					}
+
+					url = xDocument.SafeGetBoxArt("back");
+					if (url != null)
+					{
+						Gdbrelease.BoxBackUrl = BaseImageUrl + url;
+					}
+
+					url = xDocument.SafeGetB("Game", "Images", "banner");
+					if (url != null)
+					{
+						Gdbrelease.BannerUrl = BaseImageUrl + url;
+					}
+
+					url = xDocument.SafeGetB("Game", "Images", "screenshot", "original");
+					if (url != null)
+					{
+						Gdbrelease.ScreenUrl = BaseImageUrl + url;
+					}
+
+					url = xDocument.SafeGetB("Game", "Images", "clearlogo");
+					if (url != null)
+					{
+						Gdbrelease.LogoUrl = BaseImageUrl + url;
+					}
+				}
+			}
+			else
+			{
+				Reporter.Report("Failure getting " + Gdbrelease.Title + ", ID " + Gdbrelease.ID + " from Games DB.");
 			}
 		}
 
@@ -290,11 +287,11 @@ namespace Robin
 		}
 
 		/// <summary>
-		/// Implements IDB.CachePlatforms(). Update the list of Gdbplatforms in the local cache.
+		/// Implements IDB.CachePlatforms(). Update the list of GDBPlatforms in the local cache.
 		/// </summary>
 		public void CachePlatforms()
 		{
-			// TODO Get list of platforms from gamesdb and cache in Gdbplatforms
+			// TODO Get list of platforms from gamesdb and cache in GDBPlatforms
 			Reporter.Report("Cache platforms not yet implemented for GamesDB");
 		}
 

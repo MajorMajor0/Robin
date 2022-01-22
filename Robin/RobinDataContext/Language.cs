@@ -5,7 +5,7 @@ namespace Robin
 {
     public partial class Language
     {
-        public long Id { get; set; }
+        public long ID { get; set; }
         public string Title { get; set; }
         public string Abbreviation { get; set; }
     }

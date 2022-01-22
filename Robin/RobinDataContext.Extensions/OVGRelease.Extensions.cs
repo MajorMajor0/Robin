@@ -20,7 +20,7 @@ using System.Net;
 
 namespace Robin
 {
-	public partial class Ovgrelease : IDbRelease
+	public partial class OVGRelease : IDbRelease
 	{
 		[NotMapped]
 		public LocalDB LocalDB => LocalDB.OpenVGDB;
@@ -29,17 +29,17 @@ namespace Robin
 		public string RegionTitle => Region.Title;
 
 		[NotMapped]
-		public string BoxFrontPath => FileLocation.Temp + "OVGR-" + Id + "-BXF.jpg";
+		public string BoxFrontPath => FileLocation.Temp + "OVGR-" + ID + "-BXF.jpg";
 
 		[NotMapped]
-		public string BoxBackPath => FileLocation.Temp + "OVGR-" + Id + "-BXB.jpg";
+		public string BoxBackPath => FileLocation.Temp + "OVGR-" + ID + "-BXB.jpg";
 
 		[NotMapped]
 		public string BannerPath => null;
 
-		public static implicit operator Ovgrelease(VGDBRELEAS vGdbrelease)
+		public static implicit operator OVGRelease(VGDBRELEAS vGdbrelease)
 		{
-			Ovgrelease Ovgrelease = new Ovgrelease()
+			OVGRelease OVGRelease = new()
 			{
 				RegionId = vGdbrelease.regionLocalizedID,
 				Title = string.IsNullOrEmpty(vGdbrelease.releaseTitleName) ? null : vGdbrelease.releaseTitleName,
@@ -62,18 +62,18 @@ namespace Robin
 				ReferenceUrl = string.IsNullOrEmpty(vGdbrelease.releaseReferenceURL) ? null : vGdbrelease.releaseReferenceURL,
 				ReferenceImageUrl = string.IsNullOrEmpty(vGdbrelease.releaseReferenceImageURL) ? null : vGdbrelease.releaseReferenceImageURL
 			};
-			return Ovgrelease;
+			return OVGRelease;
 		}
 
 		public int ScrapeBoxFront()
 		{
-			using (WebClient webclient = new WebClient())
+			using (WebClient webclient = new())
 			{
 				if (!File.Exists(BoxFrontPath))
 				{
 					if (BoxFrontUrl != null)
 					{
-						Reporter.Report("Getting front box art for Ovgrelease " + Title + "...");
+						Reporter.Report("Getting front box art for OVGRelease " + Title + "...");
 
 						if (webclient.DownloadFileFromDB(BoxFrontUrl, BoxFrontPath))
 						{
@@ -103,13 +103,13 @@ namespace Robin
 
 		public int ScrapeBoxBack()
 		{
-			using (WebClient webclient = new WebClient())
+			using (WebClient webclient = new())
 			{
 				if (!File.Exists(BoxBackPath))
 				{
 					if (BoxFrontUrl != null)
 					{
-						Reporter.Report("Getting front box art for Ovgrelease " + Title + "...");
+						Reporter.Report("Getting front box art for OVGRelease " + Title + "...");
 
 						if (webclient.DownloadFileFromDB(BoxBackUrl, BoxBackPath))
 						{

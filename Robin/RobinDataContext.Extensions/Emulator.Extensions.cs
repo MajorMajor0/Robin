@@ -67,7 +67,7 @@ namespace Robin
 		{
 			if (platform != null)
 			{
-				platform.PreferredEmulatorId = Id;
+				platform.PreferredEmulatorId = ID;
 			}
 		}
 
@@ -80,70 +80,68 @@ namespace Robin
 		{
 			await Task.Run(() =>
 			{
-				using (Process emulatorProcess = new Process())
+				using Process emulatorProcess = new();
+				if (release == null)
 				{
-					if (release == null)
+					Reporter.Report("Launching " + Title + ".");
+				}
+				else
+				{
+					Reporter.Report("Launching " + release.Title + " using " + Title + ".");
+				}
+
+				emulatorProcess.StartInfo.CreateNoWindow = false;
+				emulatorProcess.StartInfo.UseShellExecute = false;
+				emulatorProcess.StartInfo.RedirectStandardOutput = true;
+				emulatorProcess.StartInfo.RedirectStandardError = true;
+
+				emulatorProcess.StartInfo.WorkingDirectory = Path.GetDirectoryName(FilePath);
+				emulatorProcess.StartInfo.FileName = FilePath;
+
+				if (release != null)
+				{
+					if (ID == CONSTANTS.EmulatorId.Higan)
 					{
-						Reporter.Report("Launching " + Title + ".");
+						emulatorProcess.StartInfo.Arguments = @"""" + FileLocation.HiganRoms + release.Platform.HiganRomFolder + @"\" + Path.GetFileNameWithoutExtension(release.Rom.FileName) + release.Platform.HiganExtension + @"""";
 					}
+
+					// Strip out .xls if system = MAME
+					if (ID == CONSTANTS.EmulatorId.Mame)
+					{
+						if (release.Platform.ID == CONSTANTS.PlatformId.ChannelF)
+						{
+							emulatorProcess.StartInfo.Arguments = "channelf -cart " + @"""" + release.FilePath + @"""";// + " -skip_gameinfo -nowindow";
+						}
+						else
+						{
+							emulatorProcess.StartInfo.Arguments = Path.GetFileNameWithoutExtension(release.Rom.FileName);
+						}
+					}
+
 					else
 					{
-						Reporter.Report("Launching " + release.Title + " using " + Title + ".");
+						emulatorProcess.StartInfo.Arguments = release.FilePath;
 					}
+				}
 
-					emulatorProcess.StartInfo.CreateNoWindow = false;
-					emulatorProcess.StartInfo.UseShellExecute = false;
-					emulatorProcess.StartInfo.RedirectStandardOutput = true;
-					emulatorProcess.StartInfo.RedirectStandardError = true;
-
-					emulatorProcess.StartInfo.WorkingDirectory = Path.GetDirectoryName(FilePath);
-					emulatorProcess.StartInfo.FileName = FilePath;
+				try
+				{
+					emulatorProcess.Start();
 
 					if (release != null)
 					{
-						if (Id == CONSTANTS.EmulatorId.Higan)
-						{
-							emulatorProcess.StartInfo.Arguments = @"""" + FileLocation.HiganRoms + release.Platform.HiganRomFolder + @"\" + Path.GetFileNameWithoutExtension(release.Rom.FileName) + release.Platform.HiganExtension + @"""";
-						}
-
-						// Strip out .xls if system = MAME
-						if (Id == CONSTANTS.EmulatorId.Mame)
-						{
-							if (release.Platform.Id == CONSTANTS.PlatformId.ChannelF)
-							{
-								emulatorProcess.StartInfo.Arguments = "channelf -cart " + @"""" + release.FilePath + @"""";// + " -skip_gameinfo -nowindow";
-							}
-							else
-							{
-								emulatorProcess.StartInfo.Arguments = Path.GetFileNameWithoutExtension(release.Rom.FileName);
-							}
-						}
-
-						else
-						{
-							emulatorProcess.StartInfo.Arguments = release.FilePath;
-						}
+						release.PlayCount++;
 					}
-
-					try
-					{
-						emulatorProcess.Start();
-
-						if (release != null)
-						{
-							release.PlayCount++;
-						}
-					}
-					catch (Exception)
-					{
-						// TODO: report something usefull here if the process fails to start
-					}
-
-					string output = emulatorProcess.StandardOutput.ReadToEnd();
-					string error = emulatorProcess.StandardError.ReadToEnd();
-					Reporter.Report(output);
-					Reporter.Report(error);
 				}
+				catch (Exception)
+				{
+					// TODO: report something usefull here if the process fails to start
+				}
+
+				string output = emulatorProcess.StandardOutput.ReadToEnd();
+				string error = emulatorProcess.StandardError.ReadToEnd();
+				Reporter.Report(output);
+				Reporter.Report(error);
 			});
 		}
 

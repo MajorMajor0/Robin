@@ -200,7 +200,7 @@ namespace Robin
 	{
 		public string Title { get; set; }
 
-		public Collection popular => new Collection(R.Data.Games.Local.Where(x => x.PlayCount > 0).OrderByDescending(x => x.PlayCount)) { Title = "Popular" };
+		public Collection popular => new(R.Data.Games.Local.Where(x => x.PlayCount > 0).OrderByDescending(x => x.PlayCount)) { Title = "Popular" };
 
 		public IEnumerable<Collection> List => R.Data.Collections.Local.Concat(new[] { popular });
 

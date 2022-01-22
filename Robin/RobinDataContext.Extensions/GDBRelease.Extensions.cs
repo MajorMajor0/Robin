@@ -63,19 +63,19 @@ namespace Robin
 		public Region Region => null;
 
 		[NotMapped]
-		public string BoxFrontPath => FileLocation.Temp + "GDBR-" + Id + "-BXF.jpg";
+		public string BoxFrontPath => FileLocation.Temp + "GDBR-" + ID + "-BXF.jpg";
 
 		[NotMapped]
-		public string BoxBackPath => FileLocation.Temp + "GDBR-" + Id + "-BXB.jpg";
+		public string BoxBackPath => FileLocation.Temp + "GDBR-" + ID + "-BXB.jpg";
 
 		[NotMapped]
-		public string ScreenPath => FileLocation.Temp + "GDBR-" + Id + "-SCR.jpg";
+		public string ScreenPath => FileLocation.Temp + "GDBR-" + ID + "-SCR.jpg";
 
 		[NotMapped]
-		public string BannerPath => FileLocation.Temp + "GDBR-" + Id + "-BNR.jpg";
+		public string BannerPath => FileLocation.Temp + "GDBR-" + ID + "-BNR.jpg";
 
 		[NotMapped]
-		public string LogoPath => FileLocation.Temp + "GDBR-" + Id + "-LGO.jpg";
+		public string LogoPath => FileLocation.Temp + "GDBR-" + ID + "-LGO.jpg";
 
 		public int ScrapeBox3D()
 		{
@@ -84,7 +84,7 @@ namespace Robin
 
 		public int ScrapeBoxFront()
 		{
-			using (WebClient webclient = new WebClient())
+			using (WebClient webclient = new())
 			{
 				if (!File.Exists(BoxFrontPath))
 				{
@@ -120,7 +120,7 @@ namespace Robin
 
 		public int ScrapeBoxBack()
 		{
-			using (WebClient webclient = new WebClient())
+			using (WebClient webclient = new())
 			{
 				if (!File.Exists(BoxBackPath))
 				{
@@ -156,7 +156,7 @@ namespace Robin
 
 		public int ScrapeBanner()
 		{
-			using (WebClient webclient = new WebClient())
+			using (WebClient webclient = new())
 			{
 				if (!File.Exists(BannerPath))
 				{
@@ -192,7 +192,7 @@ namespace Robin
 
 		public int ScrapeScreen()
 		{
-			using (WebClient webclient = new WebClient())
+			using (WebClient webclient = new())
 			{
 				if (!File.Exists(ScreenPath))
 				{
@@ -228,7 +228,7 @@ namespace Robin
 
 		public int ScrapeLogo()
 		{
-			using (WebClient webclient = new WebClient())
+			using (WebClient webclient = new())
 			{
 				if (!File.Exists(LogoPath))
 				{

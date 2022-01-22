@@ -70,7 +70,7 @@ namespace Robin
 #if DEBUG
 		 void DebugStuff()
 		{
-			Button BonusButton = new Button();
+			Button BonusButton = new();
 			BonusButton.Content = "BONUS!";
 			BonusButton.Style = FindResource("DatabaseWindowButtonStyle1") as Style;
 			BonusButton.Click += BonusButton_Click;

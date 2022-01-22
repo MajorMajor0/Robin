@@ -202,26 +202,34 @@ namespace Robin
 				case LocalDB.GamesDB:
 					if (MWVM.ID_GDB != null)
 					{
-						id = sep1 + MWVM.ID_GDB + sep2;
+						id = $"{sep1}{MWVM.ID_GDB}{sep2}";
 					}
 					break;
 				case LocalDB.GiantBomb:
 					if (MWVM.ID_GB != null)
 					{
-						id = sep1 + MWVM.ID_GB + sep2;
+						id = $"{sep1}{MWVM.ID_GB}{sep2}";
 					}
 					break;
 				case LocalDB.OpenVGDB:
 					if (MWVM.ID_OVG != null)
 					{
-						id = sep1 + MWVM.ID_OVG + sep2;
+						id = $"{sep1}{MWVM.ID_OVG}{sep2}";
 					}
 					break;
 				case LocalDB.LaunchBox:
 					if (MWVM.ID_LB != null)
 					{
-						id = sep1 + MWVM.ID_LB + sep2;
+						id = $"{sep1}{MWVM.ID_LB}{sep2}";
 					}
+					break;
+				case LocalDB.Unknown:
+					break;
+				case LocalDB.Datomatic:
+					break;
+				case LocalDB.MobyGames:
+					break;
+				case LocalDB.Robin:
 					break;
 				default:
 					break;

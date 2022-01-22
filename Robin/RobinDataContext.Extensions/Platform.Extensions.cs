@@ -37,7 +37,7 @@ namespace Robin
 		public Platform RPlatform => this;
 		
 		[NotMapped]
-		public Ovgplatform Ovgplatform => R.Data.Ovgplatforms.FirstOrDefault(x => x.Id == Id);
+		public OVGPlatform OVGPlatform => R.Data.OVGPlatforms.FirstOrDefault(x => x.ID == ID);
 		
 		[NotMapped]
 		public int MatchedToGamesDB => Releases.Count(x => x.ID_GDB != null);
@@ -84,7 +84,7 @@ namespace Robin
 			{
 				if (roms == null)
 				{
-					roms = R.Data.Roms.Where(x => x.PlatformId == Id).ToList();
+					roms = R.Data.Roms.Where(x => x.PlatformId == ID).ToList();
 				}
 				return roms;
 			}
@@ -122,34 +122,34 @@ namespace Robin
 		public string RomDirectory => FileLocation.Roms + FileName + @"\";
 		
 		[NotMapped]
-		public string BoxFrontUrl => Gdbplatform?.BoxFrontUrl;
+		public string BoxFrontUrl => GDBPlatform?.BoxFrontUrl;
 		
 		[NotMapped]
-		public string BoxBackUrl => Gdbplatform?.BoxBackUrl;
+		public string BoxBackUrl => GDBPlatform?.BoxBackUrl;
 		
 		[NotMapped]
-		public string BannerUrl => Gdbplatform?.BannerUrl;
+		public string BannerUrl => GDBPlatform?.BannerUrl;
 		
 		[NotMapped]
-		public string ConsoleUrl => Gdbplatform?.ConsoleUrl;
+		public string ConsoleUrl => GDBPlatform?.ConsoleUrl;
 		
 		[NotMapped]
-		public string ControllerUrl => Gdbplatform?.ControllerUrl;
+		public string ControllerUrl => GDBPlatform?.ControllerUrl;
 		
 		[NotMapped]
-		public string BoxFrontPath => FileLocation.Art.Console + Id + "P-BXF.jpg";
+		public string BoxFrontPath => FileLocation.Art.Console + ID + "P-BXF.jpg";
 		
 		[NotMapped]
-		public string BoxBackPath => FileLocation.Art.Console + Id + "P-BXB.jpg";
+		public string BoxBackPath => FileLocation.Art.Console + ID + "P-BXB.jpg";
 		
 		[NotMapped]
-		public string BannerPath => FileLocation.Art.Console + Id + "P-BNR.jpg";
+		public string BannerPath => FileLocation.Art.Console + ID + "P-BNR.jpg";
 		
 		[NotMapped]
-		public string ConsolePath => FileLocation.Art.Console + Id + "P-CNSL.jpg";
+		public string ConsolePath => FileLocation.Art.Console + ID + "P-CNSL.jpg";
 		
 		[NotMapped]
-		public string ControllerPath => FileLocation.Art.Console + Id + "P-CTRL.jpg";
+		public string ControllerPath => FileLocation.Art.Console + ID + "P-CTRL.jpg";
 
 		[NotMapped]
 		IList IDbPlatform.Releases => Releases.ToList();
@@ -225,7 +225,7 @@ namespace Robin
 		/// <returns>Returns -1 if artwork to indicate the scrape attempt could be tried again, or 0 if the scrape attempt is successfull.</returns>
 		int Scrape(string url, string filePath, string property, string description)
 		{
-			using (WebClient webclient = new WebClient())
+			using (WebClient webclient = new())
 			{
 				if (!File.Exists(filePath))
 				{
@@ -267,7 +267,7 @@ namespace Robin
 					if (Directory.Exists(path))
 					{
 						deeperPaths = Directory.GetFiles(path, "*", searchOption: SearchOption.AllDirectories);
-						Reporter.Report("Found " + deeperPaths.Count() + " in " + path);
+						Reporter.Report("Found " + deeperPaths.Length + " in " + path);
 					}
 					else
 					{
@@ -305,68 +305,64 @@ namespace Robin
 
 			try
 			{
-				using (ZipArchive archive = ZipFile.Open(filename, ZipArchiveMode.Read))
+				using ZipArchive archive = ZipFile.Open(filename, ZipArchiveMode.Read);
+				foreach (ZipArchiveEntry entry in archive.Entries)
 				{
-					foreach (ZipArchiveEntry entry in archive.Entries)
+					using Stream stream = entry.Open();
+					using MemoryStream memoryStream = new();
+					int count;
+					do
 					{
-						using (Stream stream = entry.Open())
-						using (MemoryStream memoryStream = new MemoryStream())
+						byte[] buffer = new byte[1024];
+						count = stream.Read(buffer, 0, 1024);
+						memoryStream.Write(buffer, 0, count);
+					} while (stream.CanRead && count > 0);
+
+					// TODO Some roms in DB have no Sha1 this is a substantial bug
+
+					Sha1 = Audit.GetHash(memoryStream, HashOption.Sha1, (int)HeaderLength);
+					matchedRom = Roms.FirstOrDefault(x => Sha1.Equals(x.Sha1, StringComparison.OrdinalIgnoreCase));
+
+					if (matchedRom == null && HeaderLength > 0)
+					{
+						Sha1 = Audit.GetHash(memoryStream, HashOption.Sha1, 0);
+
+						matchedRom = Roms.FirstOrDefault(x => Sha1.Equals(x.Sha1, StringComparison.OrdinalIgnoreCase));
+					}
+
+					// Have found a match so do this stuff with it
+					if (matchedRom != null)
+					{
+						// Check that the release has no filename, or the file doesn't yet exist
+						if (string.IsNullOrEmpty(matchedRom.FileName) || !File.Exists(matchedRom.FilePath))
 						{
-							int count;
-							do
+							string extension = Path.GetExtension(entry.Name);
+							matchedRom.StoreFileName(extension);
+
+							if (File.Exists(matchedRom.FilePath))
 							{
-								byte[] buffer = new byte[1024];
-								count = stream.Read(buffer, 0, 1024);
-								memoryStream.Write(buffer, 0, count);
-							} while (stream.CanRead && count > 0);
-
-							// TODO Some roms in DB have no Sha1 this is a substantial bug
-
-							Sha1 = Audit.GetHash(memoryStream, HashOption.Sha1, (int)HeaderLength);
-							matchedRom = Roms.FirstOrDefault(x => Sha1.Equals(x.Sha1, StringComparison.OrdinalIgnoreCase));
-
-							if (matchedRom == null && HeaderLength > 0)
-							{
-								Sha1 = Audit.GetHash(memoryStream, HashOption.Sha1, 0);
-
-								matchedRom = Roms.FirstOrDefault(x => Sha1.Equals(x.Sha1, StringComparison.OrdinalIgnoreCase));
+								File.Move(matchedRom.FilePath, FileLocation.RomsBackup + matchedRom.FileName);
 							}
 
-							// Have found a match so do this stuff with it
-							if (matchedRom != null)
+							if (matchedRom.PlatformId == CONSTANTS.PlatformId.Lynx)
 							{
-								// Check that the release has no filename, or the file doesn't yet exist
-								if (string.IsNullOrEmpty(matchedRom.FileName) || !File.Exists(matchedRom.FilePath))
-								{
-									string extension = Path.GetExtension(entry.Name);
-									matchedRom.StoreFileName(extension);
+								//TODO: This looks pretty shady
+								string tempFile = "lnxtmp.lyx";
+								string tempFile2 = "lnxtmp.lnx";
+								string tempPath = Path.GetDirectoryName(FileLocation.HandyConverter) + @"\" + tempFile;
+								string tempPath2 = Path.GetDirectoryName(FileLocation.HandyConverter) + @"\" + tempFile2;
+								File.Delete(tempPath);
+								File.Delete(tempPath2);
 
-									if (File.Exists(matchedRom.FilePath))
-									{
-										File.Move(matchedRom.FilePath, FileLocation.RomsBackup + matchedRom.FileName);
-									}
-
-									if (matchedRom.PlatformId == CONSTANTS.PlatformId.Lynx)
-									{
-										//TODO: This looks pretty shady
-										string tempFile = "lnxtmp.lyx";
-										string tempFile2 = "lnxtmp.lnx";
-										string tempPath = Path.GetDirectoryName(FileLocation.HandyConverter) + @"\" + tempFile;
-										string tempPath2 = Path.GetDirectoryName(FileLocation.HandyConverter) + @"\" + tempFile2;
-										File.Delete(tempPath);
-										File.Delete(tempPath2);
-
-										entry.ExtractToFile(tempPath);
-										Handy.ConvertLynx(tempFile);
-										File.Move(tempPath, matchedRom.FilePath);
-									}
-									else
-									{
-										entry.ExtractToFile(matchedRom.FilePath);
-									}
-									total += 1;
-								}
+								entry.ExtractToFile(tempPath);
+								Handy.ConvertLynx(tempFile);
+								File.Move(tempPath, matchedRom.FilePath);
 							}
+							else
+							{
+								entry.ExtractToFile(matchedRom.FilePath);
+							}
+							total += 1;
 						}
 					}
 				}
@@ -440,7 +436,7 @@ namespace Robin
 		{
 			if (emulator != null)
 			{
-				PreferredEmulatorId = emulator.Id;
+				PreferredEmulatorId = emulator.ID;
 			}
 		}
 
@@ -455,12 +451,12 @@ namespace Robin
 
 			if (ID_GDB != null)
 			{
-				Overview = Gdbplatform.Overview;
+				Overview = GDBPlatform.Overview;
 			}
 
 			if ((Overview == null || Overview.Length < 20) && ID_GB != null)
 			{
-				Overview = Gbplatform.Deck;
+				Overview = GBPlatform.Deck;
 			}
 
 		}
@@ -469,12 +465,12 @@ namespace Robin
 		{
 			if (ID_LB != null)
 			{
-				Developer = Lbplatform.Developer;
+				Developer = LBPlatform.Developer;
 			}
 
 			if ((Developer == null || Developer.Length < 2) && ID_GDB != null)
 			{
-				Developer = Gdbplatform.Developer;
+				Developer = GDBPlatform.Developer;
 			}
 		}
 
@@ -482,12 +478,12 @@ namespace Robin
 		{
 			if (ID_LB != null)
 			{
-				Manufacturer = Lbplatform.Manufacturer;
+				Manufacturer = LBPlatform.Manufacturer;
 			}
 
 			if ((Manufacturer == null || Manufacturer.Length < 2) && ID_GDB != null)
 			{
-				Manufacturer = Gdbplatform.Manufacturer;
+				Manufacturer = GDBPlatform.Manufacturer;
 			}
 		}
 

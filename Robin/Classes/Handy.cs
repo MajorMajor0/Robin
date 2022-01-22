@@ -24,7 +24,7 @@ namespace Robin
 		{
 			try
 			{
-				Process handy = new Process();
+				Process handy = new();
 
 				handy.StartInfo.CreateNoWindow = true;
 				handy.StartInfo.UseShellExecute = false;

@@ -25,11 +25,11 @@ namespace Robin
 {
 	public static class Reporter
 	{
-		static object messagesLock = new object();
+		static readonly object messagesLock = new();
 
 		public static ObservableCollection<Message> Messages { get; set; }
 
-		static List<Stopwatch> watches = new List<Stopwatch>();
+		static readonly List<Stopwatch> watches = new();
 
 		static string _newsFeed;
 		public static string NewsFeed
@@ -55,7 +55,7 @@ namespace Robin
 		public static void Report(string msg, Message.Sort sort = Message.Sort.Note)
 		{
 			NewsFeed = msg;
-			Message message = new Message(msg) { MsgSort = sort };
+			Message message = new(msg) { MsgSort = sort };
 			Messages.Add(message);
 		}
 

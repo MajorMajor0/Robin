@@ -32,16 +32,15 @@ namespace Robin.Mame
 {
 	public class Database
 	{
-		Platform arcadePlatform;
-
-		List<Region> notNullRegions;
+		readonly Platform arcadePlatform;
+		//readonly List<Region> notNullRegions;
 
 		//public Entities MEntities { get; set; }
 
 		public Database()
 		{
-			arcadePlatform = R.Data.Platforms.FirstOrDefault(x => x.Id == CONSTANTS.PlatformId.Arcade);
-			notNullRegions = R.Data.Regions.Where(x => x.Priority != null).OrderByDescending(x => x.Priority).ToList();
+			arcadePlatform = R.Data.Platforms.FirstOrDefault(x => x.ID == CONSTANTS.PlatformId.Arcade);
+			//notNullRegions = R.Data.Regions.Where(x => x.Priority != null).OrderByDescending(x => x.Priority).ToList();
 		}
 
 		/// <summary>
@@ -52,12 +51,12 @@ namespace Robin.Mame
 			Stopwatch Watch = Stopwatch.StartNew();
 			Stopwatch Watch1 = Stopwatch.StartNew();
 
-			List<XElement> machineElements = new List<XElement>();
+			List<XElement> machineElements = new();
 
 			Reporter.Report("Getting xml file from MAME...");
 
 			// Scan through xml file from MAME and pick out working games
-			XmlReaderSettings settings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
+			XmlReaderSettings settings = new() { DtdProcessing = DtdProcessing.Parse };
 			using (Process process = MAMEexe(@"-lx"))
 			using (XmlReader reader = XmlReader.Create(process.StandardOutput, settings))
 			{
@@ -185,24 +184,22 @@ namespace Robin.Mame
 					// If the parent is not in arcadePlatform, go back to mame to get the parent
 					else
 					{
-						using (Process process1 = MAMEexe(@"-lx " + clonePair[1]))
-						using (StreamReader MameOutput = process1.StandardOutput)
-						{
-							string text = MameOutput.ReadToEnd();
-							XElement machineElement = XElement.Parse(text).Element("machine");
+						using Process process1 = MAMEexe(@"-lx " + clonePair[1]);
+						using StreamReader MameOutput = process1.StandardOutput;
+						string text = MameOutput.ReadToEnd();
+						XElement machineElement = XElement.Parse(text).Element("machine");
 
-							Release parentRelease = new Release();
-							Game parentGame = new Game();
+						Release parentRelease = new();
+						Game parentGame = new();
 
-							ParseReleaseFromElement(machineElement, parentRelease);
+						ParseReleaseFromElement(machineElement, parentRelease);
 
-							parentRelease.Game = parentGame;
-							orphanRelease.Game = parentGame;
-							R.Data.Games.Add(parentGame);
-							arcadePlatform.Releases.Add(parentRelease);
+						parentRelease.Game = parentGame;
+						orphanRelease.Game = parentGame;
+						R.Data.Games.Add(parentGame);
+						arcadePlatform.Releases.Add(parentRelease);
 
-							Debug.WriteLine(machineElement.SafeGetA(element1: "driver", attribute: "status"));
-						}
+						Debug.WriteLine(machineElement.SafeGetA(element1: "driver", attribute: "status"));
 					}
 				}
 			}
@@ -380,7 +377,7 @@ namespace Robin.Mame
 		//				XElement machineElement = XNode.ReadFrom(reader) as XElement;
 		//				Machine machine = new Machine(machineElement);
 		//				machines.Add(machine.Name, machine);
-		//				//machine.Id = machineCount;
+		//				//machine.ID = machineCount;
 
 		//				foreach (XElement romElement in machineElement.Elements("rom"))
 		//				{
@@ -473,7 +470,7 @@ namespace Robin.Mame
 
 		private static ProcessStartInfo MAMEProcess(string arguments = null)
 		{
-			ProcessStartInfo MAMEexe = new ProcessStartInfo
+			ProcessStartInfo MAMEexe = new()
 			{
 				FileName = FileLocation.MAME,
 				UseShellExecute = false,
@@ -490,7 +487,7 @@ namespace Robin.Mame
 		{
 			ProcessStartInfo MAMEexe = MAMEProcess(@"-lc");
 
-			List<string[]> cloneList = new List<string[]>();
+			List<string[]> cloneList = new();
 			string line;
 			string[] separators = { " " };
 
@@ -536,7 +533,7 @@ namespace Robin.Mame
 			{
 				if (parenthesisText != null && (parenthesisText.Contains(region.Title) || parenthesisText.Contains(region.Datomatic ?? "XXX") || parenthesisText.Contains(region.Uncode ?? "XXX")))
 				{
-					release.RegionId = region.Id;
+					release.RegionId = region.ID;
 
 					parenthesisText = Regex.Replace(parenthesisText, region.Title + @"|" + region.Datomatic + @"|" + region.Uncode, string.Empty);
 
@@ -570,48 +567,46 @@ namespace Robin.Mame
 		public static TitledCollection<Audit.Result> AuditRoms()
 		{
 			Reporter.Report("Auditing MAME ROMs");
-			Emulator mame = R.Data.Emulators.FirstOrDefault(x => x.Id == CONSTANTS.EmulatorId.Mame);
+			Emulator mame = R.Data.Emulators.FirstOrDefault(x => x.ID == CONSTANTS.EmulatorId.Mame);
 
 			List<string> arguments = GetListOfCurrentRoms();
 
-			List<string> resultStrings = new List<string>();
+			List<string> resultStrings = new();
 
 			int k = 0;
 			int N = arguments.Count;
 			foreach (string argument in arguments)
 			{
-				using (Process emulatorProcess = new Process())
+				using Process emulatorProcess = new();
+				emulatorProcess.StartInfo.CreateNoWindow = true;
+				emulatorProcess.StartInfo.UseShellExecute = false;
+				emulatorProcess.StartInfo.RedirectStandardOutput = true;
+				emulatorProcess.StartInfo.RedirectStandardError = true;
+				emulatorProcess.StartInfo.WorkingDirectory = Path.GetDirectoryName(mame.FilePath);
+
+				emulatorProcess.StartInfo.FileName = mame.FilePath;
+				emulatorProcess.StartInfo.Arguments = argument;
+				Reporter.Tic("Getting batch " + ++k + " / " + N + " from MAME...", out int tic1);
+				try
 				{
-					emulatorProcess.StartInfo.CreateNoWindow = true;
-					emulatorProcess.StartInfo.UseShellExecute = false;
-					emulatorProcess.StartInfo.RedirectStandardOutput = true;
-					emulatorProcess.StartInfo.RedirectStandardError = true;
-					emulatorProcess.StartInfo.WorkingDirectory = Path.GetDirectoryName(mame.FilePath);
-
-					emulatorProcess.StartInfo.FileName = mame.FilePath;
-					emulatorProcess.StartInfo.Arguments = argument;
-					Reporter.Tic("Getting batch " + ++k + " / " + N + " from MAME...", out int tic1);
-					try
-					{
-						emulatorProcess.Start();
-					}
-					catch (Exception)
-					{
-						Reporter.Report("MAME process failed to start.");
-					}
-
-					string output = emulatorProcess.StandardOutput.ReadToEnd();
-					Reporter.Toc(tic1);
-					string error = emulatorProcess.StandardError.ReadToEnd();
-
-					Reporter.Tic("Listing results...", out int tic2);
-					List<string> lines = output.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
-					resultStrings.AddRange(lines);
-					Reporter.Toc(tic2);
+					emulatorProcess.Start();
 				}
+				catch (Exception)
+				{
+					Reporter.Report("MAME process failed to start.");
+				}
+
+				string output = emulatorProcess.StandardOutput.ReadToEnd();
+				Reporter.Toc(tic1);
+				string error = emulatorProcess.StandardError.ReadToEnd();
+
+				Reporter.Tic("Listing results...", out int tic2);
+				List<string> lines = output.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+				resultStrings.AddRange(lines);
+				Reporter.Toc(tic2);
 			}
 
-			TitledCollection<Audit.Result> auditResults = new TitledCollection<Audit.Result>("Arcade");
+			TitledCollection<Audit.Result> auditResults = new("Arcade");
 			foreach (string line in resultStrings)
 			{
 				if (!line.Contains(": "))
@@ -631,15 +626,15 @@ namespace Robin.Mame
 		static List<string> GetListOfCurrentRoms()
 		{
 			Reporter.Report("Getting roms from Robin...");
-			List<string> returner = new List<string>();
-			Platform arcadePlatform = R.Data.Platforms.FirstOrDefault(x => x.Id == CONSTANTS.PlatformId.Arcade);
+			List<string> returner = new();
+			Platform arcadePlatform = R.Data.Platforms.FirstOrDefault(x => x.ID == CONSTANTS.PlatformId.Arcade);
 			string[] arcadeRoms = arcadePlatform.Releases.Select(x => x.Rom.FileName.Replace(@".zip", "")).OrderBy(x => x).ToArray();
 
 			int i = 0;
 			int j = 0;
 			while (j < arcadeRoms.Length)
 			{
-				StringBuilder argument = new StringBuilder("-verifyroms ");
+				StringBuilder argument = new("-verifyroms ");
 
 				// Arguments have to be less than about 32k or windows bonks the command line
 				while (argument.Length < 32000 && j < arcadeRoms.Length)
@@ -707,7 +702,7 @@ namespace Robin.Mame
 		//	Reporter.Toc(tic2);
 
 		//	RobinDataEntities RData = new RobinDataEntities();
-		//	Platform arcade = RData.Platforms.FirstOrDefault(x => x.Id == CONSTANTS.ARCADE_PlatformId);
+		//	Platform arcade = RData.Platforms.FirstOrDefault(x => x.ID == CONSTANTS.ARCADE_PlatformId);
 
 		//	string[] files = Directory.GetFiles(arcade.RomDirectory);
 

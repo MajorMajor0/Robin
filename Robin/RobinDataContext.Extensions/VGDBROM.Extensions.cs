@@ -30,7 +30,7 @@ namespace Robin
 
 	    public static implicit operator Rom(VGDBROM vgdbRom)
 		{
-			Rom rom = new Rom();
+			Rom rom = new();
 			rom.Crc32 = vgdbRom.romHashCRC;
 			rom.Md5 = vgdbRom.romHashMd5;
 			rom.Sha1 = vgdbRom.romHashSha1;

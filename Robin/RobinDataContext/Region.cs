@@ -7,14 +7,14 @@ namespace Robin
     {
         public Region()
         {
-            Gbreleases = new HashSet<Gbrelease>();
+            GBReleases = new HashSet<GBRelease>();
             Mbreleases = new HashSet<Mbrelease>();
-            Lbreleases = new HashSet<Lbrelease>();
-            Ovgreleases = new HashSet<Ovgrelease>();
+            LBReleases = new HashSet<LBRelease>();
+            OVGReleases = new HashSet<OVGRelease>();
             Releases = new HashSet<Release>();
         }
 
-        public long Id { get; set; }
+        public long ID { get; set; }
         public string Title { get; set; }
         public string Datomatic { get; set; }
         public long? IdGb { get; set; }
@@ -24,10 +24,10 @@ namespace Robin
         public string Mame { get; set; }
         public string Launchbox { get; set; }
 
-        public virtual ICollection<Gbrelease> Gbreleases { get; set; }
-        public virtual ICollection<Lbrelease> Lbreleases { get; set; }
+        public virtual ICollection<GBRelease> GBReleases { get; set; }
+        public virtual ICollection<LBRelease> LBReleases { get; set; }
         public virtual ICollection<Mbrelease> Mbreleases { get; set; }
-        public virtual ICollection<Ovgrelease> Ovgreleases { get; set; }
+        public virtual ICollection<OVGRelease> OVGReleases { get; set; }
         public virtual ICollection<Release> Releases { get; set; }
     }
 }

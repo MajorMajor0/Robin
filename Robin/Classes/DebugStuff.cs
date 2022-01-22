@@ -29,24 +29,24 @@ namespace Robin
 	{
 		public async static Task MainWindowBonusAsync()
 		{
-			MobyGames mbg = new();
-			R.Data.Mbplatforms.Load();
+			//MobyGames mbg = new();
+			//R.Data.MBPlatforms.Load();
 
-			Platform platform = R.Data.Platforms.FirstOrDefault(x => x.Id == 22);
+			//Platform platform = R.Data.Platforms.FirstOrDefault(x => x.ID == 22);
 
-			mbg.CachePlatformGamesAsync(platform);
+			//mbg.CachePlatformGamesAsync(platform);
 		}
 
 		static void ForEachSpeedTest()
 		{
-			Stopwatch watch = Stopwatch.StartNew();
-			HashSet<Release> hs = new HashSet<Release>(R.Data.Releases);
-			foreach (Release release in hs)
-			{
-				string s = release.Title;
-				long i = release.Id;
-			}
-			Debug.WriteLine($"Straight from DbSet: {watch.ElapsedMilliseconds} elapsed.");
+			//Stopwatch watch = Stopwatch.StartNew();
+			//HashSet<Release> hs = new(R.Data.Releases);
+			//foreach (Release release in hs)
+			//{
+			//	string s = release.Title;
+			//	long i = release.ID;
+			//}
+			//Debug.WriteLine($"Straight from DbSet: {watch.ElapsedMilliseconds} elapsed.");
 
 		}
 
@@ -54,24 +54,23 @@ namespace Robin
 		static void MetaTest()
 		{
 			List<Release> releases = R.Data.Releases.ToList();
-			Release release = releases.Find(x => x.Id == 1000);
+			Release release = releases.Find(x => x.ID == 1000);
 			release.Title = "xkcd";
-			Datomatic dat = new Datomatic();
+			Datomatic dat = new();
 			dat.ReportUpdates(true);
 		}
 
 		static void FindSpeedTest()
 		{
 			Stopwatch watch = Stopwatch.StartNew();
-			Dictionary<long, Release> releases = R.Data.Releases.ToDictionary(x => x.Id, x => x);
-			List<long> list = R.Data.Releases.Select(x => x.Id).ToList();
+			Dictionary<long, Release> releases = R.Data.Releases.ToDictionary(x => x.ID, x => x);
+			List<long> list = R.Data.Releases.Select(x => x.ID).ToList();
 			int yes = 0;
 			int no = 0;
 
-			Release release;
 			foreach (long id in list)
 			{
-				if (releases.TryGetValue(id, out release))
+				if (releases.TryGetValue(id, out Release release))
 				{
 					yes++;
 				}
@@ -86,10 +85,10 @@ namespace Robin
 
 		static void HashsetSpeedTest()
 		{
-			Platform NES = R.Data.Platforms.FirstOrDefault(x => x.Id == 22);
+			Platform NES = R.Data.Platforms.FirstOrDefault(x => x.ID == 22);
 
 			Stopwatch Watch1 = Stopwatch.StartNew();
-			List<Rom> roms = roms = R.Data.Roms.Where(x => x.PlatformId == NES.Id).ToList();
+			List<Rom> roms = roms = R.Data.Roms.Where(x => x.PlatformId == NES.ID).ToList();
 			Debug.WriteLine($"List created: {Watch1.ElapsedMilliseconds}."); Watch1.Restart();
 
 			HashSet<string> stringDing = roms.Select(x => x.Crc32) as HashSet<string>;
@@ -100,7 +99,7 @@ namespace Robin
 
 		static void TestHash()
 		{
-			Platform NES = R.Data.Platforms.FirstOrDefault(x => x.Id == 22);
+			Platform NES = R.Data.Platforms.FirstOrDefault(x => x.ID == 22);
 			foreach (Rom rom in NES.Roms.Where(x => x.FileName != null))
 			{
 				string Crc32a = Audit.GetHash(rom.FilePath, HashOption.Crc32, (int)NES.HeaderLength);
@@ -113,7 +112,7 @@ namespace Robin
 
 				if (Crc32a == Crc32b && Md5a == Md5b && Sha1a == Sha1b)
 				{
-					Debug.WriteLine($"OK - {rom.Title} - {rom.Id}");
+					Debug.WriteLine($"OK - {rom.Title} - {rom.ID}");
 				}
 
 				else
@@ -125,12 +124,12 @@ namespace Robin
 
 				if (Crc32a == Crc32b && Md5a == Md5b && Sha1a == Sha1b)
 				{
-					Debug.WriteLine($"OK - {rom.Title} - {rom.Id}");
+					Debug.WriteLine($"OK - {rom.Title} - {rom.ID}");
 				}
 
-				Debug.Assert(Crc32a == Crc32b || Crc32b == null, $"Crc32 failure on {rom.Title} - {rom.Id}");
-				Debug.Assert(Sha1a == Sha1b || Sha1b == null, $"Sha1 failure on {rom.Title} - {rom.Id}");
-				Debug.Assert(Md5a == Md5b || Md5b == null, $"Md5 failure on {rom.Title} - {rom.Id}");
+				Debug.Assert(Crc32a == Crc32b || Crc32b == null, $"Crc32 failure on {rom.Title} - {rom.ID}");
+				Debug.Assert(Sha1a == Sha1b || Sha1b == null, $"Sha1 failure on {rom.Title} - {rom.ID}");
+				Debug.Assert(Md5a == Md5b || Md5b == null, $"Md5 failure on {rom.Title} - {rom.ID}");
 			}
 		}
 
@@ -173,15 +172,15 @@ namespace Robin
 
 		static void GetMameStatusesAsync()
 		{
-			Platform arcadePlatform = R.Data.Platforms.FirstOrDefault(x => x.Id == CONSTANTS.PlatformId.Arcade);
+			Platform arcadePlatform = R.Data.Platforms.FirstOrDefault(x => x.ID == CONSTANTS.PlatformId.Arcade);
 
 			Stopwatch Watch = Stopwatch.StartNew();
 			Stopwatch Watch1 = Stopwatch.StartNew();
 
-			XmlReaderSettings settings = new XmlReaderSettings();
+			XmlReaderSettings settings = new();
 
-			List<string> driverStatuses = new List<string>();
-			List<string> emulationStatuses = new List<string>();
+			List<string> driverStatuses = new();
+			List<string> emulationStatuses = new();
 			settings.DtdProcessing = DtdProcessing.Parse;
 
 			arcadePlatform = R.Data.Platforms.FirstOrDefault(x => x.Title.Contains("Arcade"));
@@ -226,7 +225,7 @@ namespace Robin
 
 		}
 
-		static string[] adults = {"3kokushi.zip",
+		static readonly string[] adults = {"3kokushi.zip",
 		"47pie2.zip",
 		"47pie2o.zip",
 		"7jigen.zip",
@@ -502,7 +501,7 @@ namespace Robin
 		"zerozone.zip" };
 
 
-		static string[] messMachines = new string[]
+		static readonly string[] messMachines = new string[]
 			{
 				"1292apvs",
 "1392apvs",

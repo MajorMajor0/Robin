@@ -10,7 +10,7 @@ namespace Robin
             Platforms = new HashSet<Platform>();
         }
 
-        public long Id { get; set; }
+        public long ID { get; set; }
         public string Title { get; set; }
         public string FileName { get; set; }
         public long EmulatorId { get; set; }

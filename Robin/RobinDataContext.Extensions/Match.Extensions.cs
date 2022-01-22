@@ -25,8 +25,8 @@ namespace Robin
 	{
 		public static implicit operator Match(Release release)
 		{
-			Match match = new Match();
-			match.Id = release.Id;
+			Match match = new();
+			match.ID = release.ID;
 			match.IdGb = release.ID_GB;
 			match.IdGdb = release.ID_GDB;
 			match.IdOvg = release.ID_OVG;
@@ -67,10 +67,10 @@ namespace Robin
 					Release release = R.Data.Releases.FirstOrDefault(x => x.Rom.Sha1 == match.Sha1 && x.RegionId == match.RegionId);
 					if (release != null)
 					{
-						Reporter.Report((i++).ToString() + " Matched " + release.TitleAndRegion);
-						release.ID_GB = release.ID_GB ?? match.IdGb;
-						release.ID_GDB = release.ID_GDB ?? match.IdGdb;
-						release.ID_OVG = release.ID_OVG ?? match.IdOvg;
+						Reporter.Report($"{i++} Matched {release.TitleAndRegion}");
+						release.ID_GB ??= match.IdGb;
+						release.ID_GDB ??= match.IdGdb;
+						release.ID_OVG ??= match.IdOvg;
 					}
 				}
 

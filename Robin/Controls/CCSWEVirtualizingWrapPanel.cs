@@ -39,14 +39,14 @@ namespace Robin
 		private WrapPanelAbstraction _abstractPanel;
 		private UIElementCollection _children;
 		private Size _childSize;
-		private Size _extent = new Size(0, 0);
+		private Size _extent = new(0, 0);
 		private int _firstIndex = 0;
 		private IItemContainerGenerator _generator;
 		private ItemsControl _itemsControl;
-		private Point _offset = new Point(0, 0);
-		private Size _pixelMeasuredViewport = new Size(0, 0);
-		private readonly Dictionary<UIElement, Rect> _realizedChildLayout = new Dictionary<UIElement, Rect>();
-		private Size _viewport = new Size(0, 0);
+		private Point _offset = new(0, 0);
+		private Size _pixelMeasuredViewport = new(0, 0);
+		private readonly Dictionary<UIElement, Rect> _realizedChildLayout = new();
+		private Size _viewport = new(0, 0);
 		#endregion
 
 		#region Dependency Properties
@@ -384,7 +384,7 @@ namespace Robin
 
 						if (childRect.Right > realizedFrameSize.Width) //wrap to a new line
 						{
-							currentY = currentY + maxItemSize;
+							currentY += maxItemSize;
 							currentX = 0;
 							maxItemSize = childRect.Height;
 							childRect.X = currentX;
@@ -406,7 +406,7 @@ namespace Robin
 
 						if (childRect.Bottom > realizedFrameSize.Height) //wrap to a new column
 						{
-							currentX = currentX + maxItemSize;
+							currentX += maxItemSize;
 							currentY = 0;
 							maxItemSize = childRect.Width;
 							childRect.X = currentX;
@@ -932,7 +932,7 @@ namespace Robin
 				_index = index;
 			}
 
-			WrapPanelAbstraction _panel;
+			readonly WrapPanelAbstraction _panel;
 
 			public readonly int _index;
 
@@ -994,7 +994,7 @@ namespace Robin
 			private int _currentSetSection = -1;
 			private int _currentSetItemIndex = -1;
 			private int _itemsInCurrentSecction = 0;
-			private object _syncRoot = new object();
+			private readonly object _syncRoot = new();
 
 			public int SectionCount
 			{

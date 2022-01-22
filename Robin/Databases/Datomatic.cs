@@ -110,9 +110,9 @@ namespace Robin
 
 		public void CachePlatformReleases(Platform platform)
 		{
-			if (platform.Id == CONSTANTS.PlatformId.Arcade)
+			if (platform.ID == CONSTANTS.PlatformId.Arcade)
 			{
-				Mame.Database mame = new Mame.Database();
+				Mame.Database mame = new();
 				mame.CacheReleases();
 			}
 			else
@@ -125,7 +125,7 @@ namespace Robin
 		{
 			//TODO: customize dialog window to explain what is going on here--i.e., that you have to find a datomatic file
 			// Configure open file dialog box
-			Microsoft.Win32.OpenFileDialog Dialog = new Microsoft.Win32.OpenFileDialog();
+			Microsoft.Win32.OpenFileDialog Dialog = new();
 			Dialog.FileName = "Document"; // Default file name
 			Dialog.DefaultExt = ".dat"; // Default file extension
 			Dialog.Filter = "DAT files (.xml; .txt; .dat)|*.xml;*.txt;*.dat|ZIP files (.zip)|*.zip|All files (*.*)|*.*"; // Filter files by extension
@@ -146,14 +146,10 @@ namespace Robin
 				// Unpack Datomatic from zip file if it is zipped
 				if (Path.GetExtension(Dialog.FileName) == ".zip")
 				{
-					using (ZipArchive archive = ZipFile.Open(Dialog.FileName, ZipArchiveMode.Read))
-					{
-						string zipentryname = Path.GetFileNameWithoutExtension(Dialog.FileName) + ".dat";
-						using (var dattext = archive.GetEntry(zipentryname).Open())
-						{
-							DatomaticFile = XDocument.Load(dattext);
-						}
-					}
+					using ZipArchive archive = ZipFile.Open(Dialog.FileName, ZipArchiveMode.Read);
+					string zipentryname = Path.GetFileNameWithoutExtension(Dialog.FileName) + ".dat";
+					using var dattext = archive.GetEntry(zipentryname).Open();
+					DatomaticFile = XDocument.Load(dattext);
 				}
 
 				else
@@ -192,7 +188,7 @@ namespace Robin
 							}
 						}
 
-						XElement ReleaseNode = new XElement("release");
+						XElement ReleaseNode = new("release");
 						ReleaseNode.Add(new XAttribute("name", elementName));
 						ReleaseNode.Add(new XAttribute("region", regionName));
 						gameElement.Add(ReleaseNode);
@@ -277,7 +273,7 @@ namespace Robin
 							// Not found, create a new one
 							if (rom == null)
 							{
-								rom = new Rom();// { PlatformId = platform.Id };
+								rom = new Rom();// { PlatformId = platform.ID };
 								R.Data.Roms.Add(rom);
 							}
 #if DEBUG
@@ -300,7 +296,7 @@ namespace Robin
 									continue;
 								}
 
-								long? regionID = R.Data.Regions.FirstOrDefault(x => (x.Datomatic == releaseRegionTitle) || (x.Title == releaseRegionTitle)).Id;
+								long? regionID = R.Data.Regions.FirstOrDefault(x => (x.Datomatic == releaseRegionTitle) || (x.Title == releaseRegionTitle)).ID;
 
 								if (regionID == null)
 								{
@@ -310,13 +306,15 @@ namespace Robin
 #if DEBUG
 								Watch2.Restart();
 #endif
-								Release release = platform.Releases.FirstOrDefault(x => x.RomId == rom.Id && x.RegionId == regionID);
+								Release release = platform.Releases.FirstOrDefault(x => x.RomId == rom.ID && x.RegionId == regionID);
 								if (release == null)
 								{
-									release = new Release();
-									release.Game = game;
-									release.Rom = rom;
-									release.RegionId = (long)regionID;
+									release = new Release
+									{
+										Game = game,
+										Rom = rom,
+										RegionId = (long)regionID
+									};
 									platform.Releases.Add(release);
 								}
 #if DEBUG
@@ -335,7 +333,7 @@ namespace Robin
 					DateTime cacheDate;
 					if (dateString != null)
 					{
-						CultureInfo enUS = new CultureInfo("en-US");
+						CultureInfo enUS = new("en-US");
 						if (DateTime.TryParseExact(dateString, "yyyyMMdd-hhmmss", enUS,
 							 DateTimeStyles.None, out cacheDate))
 						{
@@ -435,11 +433,11 @@ namespace Robin
 			// Move "the" to front of title
 			if (release.Title.Length > 3 && release.Title.Substring(release.Title.Length - 3, 3).ToLower() == "the")
 			{
-				release.Title = "The " + release.Title.Substring(0, release.Title.Length - 5);
+				release.Title = "The " + release.Title[0..^5];
 			}
 		}
 
-		void ParseElementToRom(XElement romElement, Rom rom)
+		static void ParseElementToRom(XElement romElement, Rom rom)
 		{
 			// Get rom properties from parent node
 			rom.Source = "Datomatic";
@@ -471,7 +469,7 @@ namespace Robin
 			{
 				// free other managed objects that implement
 				// IDisposable only
-				// R.Data.Gbplatforms.Dispose();
+				// R.Data.GBPlatforms.Dispose();
 			}
 
 			// release any unmanaged objects

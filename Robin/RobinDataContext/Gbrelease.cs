@@ -5,28 +5,28 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Robin
 {
-	public partial class Gbrelease : INotifyPropertyChanged
+	public partial class GBRelease : INotifyPropertyChanged
 	{
-		public Gbrelease()
+		public GBRelease()
 		{
 			Releases = new HashSet<Release>();
 		}
 
-		public long Id { get; set; }
+		public long ID { get; set; }
 		public string Title { get; set; }
 		public long? RegionId { get; set; }
 		public string Overview { get; set; }
 
 		[Column("GBGame_ID")]
-		public long? GbgameId { get; set; }
+		public long? GBGameId { get; set; }
 		public string Players { get; set; }
-		public long GbplatformId { get; set; }
+		public long GBPlatformId { get; set; }
 		public string BoxUrl { get; set; }
 		public string ScreenUrl { get; set; }
 		public DateTime? Date { get; set; }
 
-		public virtual Gbgame Gbgame { get; set; }
-		public virtual Gbplatform Gbplatform { get; set; }
+		public virtual GBGame GBGame { get; set; }
+		public virtual GBPlatform GBPlatform { get; set; }
 		public virtual Region Region { get; set; }
 		public virtual ICollection<Release> Releases { get; set; }
 

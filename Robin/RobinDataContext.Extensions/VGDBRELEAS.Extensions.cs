@@ -18,7 +18,7 @@ namespace Robin
     {
         public static implicit operator Release(VGDBRELEAS vGdbrelease)
         {
-            Release release = new Release();
+            Release release = new();
             release.PlatformId = vGdbrelease.VGDBROM.systemID;
             release.RegionId = vGdbrelease.regionLocalizedID ?? 0;
             release.Title = vGdbrelease.releaseTitleName;

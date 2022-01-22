@@ -25,11 +25,11 @@ namespace Robin
 	{
 		public Release Release { get; }
 
-		public Lbrelease Lbrelease => Release.Lbrelease;
+		public LBRelease LBRelease => Release.LBRelease;
 
 		public Gdbrelease Gdbrelease => Release.Gdbrelease;
 
-		public Gbrelease Gbrelease => Release.Gbrelease;
+		public GBRelease GBRelease => Release.GBRelease;
 
 
 		//public List<Art> LBArt { get; set; }
@@ -46,53 +46,53 @@ namespace Robin
 			Release = release;
 			//LBArt = new List<Art>();
 
-			Launchbox launchbox = new Launchbox();
+			Launchbox launchbox = new();
 
-			//R.Data.Releases.Include(x => x.Lbrelease).Load();
+			//R.Data.Releases.Include(x => x.LBRelease).Load();
 
-			//if (Lbrelease != null)
+			//if (LBRelease != null)
 			//{
-			//	if (!String.IsNullOrEmpty(Lbrelease.BoxFrontPath))
+			//	if (!String.IsNullOrEmpty(LBRelease.BoxFrontPath))
 			//	{
-			//		LBArt.Add(new Art("Banner", Lbrelease.BoxFrontUrl, Lbrelease.BoxFrontPath));
+			//		LBArt.Add(new Art("Banner", LBRelease.BoxFrontUrl, LBRelease.BoxFrontPath));
 			//	}
-			//	if (!String.IsNullOrEmpty(Lbrelease.BoxBackPath))
+			//	if (!String.IsNullOrEmpty(LBRelease.BoxBackPath))
 			//	{
-			//		LBArt.Add(new Art("Banner", Lbrelease.BoxBackUrl, Lbrelease.BoxBackPath));
+			//		LBArt.Add(new Art("Banner", LBRelease.BoxBackUrl, LBRelease.BoxBackPath));
 			//	}
-			//	if (!String.IsNullOrEmpty(Lbrelease.BannerUrl))
+			//	if (!String.IsNullOrEmpty(LBRelease.BannerUrl))
 			//	{
-			//		LBArt.Add(new Art("Banner", Lbrelease.BannerUrl, Lbrelease.BannerPath));
-			//	}
-
-			//	if (!String.IsNullOrEmpty(Lbrelease.Box3DURL))
-			//	{
-			//		LBArt.Add(new Art("Banner", Lbrelease.Box3DURL, Lbrelease.Box3DPath));
+			//		LBArt.Add(new Art("Banner", LBRelease.BannerUrl, LBRelease.BannerPath));
 			//	}
 
-			//	if (!String.IsNullOrEmpty(Lbrelease.Cart3DURL))
+			//	if (!String.IsNullOrEmpty(LBRelease.Box3DURL))
 			//	{
-			//		LBArt.Add(new Art("Banner", Lbrelease.Cart3DURL, Lbrelease.Cart3DPath));
+			//		LBArt.Add(new Art("Banner", LBRelease.Box3DURL, LBRelease.Box3DPath));
 			//	}
 
-			//	if (!String.IsNullOrEmpty(Lbrelease.CartBackURL))
+			//	if (!String.IsNullOrEmpty(LBRelease.Cart3DURL))
 			//	{
-			//		LBArt.Add(new Art("Cartridge Back", Lbrelease.CartBackURL, Lbrelease.CartBackPath));
+			//		LBArt.Add(new Art("Banner", LBRelease.Cart3DURL, LBRelease.Cart3DPath));
 			//	}
 
-			//	if (!String.IsNullOrEmpty(Lbrelease.ControlPanelURL))
+			//	if (!String.IsNullOrEmpty(LBRelease.CartBackURL))
 			//	{
-			//		LBArt.Add(new Art("Control Panel", Lbrelease.ControlPanelURL, Lbrelease.ControlPanelPath));
+			//		LBArt.Add(new Art("Cartridge Back", LBRelease.CartBackURL, LBRelease.CartBackPath));
 			//	}
 
-			//	if (!String.IsNullOrEmpty(Lbrelease.LogoUrl))
+			//	if (!String.IsNullOrEmpty(LBRelease.ControlPanelURL))
 			//	{
-			//		LBArt.Add(new Art("Clear Logo", Lbrelease.LogoUrl, Lbrelease.LogoPath));
+			//		LBArt.Add(new Art("Control Panel", LBRelease.ControlPanelURL, LBRelease.ControlPanelPath));
 			//	}
 
-			//	if (!String.IsNullOrEmpty(Lbrelease.MarqueeURL))
+			//	if (!String.IsNullOrEmpty(LBRelease.LogoUrl))
 			//	{
-			//		LBArt.Add(new Art("Marquee", Lbrelease.MarqueeURL, Lbrelease.MarqueePath));
+			//		LBArt.Add(new Art("Clear Logo", LBRelease.LogoUrl, LBRelease.LogoPath));
+			//	}
+
+			//	if (!String.IsNullOrEmpty(LBRelease.MarqueeURL))
+			//	{
+			//		LBArt.Add(new Art("Marquee", LBRelease.MarqueeURL, LBRelease.MarqueePath));
 			//	}
 
 			//}

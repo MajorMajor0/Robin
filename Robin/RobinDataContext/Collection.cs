@@ -12,7 +12,7 @@ namespace Robin
 			Releases = new List<Release>();
 		}
 
-		public long Id { get; set; }
+		public long ID { get; set; }
 
 		private string title;
 		public string Title

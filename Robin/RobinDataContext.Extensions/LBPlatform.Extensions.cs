@@ -19,19 +19,19 @@ using System.Linq;
 
 namespace Robin
 {
-	public partial class Lbplatform : IDbPlatform
+	public partial class LBPlatform : IDbPlatform
 	{
 		[NotMapped]
-		public IList Releases => Lbreleases.ToList<Lbrelease>();
+		public IList Releases => LBReleases.ToList<LBRelease>();
 
 		[NotMapped]
-		public IList Games => Lbgames.ToList();
+		public IList Games => LBGames.ToList();
 
 		[NotMapped]
-		public Platform RPlatform => R.Data.Platforms.FirstOrDefault(x => x.ID_LB == Id);
+		public Platform RPlatform => R.Data.Platforms.FirstOrDefault(x => x.ID_LB == ID);
 
 		[NotMapped]
-		public IEnumerable<Lbrelease> Lbreleases => Lbgames.SelectMany(x => x.Lbreleases);
+		public IEnumerable<LBRelease> LBReleases => LBGames.SelectMany(x => x.LBReleases);
 
 
 		public int MatchedReleaseCount

@@ -11,9 +11,9 @@ namespace Robin
 			Releases = new HashSet<Release>();
 		}
 
-		public long Id { get; set; }
+		public long ID { get; set; }
 		public string Title { get; set; }
-		public long GdbplatformId { get; set; }
+		public long GDBPlatformId { get; set; }
 		public string Developer { get; set; }
 		public string Publisher { get; set; }
 		public string Players { get; set; }
@@ -29,7 +29,7 @@ namespace Robin
 		public string LogoUrl { get; set; }
 		public bool? Coop { get; set; }
 
-		public virtual Gdbplatform Gdbplatform { get; set; }
+		public virtual GDBPlatform GDBPlatform { get; set; }
 		public virtual ICollection<Release> Releases { get; set; }
 
 		public event PropertyChangedEventHandler PropertyChanged;

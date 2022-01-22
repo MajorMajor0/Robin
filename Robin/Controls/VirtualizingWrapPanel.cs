@@ -26,13 +26,13 @@ namespace Robin
 		UIElementCollection _children;
 		ItemsControl _itemsControl;
 		IItemContainerGenerator _generator;
-		 Point _offset = new Point(0, 0);
-		 Size _extent = new Size(0, 0);
-		 Size _viewport = new Size(0, 0);
+		 Point _offset = new(0, 0);
+		 Size _extent = new(0, 0);
+		 Size _viewport = new(0, 0);
 		 int firstIndex = 0;
 		 Size childSize;
-		 Size _pixelMeasuredViewport = new Size(0, 0);
-		Dictionary<UIElement, Rect> _realizedChildLayout = new Dictionary<UIElement, Rect>();
+		 Size _pixelMeasuredViewport = new(0, 0);
+		readonly Dictionary<UIElement, Rect> _realizedChildLayout = new();
 		WrapPanelAbstraction _abstractPanel;
 
 
@@ -148,7 +148,7 @@ namespace Robin
 		{
 			for (int i = _children.Count - 1; i >= 0; i--)
 			{
-				GeneratorPosition childGeneratorPos = new GeneratorPosition(i, 0);
+				GeneratorPosition childGeneratorPos = new(i, 0);
 				int itemIndex = _generator.IndexFromGeneratorPosition(childGeneratorPos);
 				if (itemIndex < minDesiredGenerated || itemIndex > maxDesiredGenerated)
 				{
@@ -499,13 +499,13 @@ namespace Robin
 						Debug.Assert(child == _children[childIndex], "Wrong child was generated");
 					}
 					childSize = child.DesiredSize;
-					Rect childRect = new Rect(new Point(currentX, currentY), childSize);
+					Rect childRect = new(new Point(currentX, currentY), childSize);
 					if (isHorizontal)
 					{
 						maxItemSize = Math.Max(maxItemSize, childRect.Height);
 						if (childRect.Right > realizedFrameSize.Width) //wrap to a new line
 						{
-							currentY = currentY + maxItemSize;
+							currentY += maxItemSize;
 							currentX = 0;
 							maxItemSize = childRect.Height;
 							childRect.X = currentX;
@@ -522,7 +522,7 @@ namespace Robin
 						maxItemSize = Math.Max(maxItemSize, childRect.Width);
 						if (childRect.Bottom > realizedFrameSize.Height) //wrap to a new column
 						{
-							currentX = currentX + maxItemSize;
+							currentX += maxItemSize;
 							currentY = 0;
 							maxItemSize = childRect.Width;
 							childRect.X = currentX;
@@ -781,7 +781,7 @@ namespace Robin
 				_index = index;
 			}
 
-			WrapPanelAbstraction _panel;
+			readonly WrapPanelAbstraction _panel;
 
 			public readonly int _index;
 
@@ -826,10 +826,10 @@ namespace Robin
 		{
 			public WrapPanelAbstraction(int itemCount)
 			{
-				List<ItemAbstraction> items = new List<ItemAbstraction>(itemCount);
+				List<ItemAbstraction> items = new(itemCount);
 				for (int i = 0; i < itemCount; i++)
 				{
-					ItemAbstraction item = new ItemAbstraction(this, i);
+					ItemAbstraction item = new(this, i);
 					items.Add(item);
 				}
 
@@ -843,7 +843,7 @@ namespace Robin
 			 int _currentSetSection = -1;
 			 int _currentSetItemIndex = -1;
 			 int _itemsInCurrentSecction = 0;
-			 object _syncRoot = new object();
+			readonly object _syncRoot = new();
 
 			public int SectionCount
 			{

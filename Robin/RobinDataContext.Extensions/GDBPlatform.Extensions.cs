@@ -18,13 +18,13 @@ using System.Linq;
 
 namespace Robin
 {
-	public partial class Gdbplatform : IDbPlatform
+	public partial class GDBPlatform : IDbPlatform
 	{
 		[NotMapped]
 		public IList Releases => Gdbreleases.ToList();
 
 		[NotMapped]
-		public Platform RPlatform => R.Data.Platforms.FirstOrDefault(x => x.ID_GDB == Id);
+		public Platform RPlatform => R.Data.Platforms.FirstOrDefault(x => x.ID_GDB == ID);
 
 		[NotMapped]
 		public int MatchedReleaseCount

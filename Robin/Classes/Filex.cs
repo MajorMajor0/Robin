@@ -21,8 +21,8 @@ namespace Robin
     {
         public static void CopyDirectory(string sourceDirectory, string targetDirectory)
         {
-            DirectoryInfo diSource = new DirectoryInfo(sourceDirectory);
-            DirectoryInfo diTarget = new DirectoryInfo(targetDirectory);
+            DirectoryInfo diSource = new(sourceDirectory);
+            DirectoryInfo diTarget = new(targetDirectory);
 
             CopyAll(diSource, diTarget);
         }

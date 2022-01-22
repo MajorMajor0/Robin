@@ -3,16 +3,16 @@ using System.Collections.Generic;
 
 namespace Robin
 {
-    public partial class Ovgplatform
+    public partial class OVGPlatform
     {
-        public Ovgplatform()
+        public OVGPlatform()
         {
-            Ovgreleases = new HashSet<Ovgrelease>();
+            OVGReleases = new HashSet<OVGRelease>();
         }
 
-        public long Id { get; set; }
+        public long ID { get; set; }
         public string Title { get; set; }
 
-        public virtual ICollection<Ovgrelease> Ovgreleases { get; set; }
+        public virtual ICollection<OVGRelease> OVGReleases { get; set; }
     }
 }

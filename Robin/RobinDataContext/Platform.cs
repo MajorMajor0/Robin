@@ -12,7 +12,7 @@ namespace Robin
 			Emulators = new HashSet<Emulator>();
 		}
 
-		public long Id { get; set; }
+		public long ID { get; set; }
 		public string Title { get; set; }
 		public byte[] LastDate { get; set; }
 		public long? ID_GDB { get; set; }
@@ -60,10 +60,10 @@ namespace Robin
 		public string Overview { get; set; }
 		public DateTime CacheDate { get; set; }
 
-		public virtual Gbplatform Gbplatform { get; set; }
-		public virtual Gdbplatform Gdbplatform { get; set; }
-		public virtual Lbplatform Lbplatform { get; set; }
-		public virtual Mbplatform Mbplatform { get; set; }
+		public virtual GBPlatform GBPlatform { get; set; }
+		public virtual GDBPlatform GDBPlatform { get; set; }
+		public virtual LBPlatform LBPlatform { get; set; }
+		public virtual MBPlatform MBPlatform { get; set; }
 		public virtual Emulator PreferredEmulator { get; set; }
 
 		public virtual List<Release> Releases { get; set; }

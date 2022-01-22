@@ -247,25 +247,25 @@ namespace Robin
 		public string LogoUrl => GetLogoUrl();
 
 		[NotMapped]
-		public string Box3DURL => Lbrelease?.Box3DUrl;
+		public string Box3DURL => LBRelease?.Box3DUrl;
 
 		[NotMapped]
-		public string MarqueeURL => Lbrelease?.MarqueeUrl;//TODO Add other DBs
+		public string MarqueeURL => LBRelease?.MarqueeUrl;//TODO Add other DBs
 
 		[NotMapped]
-		public string ControlPanelURL => Lbrelease?.ControlPanelUrl;
+		public string ControlPanelURL => LBRelease?.ControlPanelUrl;
 
 		[NotMapped]
-		public string ControlInformationURL => Lbrelease?.ControlInformationUrl;
+		public string ControlInformationURL => LBRelease?.ControlInformationUrl;
 
 		[NotMapped]
-		public string CartFrontURL => Lbrelease?.CartFrontUrl;
+		public string CartFrontURL => LBRelease?.CartFrontUrl;
 
 		[NotMapped]
-		public string CartBackURL => Lbrelease?.CartBackUrl;
+		public string CartBackURL => LBRelease?.CartBackUrl;
 
 		[NotMapped]
-		public string Cart3DURL => Lbrelease?.Cart3DUrl;
+		public string Cart3DURL => LBRelease?.Cart3DUrl;
 
 
 		public string GetBoxFrontUrl(LocalDB DB = 0)
@@ -275,16 +275,16 @@ namespace Robin
 			{
 				case LocalDB.Unknown:
 
-					url = Lbrelease?.BoxFrontUrl;
+					url = LBRelease?.BoxFrontUrl;
 
 					if (string.IsNullOrEmpty(url))
 					{
-						url = Gbrelease?.BoxUrl;
+						url = GBRelease?.BoxUrl;
 					}
 
 					if (string.IsNullOrEmpty(url))
 					{
-						url = Ovgrelease?.BoxFrontUrl;
+						url = OVGRelease?.BoxFrontUrl;
 					}
 
 					if (string.IsNullOrEmpty(url) && (Game.Releases.Count == 1 || RegionId == CONSTANTS.RegionId.Unk) && !string.IsNullOrEmpty(Gdbrelease?.BoxFrontUrl))
@@ -298,15 +298,15 @@ namespace Robin
 					break;
 
 				case LocalDB.GiantBomb:
-					url = Gbrelease?.BoxUrl;
+					url = GBRelease?.BoxUrl;
 					break;
 
 				case LocalDB.OpenVGDB:
-					url = Ovgrelease?.BoxFrontUrl;
+					url = OVGRelease?.BoxFrontUrl;
 					break;
 
 				case LocalDB.LaunchBox:
-					url = Lbrelease?.BoxFrontUrl;
+					url = LBRelease?.BoxFrontUrl;
 					break;
 			}
 
@@ -320,11 +320,11 @@ namespace Robin
 			{
 				case LocalDB.Unknown:
 
-					url = Lbrelease?.BoxBackUrl;
+					url = LBRelease?.BoxBackUrl;
 
 					if (string.IsNullOrEmpty(url))
 					{
-						url = Ovgrelease?.BoxBackUrl;
+						url = OVGRelease?.BoxBackUrl;
 					}
 
 					if (string.IsNullOrEmpty(url) && (Game.Releases.Count == 1 || RegionId == CONSTANTS.RegionId.Unk) && !string.IsNullOrEmpty(Gdbrelease?.BoxBackUrl))
@@ -341,11 +341,11 @@ namespace Robin
 					break;
 
 				case LocalDB.OpenVGDB:
-					url = Ovgrelease?.BoxBackUrl;
+					url = OVGRelease?.BoxBackUrl;
 					break;
 
 				case LocalDB.LaunchBox:
-					url = Lbrelease?.BoxBackUrl;
+					url = LBRelease?.BoxBackUrl;
 					break;
 			}
 			return string.IsNullOrEmpty(url) ? null : url;
@@ -358,11 +358,11 @@ namespace Robin
 			{
 				case LocalDB.Unknown:
 
-					url = Lbrelease?.ScreenUrl;
+					url = LBRelease?.ScreenUrl;
 
 					if (string.IsNullOrEmpty(url))
 					{
-						url = Gbrelease?.ScreenUrl;
+						url = GBRelease?.ScreenUrl;
 					}
 
 					if (string.IsNullOrEmpty(url) && (Game.Releases.Count == 1 || RegionId == CONSTANTS.RegionId.Unk) && !string.IsNullOrEmpty(Gdbrelease?.ScreenUrl))
@@ -376,11 +376,11 @@ namespace Robin
 					break;
 
 				case LocalDB.GiantBomb:
-					url = Gbrelease?.ScreenUrl;
+					url = GBRelease?.ScreenUrl;
 					break;
 
 				case LocalDB.LaunchBox:
-					url = Lbrelease?.ScreenUrl;
+					url = LBRelease?.ScreenUrl;
 					break;
 			}
 			return string.IsNullOrEmpty(url) ? null : url;
@@ -394,7 +394,7 @@ namespace Robin
 			{
 				case LocalDB.Unknown:
 
-					url = Lbrelease?.BannerUrl;
+					url = LBRelease?.BannerUrl;
 
 					if (string.IsNullOrEmpty(url))
 					{
@@ -407,7 +407,7 @@ namespace Robin
 					break;
 
 				case LocalDB.LaunchBox:
-					url = Lbrelease?.BannerUrl;
+					url = LBRelease?.BannerUrl;
 					break;
 			}
 			return url;
@@ -421,7 +421,7 @@ namespace Robin
 			{
 				case LocalDB.Unknown:
 
-					url = Lbrelease?.LogoUrl;
+					url = LBRelease?.LogoUrl;
 
 					if (string.IsNullOrEmpty(url))
 					{
@@ -434,7 +434,7 @@ namespace Robin
 					break;
 
 				case LocalDB.LaunchBox:
-					url = Lbrelease?.LogoUrl;
+					url = LBRelease?.LogoUrl;
 					break;
 			}
 			return url;
@@ -442,22 +442,22 @@ namespace Robin
 
 
 		[NotMapped]
-		public string BoxFrontPath => $"{FileLocation.Art.BoxFront}{Id}R-BXF.jpg";
+		public string BoxFrontPath => $"{FileLocation.Art.BoxFront}{ID}R-BXF.jpg";
 
 		[NotMapped]
-		public string BoxFrontThumbPath => $"{FileLocation.Art.BoxFrontThumbs}{Id}R-BXF.jpg";
+		public string BoxFrontThumbPath => $"{FileLocation.Art.BoxFrontThumbs}{ID}R-BXF.jpg";
 
 		[NotMapped]
-		public string BoxBackPath => $"{FileLocation.Art.BoxBack}{Id}R-BXB.jpg";
+		public string BoxBackPath => $"{FileLocation.Art.BoxBack}{ID}R-BXB.jpg";
 
 		[NotMapped]
-		public string ScreenPath => $"{FileLocation.Art.Screen}{Id}R-SCR.jpg";
+		public string ScreenPath => $"{FileLocation.Art.Screen}{ID}R-SCR.jpg";
 
 		[NotMapped]
-		public string BannerPath => $"{FileLocation.Art.Banner}{Id}R-BNR.jpg";
+		public string BannerPath => $"{FileLocation.Art.Banner}{ID}R-BNR.jpg";
 
 		[NotMapped]
-		public string LogoPath => $"{FileLocation.Art.Logo}{Id}R-LGO.jpg";
+		public string LogoPath => $"{FileLocation.Art.Logo}{ID}R-LGO.jpg";
 
 		[NotMapped]
 		public string MarqueePath => PlatformId == 1 ? $"{FileLocation.Marquee}{Rom.FileName.Replace(".zip", ".png")}" : null;
@@ -474,7 +474,7 @@ namespace Robin
 		{
 			if (ID_LB != null)
 			{
-				Overview = Lbrelease?.Overview;
+				Overview = LBRelease?.Overview;
 			}
 
 			if ((Overview == null || Overview.Length < 20) && ID_GDB != null)
@@ -484,12 +484,12 @@ namespace Robin
 
 			if ((Overview == null || Overview.Length < 20) && ID_GB != null)
 			{
-				Overview = Gbrelease?.Overview;
+				Overview = GBRelease?.Overview;
 			}
 
 			if ((Overview == null || Overview.Length < 20) && ID_OVG != null)
 			{
-				Overview = Ovgrelease?.Overview;
+				Overview = OVGRelease?.Overview;
 			}
 			if (!string.IsNullOrEmpty(Overview))
 			{
@@ -501,7 +501,7 @@ namespace Robin
 		{
 			if (ID_LB != null)
 			{
-				Developer = Lbrelease.Developer;
+				Developer = LBRelease.Developer;
 			}
 
 			if ((Developer == null || Developer.Length < 2) && ID_GDB != null)
@@ -511,7 +511,7 @@ namespace Robin
 
 			if ((Developer == null || Developer.Length < 2) && ID_OVG != null)
 			{
-				Developer = Ovgrelease?.Developer;
+				Developer = OVGRelease?.Developer;
 			}
 		}
 
@@ -519,7 +519,7 @@ namespace Robin
 		{
 			if (ID_LB != null)
 			{
-				Publisher = Lbrelease.Publisher;
+				Publisher = LBRelease.Publisher;
 			}
 
 			if ((Publisher == null || Publisher.Length < 2) && ID_GDB != null)
@@ -529,7 +529,7 @@ namespace Robin
 
 			if ((Publisher == null || Publisher.Length < 2) && ID_OVG != null)
 			{
-				Publisher = Ovgrelease?.Publisher;
+				Publisher = OVGRelease?.Publisher;
 			}
 		}
 
@@ -539,9 +539,9 @@ namespace Robin
 			string joinSeperator = ", ";
 			string[] genres;
 
-			if (ID_LB != null && Lbrelease.Lbgame.Genres != null)
+			if (ID_LB != null && LBRelease.LBGame.Genres != null)
 			{
-				genres = Lbrelease.Lbgame.Genres.Split(splitSeparators, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).OrderBy(x => x).ToArray();
+				genres = LBRelease.LBGame.Genres.Split(splitSeparators, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).OrderBy(x => x).ToArray();
 				Genre = string.Join(joinSeperator, genres);
 			}
 
@@ -552,14 +552,14 @@ namespace Robin
 				Genre = string.Join(joinSeperator, genres);
 			}
 
-			if ((Genre == null || Genre.Length < 2) && ID_OVG != null && Ovgrelease?.Genre != null)
+			if ((Genre == null || Genre.Length < 2) && ID_OVG != null && OVGRelease?.Genre != null)
 			{
-				genres = Ovgrelease?.Genre.Split(splitSeparators, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).OrderBy(x => x).ToArray();
+				genres = OVGRelease?.Genre.Split(splitSeparators, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).OrderBy(x => x).ToArray();
 
 				Genre = string.Join(joinSeperator, genres);
 			}
 
-			Genre = Genre ?? "Unknown";
+			Genre ??= "Unknown";
 
 		}
 
@@ -569,7 +569,7 @@ namespace Robin
 			{
 				if (ID_LB != null)
 				{
-					Date = Lbrelease.Date;
+					Date = LBRelease.Date;
 				}
 
 				if (Date == null && ID_GDB != null)
@@ -579,12 +579,12 @@ namespace Robin
 
 				if (Date == null && ID_GB != null)
 				{
-					Date = Gbrelease?.Date;
+					Date = GBRelease?.Date;
 				}
 
 				if (Date == null && ID_OVG != null)
 				{
-					Date = Ovgrelease?.Date;
+					Date = OVGRelease?.Date;
 				}
 			}
 		}
@@ -593,7 +593,7 @@ namespace Robin
 		{
 			if (ID_LB != null)
 			{
-				Players = Lbrelease.Players;
+				Players = LBRelease.Players;
 			}
 
 			if (string.IsNullOrEmpty(Players) && ID_GDB != null)
@@ -603,7 +603,7 @@ namespace Robin
 
 			if (string.IsNullOrEmpty(Players) && ID_GB != null)
 			{
-				Players = Gbrelease?.Players;
+				Players = GBRelease?.Players;
 			}
 		}
 
@@ -713,7 +713,7 @@ namespace Robin
 		/// <returns>Returns -1 if artwork to indicate the scrape attempt could be tried again, or 0 if the scrape attempt is successfull.</returns>
 		int Scrape(string url, string filePath, string property, string description)
 		{
-			using (WebClient webclient = new WebClient())
+			using (WebClient webclient = new())
 			{
 				if (!File.Exists(filePath))
 				{
@@ -753,7 +753,7 @@ namespace Robin
 		{
 			await Task.Run(() =>
 			{
-				using Process emulatorProcess = new Process();
+				using Process emulatorProcess = new();
 				// Choose default emulator if necessary
 				if (emulator == null || !Platform.Emulators.Contains(emulator))
 				{
@@ -770,14 +770,14 @@ namespace Robin
 
 				emulatorProcess.StartInfo.FileName = emulator.FilePath;
 
-				switch (emulator.Id)
+				switch (emulator.ID)
 				{
 					case CONSTANTS.EmulatorId.Higan:
 						emulatorProcess.StartInfo.Arguments = $"\"{FileLocation.HiganRoms}{Platform.HiganRomFolder}\\{Path.GetFileNameWithoutExtension(Rom.FileName)}{Platform.HiganExtension}\"";
 						break;
 
 					case CONSTANTS.EmulatorId.Mame:
-						if (Platform.Id == CONSTANTS.PlatformId.ChannelF)
+						if (Platform.ID == CONSTANTS.PlatformId.ChannelF)
 						{
 							emulatorProcess.StartInfo.Arguments = $"channelf -cart \"{FilePath}\" -skip_gameinfo -nowindow";
 						}
@@ -829,31 +829,29 @@ namespace Robin
 				{
 					try
 					{
-						using (System.Drawing.Image image = System.Drawing.Image.FromFile(BoxFrontPath))
+						using System.Drawing.Image image = System.Drawing.Image.FromFile(BoxFrontPath);
+#if DEBUG
+						Stopwatch Watch = Stopwatch.StartNew();
+#endif
+						File.Delete(BoxFrontThumbPath);
+#if DEBUG
+						Debug.WriteLine("Delete" + Watch.ElapsedMilliseconds);
+						Watch.Restart();
+#endif
+						if (image.Width > 255)
 						{
-#if DEBUG
-							Stopwatch Watch = Stopwatch.StartNew();
-#endif
-							File.Delete(BoxFrontThumbPath);
-#if DEBUG
-							Debug.WriteLine("Delete" + Watch.ElapsedMilliseconds);
-							Watch.Restart();
-#endif
-							if (image.Width > 255)
-							{
-								System.Drawing.Image thumb = Thumbs.ResizeImage(image, 255);
-								thumb.Save(BoxFrontThumbPath);
-							}
-
-							else
-							{
-								File.Copy(BoxFrontPath, BoxFrontThumbPath);
-							}
-#if DEBUG
-							Debug.WriteLine("Create" + Watch.ElapsedMilliseconds);
-							Watch.Restart();
-#endif
+							System.Drawing.Image thumb = Thumbs.ResizeImage(image, 255);
+							thumb.Save(BoxFrontThumbPath);
 						}
+
+						else
+						{
+							File.Copy(BoxFrontPath, BoxFrontThumbPath);
+						}
+#if DEBUG
+						Debug.WriteLine("Create" + Watch.ElapsedMilliseconds);
+						Watch.Restart();
+#endif
 					}
 					catch (OutOfMemoryException)
 					{
