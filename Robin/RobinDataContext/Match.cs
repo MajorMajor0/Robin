@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Robin;
 
-namespace Robin
+public partial class Match
 {
-    public partial class Match
-    {
-        public long ID { get; set; }
-        public long? IdGb { get; set; }
-        public long? IdMb { get; set; }
-        public long? IdLb { get; set; }
-        public long? IdGdb { get; set; }
-        public long? IdOvg { get; set; }
-        public string Sha1 { get; set; }
-        public long? RegionId { get; set; }
-    }
+	public long ID { get; set; }
+	public long? ID_GB { get; set; }
+	public long? ID_MB { get; set; }
+	public long? ID_LB { get; set; }
+	public long? ID_GDB { get; set; }
+	public long? ID_OVG { get; set; }
+	public string SHA1 { get; set; }
+	public long? Region_ID { get; set; }
 }

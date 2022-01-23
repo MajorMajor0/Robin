@@ -16,12 +16,12 @@ namespace Robin
 {
     public partial class VGDBRELEAS
     {
-        public static implicit operator Release(VGDBRELEAS vGdbrelease)
+        public static implicit operator Release(VGDBRELEAS vGDBRelease)
         {
             Release release = new();
-            release.PlatformId = vGdbrelease.VGDBROM.systemID;
-            release.RegionId = vGdbrelease.regionLocalizedID ?? 0;
-            release.Title = vGdbrelease.releaseTitleName;
+            release.Platform_ID = vGDBRelease.VGDBROM.systemID;
+            release.Region_ID = vGDBRelease.regionLocalizedID ?? 0;
+            release.Title = vGDBRelease.releaseTitleName;
             release.IsGame = true;
 
             return release;

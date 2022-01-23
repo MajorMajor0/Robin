@@ -25,7 +25,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>C:\Robin_debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS, PLATFORMNET45</DefineConstants>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <RUNCodeAnalysis>false</RUNCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>C:\Robin_Release\</OutputPath>
@@ -53,7 +53,7 @@
     <OutputPath>bin\Debug any CPU\</OutputPath>
     <DefineConstants>CODE_ANALYSIS;DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <RUNCodeAnalysis>false</RUNCodeAnalysis>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug any CPU|x64'">
@@ -116,7 +116,7 @@
     <Compile Update="GDBPlatform.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Update="Gdbrelease.cs">
+    <Compile Update="GDBRelease.cs">
       <DependentUpon>RobinDataModel.tt</DependentUpon>
     </Compile>
     <Compile Update="Language.cs">

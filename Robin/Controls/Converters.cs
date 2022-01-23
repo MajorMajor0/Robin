@@ -15,327 +15,325 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
-using System.IO;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace Robin
+namespace Robin;
+
+//public class BooleanToCollapsedVisibilityConverter : IValueConverter
+//{
+//    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+//    {
+//        //reverse conversion (false=>Visible, true=>collapsed) on any given parameter
+//        bool input = (null == parameter) ? (bool)value : !((bool)value);
+//        return (input) ? Visibility.Visible : Visibility.Collapsed;
+//    }
+
+//    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+//    {
+//        throw new NotImplementedException();
+//    }
+////}
+
+public class IntToVisibilityConverter : IValueConverter
 {
-	//public class BooleanToCollapsedVisibilityConverter : IValueConverter
-	//{
-	//    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-	//    {
-	//        //reverse conversion (false=>Visible, true=>collapsed) on any given parameter
-	//        bool input = (null == parameter) ? (bool)value : !((bool)value);
-	//        return (input) ? Visibility.Visible : Visibility.Collapsed;
-	//    }
-
-	//    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-	//    {
-	//        throw new NotImplementedException();
-	//    }
-	////}
-
-	public class IntToVisibilityConverter : IValueConverter
+	public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 	{
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			int i = System.Convert.ToInt32(value ?? 0);
+		int i = System.Convert.ToInt32(value ?? 0);
 
-			if (i < 1)
-			{
-				return Visibility.Hidden;
-			}
-			else
-			{
-				return Visibility.Visible;
-			}
+		if (i < 1)
+		{
+			return Visibility.Hidden;
 		}
-
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		else
 		{
-			throw new NotImplementedException();
+			return Visibility.Visible;
 		}
 	}
 
-	public class BooleanToHiddenConverter : IValueConverter
+	public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 	{
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			bool tf = (bool)value;
-			if (tf)
-			{
-				return Visibility.Visible;
-			}
-			else
-			{
-				return Visibility.Hidden;
-			}
-		}
+		throw new NotImplementedException();
+	}
+}
 
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+public class BooleanToHiddenConverter : IValueConverter
+{
+	public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+	{
+		bool tf = (bool)value;
+		if (tf)
 		{
-			throw new NotImplementedException();
+			return Visibility.Visible;
+		}
+		else
+		{
+			return Visibility.Hidden;
 		}
 	}
 
-	public class PlatformToVisibilityConverter : IValueConverter
+	public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 	{
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			if (value is Platform)
-			{
-				return Visibility.Visible;
-			}
-			else
-			{
-				return Visibility.Collapsed;
-			}
-		}
+		throw new NotImplementedException();
+	}
+}
 
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+public class PlatformToVisibilityConverter : IValueConverter
+{
+	public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+	{
+		if (value is Platform)
 		{
-			throw new NotImplementedException();
+			return Visibility.Visible;
+		}
+		else
+		{
+			return Visibility.Collapsed;
 		}
 	}
 
-	public class DateToVisibilityConverter : IValueConverter
+	public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 	{
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			if (value == null)
-			{
-				return Visibility.Hidden;
-			}
-			else
-			{
-				return Visibility.Visible;
-			}
-		}
+		throw new NotImplementedException();
+	}
+}
 
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+public class DateToVisibilityConverter : IValueConverter
+{
+	public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+	{
+		if (value == null)
 		{
-			throw new NotImplementedException();
+			return Visibility.Hidden;
+		}
+		else
+		{
+			return Visibility.Visible;
 		}
 	}
 
-	public class ImageConverter : IValueConverter
+	public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 	{
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-		{
+		throw new NotImplementedException();
+	}
+}
+
+public class ImageConverter : IValueConverter
+{
+	public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+	{
 #if DEBUG
-			Stopwatch Watch = Stopwatch.StartNew();
+		Stopwatch Watch = Stopwatch.StartNew();
 #endif
-			var path = value as string;
-			try
+		var path = value as string;
+		try
+		{
+			if (path != null && (Catalog.Images.Contains(path) || Catalog.Art.Contains(path)))
 			{
-				if (path != null && (Catalog.Images.Contains(path) || Catalog.Art.Contains(path)))
-				{
-					BitmapImage bitmap = new();
-					bitmap.BeginInit();
-					bitmap.CacheOption = BitmapCacheOption.OnLoad;
-					bitmap.UriSource = new Uri(path);
-					bitmap.EndInit();
+				BitmapImage bitmap = new();
+				bitmap.BeginInit();
+				bitmap.CacheOption = BitmapCacheOption.OnLoad;
+				bitmap.UriSource = new Uri(path);
+				bitmap.EndInit();
 #if DEBUG
-					//Debug.WriteLine(path + " " + Watch.ElapsedMilliseconds);
+				//Debug.WriteLine(path + " " + Watch.ElapsedMilliseconds);
 #endif
-					return bitmap;
-				}
-				else
-				{
-#if DEBUG
-					Debug.WriteLine("Image failure: " + path);
-#endif
-					return DependencyProperty.UnsetValue;
-				}
+				return bitmap;
 			}
-			catch (Exception)
+			else
 			{
+#if DEBUG
+				Debug.WriteLine("Image failure: " + path);
+#endif
 				return DependencyProperty.UnsetValue;
 			}
 		}
-
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		catch (Exception)
 		{
-			throw new NotImplementedException();
+			return DependencyProperty.UnsetValue;
 		}
 	}
 
-	public class PreferredMultiValueConverter : IMultiValueConverter
+	public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 	{
-		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-		{
-			if (Equals(values[0], values[1]))
-			{
-				return Visibility.Visible;
-			}
-			else
-			{
-				return Visibility.Hidden;
-			}
-		}
+		throw new NotImplementedException();
+	}
+}
 
-		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+public class PreferredMultiValueConverter : IMultiValueConverter
+{
+	public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+	{
+		if (Equals(values[0], values[1]))
 		{
-			throw new NotImplementedException();
+			return Visibility.Visible;
+		}
+		else
+		{
+			return Visibility.Hidden;
 		}
 	}
 
-	public class MatchGroupMultiValueConverter : IMultiValueConverter
+	public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
 	{
-		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+		throw new NotImplementedException();
+	}
+}
+
+public class MatchGroupMultiValueConverter : IMultiValueConverter
+{
+	public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+	{
+		MatchWindowViewModel MWVM = values[0] as MatchWindowViewModel;
+
+		LocalDB db = (LocalDB)values[1];
+
+		string name = Enum.GetName(typeof(LocalDB), db);
+
+		string id = "";
+
+		string sep1 = " (";
+		string sep2 = ")";
+		switch (db)
 		{
-			MatchWindowViewModel MWVM = values[0] as MatchWindowViewModel;
-
-			LocalDB db = (LocalDB)values[1];
-
-			string name = Enum.GetName(typeof(LocalDB), db);
-
-			string id = "";
-
-			string sep1 = " (";
-			string sep2 = ")";
-			switch (db)
-			{
-				case LocalDB.GamesDB:
-					if (MWVM.ID_GDB != null)
-					{
-						id = $"{sep1}{MWVM.ID_GDB}{sep2}";
-					}
-					break;
-				case LocalDB.GiantBomb:
-					if (MWVM.ID_GB != null)
-					{
-						id = $"{sep1}{MWVM.ID_GB}{sep2}";
-					}
-					break;
-				case LocalDB.OpenVGDB:
-					if (MWVM.ID_OVG != null)
-					{
-						id = $"{sep1}{MWVM.ID_OVG}{sep2}";
-					}
-					break;
-				case LocalDB.LaunchBox:
-					if (MWVM.ID_LB != null)
-					{
-						id = $"{sep1}{MWVM.ID_LB}{sep2}";
-					}
-					break;
-				case LocalDB.Unknown:
-					break;
-				case LocalDB.Datomatic:
-					break;
-				case LocalDB.MobyGames:
-					break;
-				case LocalDB.Robin:
-					break;
-				default:
-					break;
-			}
-
-			return name + id;
+			case LocalDB.GamesDB:
+				if (MWVM.ID_GDB != null)
+				{
+					id = $"{sep1}{MWVM.ID_GDB}{sep2}";
+				}
+				break;
+			case LocalDB.GiantBomb:
+				if (MWVM.ID_GB != null)
+				{
+					id = $"{sep1}{MWVM.ID_GB}{sep2}";
+				}
+				break;
+			case LocalDB.OpenVGDB:
+				if (MWVM.ID_OVG != null)
+				{
+					id = $"{sep1}{MWVM.ID_OVG}{sep2}";
+				}
+				break;
+			case LocalDB.LaunchBox:
+				if (MWVM.ID_LB != null)
+				{
+					id = $"{sep1}{MWVM.ID_LB}{sep2}";
+				}
+				break;
+			case LocalDB.Unknown:
+				break;
+			case LocalDB.Datomatic:
+				break;
+			case LocalDB.MobyGames:
+				break;
+			case LocalDB.Robin:
+				break;
+			default:
+				break;
 		}
 
-		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+		return name + id;
+	}
+
+	public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+	{
+		throw new NotImplementedException();
+	}
+}
+
+public class FileToVisibilityConverter : IValueConverter
+{
+	public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+	{
+		string filePath = (string)(value ?? "");
+		if (Catalog.Images.Contains(filePath) || Catalog.Art.Contains(filePath))
 		{
-			throw new NotImplementedException();
+			return Visibility.Visible;
+		}
+		else
+		{
+			return Visibility.Collapsed;
 		}
 	}
 
-	public class FileToVisibilityConverter : IValueConverter
+	public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 	{
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			string filePath = (string)(value ?? "");
-			if (Catalog.Images.Contains(filePath) || Catalog.Art.Contains(filePath))
-			{
-				return Visibility.Visible;
-			}
-			else
-			{
-				return Visibility.Collapsed;
-			}
-		}
+		throw new NotImplementedException();
+	}
+}
 
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+public class StarConverter : IValueConverter
+{
+	public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+	{
+		if (value == null)
 		{
-			throw new NotImplementedException();
+			return 1;
+		}
+		else
+		{
+			return (value as double?) * 15 - 1;
 		}
 	}
 
-	public class StarConverter : IValueConverter
+	public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 	{
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		throw new NotImplementedException();
+	}
+}
+
+public class RatingColorConverter : IValueConverter
+{
+	private readonly SolidColorBrush gold = new(Colors.Gold);
+	private readonly SolidColorBrush silver = new(Colors.Silver);
+	private readonly SolidColorBrush bronze = new((Color)ColorConverter.ConvertFromString(@"#CD7F32"));
+	//SolidColorBrush copper = new SolidColorBrush((Color)ColorConverter.ConvertFromString(@"#8C5B53"));
+	private readonly SolidColorBrush white = new(Colors.White);
+	//SolidColorBrush transparent = new SolidColorBrush(Colors.Transparent);
+
+	public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+	{
+		double? rating = value as double?;
+
+		if (rating == null)
 		{
-			if (value == null)
-			{
-				return 1;
-			}
-			else
-			{
-				return (value as double?) * 15 - 1;
-			}
+			return null;
 		}
 
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		if (rating == 5)
 		{
-			throw new NotImplementedException();
+			return gold;
 		}
+
+		if (rating >= 4)
+		{
+			return silver;
+		}
+		if (rating >= 3)
+		{
+			return bronze;
+		}
+
+		return white;
 	}
 
-	public class RatingColorConverter : IValueConverter
+	public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 	{
-		private readonly SolidColorBrush gold = new(Colors.Gold);
-		private readonly SolidColorBrush silver = new(Colors.Silver);
-		private readonly SolidColorBrush bronze = new((Color)ColorConverter.ConvertFromString(@"#CD7F32"));
-		//SolidColorBrush copper = new SolidColorBrush((Color)ColorConverter.ConvertFromString(@"#8C5B53"));
-		private readonly SolidColorBrush white = new(Colors.White);
-		//SolidColorBrush transparent = new SolidColorBrush(Colors.Transparent);
+		throw new NotImplementedException();
+	}
+}
 
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			double? rating = value as double?;
-
-			if (rating == null)
-			{
-				return null;
-			}
-
-			if (rating == 5)
-			{
-				return gold;
-			}
-
-			if (rating >= 4)
-			{
-				return silver;
-			}
-			if (rating >= 3)
-			{
-				return bronze;
-			}
-
-			return white;
-		}
-
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			throw new NotImplementedException();
-		}
+public class NullToVisibilityConverter : IValueConverter
+{
+	public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+	{
+		return value == null ? Visibility.Hidden : Visibility.Visible;
 	}
 
-	public class NullToVisibilityConverter : IValueConverter
+	public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 	{
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			return value == null ? Visibility.Hidden : Visibility.Visible;
-		}
-
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			throw new NotImplementedException();
-		}
+		throw new NotImplementedException();
 	}
 }

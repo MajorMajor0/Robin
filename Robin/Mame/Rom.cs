@@ -7,32 +7,31 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Robin.Mame
+namespace Robin.Mame;
+
+using System;
+using System.Collections.Generic;
+
+public partial class Rom
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class Rom
-    {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Rom()
-        {
-            this.Machines = new HashSet<Machine>();
-            this.RomFiles = new HashSet<RomFile>();
-        }
-    
-        public long ID { get; set; }
-        public string Name { get; set; }
-        public string Region { get; set; }
-        public string CRC { get; set; }
-        public Nullable<long> Size { get; set; }
-        public string Status { get; set; }
-        public bool Optional { get; set; }
-        public bool Unknown { get; set; }
-    
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Machine> Machines { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<RomFile> RomFiles { get; set; }
-    }
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+	public Rom()
+	{
+		this.Machines = new HashSet<Machine>();
+		this.RomFiles = new HashSet<RomFile>();
+	}
+
+	public long ID { get; set; }
+	public string Name { get; set; }
+	public string Region { get; set; }
+	public string CRC { get; set; }
+	public Nullable<long> Size { get; set; }
+	public string Status { get; set; }
+	public bool Optional { get; set; }
+	public bool Unknown { get; set; }
+
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+	public virtual ICollection<Machine> Machines { get; set; }
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+	public virtual ICollection<RomFile> RomFiles { get; set; }
 }

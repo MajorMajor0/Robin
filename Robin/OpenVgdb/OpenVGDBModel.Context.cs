@@ -27,7 +27,7 @@ namespace Robin
     
         public virtual DbSet<VGDBPlatform> VGDBPlatforms { get; set; }
         public virtual DbSet<VGDBREGION> VGDBREGIONS { get; set; }
-        public virtual DbSet<VGDBRELEAS> VGdbreleaseS { get; set; }
+        public virtual DbSet<VGDBRELEAS> VGDBReleaseS { get; set; }
         public virtual DbSet<VGDBROM> VGDBROMS { get; set; }
     }
 }

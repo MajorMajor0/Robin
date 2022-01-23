@@ -21,144 +21,143 @@ using System.IO;
 using System.Linq;
 using System.Net;
 
-namespace Robin
+namespace Robin;
+
+public partial class GBRelease : IDbRelease
 {
-	public partial class GBRelease : IDbRelease
+	[NotMapped]
+	public LocalDB LocalDB => LocalDB.GiantBomb;
+
+	[NotMapped]
+	public string RegionTitle => Region.Title;
+
+	[NotMapped]
+	public string BoxFrontPath => FileLocation.Temp + ID + "GBR-BXF.jpg";
+
+	[NotMapped]
+	public string ScreenPath => FileLocation.Temp + ID + "GBR-SCR.jpg";
+
+	[NotMapped]
+	public string BannerPath => null;
+
+
+	public static List<GBRelease> GetGames(Platform platform)
 	{
-		[NotMapped]
-		public LocalDB LocalDB => LocalDB.GiantBomb;
-
-		[NotMapped]
-		public string RegionTitle => Region.Title;
-
-		[NotMapped]
-		public string BoxFrontPath => FileLocation.Temp + ID + "GBR-BXF.jpg";
-
-		[NotMapped]
-		public string ScreenPath => FileLocation.Temp + ID + "GBR-SCR.jpg";
-
-		[NotMapped]
-		public string BannerPath => null;
-
-
-		public static List<GBRelease> GetGames(Platform platform)
-		{
-			R.Data.GBReleases.Load();
-			R.Data.Regions.Load();
-			return R.Data.GBReleases.Where(x => x.GBPlatformId == platform.ID_GB).ToList();
-		}
-
-		public int ScrapeBoxFront()
-		{
-			using (WebClient webclient = new())
-			{
-				if (!File.Exists(BoxFrontPath))
-				{
-					if (BoxUrl != null)
-					{
-						Reporter.Report("Getting front box art for GBRelease " + Title + "...");
-
-						if (webclient.DownloadFileFromDB(BoxUrl, BoxFrontPath))
-						{
-							Reporter.ReportInline("success!");
-							OnPropertyChanged("BoxFrontPath");
-						}
-						else
-						{
-							Reporter.ReportInline("dammit!");
-							return -1;
-						}
-					}
-
-					else
-					{
-						Reporter.Report("No box art URL exists.");
-					}
-				}
-
-				else
-				{
-					Reporter.Report("File already exists.");
-				}
-			}
-			return 0;
-		}
-
-		public int ScrapeBoxBack()
-		{
-			throw new NotImplementedException();
-		}
-
-		public int ScrapeBox3D()
-		{
-			throw new NotImplementedException();
-		}
-
-		public int ScrapeScreen()
-		{
-			using (WebClient webclient = new())
-			{
-				if (!File.Exists(ScreenPath))
-				{
-					if (ScreenUrl != null)
-					{
-						Reporter.Report("Getting screen shot for GBRelease " + Title + "...");
-
-						if (webclient.DownloadFileFromDB(ScreenUrl, ScreenPath))
-						{
-							Reporter.ReportInline("success!");
-							OnPropertyChanged("ScreenPath");
-						}
-						else
-						{
-							Reporter.ReportInline("dammit!");
-							return -1;
-						}
-					}
-
-					else
-					{
-						Reporter.Report("No screen shot URL exists.");
-					}
-				}
-
-				else
-				{
-					Reporter.Report("File already exists.");
-				}
-			}
-			return 0;
-		}
-
-		public int ScrapeLogo()
-		{
-			throw new NotImplementedException();
-		}
-
-		public int ScrapeBanner()
-		{
-			throw new NotImplementedException();
-		}
-
-		public int ScrapeCartFront()
-		{
-			throw new NotImplementedException();
-		}
-
-		public int ScrapeCart3D()
-		{
-			throw new NotImplementedException();
-		}
-
-		public int ScrapeMarquee()
-		{
-			throw new NotImplementedException();
-		}
-
-		public int ScrapeControlPanel()
-		{
-			throw new NotImplementedException();
-		}
-
+		R.Data.GBReleases.Load();
+		R.Data.Regions.Load();
+		return R.Data.GBReleases.Where(x => x.GBPlatform_ID == platform.ID_GB).ToList();
 	}
+
+	public int ScrapeBoxFront()
+	{
+		using (WebClient webclient = new())
+		{
+			if (!File.Exists(BoxFrontPath))
+			{
+				if (BoxUrl != null)
+				{
+					Reporter.Report("Getting front box art for GBRelease " + Title + "...");
+
+					if (webclient.DownloadFileFromDB(BoxUrl, BoxFrontPath))
+					{
+						Reporter.ReportInline("success!");
+						OnPropertyChanged("BoxFrontPath");
+					}
+					else
+					{
+						Reporter.ReportInline("dammit!");
+						return -1;
+					}
+				}
+
+				else
+				{
+					Reporter.Report("No box art URL exists.");
+				}
+			}
+
+			else
+			{
+				Reporter.Report("File already exists.");
+			}
+		}
+		return 0;
+	}
+
+	public int ScrapeBoxBack()
+	{
+		throw new NotImplementedException();
+	}
+
+	public int ScrapeBox3D()
+	{
+		throw new NotImplementedException();
+	}
+
+	public int ScrapeScreen()
+	{
+		using (WebClient webclient = new())
+		{
+			if (!File.Exists(ScreenPath))
+			{
+				if (ScreenUrl != null)
+				{
+					Reporter.Report("Getting screen shot for GBRelease " + Title + "...");
+
+					if (webclient.DownloadFileFromDB(ScreenUrl, ScreenPath))
+					{
+						Reporter.ReportInline("success!");
+						OnPropertyChanged("ScreenPath");
+					}
+					else
+					{
+						Reporter.ReportInline("dammit!");
+						return -1;
+					}
+				}
+
+				else
+				{
+					Reporter.Report("No screen shot URL exists.");
+				}
+			}
+
+			else
+			{
+				Reporter.Report("File already exists.");
+			}
+		}
+		return 0;
+	}
+
+	public int ScrapeLogo()
+	{
+		throw new NotImplementedException();
+	}
+
+	public int ScrapeBanner()
+	{
+		throw new NotImplementedException();
+	}
+
+	public int ScrapeCartFront()
+	{
+		throw new NotImplementedException();
+	}
+
+	public int ScrapeCart3D()
+	{
+		throw new NotImplementedException();
+	}
+
+	public int ScrapeMarquee()
+	{
+		throw new NotImplementedException();
+	}
+
+	public int ScrapeControlPanel()
+	{
+		throw new NotImplementedException();
+	}
+
 }

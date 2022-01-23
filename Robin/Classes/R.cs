@@ -17,7 +17,6 @@ namespace Robin
 		/// This is where the entire application gets its info
 		/// </summary>
 		public static RobinDataContext Data { get; }
-		public static bool Trash { get; internal set; }
 
 		static R()
 		{

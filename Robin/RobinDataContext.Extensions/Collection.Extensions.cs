@@ -16,59 +16,58 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
-namespace Robin
+namespace Robin;
+
+public partial class Collection
 {
-	public partial class Collection
+	[NotMapped]
+	public IEnumerable<IDbObject> FilteredCollection
 	{
-		[NotMapped]
-		public IEnumerable<IDbObject> FilteredCollection
-		{
-			get { return (Games as IEnumerable<IDbObject>).Union(Releases as IEnumerable<IDbObject>); }
-		}
+		get { return (Games as IEnumerable<IDbObject>).Union(Releases as IEnumerable<IDbObject>); }
+	}
 
-		public Collection(IEnumerable<IDbObject> objects) : this()
+	public Collection(IEnumerable<IDbObject> objects) : this()
+	{
+		foreach (IDbObject idbo in objects)
 		{
-			foreach (IDbObject idbo in objects)
+			if (idbo is Game)
 			{
-				if (idbo is Game)
-				{
-					Games.Add(idbo as Game);
-				}
-
-				else if (idbo is Release)
-				{
-					Releases.Add(idbo as Release);
-				}
+				Games.Add(idbo as Game);
 			}
 
-		}
-
-		public void Add(IDbObject idbObject)
-		{
-			if (idbObject is Game)
+			else if (idbo is Release)
 			{
-				Games.Add(idbObject as Game);
-				OnPropertyChanged("FilteredCollection");
-			}
-			if (idbObject is Release)
-			{
-				Releases.Add(idbObject as Release);
-				OnPropertyChanged("FilteredCollection");
+				Releases.Add(idbo as Release);
 			}
 		}
 
-		public void Remove(IDbObject idbObject)
+	}
+
+	public void Add(IDbObject idbObject)
+	{
+		if (idbObject is Game)
 		{
-			if (idbObject is Game)
-			{
-				Games.Remove(idbObject as Game);
-				OnPropertyChanged("FilteredCollection");
-			}
-			if (idbObject is Release)
-			{
-				Releases.Remove(idbObject as Release);
-				OnPropertyChanged("FilteredCollection");
-			}
+			Games.Add(idbObject as Game);
+			OnPropertyChanged("FilteredCollection");
+		}
+		if (idbObject is Release)
+		{
+			Releases.Add(idbObject as Release);
+			OnPropertyChanged("FilteredCollection");
+		}
+	}
+
+	public void Remove(IDbObject idbObject)
+	{
+		if (idbObject is Game)
+		{
+			Games.Remove(idbObject as Game);
+			OnPropertyChanged("FilteredCollection");
+		}
+		if (idbObject is Release)
+		{
+			Releases.Remove(idbObject as Release);
+			OnPropertyChanged("FilteredCollection");
 		}
 	}
 }

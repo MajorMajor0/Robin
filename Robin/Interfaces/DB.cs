@@ -17,154 +17,152 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace Robin
+namespace Robin;
+
+public interface IDbObject : INotifyPropertyChanged
 {
-	public interface IDbObject : INotifyPropertyChanged
-	{
-		string Title { get; }
-		string MainDisplay { get; }
-		bool Included { get; }
-		bool IsCrap { get; set; }
-		bool Preferred { get; set; }
-		bool Unlicensed { get; }
-		bool HasArt { get; }
-		string WhyCantIPlay { get; }
+	string Title { get; }
+	string MainDisplay { get; }
+	bool Included { get; }
+	bool IsCrap { get; set; }
+	bool Preferred { get; set; }
+	bool Unlicensed { get; }
+	bool HasArt { get; }
+	string WhyCantIPlay { get; }
 
-		void Play();
+	void Play();
 
-		int ScrapeArt(ArtType artType, LocalDB localDB);
-	}
+	int ScrapeArt(ArtType artType, LocalDB localDB);
+}
 
-	public interface IDbRelease : INotifyPropertyChanged
-	{
-		long ID { get; }
-		string Title { get; }
-		string Overview { get; }
-		string RegionTitle { get; }
-		LocalDB LocalDB { get; }
+public interface IDbRelease : INotifyPropertyChanged
+{
+	long ID { get; }
+	string Title { get; }
+	string Overview { get; }
+	string RegionTitle { get; }
+	LocalDB LocalDB { get; }
 
-		Region Region { get; }
+	Region Region { get; }
 
-		DateTime? Date { get; }
-		string BannerPath { get; }
+	DateTime? Date { get; }
+	string BannerPath { get; }
 
-		int ScrapeBoxFront();
-	}
+	int ScrapeBoxFront();
+}
 
-	public interface IDbPlatform
-	{
-		long ID { get; }
-		string Title { get; }
-		string Manufacturer { get; }
-		DateTime? Date { get; }
-		DateTime CacheDate { get; set; }
-		IList Releases { get; }
-		bool Preferred { get; }
-		Platform RPlatform { get; }
-		int MatchedReleaseCount { get; }
+public interface IDbPlatform
+{
+	long ID { get; }
+	string Title { get; }
+	string Manufacturer { get; }
+	DateTime? Date { get; }
+	DateTime CacheDate { get; set; }
+	IList Releases { get; }
+	bool Preferred { get; }
+	Platform RPlatform { get; }
+	int MatchedReleaseCount { get; }
 
-	}
+}
+
+/// <summary>
+/// A local cache of an online database, Games DB, GiantBomb, LaunchBox...
+/// </summary>
+public interface IDB : IDisposable
+{
+	LocalDB DB { get; }
+	string Title { get; }
+	IEnumerable<IDbPlatform> Platforms { get; }
+	IEnumerable<IDbRelease> Releases { get; }
+	bool HasRegions { get; }
 
 	/// <summary>
-	/// A local cache of an online database, Games DB, GiantBomb, LaunchBox...
+	/// Update the list of platforms in the local DB cache, GBPlatform, GDBlatform, LBPlatform...
 	/// </summary>
-	public interface IDB : IDisposable
-	{
-		LocalDB DB { get; }
-		string Title { get; }
-		IEnumerable<IDbPlatform> Platforms { get; }
-		IEnumerable<IDbRelease> Releases { get; }
-		bool HasRegions { get; }
+	void CachePlatforms();
 
-		/// <summary>
-		/// Update the list of platforms in the local DB cache, GBPlatform, GDBlatform, LBPlatform...
-		/// </summary>
-		void CachePlatforms();
+	/// <summary>
+	/// Update the local DB cache of realeases for one platform, inlcluding the list of releases and associated metadata. LBRealease, GBRelease, GDBRelease...
+	/// </summary>
+	/// <param name="platform"></param>
+	void CachePlatformReleases(Platform platform);
 
-		/// <summary>
-		/// Update the local DB cache of realeases for one platform, inlcluding the list of releases and associated metadata. LBRealease, GBRelease, Gdbrelease...
-		/// </summary>
-		/// <param name="platform"></param>
-		void CachePlatformReleases(Platform platform);
+	/// <summary>
+	/// Update the local DB cache of games for one platform, inlcluding the list o games and associated metadata.
+	/// </summary>
+	/// <param name="platform"></param>
+	void CachePlatformGamesAsync(Platform platform);
 
-		/// <summary>
-		/// Update the local DB cache of games for one platform, inlcluding the list o games and associated metadata.
-		/// </summary>
-		/// <param name="platform"></param>
-		void CachePlatformGamesAsync(Platform platform);
+	/// <summary>
+	/// Update the local DB cache of platform associated metadata
+	/// </summary>
+	/// <param name="platform">Robin.Platform associated with the DBPlatorm to update.</param>
+	void CachePlatformData(Platform platform);
 
-		/// <summary>
-		/// Update the local DB cache of platform associated metadata
-		/// </summary>
-		/// <param name="platform">Robin.Platform associated with the DBPlatorm to update.</param>
-		void CachePlatformData(Platform platform);
+	/// <summary>
+	/// Report to the UI how many database entries and of what type have been updated or added since the last save changes for a local DB cache.
+	/// </summary>
+	/// <param name="detect">Whether to detect changes prior to reporting. Detecting changes takes about 4 seconds. This can be set to false if no changes have been made since the last detect changes. Detecting changes is only necessary for updates, it is not necessary to detect additions.</param>
+	void ReportUpdates(bool detect);
+}
 
-		/// <summary>
-		/// Report to the UI how many database entries and of what type have been updated or added since the last save changes for a local DB cache.
-		/// </summary>
-		/// <param name="detect">Whether to detect changes prior to reporting. Detecting changes takes about 4 seconds. This can be set to false if no changes have been made since the last detect changes. Detecting changes is only necessary for updates, it is not necessary to detect additions.</param>
-		void ReportUpdates(bool detect);
-	}
+public interface ICollectionItem
+{
+	string Title { get; }
 
-	public interface ICollectionItem
-	{
-		string Title { get; }
+}
 
-	}
+public enum LocalDB
+{
+	[Description("Unknown")]
+	Unknown,
+	[Description("Games DB")]
+	GamesDB,
+	[Description("GiantBomb")]
+	GiantBomb,
+	[Description("Open VGDB")]
+	OpenVGDB,
+	[Description("LaunchBox")]
+	LaunchBox,
+	[Description("Datomatic")]
+	Datomatic,
+	[Description("Robin")]
+	MobyGames,
+	[Description("MobyGames")]
+	Robin
+}
 
-	public enum LocalDB
-	{
-		[Description("Unknown")]
-		Unknown,
-		[Description("Games DB")]
-		GamesDB,
-		[Description("GiantBomb")]
-		GiantBomb,
-		[Description("Open VGDB")]
-		OpenVGDB,
-		[Description("LaunchBox")]
-		LaunchBox,
-		[Description("Datomatic")]
-		Datomatic,
-		[Description("Robin")]
-		MobyGames,
-		[Description("MobyGames")]
-		Robin
-	}
-
-	public enum ArtType
-	{
-		[Description("All")]
-		All,
-		[Description("Box Front")]
-		BoxFront,
-		[Description("Box Back")]
-		BoxBack,
-		[Description("Banner")]
-		Banner,
-		[Description("Console")]
-		Console,
-		[Description("Controller")]
-		Controller,
-		[Description("Screen Shot")]
-		Screen,
-		[Description("Clear Logo")]
-		Logo,
-		[Description("Box 3D")]
-		Box3D,
-		[Description("Marquee")]
-		Marquee,
-		[Description("Control Panel")]
-		ControlPanel,
-		[Description("Control Information")]
-		ControlInformation,
-		[Description("Cartridge Front")]
-		CartFront,
-		[Description("Cartridg Back")]
-		CartBack,
-		[Description("Cartridge 3D")]
-		Cart3D
-	}
-
+public enum ArtType
+{
+	[Description("All")]
+	All,
+	[Description("Box Front")]
+	BoxFront,
+	[Description("Box Back")]
+	BoxBack,
+	[Description("Banner")]
+	Banner,
+	[Description("Console")]
+	Console,
+	[Description("Controller")]
+	Controller,
+	[Description("Screen Shot")]
+	Screen,
+	[Description("Clear Logo")]
+	Logo,
+	[Description("Box 3D")]
+	Box3D,
+	[Description("Marquee")]
+	Marquee,
+	[Description("Control Panel")]
+	ControlPanel,
+	[Description("Control Information")]
+	ControlInformation,
+	[Description("Cartridge Front")]
+	CartFront,
+	[Description("Cartridg Back")]
+	CartBack,
+	[Description("Cartridge 3D")]
+	Cart3D
 }
 

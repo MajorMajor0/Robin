@@ -21,9 +21,9 @@ namespace Robin
 			public Rom Parent { get; set; }
 			public Status Status { get; set; }
 			public string FilePath { get; set; }
-			public string Crc32 { get; set; }
-			public string Md5 { get; set; }
-			public string Sha1 { get; set; }
+			public string CRC32 { get; set; }
+			public string MD5 { get; set; }
+			public string SHA1 { get; set; }
 			public string FileName => Path.GetFileName(FilePath);
 
 			public Result()
@@ -82,10 +82,10 @@ namespace Robin
 		/// Get the checksum of a file and return as a string
 		/// </summary>
 		/// <param name="file">File name of file to get hash from</param>
-		/// <param name="hashOption">Default = Sha1, also Md5 and Crc32</param>
+		/// <param name="hashOption">Default = SHA1, also MD5 and CRC32</param>
 		/// <param name="headerlength">Number of bytes to skip prior to computing hash. Should try both platform header length and 0 when comparing to known checksum to account for Rom files with dumped intros. Default = 0.</param>
 		/// <returns>Returns hash as hex string</returns>
-		public static string GetHash(string file, HashOption hashOption = HashOption.Sha1, int headerlength = 0)
+		public static string GetHash(string file, HashOption hashOption = HashOption.SHA1, int headerlength = 0)
 		{
 			string hash;
 			using (FileStream stream = new(file, FileMode.Open, FileAccess.Read))
@@ -99,10 +99,10 @@ namespace Robin
 		/// Get the CRC of a file stream and return as a string
 		/// </summary>
 		/// <param name="stream">FileStream</param>
-		/// <param name="hashOption">Default = Sha1, also Md5 and Crc32</param>
+		/// <param name="hashOption">Default = SHA1, also MD5 and CRC32</param>
 		/// <param name="headerlength">Number of bytes to skip prior to computing hash. Should try both platform header length and 0 when comparing to known checksum to account for Rom files with dumped intros. Default = 0.</param>
 		/// <returns>Returns hash as hex string</returns>
-		public static string GetHash(Stream stream, HashOption hashOption = HashOption.Sha1, int headerlength = 0)
+		public static string GetHash(Stream stream, HashOption hashOption = HashOption.SHA1, int headerlength = 0)
 		{
 			string hash = "";
 			int streamLength = (int)stream.Length;
@@ -120,24 +120,24 @@ namespace Robin
 
 			switch (hashOption)
 			{
-				case HashOption.Crc32:
-					var Crc32 = new Ionic.Crc.CRC32();
+				case HashOption.CRC32:
+					var CRC32 = new Ionic.Crc.CRC32();
 					foreach (byte b in buffer)
 					{
-						Crc32.UpdateCRC(b);
+						CRC32.UpdateCRC(b);
 					}
-					hash = Crc32.Crc32Result.ToString("x8").ToUpper();
+					hash = CRC32.Crc32Result.ToString("x8").ToUpper();
 					break;
 
-				case HashOption.Md5:
-					var Md5 = MD5.Create();
-					byte[] hashBytes = Md5.ComputeHash(buffer);
+				case HashOption.MD5:
+					var md5 = MD5.Create();
+					byte[] hashBytes = md5.ComputeHash(buffer);
 					hash = BitConverter.ToString(hashBytes).Replace("-", String.Empty).ToUpper();
 					break;
 
-				case HashOption.Sha1:
-					SHA1Managed managedSha1 = new();
-					byte[] shaBuffer = managedSha1.ComputeHash(buffer);
+				case HashOption.SHA1:
+					SHA1Managed managedSHA1 = new();
+					byte[] shaBuffer = managedSHA1.ComputeHash(buffer);
 					foreach (byte b in shaBuffer)
 					{
 						hash += b.ToString("x2").ToUpper();
@@ -151,7 +151,7 @@ namespace Robin
 		public static TitledCollection<Result> AuditRoms(Platform platform)
 		{
 			;
-			if (platform.ID == CONSTANTS.PlatformId.Arcade)
+			if (platform.ID == CONSTANTS.Platform_ID.Arcade)
 			{
 				// return Mame.Database.AuditRoms();
 				return null;
@@ -186,10 +186,10 @@ namespace Robin
 
 				if (File.Exists(rom.FilePath))
 				{
-					if (rom.Crc32 != null)
+					if (rom.CRC32 != null)
 					{
-						if (rom.Crc32 == GetHash(rom.FilePath, HashOption.Crc32, headerLength) ||
-							rom.Crc32 == GetHash(rom.FilePath, HashOption.Crc32, 0))
+						if (rom.CRC32 == GetHash(rom.FilePath, HashOption.CRC32, headerLength) ||
+							rom.CRC32 == GetHash(rom.FilePath, HashOption.CRC32, 0))
 						{
 							result.Status = Status.Good;
 						}
@@ -199,10 +199,10 @@ namespace Robin
 						}
 					}
 
-					else if (rom.Md5 != null)
+					else if (rom.MD5 != null)
 					{
-						if (rom.Md5 == GetHash(rom.FilePath, HashOption.Md5, headerLength) ||
-							rom.Md5 == GetHash(rom.FilePath, HashOption.Md5, 0))
+						if (rom.MD5 == GetHash(rom.FilePath, HashOption.MD5, headerLength) ||
+							rom.MD5 == GetHash(rom.FilePath, HashOption.MD5, 0))
 						{
 							result.Status = Status.Good;
 						}
@@ -212,10 +212,10 @@ namespace Robin
 						}
 					}
 
-					else if (rom.Sha1 != null)
+					else if (rom.SHA1 != null)
 					{
-						if (rom.Sha1 == GetHash(rom.FilePath, HashOption.Sha1, headerLength) ||
-							rom.Sha1 == GetHash(rom.FilePath, HashOption.Sha1, 0))
+						if (rom.SHA1 == GetHash(rom.FilePath, HashOption.SHA1, headerLength) ||
+							rom.SHA1 == GetHash(rom.FilePath, HashOption.SHA1, 0))
 						{
 							result.Status = Status.Good;
 						}
@@ -243,9 +243,9 @@ namespace Robin
 
 			// Then go through all files in the folder not checked yet and mark as superfluous
 			Reporter.Tic("Creating hash sets...", out int tic2);
-			HashSet<string> crcs = new(returner.Select(x => x.Crc32));
-			HashSet<string> Sha1s = new(returner.Select(x => x.Sha1));
-			HashSet<string> Md5s = new(returner.Select(x => x.Md5));
+			HashSet<string> crcs = new(returner.Select(x => x.CRC32));
+			HashSet<string> SHA1s = new(returner.Select(x => x.SHA1));
+			HashSet<string> MD5s = new(returner.Select(x => x.MD5));
 			Reporter.Toc(tic2);
 
 			Reporter.Tic("Auditing orpan files on disks...", out int tic3);
@@ -257,12 +257,12 @@ namespace Robin
 					FilePath = file
 				};
 
-				if (crcs.Contains(GetHash(file, HashOption.Crc32, (int)platform.HeaderLength)) ||
-					crcs.Contains(GetHash(file, HashOption.Crc32, 0)) ||
-					Md5s.Contains(GetHash(file, HashOption.Md5, (int)platform.HeaderLength)) ||
-					Md5s.Contains(GetHash(file, HashOption.Md5, 0)) ||
-					Sha1s.Contains(GetHash(file, HashOption.Sha1, (int)platform.HeaderLength)) ||
-					Sha1s.Contains(GetHash(file, HashOption.Sha1, 0)))
+				if (crcs.Contains(GetHash(file, HashOption.CRC32, (int)platform.HeaderLength)) ||
+					crcs.Contains(GetHash(file, HashOption.CRC32, 0)) ||
+					MD5s.Contains(GetHash(file, HashOption.MD5, (int)platform.HeaderLength)) ||
+					MD5s.Contains(GetHash(file, HashOption.MD5, 0)) ||
+					SHA1s.Contains(GetHash(file, HashOption.SHA1, (int)platform.HeaderLength)) ||
+					SHA1s.Contains(GetHash(file, HashOption.SHA1, 0)))
 				{
 					result.Status = Status.Duplicate;
 				}
@@ -296,12 +296,12 @@ namespace Robin
 
 	public enum HashOption
 	{
-		[Description("Crc32")]
-		Crc32,
-		[Description("Sha1")]
-		Sha1,
-		[Description("Md5")]
-		Md5
+		[Description("CRC32")]
+		CRC32,
+		[Description("SHA1")]
+		SHA1,
+		[Description("MD5")]
+		MD5
 	}
 }
 

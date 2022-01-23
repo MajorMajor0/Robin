@@ -202,7 +202,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Box art front: {0}">
-									<Binding Path="Gdbrelease.BoxFrontUrl"
+									<Binding Path="GDBRelease.BoxFrontUrl"
 											 TargetNullValue="-" />
 								</MultiBinding>
 							</TextBlock.Text>
@@ -210,7 +210,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Box art back: {0}">
-									<Binding Path="Gdbrelease.BoxBackUrl"
+									<Binding Path="GDBRelease.BoxBackUrl"
 											 TargetNullValue="-" />
 								</MultiBinding>
 							</TextBlock.Text>
@@ -218,7 +218,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Banner: {0}">
-									<Binding Path="Gdbrelease.BannerUrl"
+									<Binding Path="GDBRelease.BannerUrl"
 											 TargetNullValue="-" />
 								</MultiBinding>
 							</TextBlock.Text>
@@ -226,7 +226,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Screen: {0}">
-									<Binding Path="Gdbrelease.ScreenUrl"
+									<Binding Path="GDBRelease.ScreenUrl"
 											 TargetNullValue="-" />
 								</MultiBinding>
 							</TextBlock.Text>
@@ -234,7 +234,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 						<TextBlock Style="{StaticResource Normal}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} Logo: {0}">
-									<Binding Path="Gdbrelease.LogoUrl"
+									<Binding Path="GDBRelease.LogoUrl"
 											 TargetNullValue="-" />
 								</MultiBinding>
 							</TextBlock.Text>

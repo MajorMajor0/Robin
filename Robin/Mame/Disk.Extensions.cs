@@ -21,7 +21,7 @@ namespace Robin.Mame
 		public void GetPropsFromXElement(XElement xelement)
 		{
 			Name = xelement.Attribute("name")?.Value;
-			Sha1 = xelement.Attribute("Sha1")?.Value;
+			SHA1 = xelement.Attribute("SHA1")?.Value;
 		}
 	}
 }

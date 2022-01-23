@@ -17,49 +17,48 @@ using System.Collections;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
-namespace Robin
+namespace Robin;
+
+public partial class OVGPlatform : IDbPlatform
 {
-	public partial class OVGPlatform : IDbPlatform
+	[NotMapped]
+	public IList Releases => OVGReleases.ToList();
+
+	[NotMapped]
+	public Platform RPlatform => R.Data.Platforms.FirstOrDefault(x => x.ID == ID);
+
+	[NotMapped]
+	public int MatchedReleaseCount
 	{
-		[NotMapped]
-		public IList Releases => OVGReleases.ToList();
-
-		[NotMapped]
-		public Platform RPlatform => R.Data.Platforms.FirstOrDefault(x => x.ID == ID);
-
-		[NotMapped]
-		public int MatchedReleaseCount
+		get
 		{
-			get
+			if (RPlatform != null)
 			{
-				if (RPlatform != null)
-				{
-					return RPlatform.MatchedToOpenVG;
-				}
-				return 0;
+				return RPlatform.MatchedToOpenVG;
 			}
+			return 0;
 		}
-
-		[NotMapped]
-		public bool Preferred
-		{
-			get
-			{
-				if (RPlatform != null)
-				{
-					return RPlatform.Preferred;
-				}
-				return false;
-			}
-		}
-
-		[NotMapped]
-		public string Manufacturer => null;
-
-		[NotMapped]
-		public DateTime? Date => null;
-
-		[NotMapped]
-		public DateTime CacheDate { get; set; }
 	}
+
+	[NotMapped]
+	public bool Preferred
+	{
+		get
+		{
+			if (RPlatform != null)
+			{
+				return RPlatform.Preferred;
+			}
+			return false;
+		}
+	}
+
+	[NotMapped]
+	public string Manufacturer => null;
+
+	[NotMapped]
+	public DateTime? Date => null;
+
+	[NotMapped]
+	public DateTime CacheDate { get; set; }
 }

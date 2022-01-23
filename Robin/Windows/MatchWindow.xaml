@@ -160,7 +160,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 							<ContentPresenter ContentTemplate="{StaticResource DBTemplate }" />
 						</DataTemplate>
 
-						<DataTemplate DataType="{x:Type local:Gdbrelease}">
+						<DataTemplate DataType="{x:Type local:GDBRelease}">
 							<ContentPresenter ContentTemplate="{StaticResource DBTemplate }" />
 						</DataTemplate>
 						
@@ -180,7 +180,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 										<Binding Path="Region.Title"
 												 TargetNullValue="-"
 												 FallbackValue="-" />
-										<Binding Path="Sha1"
+										<Binding Path="SHA1"
 												 TargetNullValue="-"
 												 FallbackValue="-" />
 									</MultiBinding>

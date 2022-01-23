@@ -11,7 +11,7 @@
           </Key>
           <Property Name="ID" Type="integer" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="2147483647" />
-          <Property Name="Sha1" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="SHA1" Type="nvarchar" MaxLength="2147483647" />
         </EntityType>
         <EntityType Name="Machine">
           <Key>
@@ -44,10 +44,10 @@
         <EntityType Name="Machine_Rom">
           <Key>
             <PropertyRef Name="Machine_Name" />
-            <PropertyRef Name="RomId" />
+            <PropertyRef Name="Rom_ID" />
           </Key>
           <Property Name="Machine_Name" Type="nvarchar" MaxLength="2147483647" Nullable="false" />
-          <Property Name="RomId" Type="integer" Nullable="false" />
+          <Property Name="Rom_ID" Type="integer" Nullable="false" />
         </EntityType>
         <EntityType Name="Rom">
           <Key>
@@ -72,10 +72,10 @@
         </EntityType>
         <EntityType Name="RomFile_Rom">
           <Key>
-            <PropertyRef Name="RomId" />
+            <PropertyRef Name="Rom_ID" />
             <PropertyRef Name="RomFile_ID" />
           </Key>
-          <Property Name="RomId" Type="integer" Nullable="false" />
+          <Property Name="Rom_ID" Type="integer" Nullable="false" />
           <Property Name="RomFile_ID" Type="integer" Nullable="false" />
         </EntityType>
         <Association Name="FK_Machine_0_0">
@@ -134,7 +134,7 @@
               <PropertyRef Name="ID" />
             </Principal>
             <Dependent Role="Machine_Rom">
-              <PropertyRef Name="RomId" />
+              <PropertyRef Name="Rom_ID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -170,7 +170,7 @@
               <PropertyRef Name="ID" />
             </Principal>
             <Dependent Role="RomFile_Rom">
-              <PropertyRef Name="RomId" />
+              <PropertyRef Name="Rom_ID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -225,7 +225,7 @@
           </Key>
           <Property Name="ID" Type="Int64" Nullable="false" />
           <Property Name="Name" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
-          <Property Name="Sha1" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="SHA1" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Machines" Relationship="Self.Machine_Disk" FromRole="Disk" ToRole="Machine" />
         </EntityType>
         <EntityType Name="Machine">
@@ -351,7 +351,7 @@
               <MappingFragment StoreEntitySet="Disk">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Sha1" ColumnName="Sha1" />
+                <ScalarProperty Name="SHA1" ColumnName="SHA1" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -409,7 +409,7 @@
           </AssociationSetMapping>
           <AssociationSetMapping Name="Machine_Rom" TypeName="MEntities.Machine_Rom" StoreEntitySet="Machine_Rom">
             <EndProperty Name="Rom">
-              <ScalarProperty Name="ID" ColumnName="RomId" />
+              <ScalarProperty Name="ID" ColumnName="Rom_ID" />
             </EndProperty>
             <EndProperty Name="Machine">
               <ScalarProperty Name="Name" ColumnName="Machine_Name" />
@@ -417,7 +417,7 @@
           </AssociationSetMapping>
           <AssociationSetMapping Name="RomFile_Rom1" TypeName="MEntities.RomFile_Rom1" StoreEntitySet="RomFile_Rom">
             <EndProperty Name="Rom">
-              <ScalarProperty Name="ID" ColumnName="RomId" />
+              <ScalarProperty Name="ID" ColumnName="Rom_ID" />
             </EndProperty>
             <EndProperty Name="RomFile">
               <ScalarProperty Name="ID" ColumnName="RomFile_ID" />

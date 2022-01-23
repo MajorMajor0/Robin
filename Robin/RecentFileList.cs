@@ -14,56 +14,54 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 
-namespace Robin
+namespace Robin;
+
+/// <summary>
+/// Class to hold list of games recently played with a limit set in the user settings.
+/// </summary>
+public static class RecentFileList
 {
-	/// <summary>
-	/// Class to hold list of games recently played with a limit set in the user settings.
-	/// </summary>
-	public static class RecentFileList
+	public static int Limit => Properties.Settings.Default.RecentFileLimit;
+
+	static readonly Queue<Release> recentFiles;
+
+	public static IEnumerable<Release> RecentFiles => recentFiles.Reverse();
+
+	static RecentFileList()
 	{
-		public static int Limit => Properties.Settings.Default.RecentFileLimit;
+		recentFiles = new Queue<Release>();
 
-		static readonly Queue<Release> recentFiles;
-
-		public static IEnumerable<Release> RecentFiles => recentFiles.Reverse();
-
-		static RecentFileList()
+		if (Properties.Settings.Default.RecentFileIDs != null)
 		{
-			recentFiles = new Queue<Release>();
-
-			if (Properties.Settings.Default.RecentFileIDs != null)
+			foreach (long id in Properties.Settings.Default.RecentFileIDs)
 			{
-				foreach (long id in Properties.Settings.Default.RecentFileIDs)
-				{
-					recentFiles.Enqueue(R.Data.Releases.FirstOrDefault(x => x.ID == id));
-				}
+				recentFiles.Enqueue(R.Data.Releases.FirstOrDefault(x => x.ID == id));
 			}
 		}
-
-		public static void Add(Game game)
-		{
-			Add(game.PreferredRelease);
-		}
-
-		public static void Add(Release release)
-		{
-			recentFiles.Enqueue(release);
-
-			if (recentFiles.Count > Limit)
-			{
-				recentFiles.Dequeue();
-			}
-			RecentFilesChanged?.Invoke(null, EventArgs.Empty);
-		}
-
-		public static void Save()
-		{
-			Properties.Settings.Default.RecentFileIDs = RecentFiles.Select(x => x.ID).ToList();
-		}
-
-		public static event EventHandler RecentFilesChanged;
 	}
+
+	public static void Add(Game game)
+	{
+		Add(game.PreferredRelease);
+	}
+
+	public static void Add(Release release)
+	{
+		recentFiles.Enqueue(release);
+
+		if (recentFiles.Count > Limit)
+		{
+			recentFiles.Dequeue();
+		}
+		RecentFilesChanged?.Invoke(null, EventArgs.Empty);
+	}
+
+	public static void Save()
+	{
+		Properties.Settings.Default.RecentFileIDs = RecentFiles.Select(x => x.ID).ToList();
+	}
+
+	public static event EventHandler RecentFilesChanged;
 }

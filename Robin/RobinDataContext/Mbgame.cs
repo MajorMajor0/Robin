@@ -1,26 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Robin
+namespace Robin;
+
+public partial class MBGame
 {
-    public partial class MBGame
-    {
-        public MBGame()
-        {
-            Mbreleases = new HashSet<Mbrelease>();
-            MBGenres = new HashSet<MBGenre>();
+	public MBGame()
+	{
+		MBReleases = new HashSet<MBRelease>();
+		MBAttributes = new HashSet<MBAttribute>();
+		MBGenres = new HashSet<MBGenre>();
+	}
 
-        }
+	public long ID { get; set; }
+	public string Title { get; set; }
+	public string Overview { get; set; }
+	public long MBPlatform_ID { get; set; }
+	public DateTime? Date { get; set; }
 
-        public long ID { get; set; }
-        public long MBPlatformId { get; set; }
-        public string Title { get; set; }
-        public string Overview { get; set; }
-        public DateTime? Date { get; set; }
-
-        public virtual MBPlatform MBPlatform { get; set; }
-        public virtual ICollection<Mbrelease> Mbreleases { get; set; }
-
-        public virtual ICollection<MBGenre> MBGenres { get; set; }
-    }
+	public virtual MBPlatform MBPlatform { get; set; }
+	public virtual ICollection<MBRelease> MBReleases { get; set; }
+	public virtual ICollection<MBAttribute> MBAttributes { get; set; }
+	public virtual ICollection<MBGenre> MBGenres { get; set; }
 }

@@ -18,171 +18,169 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.IO;
 using System.Net;
 
-namespace Robin
+namespace Robin;
+
+public partial class OVGRelease : IDbRelease
 {
-	public partial class OVGRelease : IDbRelease
+	[NotMapped]
+	public LocalDB LocalDB => LocalDB.OpenVGDB;
+
+	[NotMapped]
+	public string RegionTitle => Region.Title;
+
+	[NotMapped]
+	public string BoxFrontPath => FileLocation.Temp + "OVGR-" + ID + "-BXF.jpg";
+
+	[NotMapped]
+	public string BoxBackPath => FileLocation.Temp + "OVGR-" + ID + "-BXB.jpg";
+
+	[NotMapped]
+	public string BannerPath => null;
+
+	public static implicit operator OVGRelease(VGDBRELEAS vGDBRelease)
 	{
-		[NotMapped]
-		public LocalDB LocalDB => LocalDB.OpenVGDB;
-
-		[NotMapped]
-		public string RegionTitle => Region.Title;
-
-		[NotMapped]
-		public string BoxFrontPath => FileLocation.Temp + "OVGR-" + ID + "-BXF.jpg";
-
-		[NotMapped]
-		public string BoxBackPath => FileLocation.Temp + "OVGR-" + ID + "-BXB.jpg";
-
-		[NotMapped]
-		public string BannerPath => null;
-
-		public static implicit operator OVGRelease(VGDBRELEAS vGdbrelease)
+		OVGRelease OVGRelease = new()
 		{
-			OVGRelease OVGRelease = new()
-			{
-				RegionId = vGdbrelease.regionLocalizedID,
-				Title = string.IsNullOrEmpty(vGdbrelease.releaseTitleName) ? null : vGdbrelease.releaseTitleName,
-				Overview = string.IsNullOrEmpty(vGdbrelease.releaseDescription) ? null : vGdbrelease.releaseDescription,
-				Developer = string.IsNullOrEmpty(vGdbrelease.releaseDeveloper) ? null : vGdbrelease.releaseDeveloper,
-				Publisher = string.IsNullOrEmpty(vGdbrelease.releasePublisher) ? null : vGdbrelease.releasePublisher,
-				Genre = string.IsNullOrEmpty(vGdbrelease.releaseGenre) ? null : vGdbrelease.releaseGenre,
-				Date = DateTimeRoutines.SafeGetDate(string.IsNullOrEmpty(vGdbrelease.releaseDate) ? null : vGdbrelease.releaseDate),
+			Region_ID = vGDBRelease.regionLocalizedID,
+			Title = string.IsNullOrEmpty(vGDBRelease.releaseTitleName) ? null : vGDBRelease.releaseTitleName,
+			Overview = string.IsNullOrEmpty(vGDBRelease.releaseDescription) ? null : vGDBRelease.releaseDescription,
+			Developer = string.IsNullOrEmpty(vGDBRelease.releaseDeveloper) ? null : vGDBRelease.releaseDeveloper,
+			Publisher = string.IsNullOrEmpty(vGDBRelease.releasePublisher) ? null : vGDBRelease.releasePublisher,
+			Genre = string.IsNullOrEmpty(vGDBRelease.releaseGenre) ? null : vGDBRelease.releaseGenre,
+			Date = DateTimeRoutines.SafeGetDate(string.IsNullOrEmpty(vGDBRelease.releaseDate) ? null : vGDBRelease.releaseDate),
 
-				Crc = string.IsNullOrEmpty(vGdbrelease.VGDBROM.romHashCRC) ? null : vGdbrelease.VGDBROM.romHashCRC,
-				Md5 = string.IsNullOrEmpty(vGdbrelease.VGDBROM.romHashMd5) ? null : vGdbrelease.VGDBROM.romHashMd5,
-				Sha1 = string.IsNullOrEmpty(vGdbrelease.VGDBROM.romHashSha1) ? null : vGdbrelease.VGDBROM.romHashSha1,
-				Size = vGdbrelease.VGDBROM.romSize?.ToString(),
-				Header = string.IsNullOrEmpty(vGdbrelease.VGDBROM.romHeader) ? null : vGdbrelease.VGDBROM.romHeader,
-				Language = string.IsNullOrEmpty(vGdbrelease.VGDBROM.romLanguage) ? null : vGdbrelease.VGDBROM.romLanguage,
-				Serial = string.IsNullOrEmpty(vGdbrelease.VGDBROM.romSerial) ? null : vGdbrelease.VGDBROM.romSerial,
+			Crc = string.IsNullOrEmpty(vGDBRelease.VGDBROM.romHashCRC) ? null : vGDBRelease.VGDBROM.romHashCRC,
+			MD5 = string.IsNullOrEmpty(vGDBRelease.VGDBROM.romHashMD5) ? null : vGDBRelease.VGDBROM.romHashMD5,
+			SHA1 = string.IsNullOrEmpty(vGDBRelease.VGDBROM.romHashSHA1) ? null : vGDBRelease.VGDBROM.romHashSHA1,
+			Size = vGDBRelease.VGDBROM.romSize?.ToString(),
+			Header = string.IsNullOrEmpty(vGDBRelease.VGDBROM.romHeader) ? null : vGDBRelease.VGDBROM.romHeader,
+			Language = string.IsNullOrEmpty(vGDBRelease.VGDBROM.romLanguage) ? null : vGDBRelease.VGDBROM.romLanguage,
+			Serial = string.IsNullOrEmpty(vGDBRelease.VGDBROM.romSerial) ? null : vGDBRelease.VGDBROM.romSerial,
 
-				BoxFrontUrl = string.IsNullOrEmpty(vGdbrelease.releaseCoverFront) ? null : vGdbrelease.releaseCoverFront,
-				BoxBackUrl = string.IsNullOrEmpty(vGdbrelease.releaseCoverBack) ? null : vGdbrelease.releaseCoverBack,
-				ReferenceUrl = string.IsNullOrEmpty(vGdbrelease.releaseReferenceURL) ? null : vGdbrelease.releaseReferenceURL,
-				ReferenceImageUrl = string.IsNullOrEmpty(vGdbrelease.releaseReferenceImageURL) ? null : vGdbrelease.releaseReferenceImageURL
-			};
-			return OVGRelease;
-		}
-
-		public int ScrapeBoxFront()
-		{
-			using (WebClient webclient = new())
-			{
-				if (!File.Exists(BoxFrontPath))
-				{
-					if (BoxFrontUrl != null)
-					{
-						Reporter.Report("Getting front box art for OVGRelease " + Title + "...");
-
-						if (webclient.DownloadFileFromDB(BoxFrontUrl, BoxFrontPath))
-						{
-							Reporter.ReportInline("success!");
-							OnPropertyChanged("BoxFrontPath");
-						}
-						else
-						{
-							Reporter.ReportInline("dammit!");
-							return -1;
-						}
-					}
-
-					else
-					{
-						Reporter.Report("No front box art URL exists.");
-					}
-				}
-
-				else
-				{
-					Reporter.Report("File already exists.");
-				}
-			}
-			return 0;
-		}
-
-		public int ScrapeBoxBack()
-		{
-			using (WebClient webclient = new())
-			{
-				if (!File.Exists(BoxBackPath))
-				{
-					if (BoxFrontUrl != null)
-					{
-						Reporter.Report("Getting front box art for OVGRelease " + Title + "...");
-
-						if (webclient.DownloadFileFromDB(BoxBackUrl, BoxBackPath))
-						{
-							Reporter.ReportInline("success!");
-							OnPropertyChanged("BoxBackPath");
-						}
-						else
-						{
-							Reporter.ReportInline("dammit!");
-							return -1;
-						}
-					}
-
-					else
-					{
-						Reporter.Report("No back box art URL exists.");
-					}
-				}
-
-				else
-				{
-					Reporter.Report("File already exists.");
-				}
-			}
-			return 0;
-		}
-
-		public int ScrapeBox3D()
-		{
-			throw new NotImplementedException();
-		}
-
-		public int ScrapeScreen()
-		{
-			throw new NotImplementedException();
-		}
-
-		public int ScrapeLogo()
-		{
-			throw new NotImplementedException();
-		}
-
-		public int ScrapeBanner()
-		{
-			throw new NotImplementedException();
-		}
-
-		public int ScrapeCartFront()
-		{
-			throw new NotImplementedException();
-		}
-
-		public int ScrapeCart3D()
-		{
-			throw new NotImplementedException();
-		}
-
-		public int ScrapeMarquee()
-		{
-			throw new NotImplementedException();
-		}
-
-		public int ScrapeControlPanel()
-		{
-			throw new NotImplementedException();
-		}
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		protected void OnPropertyChanged(string name = null)
-		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-		}
+			BoxFrontUrl = string.IsNullOrEmpty(vGDBRelease.releaseCoverFront) ? null : vGDBRelease.releaseCoverFront,
+			BoxBackUrl = string.IsNullOrEmpty(vGDBRelease.releaseCoverBack) ? null : vGDBRelease.releaseCoverBack,
+			ReferenceUrl = string.IsNullOrEmpty(vGDBRelease.releaseReferenceURL) ? null : vGDBRelease.releaseReferenceURL,
+			ReferenceImageUrl = string.IsNullOrEmpty(vGDBRelease.releaseReferenceImageURL) ? null : vGDBRelease.releaseReferenceImageURL
+		};
+		return OVGRelease;
 	}
 
+	public int ScrapeBoxFront()
+	{
+		using (WebClient webclient = new())
+		{
+			if (!File.Exists(BoxFrontPath))
+			{
+				if (BoxFrontUrl != null)
+				{
+					Reporter.Report("Getting front box art for OVGRelease " + Title + "...");
+
+					if (webclient.DownloadFileFromDB(BoxFrontUrl, BoxFrontPath))
+					{
+						Reporter.ReportInline("success!");
+						OnPropertyChanged("BoxFrontPath");
+					}
+					else
+					{
+						Reporter.ReportInline("dammit!");
+						return -1;
+					}
+				}
+
+				else
+				{
+					Reporter.Report("No front box art URL exists.");
+				}
+			}
+
+			else
+			{
+				Reporter.Report("File already exists.");
+			}
+		}
+		return 0;
+	}
+
+	public int ScrapeBoxBack()
+	{
+		using (WebClient webclient = new())
+		{
+			if (!File.Exists(BoxBackPath))
+			{
+				if (BoxFrontUrl != null)
+				{
+					Reporter.Report("Getting front box art for OVGRelease " + Title + "...");
+
+					if (webclient.DownloadFileFromDB(BoxBackUrl, BoxBackPath))
+					{
+						Reporter.ReportInline("success!");
+						OnPropertyChanged("BoxBackPath");
+					}
+					else
+					{
+						Reporter.ReportInline("dammit!");
+						return -1;
+					}
+				}
+
+				else
+				{
+					Reporter.Report("No back box art URL exists.");
+				}
+			}
+
+			else
+			{
+				Reporter.Report("File already exists.");
+			}
+		}
+		return 0;
+	}
+
+	public int ScrapeBox3D()
+	{
+		throw new NotImplementedException();
+	}
+
+	public int ScrapeScreen()
+	{
+		throw new NotImplementedException();
+	}
+
+	public int ScrapeLogo()
+	{
+		throw new NotImplementedException();
+	}
+
+	public int ScrapeBanner()
+	{
+		throw new NotImplementedException();
+	}
+
+	public int ScrapeCartFront()
+	{
+		throw new NotImplementedException();
+	}
+
+	public int ScrapeCart3D()
+	{
+		throw new NotImplementedException();
+	}
+
+	public int ScrapeMarquee()
+	{
+		throw new NotImplementedException();
+	}
+
+	public int ScrapeControlPanel()
+	{
+		throw new NotImplementedException();
+	}
+
+	public event PropertyChangedEventHandler PropertyChanged;
+
+	protected void OnPropertyChanged(string name = null)
+	{
+		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+	}
 }

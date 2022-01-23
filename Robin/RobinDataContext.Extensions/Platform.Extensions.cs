@@ -26,482 +26,481 @@ using System.Threading;
 using System.Threading.Tasks;
 
 
-namespace Robin
+namespace Robin;
+
+public partial class Platform : IDbObject, IDbPlatform
 {
-	public partial class Platform : IDbObject, IDbPlatform
+	[NotMapped]
+	public IEnumerable<Game> Games => Releases.Select(x => x.Game).Distinct();
+
+	[NotMapped]
+	public Platform RPlatform => this;
+
+	[NotMapped]
+	public OVGPlatform OVGPlatform => R.Data.OVGPlatforms.FirstOrDefault(x => x.ID == ID);
+
+	[NotMapped]
+	public int MatchedToGamesDB => Releases.Count(x => x.ID_GDB != null);
+
+	[NotMapped]
+	public int MatchedToGiantBomb => Releases.Count(x => x.ID_GB != null);
+
+	[NotMapped]
+	public int MatchedToOpenVG => Releases.Count(x => x.ID_OVG != null);
+
+	[NotMapped]
+	public int MatchedToLaunchBox => Releases.Count(x => x.ID_LB != null);
+
+	[NotMapped]
+	public int MatchedReleaseCount => Releases.Count(x => x.MatchedToSomething);
+
+	[NotMapped]
+	public int MatchedGameCount => Games.Count(x => x.MatchedToSomething);
+
+	[NotMapped]
+	public int ReleasesWithArt => Releases.Count(x => x.HasArt);
+
+	[NotMapped]
+	public int GamesWithArt => Games.Count(x => x.HasArt);
+
+	[NotMapped]
+	public int ReleasesIncluded => Releases.Count(x => x.Included);
+
+	[NotMapped]
+	public bool Included => HasEmulator && HasRelease;
+
+	[NotMapped]
+	public bool HasEmulator => Emulators.Any(x => x.Included);
+
+	[NotMapped]
+	public bool HasRelease => Releases.Any(x => x.Included);
+
+	private List<Rom> roms;
+
+	[NotMapped]
+	public List<Rom> Roms
 	{
-		[NotMapped]
-		public IEnumerable<Game> Games => Releases.Select(x => x.Game).Distinct();
-		
-		[NotMapped]
-		public Platform RPlatform => this;
-		
-		[NotMapped]
-		public OVGPlatform OVGPlatform => R.Data.OVGPlatforms.FirstOrDefault(x => x.ID == ID);
-		
-		[NotMapped]
-		public int MatchedToGamesDB => Releases.Count(x => x.ID_GDB != null);
-		
-		[NotMapped]
-		public int MatchedToGiantBomb => Releases.Count(x => x.ID_GB != null);
-		
-		[NotMapped]
-		public int MatchedToOpenVG => Releases.Count(x => x.ID_OVG != null);
-		
-		[NotMapped]
-		public int MatchedToLaunchBox => Releases.Count(x => x.ID_LB != null);
-		
-		[NotMapped]
-		public int MatchedReleaseCount => Releases.Count(x => x.MatchedToSomething);
-		
-		[NotMapped]
-		public int MatchedGameCount => Games.Count(x => x.MatchedToSomething);
-		
-		[NotMapped]
-		public int ReleasesWithArt => Releases.Count(x => x.HasArt);
-		
-		[NotMapped]
-		public int GamesWithArt => Games.Count(x => x.HasArt);
-		
-		[NotMapped]
-		public int ReleasesIncluded => Releases.Count(x => x.Included);
-
-		[NotMapped]
-		public bool Included => HasEmulator && HasRelease;
-		
-		[NotMapped]
-		public bool HasEmulator => Emulators.Any(x => x.Included);
-		
-		[NotMapped]
-		public bool HasRelease => Releases.Any(x => x.Included);
-
-		private List<Rom> roms;
-	
-		[NotMapped]
-		public List<Rom> Roms
+		get
 		{
-			get
+			if (roms == null)
 			{
-				if (roms == null)
-				{
-					roms = R.Data.Roms.Where(x => x.PlatformId == ID).ToList();
-				}
-				return roms;
+				roms = R.Data.Roms.Where(x => x.Platform_ID == ID).ToList();
 			}
+			return roms;
 		}
+	}
 
-		[NotMapped]
-		public string WhyCantIPlay
+	[NotMapped]
+	public string WhyCantIPlay
+	{
+		get
 		{
-			get
+			if (Included)
 			{
-				if (Included)
-				{
-					return $"{Title} is ready to play.";
-				}
-				string and = HasRelease || HasEmulator ? "" : " and ";
-				string emulatorTrouble = HasEmulator ? "" : "no emulator appears to be installed for it";
-				string releaseTrouble = HasRelease ? "" : "no rom files appear to be available";
-				return $"{Title} can't launch because {releaseTrouble} {and} {emulatorTrouble}.";
+				return $"{Title} is ready to play.";
 			}
+			string and = HasRelease || HasEmulator ? "" : " and ";
+			string emulatorTrouble = HasEmulator ? "" : "no emulator appears to be installed for it";
+			string releaseTrouble = HasRelease ? "" : "no rom files appear to be available";
+			return $"{Title} can't launch because {releaseTrouble} {and} {emulatorTrouble}.";
 		}
-		
-		[NotMapped]
-		public bool HasArt => Catalog.Art.Contains(BoxFrontPath);
-		
-		[NotMapped]
-		public bool IsCrap { get; set; }
-		
-		[NotMapped]
-		public bool Unlicensed => false;
+	}
 
-		[NotMapped]
-		public string MainDisplay => ConsolePath;
-		
-		[NotMapped]
-		public string RomDirectory => FileLocation.Roms + FileName + @"\";
-		
-		[NotMapped]
-		public string BoxFrontUrl => GDBPlatform?.BoxFrontUrl;
-		
-		[NotMapped]
-		public string BoxBackUrl => GDBPlatform?.BoxBackUrl;
-		
-		[NotMapped]
-		public string BannerUrl => GDBPlatform?.BannerUrl;
-		
-		[NotMapped]
-		public string ConsoleUrl => GDBPlatform?.ConsoleUrl;
-		
-		[NotMapped]
-		public string ControllerUrl => GDBPlatform?.ControllerUrl;
-		
-		[NotMapped]
-		public string BoxFrontPath => FileLocation.Art.Console + ID + "P-BXF.jpg";
-		
-		[NotMapped]
-		public string BoxBackPath => FileLocation.Art.Console + ID + "P-BXB.jpg";
-		
-		[NotMapped]
-		public string BannerPath => FileLocation.Art.Console + ID + "P-BNR.jpg";
-		
-		[NotMapped]
-		public string ConsolePath => FileLocation.Art.Console + ID + "P-CNSL.jpg";
-		
-		[NotMapped]
-		public string ControllerPath => FileLocation.Art.Console + ID + "P-CTRL.jpg";
+	[NotMapped]
+	public bool HasArt => Catalog.Art.Contains(BoxFrontPath);
 
-		[NotMapped]
-		IList IDbPlatform.Releases => Releases.ToList();
+	[NotMapped]
+	public bool IsCrap { get; set; }
 
-		public void GetGames()
+	[NotMapped]
+	public bool Unlicensed => false;
+
+	[NotMapped]
+	public string MainDisplay => ConsolePath;
+
+	[NotMapped]
+	public string RomDirectory => FileLocation.Roms + FileName + @"\";
+
+	[NotMapped]
+	public string BoxFrontUrl => GDBPlatform?.BoxFrontUrl;
+
+	[NotMapped]
+	public string BoxBackUrl => GDBPlatform?.BoxBackUrl;
+
+	[NotMapped]
+	public string BannerUrl => GDBPlatform?.BannerUrl;
+
+	[NotMapped]
+	public string ConsoleUrl => GDBPlatform?.ConsoleUrl;
+
+	[NotMapped]
+	public string ControllerUrl => GDBPlatform?.ControllerUrl;
+
+	[NotMapped]
+	public string BoxFrontPath => FileLocation.Art.Console + ID + "P-BXF.jpg";
+
+	[NotMapped]
+	public string BoxBackPath => FileLocation.Art.Console + ID + "P-BXB.jpg";
+
+	[NotMapped]
+	public string BannerPath => FileLocation.Art.Console + ID + "P-BNR.jpg";
+
+	[NotMapped]
+	public string ConsolePath => FileLocation.Art.Console + ID + "P-CNSL.jpg";
+
+	[NotMapped]
+	public string ControllerPath => FileLocation.Art.Console + ID + "P-CTRL.jpg";
+
+	[NotMapped]
+	IList IDbPlatform.Releases => Releases.ToList();
+
+	public void GetGames()
+	{
+		Debug.Assert(false, "Called GetGames() on Robin.Platform. Don't do that. GetGames is for LocalDB caches.");
+	}
+
+	/// <summary>
+	/// Scrape art from the selected online database to the built-in file location unique to the release instance. 
+	/// </summary>
+	/// <param name="artType">The type of art to scrape. Default is all available art.</param>
+	/// <param name="localDB">Null for platforms.</param>
+	/// <returns>Returns a negative integer to indicate the number of scraping attempts that could be tried again, or 0 if all attempts are successfull.</returns>
+	public int ScrapeArt(ArtType artType, LocalDB localDB = 0)
+	{
+		int returner = 0;
+		string url = null;
+		string filePath = null;
+		string property = null;
+
+		switch (artType)
 		{
-			Debug.Assert(false, "Called GetGames() on Robin.Platform. Don't do that. GetGames is for LocalDB caches.");
+			case ArtType.All:
+				returner += ScrapeArt(ArtType.BoxFront);
+				returner += ScrapeArt(ArtType.BoxBack);
+				returner += ScrapeArt(ArtType.Banner);
+				returner += ScrapeArt(ArtType.Console);
+				returner += ScrapeArt(ArtType.Controller);
+				break;
+			case ArtType.BoxFront:
+				url = BoxFrontUrl;
+				filePath = BoxFrontPath;
+				property = "BoxFrontPath";
+				break;
+			case ArtType.BoxBack:
+				url = BoxBackUrl;
+				filePath = BoxBackPath;
+				property = "BoxBackPath";
+				break;
+			case ArtType.Banner:
+				url = BannerUrl;
+				filePath = BannerPath;
+				property = "BannerPath";
+				break;
+			case ArtType.Console:
+				url = ConsoleUrl;
+				filePath = ConsolePath;
+				property = "ConsolePath";
+				break;
+			case ArtType.Controller:
+				url = ControllerUrl;
+				filePath = ControllerPath;
+				property = "ControllerPath";
+				break;
+			default:
+				// Not implemented.
+				Debug.Assert(false, $"Called Release.ScrapeArt() with the option {artType.Description()}, which is valid only for Releases. Can't see what it's hurting, but don't do that.");
+				break;
 		}
 
-		/// <summary>
-		/// Scrape art from the selected online database to the built-in file location unique to the release instance. 
-		/// </summary>
-		/// <param name="artType">The type of art to scrape. Default is all available art.</param>
-		/// <param name="localDB">Null for platforms.</param>
-		/// <returns>Returns a negative integer to indicate the number of scraping attempts that could be tried again, or 0 if all attempts are successfull.</returns>
-		public int ScrapeArt(ArtType artType, LocalDB localDB = 0)
-		{
-			int returner = 0;
-			string url = null;
-			string filePath = null;
-			string property = null;
+		return Scrape(url, filePath, property, artType.Description());
+	}
 
-			switch (artType)
+	/// <summary>
+	/// Sub function to scrape art based on strings computed elsewhere.
+	/// </summary>
+	/// <param name="url">URL to scrape art from.</param>
+	/// <param name="filePath">Path to download art to.</param>
+	/// <param name="property">Property of this release to notify PropertyChanged if art is downloaded.</param>
+	/// <param name="description">String describing the art to download.</param>
+	/// <returns>Returns -1 if artwork to indicate the scrape attempt could be tried again, or 0 if the scrape attempt is successfull.</returns>
+	int Scrape(string url, string filePath, string property, string description)
+	{
+		using (WebClient webclient = new())
+		{
+			if (!File.Exists(filePath))
 			{
-				case ArtType.All:
-					returner += ScrapeArt(ArtType.BoxFront);
-					returner += ScrapeArt(ArtType.BoxBack);
-					returner += ScrapeArt(ArtType.Banner);
-					returner += ScrapeArt(ArtType.Console);
-					returner += ScrapeArt(ArtType.Controller);
-					break;
-				case ArtType.BoxFront:
-					url = BoxFrontUrl;
-					filePath = BoxFrontPath;
-					property = "BoxFrontPath";
-					break;
-				case ArtType.BoxBack:
-					url = BoxBackUrl;
-					filePath = BoxBackPath;
-					property = "BoxBackPath";
-					break;
-				case ArtType.Banner:
-					url = BannerUrl;
-					filePath = BannerPath;
-					property = "BannerPath";
-					break;
-				case ArtType.Console:
-					url = ConsoleUrl;
-					filePath = ConsolePath;
-					property = "ConsolePath";
-					break;
-				case ArtType.Controller:
-					url = ControllerUrl;
-					filePath = ControllerPath;
-					property = "ControllerPath";
-					break;
-				default:
-					// Not implemented.
-					Debug.Assert(false, $"Called Release.ScrapeArt() with the option {artType.Description()}, which is valid only for Releases. Can't see what it's hurting, but don't do that.");
-					break;
-			}
-
-			return Scrape(url, filePath, property, artType.Description());
-		}
-
-		/// <summary>
-		/// Sub function to scrape art based on strings computed elsewhere.
-		/// </summary>
-		/// <param name="url">URL to scrape art from.</param>
-		/// <param name="filePath">Path to download art to.</param>
-		/// <param name="property">Property of this release to notify PropertyChanged if art is downloaded.</param>
-		/// <param name="description">String describing the art to download.</param>
-		/// <returns>Returns -1 if artwork to indicate the scrape attempt could be tried again, or 0 if the scrape attempt is successfull.</returns>
-		int Scrape(string url, string filePath, string property, string description)
-		{
-			using (WebClient webclient = new())
-			{
-				if (!File.Exists(filePath))
+				if (url != null)
 				{
-					if (url != null)
+					Reporter.Report($"Getting {description} art for {Title}...");
+
+					if (webclient.DownloadFileFromDB(url, filePath))
 					{
-						Reporter.Report($"Getting {description} art for {Title}...");
-
-						if (webclient.DownloadFileFromDB(url, filePath))
-						{
-							Reporter.ReportInline("success!");
-							OnPropertyChanged(property);
-						}
-						else
-						{
-							Reporter.ReportInline("dammit!");
-							return -1;
-						}
-					}
-				}
-			}
-
-			return 0;
-		}
-
-		public async void GetReleaseDirectoryAsync(string[] paths)
-		{
-			Reporter.Report("Getting " + Title + " files.");
-			Directory.CreateDirectory(FileLocation.RomsBackup);
-
-			await Task.Run(() =>
-			{
-				int[] totals = { 0, 0 };
-				string[] deeperPaths;
-				int k;
-
-				Directory.CreateDirectory(RomDirectory);
-				foreach (string path in paths)
-				{
-					if (Directory.Exists(path))
-					{
-						deeperPaths = Directory.GetFiles(path, "*", searchOption: SearchOption.AllDirectories);
-						Reporter.Report("Found " + deeperPaths.Length + " in " + path);
+						Reporter.ReportInline("success!");
+						OnPropertyChanged(property);
 					}
 					else
 					{
-						deeperPaths = paths;
-					}
-
-					foreach (string file in deeperPaths)
-					{
-						if (Path.GetExtension(file) == ".zip")
-						{
-							k = GetRomsFromZipFile(file);
-						}
-						else
-						{
-							k = GetRomFromFile(file);
-						}
-
-						totals[0] += k;
-						if (k > 0)
-						{
-							totals[1] += 1;
-						}
-					}
-				}
-				Reporter.Report("Added " + totals[1] + " ROMs to " + RomDirectory);
-				Reporter.Report("Updated " + totals[0] + " releases.");
-			});
-		}
-
-		public int GetRomsFromZipFile(string filename)
-		{
-			int total = 0;
-			string Sha1;
-			Rom matchedRom;
-
-			try
-			{
-				using ZipArchive archive = ZipFile.Open(filename, ZipArchiveMode.Read);
-				foreach (ZipArchiveEntry entry in archive.Entries)
-				{
-					using Stream stream = entry.Open();
-					using MemoryStream memoryStream = new();
-					int count;
-					do
-					{
-						byte[] buffer = new byte[1024];
-						count = stream.Read(buffer, 0, 1024);
-						memoryStream.Write(buffer, 0, count);
-					} while (stream.CanRead && count > 0);
-
-					// TODO Some roms in DB have no Sha1 this is a substantial bug
-
-					Sha1 = Audit.GetHash(memoryStream, HashOption.Sha1, (int)HeaderLength);
-					matchedRom = Roms.FirstOrDefault(x => Sha1.Equals(x.Sha1, StringComparison.OrdinalIgnoreCase));
-
-					if (matchedRom == null && HeaderLength > 0)
-					{
-						Sha1 = Audit.GetHash(memoryStream, HashOption.Sha1, 0);
-
-						matchedRom = Roms.FirstOrDefault(x => Sha1.Equals(x.Sha1, StringComparison.OrdinalIgnoreCase));
-					}
-
-					// Have found a match so do this stuff with it
-					if (matchedRom != null)
-					{
-						// Check that the release has no filename, or the file doesn't yet exist
-						if (string.IsNullOrEmpty(matchedRom.FileName) || !File.Exists(matchedRom.FilePath))
-						{
-							string extension = Path.GetExtension(entry.Name);
-							matchedRom.StoreFileName(extension);
-
-							if (File.Exists(matchedRom.FilePath))
-							{
-								File.Move(matchedRom.FilePath, FileLocation.RomsBackup + matchedRom.FileName);
-							}
-
-							if (matchedRom.PlatformId == CONSTANTS.PlatformId.Lynx)
-							{
-								//TODO: This looks pretty shady
-								string tempFile = "lnxtmp.lyx";
-								string tempFile2 = "lnxtmp.lnx";
-								string tempPath = Path.GetDirectoryName(FileLocation.HandyConverter) + @"\" + tempFile;
-								string tempPath2 = Path.GetDirectoryName(FileLocation.HandyConverter) + @"\" + tempFile2;
-								File.Delete(tempPath);
-								File.Delete(tempPath2);
-
-								entry.ExtractToFile(tempPath);
-								Handy.ConvertLynx(tempFile);
-								File.Move(tempPath, matchedRom.FilePath);
-							}
-							else
-							{
-								entry.ExtractToFile(matchedRom.FilePath);
-							}
-							total += 1;
-						}
+						Reporter.ReportInline("dammit!");
+						return -1;
 					}
 				}
 			}
-
-			catch (Exception)
-			{
-			}
-
-			return total;
 		}
 
-		public int GetRomFromFile(string foundFilePath)
+		return 0;
+	}
+
+	public async void GetReleaseDirectoryAsync(string[] paths)
+	{
+		Reporter.Report("Getting " + Title + " files.");
+		Directory.CreateDirectory(FileLocation.RomsBackup);
+
+		await Task.Run(() =>
 		{
-			int total = 0;
+			int[] totals = { 0, 0 };
+			string[] deeperPaths;
+			int k;
 
-			var Sha1 = Audit.GetHash(foundFilePath, HashOption.Sha1, (int)HeaderLength);
-			Rom matchedRom = Roms.FirstOrDefault(x => Sha1.Equals(x.Sha1, StringComparison.OrdinalIgnoreCase));
-			if (matchedRom == null && HeaderLength > 0)
+			Directory.CreateDirectory(RomDirectory);
+			foreach (string path in paths)
 			{
-				Sha1 = Audit.GetHash(foundFilePath, HashOption.Sha1, 0);
-				matchedRom = Roms.FirstOrDefault(x => Sha1.Equals(x.Sha1, StringComparison.OrdinalIgnoreCase));
-			}
-
-			// Have found a match so do this stuff with it
-			if (matchedRom != null)
-			{
-				// Check whether the release has a filename stored and that file exists
-				if (string.IsNullOrEmpty(matchedRom.FileName) || !File.Exists(matchedRom.FilePath))
+				if (Directory.Exists(path))
 				{
-					string extension = Path.GetExtension(foundFilePath);
-					matchedRom.StoreFileName(extension);
+					deeperPaths = Directory.GetFiles(path, "*", searchOption: SearchOption.AllDirectories);
+					Reporter.Report("Found " + deeperPaths.Length + " in " + path);
+				}
+				else
+				{
+					deeperPaths = paths;
+				}
 
-					if (foundFilePath != matchedRom.FilePath)
+				foreach (string file in deeperPaths)
+				{
+					if (Path.GetExtension(file) == ".zip")
 					{
+						k = GetRomsFromZipFile(file);
+					}
+					else
+					{
+						k = GetRomFromFile(file);
+					}
+
+					totals[0] += k;
+					if (k > 0)
+					{
+						totals[1] += 1;
+					}
+				}
+			}
+			Reporter.Report("Added " + totals[1] + " ROMs to " + RomDirectory);
+			Reporter.Report("Updated " + totals[0] + " releases.");
+		});
+	}
+
+	public int GetRomsFromZipFile(string filename)
+	{
+		int total = 0;
+		string SHA1;
+		Rom matchedRom;
+
+		try
+		{
+			using ZipArchive archive = ZipFile.Open(filename, ZipArchiveMode.Read);
+			foreach (ZipArchiveEntry entry in archive.Entries)
+			{
+				using Stream stream = entry.Open();
+				using MemoryStream memoryStream = new();
+				int count;
+				do
+				{
+					byte[] buffer = new byte[1024];
+					count = stream.Read(buffer, 0, 1024);
+					memoryStream.Write(buffer, 0, count);
+				} while (stream.CanRead && count > 0);
+
+				// TODO Some roms in DB have no SHA1 this is a substantial bug
+
+				SHA1 = Audit.GetHash(memoryStream, HashOption.SHA1, (int)HeaderLength);
+				matchedRom = Roms.FirstOrDefault(x => SHA1.Equals(x.SHA1, StringComparison.OrdinalIgnoreCase));
+
+				if (matchedRom == null && HeaderLength > 0)
+				{
+					SHA1 = Audit.GetHash(memoryStream, HashOption.SHA1, 0);
+
+					matchedRom = Roms.FirstOrDefault(x => SHA1.Equals(x.SHA1, StringComparison.OrdinalIgnoreCase));
+				}
+
+				// Have found a match so do this stuff with it
+				if (matchedRom != null)
+				{
+					// Check that the release has no filename, or the file doesn't yet exist
+					if (string.IsNullOrEmpty(matchedRom.FileName) || !File.Exists(matchedRom.FilePath))
+					{
+						string extension = Path.GetExtension(entry.Name);
+						matchedRom.StoreFileName(extension);
+
 						if (File.Exists(matchedRom.FilePath))
 						{
 							File.Move(matchedRom.FilePath, FileLocation.RomsBackup + matchedRom.FileName);
 						}
 
-						if (matchedRom.PlatformId == CONSTANTS.PlatformId.Lynx)
+						if (matchedRom.Platform_ID == CONSTANTS.Platform_ID.Lynx)
 						{
+							//TODO: This looks pretty shady
 							string tempFile = "lnxtmp.lyx";
 							string tempFile2 = "lnxtmp.lnx";
 							string tempPath = Path.GetDirectoryName(FileLocation.HandyConverter) + @"\" + tempFile;
 							string tempPath2 = Path.GetDirectoryName(FileLocation.HandyConverter) + @"\" + tempFile2;
-
 							File.Delete(tempPath);
-							Thread.Sleep(100);
-							File.Copy(foundFilePath, tempPath);
-							Thread.Sleep(100);
-							if (Handy.ConvertLynx(tempFile))
-							{
-								File.Move(tempPath2, matchedRom.FilePath);
-							}
+							File.Delete(tempPath2);
 
+							entry.ExtractToFile(tempPath);
+							Handy.ConvertLynx(tempFile);
+							File.Move(tempPath, matchedRom.FilePath);
 						}
-
 						else
 						{
-							File.Copy(foundFilePath, matchedRom.FilePath);
+							entry.ExtractToFile(matchedRom.FilePath);
 						}
+						total += 1;
 					}
-					total = 1;
 				}
 			}
-			return total;
 		}
 
-		public void MarkPreferred(Emulator emulator)
+		catch (Exception)
 		{
-			if (emulator != null)
+		}
+
+		return total;
+	}
+
+	public int GetRomFromFile(string foundFilePath)
+	{
+		int total = 0;
+
+		var SHA1 = Audit.GetHash(foundFilePath, HashOption.SHA1, (int)HeaderLength);
+		Rom matchedRom = Roms.FirstOrDefault(x => SHA1.Equals(x.SHA1, StringComparison.OrdinalIgnoreCase));
+		if (matchedRom == null && HeaderLength > 0)
+		{
+			SHA1 = Audit.GetHash(foundFilePath, HashOption.SHA1, 0);
+			matchedRom = Roms.FirstOrDefault(x => SHA1.Equals(x.SHA1, StringComparison.OrdinalIgnoreCase));
+		}
+
+		// Have found a match so do this stuff with it
+		if (matchedRom != null)
+		{
+			// Check whether the release has a filename stored and that file exists
+			if (string.IsNullOrEmpty(matchedRom.FileName) || !File.Exists(matchedRom.FilePath))
 			{
-				PreferredEmulatorId = emulator.ID;
+				string extension = Path.GetExtension(foundFilePath);
+				matchedRom.StoreFileName(extension);
+
+				if (foundFilePath != matchedRom.FilePath)
+				{
+					if (File.Exists(matchedRom.FilePath))
+					{
+						File.Move(matchedRom.FilePath, FileLocation.RomsBackup + matchedRom.FileName);
+					}
+
+					if (matchedRom.Platform_ID == CONSTANTS.Platform_ID.Lynx)
+					{
+						string tempFile = "lnxtmp.lyx";
+						string tempFile2 = "lnxtmp.lnx";
+						string tempPath = Path.GetDirectoryName(FileLocation.HandyConverter) + @"\" + tempFile;
+						string tempPath2 = Path.GetDirectoryName(FileLocation.HandyConverter) + @"\" + tempFile2;
+
+						File.Delete(tempPath);
+						Thread.Sleep(100);
+						File.Copy(foundFilePath, tempPath);
+						Thread.Sleep(100);
+						if (Handy.ConvertLynx(tempFile))
+						{
+							File.Move(tempPath2, matchedRom.FilePath);
+						}
+
+					}
+
+					else
+					{
+						File.Copy(foundFilePath, matchedRom.FilePath);
+					}
+				}
+				total = 1;
 			}
 		}
+		return total;
+	}
 
-		public void Play()
+	public void MarkPreferred(Emulator emulator)
+	{
+		if (emulator != null)
 		{
-			// TODO: Launch prefered emulator
-			throw new NotImplementedException();
+			PreferredEmulator_ID = emulator.ID;
+		}
+	}
+
+	public void Play()
+	{
+		// TODO: Launch prefered emulator
+		throw new NotImplementedException();
+	}
+
+	public void CopyOverview()
+	{
+
+		if (ID_GDB != null)
+		{
+			Overview = GDBPlatform.Overview;
 		}
 
-		public void CopyOverview()
+		if ((Overview == null || Overview.Length < 20) && ID_GB != null)
 		{
-
-			if (ID_GDB != null)
-			{
-				Overview = GDBPlatform.Overview;
-			}
-
-			if ((Overview == null || Overview.Length < 20) && ID_GB != null)
-			{
-				Overview = GBPlatform.Deck;
-			}
-
+			Overview = GBPlatform.Deck;
 		}
 
-		public void CopyDeveloper()
-		{
-			if (ID_LB != null)
-			{
-				Developer = LBPlatform.Developer;
-			}
+	}
 
-			if ((Developer == null || Developer.Length < 2) && ID_GDB != null)
-			{
-				Developer = GDBPlatform.Developer;
-			}
+	public void CopyDeveloper()
+	{
+		if (ID_LB != null)
+		{
+			Developer = LBPlatform.Developer;
 		}
 
-		public void CopyManufacturer()
+		if ((Developer == null || Developer.Length < 2) && ID_GDB != null)
 		{
-			if (ID_LB != null)
-			{
-				Manufacturer = LBPlatform.Manufacturer;
-			}
+			Developer = GDBPlatform.Developer;
+		}
+	}
 
-			if ((Manufacturer == null || Manufacturer.Length < 2) && ID_GDB != null)
-			{
-				Manufacturer = GDBPlatform.Manufacturer;
-			}
+	public void CopyManufacturer()
+	{
+		if (ID_LB != null)
+		{
+			Manufacturer = LBPlatform.Manufacturer;
 		}
 
-		public void CopyData()
+		if ((Manufacturer == null || Manufacturer.Length < 2) && ID_GDB != null)
 		{
-			CopyOverview();
-			CopyDeveloper();
-			//CopyPublisher();
-			//CopyGenre();
-			//CopyDate();
-			//CopyPlayers();
+			Manufacturer = GDBPlatform.Manufacturer;
 		}
+	}
 
-		public event PropertyChangedEventHandler PropertyChanged;
+	public void CopyData()
+	{
+		CopyOverview();
+		CopyDeveloper();
+		//CopyPublisher();
+		//CopyGenre();
+		//CopyDate();
+		//CopyPlayers();
+	}
 
-		protected void OnPropertyChanged(string name = null)
-		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-		}
+	public event PropertyChangedEventHandler PropertyChanged;
+
+	protected void OnPropertyChanged(string name = null)
+	{
+		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 	}
 }

@@ -20,6 +20,6 @@ namespace Robin
 	{
 
 		[NotMapped]
-		public string Flag => FileLocation.Flags + Uncode + ".ico";
+		public string Flag => FileLocation.Flags + UNCode + ".ico";
 	}
 }

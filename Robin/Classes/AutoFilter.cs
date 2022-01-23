@@ -374,7 +374,7 @@ namespace Robin
 
 			else
 			{
-				sourceCollection = _sourceCollection.OrderBy(x=>x.PlatformId).ThenBy(x=>x.Title).ToList();
+				sourceCollection = _sourceCollection.OrderBy(x=>x.Platform_ID).ThenBy(x=>x.Title).ToList();
 			}
 
 			StringFilters.Add(PublisherFilter = new StringFilter("Publisher", () => Update(), Settings.GameFilterPublisher));

@@ -7,24 +7,23 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Robin.Mame
+namespace Robin.Mame;
+
+using System;
+using System.Collections.Generic;
+
+public partial class RomFile
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class RomFile
-    {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public RomFile()
-        {
-            this.Roms = new HashSet<Rom>();
-        }
-    
-        public long ID { get; set; }
-        public string FilePath { get; set; }
-        public Nullable<long> Machine_ID { get; set; }
-    
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Rom> Roms { get; set; }
-    }
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+	public RomFile()
+	{
+		this.Roms = new HashSet<Rom>();
+	}
+
+	public long ID { get; set; }
+	public string FilePath { get; set; }
+	public Nullable<long> Machine_ID { get; set; }
+
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+	public virtual ICollection<Rom> Roms { get; set; }
 }

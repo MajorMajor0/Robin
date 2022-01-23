@@ -11,72 +11,70 @@
  * 
  * You should have received a copy of the GNU General Public License
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
- 
-//using System.Data.Entity;
+
+using Microsoft.EntityFrameworkCore;
+
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Microsoft.EntityFrameworkCore;
+namespace Robin;
 
-namespace Robin
+public partial class Match
 {
-	public partial class Match
+	public static implicit operator Match(Release release)
 	{
-		public static implicit operator Match(Release release)
-		{
-			Match match = new();
-			match.ID = release.ID;
-			match.IdGb = release.ID_GB;
-			match.IdGdb = release.ID_GDB;
-			match.IdOvg = release.ID_OVG;
-			match.Sha1 = release.Rom.Sha1;
-			match.RegionId = release.RegionId;
+		Match match = new();
+		match.ID = release.ID;
+		match.ID_GB = release.ID_GB;
+		match.ID_GDB = release.ID_GDB;
+		match.ID_OVG = release.ID_OVG;
+		match.SHA1 = release.Rom.SHA1;
+		match.Region_ID = release.Region_ID;
 
-			return match;
-		}
+		return match;
+	}
 
-		public static void StoreMatches()
+	public static void StoreMatches()
+	{
+		R.Data.ChangeTracker.AutoDetectChangesEnabled = false;
+		R.Data.ChangeTracker.LazyLoadingEnabled = false;
+		R.Data.Matches.Load();
+		int i = 0;
+		foreach (Release release in R.Data.Releases)
 		{
-			R.Data.ChangeTracker.AutoDetectChangesEnabled = false;
-			R.Data.ChangeTracker.LazyLoadingEnabled = false;
-			R.Data.Matches.Load();
-			int i = 0;
-			foreach (Release release in R.Data.Releases)
+			if (release.Rom.SHA1 != null && (release.ID_GB != null || release.ID_GDB != null || release.ID_OVG != null))
 			{
-				if (release.Rom.Sha1 != null && (release.ID_GB != null || release.ID_GDB != null || release.ID_OVG != null))
-				{
-					R.Data.Matches.Add(release);
-				}
-				Debug.WriteLine(i++);
+				R.Data.Matches.Add(release);
 			}
-			R.Save();
-            // TODO Report total
-        }
-
-        public static async void RestoreMatches()
-		{
-			R.Data.ChangeTracker.AutoDetectChangesEnabled = false;
-			R.Data.ChangeTracker.LazyLoadingEnabled = false;
-			R.Data.Matches.Load();
-			int i = 0;
-			await Task.Run(() =>
-			{
-				foreach (Match match in R.Data.Matches)
-				{
-					Release release = R.Data.Releases.FirstOrDefault(x => x.Rom.Sha1 == match.Sha1 && x.RegionId == match.RegionId);
-					if (release != null)
-					{
-						Reporter.Report($"{i++} Matched {release.TitleAndRegion}");
-						release.ID_GB ??= match.IdGb;
-						release.ID_GDB ??= match.IdGdb;
-						release.ID_OVG ??= match.IdOvg;
-					}
-				}
-
-				R.Save();
-                // TODO Report total
-            });
+			Debug.WriteLine(i++);
 		}
+		R.Save();
+		// TODO Report total
+	}
+
+	public static async void RestoreMatches()
+	{
+		R.Data.ChangeTracker.AutoDetectChangesEnabled = false;
+		R.Data.ChangeTracker.LazyLoadingEnabled = false;
+		R.Data.Matches.Load();
+		int i = 0;
+		await Task.Run(() =>
+		{
+			foreach (Match match in R.Data.Matches)
+			{
+				Release release = R.Data.Releases.FirstOrDefault(x => x.Rom.SHA1 == match.SHA1 && x.Region_ID == match.Region_ID);
+				if (release != null)
+				{
+					Reporter.Report($"{i++} Matched {release.TitleAndRegion}");
+					release.ID_GB ??= match.ID_GB;
+					release.ID_GDB ??= match.ID_GDB;
+					release.ID_OVG ??= match.ID_OVG;
+				}
+			}
+
+			R.Save();
+				// TODO Report total
+			});
 	}
 }

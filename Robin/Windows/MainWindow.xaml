@@ -825,7 +825,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 																<MultiBinding Converter="{StaticResource PreferredMultiValueConverter}">
 																	<Binding Path="Id" />
 																	<Binding ElementName="CurrentItemScrollViewer"
-																			 Path="Content.PreferredEmulatorId" />
+																			 Path="Content.PreferredEmulator_ID" />
 																</MultiBinding>
 															</TextBlock.Visibility>
 														</TextBlock>
@@ -887,7 +887,7 @@ along with Robin.  If not, see http://www.gnu.org/licenses/.-->
 																   Style="{StaticResource Normal}">
 															<TextBlock.Visibility>
 																<MultiBinding Converter="{StaticResource PreferredMultiValueConverter}">
-																	<Binding Path="PreferredEmulatorId" />
+																	<Binding Path="PreferredEmulator_ID" />
 																	<Binding ElementName="CurrentItemScrollViewer"
 																			 Path="Content.ID" />
 																</MultiBinding>

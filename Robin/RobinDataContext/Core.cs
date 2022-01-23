@@ -1,22 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace Robin
+namespace Robin;
+
+public partial class Core
 {
-	public partial class Core
+	public Core()
 	{
-        public Core()
-        {
-            Platforms = new HashSet<Platform>();
-        }
+		Platforms = new HashSet<Platform>();
+	}
 
-        public long ID { get; set; }
-        public string Title { get; set; }
-        public string FileName { get; set; }
-        public long EmulatorId { get; set; }
+	public long ID { get; set; }
+	public string Title { get; set; }
+	public string FileName { get; set; }
+	public long Emulator_ID { get; set; }
 
-        public virtual Emulator Emulator { get; set; }
+	public virtual Emulator Emulator { get; set; }
 
-        public virtual ICollection<Platform> Platforms { get; set; }
-    }
+	public virtual ICollection<Platform> Platforms { get; set; }
 }

@@ -12,825 +12,823 @@
  * You should have received a copy of the GNU General Public License
  *  along with Robin.  If not, see<http://www.gnu.org/licenses/>.*/
 
+using Microsoft.EntityFrameworkCore;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
-//using System.Data.Entity;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Microsoft.EntityFrameworkCore;
+namespace Robin;
 
-namespace Robin
+partial class MainWindowViewModel
 {
-	partial class MainWindowViewModel
+	public Command SaveDataBaseCommand { get; set; }
+
+	void SaveDataBase()
 	{
-		public Command SaveDataBaseCommand { get; set; }
+		R.Save(true);
+		//Mame.M.Data.Save(true);
+	}
 
-		void SaveDataBase()
+
+	public Command AboutCommand { get; set; }
+
+	void About()
+	{
+		AboutBox aboutBox = new();
+		aboutBox.Show();
+	}
+
+	public Command HelpCommand { get; set; }
+
+	void Help()
+	{
+		//Process.Start(@"http://robinemu.org/help/");
+	}
+
+
+	public Command PlayCommand { get; set; }
+
+	void Play()
+	{
+		if (SelectedDB is Release)
 		{
-			R.Save(true);
-			//Mame.M.Data.Save(true);
+			RecentFileList.Add(SelectedDB as Release);
 		}
 
-
-		public Command AboutCommand { get; set; }
-
-		void About()
+		else if (SelectedDB is Game)
 		{
-			AboutBox aboutBox = new();
-			aboutBox.Show();
+			RecentFileList.Add((SelectedDB as Game).PreferredRelease);
 		}
 
-		public Command HelpCommand { get; set; }
+		SelectedDB.Play();
+	}
 
-		void Help()
+	bool PlayCanExecute()
+	{
+		return SelectedDB != null && SelectedDB.Included;
+	}
+
+
+	public Command ReporterWindowCommand { get; set; }
+
+	void ReporterWindow()
+	{
+		_ = new ReporterWindow();
+	}
+
+
+	public Command DatabaseWindowCommand { get; set; }
+
+	void DatabaseWindow()
+	{
+		_ = new DatabaseWindow();
+	}
+
+	public Command ArtWindowCommand { get; set; }
+
+	void ArtWindow()
+	{
+		_ = new ArtWindow(SelectedDB as Release);
+	}
+
+	bool ArtWindowCanExecute()
+	{
+		return SelectedDB is Release;
+	}
+
+	public Command StatisticsWindowCommand { get; set; }
+
+	void StatisticsWindow()
+	{
+		_ = new StatisticsWindow();
+	}
+
+
+	public Command OptionsWindowCommand { get; set; }
+
+	void OptionsWindow()
+	{
+		SaveSettings();
+		OptionsWindow optionsWindow = new();
+		optionsWindow.Closed += new EventHandler(OptionsWindowClosed);
+	}
+
+
+	public Command ClearFiltersCommand { get; set; }
+
+	void ClearFilters()
+	{
+		(MainBigSelection as AutoFilterCollection)?.ClearFilters();
+	}
+
+	bool ClearFiltersCanExecute()
+	{
+		return MainBigSelection != null;
+	}
+
+
+	public Command MarkAsCrapCommand { get; set; }
+
+	public Command MarkNotCrapCommand { get; set; }
+
+	void MarkAsCrap()
+	{
+		MarkCrap(true);
+	}
+
+	bool MarkAsCrapCanExecute()
+	{
+		return SelectedDB != null && !SelectedDB.IsCrap;
+	}
+
+	void MarkNotCrap()
+	{
+		MarkCrap(false);
+	}
+
+	bool MarkNotCrapCanExecute()
+	{
+		return SelectedDB != null && SelectedDB.IsCrap;
+	}
+
+	void MarkCrap(bool value)
+
+	{
+		IList idbList = SelectedDBs;
+
+		foreach (IDbObject idbObject in idbList)
 		{
-			//Process.Start(@"http://robinemu.org/help/");
+			idbObject.IsCrap = value;
 		}
+	}
 
 
-		public Command PlayCommand { get; set; }
+	public Command MarkPreferredCommand { get; set; }
 
-		void Play()
-		{
-			if (SelectedDB is Release)
-			{
-				RecentFileList.Add(SelectedDB as Release);
-			}
+	public Command MarkNotPreferredCommand { get; set; }
 
-			else if (SelectedDB is Game)
-			{
-				RecentFileList.Add((SelectedDB as Game).PreferredRelease);
-			}
+	void MarkPreferred()
+	{
+		SelectedDB.Preferred = true;
+	}
 
-			SelectedDB.Play();
-		}
+	bool MarkPreferredCanExecute()
+	{
+		return SelectedDB != null && (SelectedDB is not Emulator) && (SelectedDB is not Game) && !SelectedDB.Preferred;
+	}
 
-		bool PlayCanExecute()
-		{
-			return SelectedDB != null && SelectedDB.Included;
-		}
+	void MarkNotPreferred()
+	{
+		SelectedDB.Preferred = false;
+	}
 
+	bool MarkNotPreferredCanExecute()
+	{
+		return SelectedDB != null && (SelectedDB is not Emulator) && SelectedDB.Preferred;
+	}
 
-		public Command ReporterWindowCommand { get; set; }
 
-		void ReporterWindow()
-		{
-			_ = new ReporterWindow();
-		}
+	public Command MarkSelectedGameReleasePreferredCommand { get; set; }
 
+	void MarkSelectedGameReleasePreferred()
+	{
+		SelectedGameRelease.Preferred = true;
+	}
 
-		public Command DatabaseWindowCommand { get; set; }
+	bool MarkSelectedGameReleasePreferredCanExecute()
+	{
+		return SelectedGameRelease != null && !SelectedGameRelease.Preferred;
+	}
 
-		void DatabaseWindow()
-		{
-			_ = new DatabaseWindow();
-		}
 
-		public Command ArtWindowCommand { get; set; }
+	public Command MarkSelectedPlatformEmulatorPreferredCommand { get; set; }
 
-		void ArtWindow()
-		{
-			_ = new ArtWindow(SelectedDB as Release);
-		}
+	void MarkSelectedPlatformEmulatorPreferred()
+	{
+		SelectedPlatformEmulator.MarkPreferred((SelectedDB as Platform));
+	}
 
-		bool ArtWindowCanExecute()
-		{
-			return SelectedDB is Release;
-		}
+	bool MarkSelectedPlatformEmulatorPreferredCanExecute()
+	{
+		return SelectedDB is Platform && SelectedPlatformEmulator != null &&
+			   (SelectedDB as Platform).PreferredEmulator_ID != SelectedPlatformEmulator.ID;
+	}
 
-		public Command StatisticsWindowCommand { get; set; }
 
-		void StatisticsWindow()
-		{
-			_ = new StatisticsWindow();
-		}
+	public Command MarkSelectedEmulatorPlatformPreferredCommand { get; set; }
 
+	void MarkSelectedEmulatorPlatformPreferred()
+	{
+		SelectedEmulatorPlatform.MarkPreferred(SelectedDB as Emulator);
+	}
 
-		public Command OptionsWindowCommand { get; set; }
+	bool MarkSelectedEmulatorPlatformPreferredCanExecute()
+	{
+		return SelectedDB is Emulator && SelectedEmulatorPlatform != null &&
+			   (SelectedDB as Emulator).ID != SelectedEmulatorPlatform.PreferredEmulator_ID;
+	}
 
-		void OptionsWindow()
-		{
-			SaveSettings();
-			OptionsWindow optionsWindow = new();
-			optionsWindow.Closed += new EventHandler(OptionsWindowClosed);
-		}
 
+	public Command MarkAsGameCommand { get; set; }
 
-		public Command ClearFiltersCommand { get; set; }
+	public Command MarkNotGameCommand { get; set; }
 
-		void ClearFilters()
-		{
-			(MainBigSelection as AutoFilterCollection)?.ClearFilters();
-		}
+	void MarkAsGame()
+	{
+		MarkGame(true);
+	}
 
-		bool ClearFiltersCanExecute()
-		{
-			return MainBigSelection != null;
-		}
+	bool MarkAsGameCanExecute()
+	{
+		return
+		((SelectedDB is Game && !(SelectedDB as Game).IsGame)
+		 ||
+		 (SelectedDB is Release && !(SelectedDB as Release).IsGame));
+	}
 
-
-		public Command MarkAsCrapCommand { get; set; }
-
-		public Command MarkNotCrapCommand { get; set; }
-
-		void MarkAsCrap()
-		{
-			MarkCrap(true);
-		}
-
-		bool MarkAsCrapCanExecute()
-		{
-			return SelectedDB != null && !SelectedDB.IsCrap;
-		}
-
-		void MarkNotCrap()
-		{
-			MarkCrap(false);
-		}
-
-		bool MarkNotCrapCanExecute()
-		{
-			return SelectedDB != null && SelectedDB.IsCrap;
-		}
-
-		void MarkCrap(bool value)
-
-		{
-			IList idbList = SelectedDBs;
-
-			foreach (IDbObject idbObject in idbList)
-			{
-				idbObject.IsCrap = value;
-			}
-		}
-
-
-		public Command MarkPreferredCommand { get; set; }
-
-		public Command MarkNotPreferredCommand { get; set; }
-
-		void MarkPreferred()
-		{
-			SelectedDB.Preferred = true;
-		}
-
-		bool MarkPreferredCanExecute()
-		{
-			return SelectedDB != null && (SelectedDB is not Emulator) && (SelectedDB is not Game) && !SelectedDB.Preferred;
-		}
-
-		void MarkNotPreferred()
-		{
-			SelectedDB.Preferred = false;
-		}
-
-		bool MarkNotPreferredCanExecute()
-		{
-			return SelectedDB != null && (SelectedDB is not Emulator) && SelectedDB.Preferred;
-		}
-
-
-		public Command MarkSelectedGameReleasePreferredCommand { get; set; }
-
-		void MarkSelectedGameReleasePreferred()
-		{
-			SelectedGameRelease.Preferred = true;
-		}
-
-		bool MarkSelectedGameReleasePreferredCanExecute()
-		{
-			return SelectedGameRelease != null && !SelectedGameRelease.Preferred;
-		}
-
-
-		public Command MarkSelectedPlatformEmulatorPreferredCommand { get; set; }
-
-		void MarkSelectedPlatformEmulatorPreferred()
-		{
-			SelectedPlatformEmulator.MarkPreferred((SelectedDB as Platform));
-		}
-
-		bool MarkSelectedPlatformEmulatorPreferredCanExecute()
-		{
-			return SelectedDB is Platform && SelectedPlatformEmulator != null &&
-				   (SelectedDB as Platform).PreferredEmulatorId != SelectedPlatformEmulator.ID;
-		}
-
-
-		public Command MarkSelectedEmulatorPlatformPreferredCommand { get; set; }
-
-		void MarkSelectedEmulatorPlatformPreferred()
-		{
-			SelectedEmulatorPlatform.MarkPreferred(SelectedDB as Emulator);
-		}
-
-		bool MarkSelectedEmulatorPlatformPreferredCanExecute()
-		{
-			return SelectedDB is Emulator && SelectedEmulatorPlatform != null &&
-				   (SelectedDB as Emulator).ID != SelectedEmulatorPlatform.PreferredEmulatorId;
-		}
-
-
-		public Command MarkAsGameCommand { get; set; }
-
-		public Command MarkNotGameCommand { get; set; }
-
-		void MarkAsGame()
-		{
-			MarkGame(true);
-		}
-
-		bool MarkAsGameCanExecute()
-		{
-			return
-			((SelectedDB is Game && !(SelectedDB as Game).IsGame)
-			 ||
-			 (SelectedDB is Release && !(SelectedDB as Release).IsGame));
-		}
-
-		bool MarkNotGameCanExecute()
-		{
-			return ((SelectedDB is Game && (SelectedDB as Game).IsGame)
-					||
-					(SelectedDB is Release && (SelectedDB as Release).IsGame));
-		}
-
-		void MarkNotGame()
-		{
-			MarkGame(false);
-		}
-
-		void MarkGame(bool value)
-		{
-			IList idbList = SelectedDBs;
-
-			if (SelectedDB is Game)
-			{
-				foreach (Game game in idbList)
-				{
-					game.IsGame = value;
-				}
-			}
-
-			if (SelectedDB is Release)
-			{
-				foreach (Release release in idbList)
-				{
-					release.Game.IsGame = value;
-				}
-			}
-		}
-
-
-		public Command MarkAsAdultCommand { get; set; }
-
-		public Command MarkNotAdultCommand { get; set; }
-
-		void MarkAsAdult()
-		{
-			MarkAdult(true);
-		}
-
-		bool MarkAsAdultCanExecute()
-		{
-			return
-				((SelectedDB is Game && !(SelectedDB as Game).IsAdult)
+	bool MarkNotGameCanExecute()
+	{
+		return ((SelectedDB is Game && (SelectedDB as Game).IsGame)
 				||
-				(SelectedDB is Release && !(SelectedDB as Release).IsAdult));
-		}
+				(SelectedDB is Release && (SelectedDB as Release).IsGame));
+	}
 
-		bool MarkNotAdultCanExecute()
-		{
-			return ((SelectedDB is Game && (SelectedDB as Game).IsAdult)
-				   ||
-				   (SelectedDB is Release && (SelectedDB as Release).IsAdult));
-		}
+	void MarkNotGame()
+	{
+		MarkGame(false);
+	}
 
-		void MarkNotAdult()
-		{
-			MarkAdult(false);
-		}
+	void MarkGame(bool value)
+	{
+		IList idbList = SelectedDBs;
 
-		void MarkAdult(bool value)
+		if (SelectedDB is Game)
 		{
-			IList idbList = SelectedDBs;
-			if (SelectedDB is Game)
+			foreach (Game game in idbList)
 			{
-				foreach (Game game in idbList)
-				{
-					game.IsAdult = value;
-				}
-			}
-
-			if (SelectedDB is Release)
-			{
-				foreach (Release release in idbList)
-				{
-					release.Game.IsAdult = value;
-				}
+				game.IsGame = value;
 			}
 		}
 
-
-		public Command MarkAsMessCommand { get; set; }
-
-		public Command MarkNotMessCommand { get; set; }
-
-		void MarkAsMess()
+		if (SelectedDB is Release)
 		{
-			MarkMess(true);
-		}
-
-		bool MarkAsMessCanExecute()
-		{
-			return
-				((SelectedDB is Game && !(SelectedDB as Game).IsMess)
-				||
-				(SelectedDB is Release && !(SelectedDB as Release).IsMess));
-		}
-
-		bool MarkNotMessCanExecute()
-		{
-			return ((SelectedDB is Game && (SelectedDB as Game).IsMess)
-				   ||
-				   (SelectedDB is Release && (SelectedDB as Release).IsMess));
-		}
-
-		void MarkNotMess()
-		{
-			MarkMess(false);
-		}
-
-		void MarkMess(bool value)
-		{
-			IList idbList = SelectedDBs;
-			if (SelectedDB is Game)
+			foreach (Release release in idbList)
 			{
-				foreach (Game game in idbList)
-				{
-					game.IsMess = value;
-				}
-			}
-
-			if (SelectedDB is Release)
-			{
-				foreach (Release release in idbList)
-				{
-					release.Game.IsMess = value;
-				}
+				release.Game.IsGame = value;
 			}
 		}
+	}
 
 
-		public Command MarkAsBeatenCommand { get; set; }
+	public Command MarkAsAdultCommand { get; set; }
 
-		public Command MarkNotBeatenCommand { get; set; }
+	public Command MarkNotAdultCommand { get; set; }
 
-		void MarkAsBeaten()
+	void MarkAsAdult()
+	{
+		MarkAdult(true);
+	}
+
+	bool MarkAsAdultCanExecute()
+	{
+		return
+			((SelectedDB is Game && !(SelectedDB as Game).IsAdult)
+			||
+			(SelectedDB is Release && !(SelectedDB as Release).IsAdult));
+	}
+
+	bool MarkNotAdultCanExecute()
+	{
+		return ((SelectedDB is Game && (SelectedDB as Game).IsAdult)
+			   ||
+			   (SelectedDB is Release && (SelectedDB as Release).IsAdult));
+	}
+
+	void MarkNotAdult()
+	{
+		MarkAdult(false);
+	}
+
+	void MarkAdult(bool value)
+	{
+		IList idbList = SelectedDBs;
+		if (SelectedDB is Game)
 		{
-			MarkBeaten(true);
-		}
-
-		bool MarkAsBeatenCanExecute()
-		{
-			return SelectedDB != null && (((SelectedDB is Game) && !(SelectedDB as Game).IsBeaten) || (SelectedDB is Release) && !(SelectedDB as Release).IsBeaten);
-		}
-
-		void MarkBeaten(bool value)
-		{
-			IList idbList = SelectedDBs;
-			if (SelectedDB is Game)
+			foreach (Game game in idbList)
 			{
-				foreach (Game game in idbList)
-				{
-					game.IsBeaten = value;
-				}
-			}
-
-			if (SelectedDB is Release)
-			{
-				foreach (Release release in idbList)
-				{
-					release.Game.IsBeaten = value;
-				}
+				game.IsAdult = value;
 			}
 		}
 
-		bool MarkNotBeatenCanExecute()
+		if (SelectedDB is Release)
 		{
-			return ((SelectedDB is Game) && (SelectedDB as Game).IsBeaten)
-				   ||
-				   (SelectedDB is Release) && (SelectedDB as Release).IsBeaten;
-		}
-
-		void MarkNotBeaten()
-		{
-			MarkBeaten(false);
-		}
-
-
-		public Command GetAllArtCommand { get; set; }
-
-		void GetAllArt()
-		{
-			GetArt(false);
-		}
-
-		bool GetAllArtCanExecute()
-		{
-			return MainBigSelection != null;
-		}
-
-
-		public Command GetSelectedArtCommand { get; set; }
-
-		void GetSelectedArt()
-		{
-			GetArt(true);
-		}
-
-		bool GetSelectedArtCanExecute()
-		{
-			return SelectedDB != null;
-		}
-
-
-		void GetArt(bool selected)
-		{
-			TaskInProgress = true;
-			tokenSource = new CancellationTokenSource();
-			FileLocation.CreateDirectories();
-
-			if (MainBigSelection == PlatformCollection)
+			foreach (Release release in idbList)
 			{
-				GetPlatformArt(selected);
+				release.Game.IsAdult = value;
 			}
-			else
+		}
+	}
+
+
+	public Command MarkAsMessCommand { get; set; }
+
+	public Command MarkNotMessCommand { get; set; }
+
+	void MarkAsMess()
+	{
+		MarkMess(true);
+	}
+
+	bool MarkAsMessCanExecute()
+	{
+		return
+			((SelectedDB is Game && !(SelectedDB as Game).IsMess)
+			||
+			(SelectedDB is Release && !(SelectedDB as Release).IsMess));
+	}
+
+	bool MarkNotMessCanExecute()
+	{
+		return ((SelectedDB is Game && (SelectedDB as Game).IsMess)
+			   ||
+			   (SelectedDB is Release && (SelectedDB as Release).IsMess));
+	}
+
+	void MarkNotMess()
+	{
+		MarkMess(false);
+	}
+
+	void MarkMess(bool value)
+	{
+		IList idbList = SelectedDBs;
+		if (SelectedDB is Game)
+		{
+			foreach (Game game in idbList)
 			{
-				GetReleaseArt(selected);
+				game.IsMess = value;
 			}
 		}
 
-		async void GetReleaseArt(bool selected)
+		if (SelectedDB is Release)
 		{
-			try
+			foreach (Release release in idbList)
 			{
-				// Cache the art count prior to scraping to find out how many we get
-				int boxFrontCount = Directory.GetFiles(FileLocation.Art.BoxFront).Length;
-				int boxBackCount = Directory.GetFiles(FileLocation.Art.BoxBack).Length;
-				int bannerCount = Directory.GetFiles(FileLocation.Art.Banner).Length;
-				int screenCount = Directory.GetFiles(FileLocation.Art.Screen).Length;
-				int logoCount = Directory.GetFiles(FileLocation.Art.Logo).Length;
-
-				await Task.Run(() =>
-				{
-					Reporter.Report("Opening databases...");
-
-					R.Data.Gdbreleases.Load();
-					R.Data.GBReleases.Load();
-					R.Data.OVGReleases.Load();
-					R.Data.LBReleases.Include(x => x.LBImages).Load();
-
-					Reporter.Report("Scraping art files...");
-
-					List<IDbObject> list = new();
-
-					// Cache selected items in case the user changes them during scrape
-					// If items are selected, cache them
-					if (selected)
-					{
-						foreach (IDbObject idbObject in SelectedDBs)
-						{
-							list.Add(idbObject);
-						}
-					}
-
-					// If no items are selected, cache the entire collection
-					else
-					{
-						dynamic MainBigThing = MainBigSelection;
-						list.AddRange(MainBigThing.FilteredCollection);
-					}
-
-					// Scrape art in the order of most usefull
-					if (Properties.Settings.Default.ScrapeReleaseBoxFront)
-					{
-						GetArtSub(list, ArtType.BoxFront, 0);
-					}
-
-					if (Properties.Settings.Default.ScrapeReleaseLogo)
-					{
-						GetArtSub(list, ArtType.Logo, 0);
-					}
-
-					if (Properties.Settings.Default.ScrapeReleaseScreen)
-					{
-						GetArtSub(list, ArtType.Screen, 0);
-					}
-
-					if (Properties.Settings.Default.ScrapeReleaseBanner)
-					{
-						GetArtSub(list, ArtType.Banner, 0);
-					}
-
-					if (Properties.Settings.Default.ScrapeReleaseBoxBack)
-					{
-						GetArtSub(list, ArtType.BoxBack, 0);
-					}
-				});
-
-				boxFrontCount = Directory.GetFiles(FileLocation.Art.BoxFront).Length - boxFrontCount;
-				boxBackCount = Directory.GetFiles(FileLocation.Art.BoxBack).Length - boxBackCount;
-				bannerCount = Directory.GetFiles(FileLocation.Art.Banner).Length - bannerCount;
-				screenCount = Directory.GetFiles(FileLocation.Art.Screen).Length - screenCount;
-				logoCount = Directory.GetFiles(FileLocation.Art.Logo).Length - logoCount;
-
-				Reporter.Report($"Added {boxFrontCount} box front art images.");
-				Reporter.Report($"Added {boxBackCount} box back art images.");
-				Reporter.Report($"Added {bannerCount} banner images.");
-				Reporter.Report($"Added {logoCount} clear logos.");
-				Reporter.Report($"Added {screenCount} screenshots.");
+				release.Game.IsMess = value;
 			}
+		}
+	}
 
-			catch { }
 
-			finally
+	public Command MarkAsBeatenCommand { get; set; }
+
+	public Command MarkNotBeatenCommand { get; set; }
+
+	void MarkAsBeaten()
+	{
+		MarkBeaten(true);
+	}
+
+	bool MarkAsBeatenCanExecute()
+	{
+		return SelectedDB != null && (((SelectedDB is Game) && !(SelectedDB as Game).IsBeaten) || (SelectedDB is Release) && !(SelectedDB as Release).IsBeaten);
+	}
+
+	void MarkBeaten(bool value)
+	{
+		IList idbList = SelectedDBs;
+		if (SelectedDB is Game)
+		{
+			foreach (Game game in idbList)
 			{
-				TaskInProgress = false;
+				game.IsBeaten = value;
 			}
 		}
 
-		async void GetPlatformArt(bool selected)
+		if (SelectedDB is Release)
 		{
-			try
+			foreach (Release release in idbList)
 			{
-				// Cache the number of art files so we can see how many we got
-				int platformArtCount = Directory.GetFiles(FileLocation.Art.Console).Length;
-
-				await Task.Run(() =>
-				{
-					Reporter.Report("Opening databases...");
-
-					R.Data.GDBPlatforms.Load();
-
-					Reporter.Report("Scraping art files...");
-
-					List<IDbObject> list = new();
-
-					// Cache selected items in case the user changes them during scrape
-					// If items are selected, cache them
-					if (selected)
-					{
-						foreach (IDbObject idbObject in SelectedDBs)
-						{
-							list.Add(idbObject);
-						}
-					}
-
-					// If no items are selected, cache the entire collection
-					else
-					{
-						dynamic MainBigThing = MainBigSelection;
-						list.AddRange(MainBigThing.FilteredCollection);
-					}
-
-					// Scrape art in the order of most usefull
-					if (Properties.Settings.Default.ScrapePlatformConsole)
-					{
-						GetArtSub(list, ArtType.Console, 0);
-
-					}
-
-					if (Properties.Settings.Default.ScrapePlatformController)
-					{
-						GetArtSub(list, ArtType.Controller, 0);
-					}
-
-					if (Properties.Settings.Default.ScrapePlatformBoxFront)
-					{
-						GetArtSub(list, ArtType.BoxFront, 0);
-					}
-
-					if (Properties.Settings.Default.ScrapePlatformBanner)
-					{
-						GetArtSub(list, ArtType.Banner, 0);
-					}
-
-					if (Properties.Settings.Default.ScrapePlatformBoxBack)
-					{
-						GetArtSub(list, ArtType.BoxBack, 0);
-					}
-				});
-			}
-
-			catch { }
-
-			finally
-			{
-				TaskInProgress = false;
+				release.Game.IsBeaten = value;
 			}
 		}
+	}
 
-		/// <summary>
-		/// Sub function to download art based on options figured elsewhere
-		/// </summary>
-		/// <param name="db"></param>
-		/// <param name="artType"></param>
-		/// <returns></returns>
-		int GetArtSub(List<IDbObject> list, ArtType artType, LocalDB localDB)
+	bool MarkNotBeatenCanExecute()
+	{
+		return ((SelectedDB is Game) && (SelectedDB as Game).IsBeaten)
+			   ||
+			   (SelectedDB is Release) && (SelectedDB as Release).IsBeaten;
+	}
+
+	void MarkNotBeaten()
+	{
+		MarkBeaten(false);
+	}
+
+
+	public Command GetAllArtCommand { get; set; }
+
+	void GetAllArt()
+	{
+		GetArt(false);
+	}
+
+	bool GetAllArtCanExecute()
+	{
+		return MainBigSelection != null;
+	}
+
+
+	public Command GetSelectedArtCommand { get; set; }
+
+	void GetSelectedArt()
+	{
+		GetArt(true);
+	}
+
+	bool GetSelectedArtCanExecute()
+	{
+		return SelectedDB != null;
+	}
+
+
+	void GetArt(bool selected)
+	{
+		TaskInProgress = true;
+		tokenSource = new CancellationTokenSource();
+		FileLocation.CreateDirectories();
+
+		if (MainBigSelection == PlatformCollection)
 		{
-			int misCount;
-			int tryCount = 0;
-			do
-			{
-				misCount = 0;
-				foreach (IDbObject idbObject in list)
-				{
-					if (tokenSource.Token.IsCancellationRequested)
-					{
-						Reporter.Report("Downloading art cancelled.");
-						tryCount = 6;
-						break;
-					}
-					misCount += idbObject.ScrapeArt(artType, localDB);
-				}
-			} while (misCount < 0 && ++tryCount < 5);
-			return misCount;
+			GetPlatformArt(selected);
 		}
-
-		public Command GetAllDataCommand { get; set; }
-
-		async void GetAllData()
+		else
 		{
-			// TODO: make this good for any idbobject and add get selected data command
-			Stopwatch Watch = Stopwatch.StartNew();
-			Stopwatch Watch1 = Stopwatch.StartNew();
+			GetReleaseArt(selected);
+		}
+	}
 
-			int j = 0;
+	async void GetReleaseArt(bool selected)
+	{
+		try
+		{
+			// Cache the art count prior to scraping to find out how many we get
+			int boxFrontCount = Directory.GetFiles(FileLocation.Art.BoxFront).Length;
+			int boxBackCount = Directory.GetFiles(FileLocation.Art.BoxBack).Length;
+			int bannerCount = Directory.GetFiles(FileLocation.Art.Banner).Length;
+			int screenCount = Directory.GetFiles(FileLocation.Art.Screen).Length;
+			int logoCount = Directory.GetFiles(FileLocation.Art.Logo).Length;
 
 			await Task.Run(() =>
 			{
-				Reporter.Report("Opening local cache...");
+				Reporter.Report("Opening databases...");
 
+				R.Data.GDBReleases.Load();
 				R.Data.GBReleases.Load();
-				R.Data.Gdbreleases.Load();
 				R.Data.OVGReleases.Load();
-				R.Data.LBReleases.Include(x => x.LBGame).Load();
-				Reporter.ReportInline(Watch.Elapsed.ToString("ss") + " s");
-				Watch.Restart();
+				R.Data.LBReleases.Include(x => x.LBImages).Load();
 
-				int count = R.Data.Releases.Count();
-				foreach (Release release in R.Data.Releases)
+				Reporter.Report("Scraping art files...");
+
+				List<IDbObject> list = new();
+
+					// Cache selected items in case the user changes them during scrape
+					// If items are selected, cache them
+					if (selected)
 				{
-					if (j++ % (count / 10) == 0)
+					foreach (IDbObject idbObject in SelectedDBs)
 					{
-						Reporter.Report("Copying " + j + @" / " + count + " " + Watch.Elapsed.ToString(@"m\:ss") + " elapsed.");
-						Watch.Restart();
+						list.Add(idbObject);
 					}
-					release.CopyData();
+				}
+
+					// If no items are selected, cache the entire collection
+					else
+				{
+					dynamic MainBigThing = MainBigSelection;
+					list.AddRange(MainBigThing.FilteredCollection);
+				}
+
+					// Scrape art in the order of most usefull
+					if (Properties.Settings.Default.ScrapeReleaseBoxFront)
+				{
+					GetArtSub(list, ArtType.BoxFront, 0);
+				}
+
+				if (Properties.Settings.Default.ScrapeReleaseLogo)
+				{
+					GetArtSub(list, ArtType.Logo, 0);
+				}
+
+				if (Properties.Settings.Default.ScrapeReleaseScreen)
+				{
+					GetArtSub(list, ArtType.Screen, 0);
+				}
+
+				if (Properties.Settings.Default.ScrapeReleaseBanner)
+				{
+					GetArtSub(list, ArtType.Banner, 0);
+				}
+
+				if (Properties.Settings.Default.ScrapeReleaseBoxBack)
+				{
+					GetArtSub(list, ArtType.BoxBack, 0);
 				}
 			});
 
-			Datomatic datomatic = new();
-			datomatic.ReportUpdates(true);
-			R.Save(false);
+			boxFrontCount = Directory.GetFiles(FileLocation.Art.BoxFront).Length - boxFrontCount;
+			boxBackCount = Directory.GetFiles(FileLocation.Art.BoxBack).Length - boxBackCount;
+			bannerCount = Directory.GetFiles(FileLocation.Art.Banner).Length - bannerCount;
+			screenCount = Directory.GetFiles(FileLocation.Art.Screen).Length - screenCount;
+			logoCount = Directory.GetFiles(FileLocation.Art.Logo).Length - logoCount;
+
+			Reporter.Report($"Added {boxFrontCount} box front art images.");
+			Reporter.Report($"Added {boxBackCount} box back art images.");
+			Reporter.Report($"Added {bannerCount} banner images.");
+			Reporter.Report($"Added {logoCount} clear logos.");
+			Reporter.Report($"Added {screenCount} screenshots.");
 		}
 
-		bool GetAllDataCanExecute()
+		catch { }
+
+		finally
 		{
-			return MainBigSelection != null && (MainBigSelection == ReleaseCollection || MainBigSelection == GameCollection);
+			TaskInProgress = false;
 		}
+	}
 
-
-		public Command AddCollectionCommand { get; set; }
-
-		void AddCollection()
+	async void GetPlatformArt(bool selected)
+	{
+		try
 		{
-			Collection collection = new()
+			// Cache the number of art files so we can see how many we got
+			int platformArtCount = Directory.GetFiles(FileLocation.Art.Console).Length;
+
+			await Task.Run(() =>
 			{
-				Title = "New friggin collection",
-				Type = "Game"
-			};
-			CollectionList.Add(collection);
+				Reporter.Report("Opening databases...");
+
+				R.Data.GDBPlatforms.Load();
+
+				Reporter.Report("Scraping art files...");
+
+				List<IDbObject> list = new();
+
+					// Cache selected items in case the user changes them during scrape
+					// If items are selected, cache them
+					if (selected)
+				{
+					foreach (IDbObject idbObject in SelectedDBs)
+					{
+						list.Add(idbObject);
+					}
+				}
+
+					// If no items are selected, cache the entire collection
+					else
+				{
+					dynamic MainBigThing = MainBigSelection;
+					list.AddRange(MainBigThing.FilteredCollection);
+				}
+
+					// Scrape art in the order of most usefull
+					if (Properties.Settings.Default.ScrapePlatformConsole)
+				{
+					GetArtSub(list, ArtType.Console, 0);
+
+				}
+
+				if (Properties.Settings.Default.ScrapePlatformController)
+				{
+					GetArtSub(list, ArtType.Controller, 0);
+				}
+
+				if (Properties.Settings.Default.ScrapePlatformBoxFront)
+				{
+					GetArtSub(list, ArtType.BoxFront, 0);
+				}
+
+				if (Properties.Settings.Default.ScrapePlatformBanner)
+				{
+					GetArtSub(list, ArtType.Banner, 0);
+				}
+
+				if (Properties.Settings.Default.ScrapePlatformBoxBack)
+				{
+					GetArtSub(list, ArtType.BoxBack, 0);
+				}
+			});
 		}
 
-		bool AddCollectionCanExecute()
+		catch { }
+
+		finally
 		{
-			return MainBigSelection == CollectionList;
+			TaskInProgress = false;
 		}
+	}
 
-
-		public Command RemoveFromCollectionCommand { get; set; }
-
-		void RemoveFromCollection()
+	/// <summary>
+	/// Sub function to download art based on options figured elsewhere
+	/// </summary>
+	/// <param name="db"></param>
+	/// <param name="artType"></param>
+	/// <returns></returns>
+	int GetArtSub(List<IDbObject> list, ArtType artType, LocalDB localDB)
+	{
+		int misCount;
+		int tryCount = 0;
+		do
 		{
-			int N = SelectedDBs.Count;
-			for (int i = N - 1; i >= 0; i--)
+			misCount = 0;
+			foreach (IDbObject idbObject in list)
 			{
-				IDbObject idbObject = SelectedDBs[i] as IDbObject;
-				(MainBigSelection as Collection).Remove(idbObject);
+				if (tokenSource.Token.IsCancellationRequested)
+				{
+					Reporter.Report("Downloading art cancelled.");
+					tryCount = 6;
+					break;
+				}
+				misCount += idbObject.ScrapeArt(artType, localDB);
 			}
-		}
+		} while (misCount < 0 && ++tryCount < 5);
+		return misCount;
+	}
 
-		bool RemoveFromCollectionCanExecute()
+	public Command GetAllDataCommand { get; set; }
+
+	async void GetAllData()
+	{
+		// TODO: make this good for any idbobject and add get selected data command
+		Stopwatch Watch = Stopwatch.StartNew();
+		Stopwatch Watch1 = Stopwatch.StartNew();
+
+		int j = 0;
+
+		await Task.Run(() =>
 		{
-			return MainBigSelection is Collection && SelectedDBs?.Count > 0;
-		}
+			Reporter.Report("Opening local cache...");
+
+			R.Data.GBReleases.Load();
+			R.Data.GDBReleases.Load();
+			R.Data.OVGReleases.Load();
+			R.Data.LBReleases.Include(x => x.LBGame).Load();
+			Reporter.ReportInline(Watch.Elapsed.ToString("ss") + " s");
+			Watch.Restart();
+
+			int count = R.Data.Releases.Count();
+			foreach (Release release in R.Data.Releases)
+			{
+				if (j++ % (count / 10) == 0)
+				{
+					Reporter.Report("Copying " + j + @" / " + count + " " + Watch.Elapsed.ToString(@"m\:ss") + " elapsed.");
+					Watch.Restart();
+				}
+				release.CopyData();
+			}
+		});
+
+		Datomatic datomatic = new();
+		datomatic.ReportUpdates(true);
+		R.Save(false);
+	}
+
+	bool GetAllDataCanExecute()
+	{
+		return MainBigSelection != null && (MainBigSelection == ReleaseCollection || MainBigSelection == GameCollection);
+	}
 
 
-		public Command RemoveCollectionCommand { get; set; }
+	public Command AddCollectionCommand { get; set; }
 
-		void RemoveCollection()
+	void AddCollection()
+	{
+		Collection collection = new()
 		{
-			CollectionList.Remove(MainBigSelection as Collection);
-		}
+			Title = "New friggin collection",
+			Type = "Game"
+		};
+		CollectionList.Add(collection);
+	}
 
-		bool RemoveCollectionCanExecute()
+	bool AddCollectionCanExecute()
+	{
+		return MainBigSelection == CollectionList;
+	}
+
+
+	public Command RemoveFromCollectionCommand { get; set; }
+
+	void RemoveFromCollection()
+	{
+		int N = SelectedDBs.Count;
+		for (int i = N - 1; i >= 0; i--)
 		{
-			return MainBigSelection is Collection;
+			IDbObject idbObject = SelectedDBs[i] as IDbObject;
+			(MainBigSelection as Collection).Remove(idbObject);
 		}
+	}
+
+	bool RemoveFromCollectionCanExecute()
+	{
+		return MainBigSelection is Collection && SelectedDBs?.Count > 0;
+	}
 
 
-		public Command CancelTaskCommand { get; set; }
+	public Command RemoveCollectionCommand { get; set; }
 
-		void CancelTask()
-		{
-			tokenSource.Cancel();
-		}
+	void RemoveCollection()
+	{
+		CollectionList.Remove(MainBigSelection as Collection);
+	}
 
-		bool CancelTaskCanExecute()
-		{
-			return TaskInProgress;
-		}
+	bool RemoveCollectionCanExecute()
+	{
+		return MainBigSelection is Collection;
+	}
 
 
-		public Command AuditRomsCommand { get; set; }
+	public Command CancelTaskCommand { get; set; }
 
-		void AuditRoms()
-		{
-			_ = new AuditWindow();
-		}
+	void CancelTask()
+	{
+		tokenSource.Cancel();
+	}
 
-		void InitializeCommands()
-		{
-			AddCollectionCommand = new Command(AddCollection, AddCollectionCanExecute, "Add collection", "Add a new custom collection to the list.");
-			RemoveCollectionCommand = new Command(RemoveCollection, "Delete", "Remove this collection permanently.");
+	bool CancelTaskCanExecute()
+	{
+		return TaskInProgress;
+	}
 
-			DatabaseWindowCommand = new Command(DatabaseWindow, "Database Window", "Open the database window to manage databases.");
-			ReporterWindowCommand = new Command(ReporterWindow, "Reporter Window", "Open the reporter window to view logs.");
 
-			StatisticsWindowCommand = new Command(StatisticsWindow, "Statistics Window", "View statistics.");
+	public Command AuditRomsCommand { get; set; }
 
-			ArtWindowCommand = new Command(ArtWindow, ArtWindowCanExecute, "Art Window", "Open the window to select or improve available artwork.");
+	void AuditRoms()
+	{
+		_ = new AuditWindow();
+	}
 
-			OptionsWindowCommand = new Command(OptionsWindow, "Options", "Choose options for the main view.");
+	void InitializeCommands()
+	{
+		AddCollectionCommand = new Command(AddCollection, AddCollectionCanExecute, "Add collection", "Add a new custom collection to the list.");
+		RemoveCollectionCommand = new Command(RemoveCollection, "Delete", "Remove this collection permanently.");
 
-			SaveDataBaseCommand = new Command(SaveDataBase, "Save database", "Save all changes from the current session to the database.");
-			AboutCommand = new Command(About, "About", "Open the about box.");
-			HelpCommand = new Command(Help, "Help", "Navigate to the help website.");
+		DatabaseWindowCommand = new Command(DatabaseWindow, "Database Window", "Open the database window to manage databases.");
+		ReporterWindowCommand = new Command(ReporterWindow, "Reporter Window", "Open the reporter window to view logs.");
 
-			PlayCommand = new Command(Play, PlayCanExecute, "Play this", "Launch the selected game or release.");
-			ClearFiltersCommand = new Command(ClearFilters, ClearFiltersCanExecute, "X", "Clear filters and display all objects.");
+		StatisticsWindowCommand = new Command(StatisticsWindow, "Statistics Window", "View statistics.");
 
-			MarkAsCrapCommand = new Command(MarkAsCrap, MarkAsCrapCanExecute, "Crap", "Mark selected items as crap.");
-			MarkNotCrapCommand = new Command(MarkNotCrap, MarkNotCrapCanExecute, "Not crap", "Mark selected items as not crap.");
+		ArtWindowCommand = new Command(ArtWindow, ArtWindowCanExecute, "Art Window", "Open the window to select or improve available artwork.");
 
-			MarkPreferredCommand = new Command(MarkPreferred, MarkPreferredCanExecute, "Preferred", "Mark selected item as preferred. Only one item can be marked at a time");
-			MarkNotPreferredCommand = new Command(MarkNotPreferred, MarkNotPreferredCanExecute, "Not preferred", "Mark selected item as not preferred. Only one item can be marked at a time");
+		OptionsWindowCommand = new Command(OptionsWindow, "Options", "Choose options for the main view.");
 
-			MarkAsGameCommand = new Command(MarkAsGame, MarkAsGameCanExecute, "Game", "Mark selected items as games, i.e. not calculators or test cartridges");
-			MarkNotGameCommand = new Command(MarkNotGame, MarkNotGameCanExecute, "Not a game", "Mark selected items as not games, i.e. calculators or test cartridges.");
+		SaveDataBaseCommand = new Command(SaveDataBase, "Save database", "Save all changes from the current session to the database.");
+		AboutCommand = new Command(About, "About", "Open the about box.");
+		HelpCommand = new Command(Help, "Help", "Navigate to the help website.");
 
-			MarkAsBeatenCommand = new Command(MarkAsBeaten, MarkAsBeatenCanExecute, "Beaten", "Mark selected item as beaten.");
-			MarkNotBeatenCommand = new Command(MarkNotBeaten, MarkNotBeatenCanExecute, "Not beaten", "Mark selected item as not beaten");
+		PlayCommand = new Command(Play, PlayCanExecute, "Play this", "Launch the selected game or release.");
+		ClearFiltersCommand = new Command(ClearFilters, ClearFiltersCanExecute, "X", "Clear filters and display all objects.");
 
-			MarkAsAdultCommand = new Command(MarkAsAdult, MarkAsAdultCanExecute, "Adult", "Mark selected item as adult.");
-			MarkNotAdultCommand = new Command(MarkNotAdult, MarkNotAdultCanExecute, "Not adult", "Mark selected item as not adult");
+		MarkAsCrapCommand = new Command(MarkAsCrap, MarkAsCrapCanExecute, "Crap", "Mark selected items as crap.");
+		MarkNotCrapCommand = new Command(MarkNotCrap, MarkNotCrapCanExecute, "Not crap", "Mark selected items as not crap.");
 
-			MarkAsMessCommand = new Command(MarkAsMess, MarkAsMessCanExecute, "Mess", "Mark selected item as an MESS machine.");
-			MarkNotMessCommand = new Command(MarkNotMess, MarkNotMessCanExecute, "Not Mess", "Mark selected item as not an MESS machine.");
+		MarkPreferredCommand = new Command(MarkPreferred, MarkPreferredCanExecute, "Preferred", "Mark selected item as preferred. Only one item can be marked at a time");
+		MarkNotPreferredCommand = new Command(MarkNotPreferred, MarkNotPreferredCanExecute, "Not preferred", "Mark selected item as not preferred. Only one item can be marked at a time");
 
-			MarkSelectedGameReleasePreferredCommand = new Command(MarkSelectedGameReleasePreferred, MarkSelectedGameReleasePreferredCanExecute, "Mark preferred", "Mark selected release as preferred. Only one item can be marked at a time. The preferred release will be launched by default");
+		MarkAsGameCommand = new Command(MarkAsGame, MarkAsGameCanExecute, "Game", "Mark selected items as games, i.e. not calculators or test cartridges");
+		MarkNotGameCommand = new Command(MarkNotGame, MarkNotGameCanExecute, "Not a game", "Mark selected items as not games, i.e. calculators or test cartridges.");
 
-			MarkSelectedPlatformEmulatorPreferredCommand = new Command(MarkSelectedPlatformEmulatorPreferred, MarkSelectedPlatformEmulatorPreferredCanExecute, "Mark preferred", "Mark selected emulator as preferred. Only one item can be marked at a time. The preferred emulator will be used to play games on this platform by default");
+		MarkAsBeatenCommand = new Command(MarkAsBeaten, MarkAsBeatenCanExecute, "Beaten", "Mark selected item as beaten.");
+		MarkNotBeatenCommand = new Command(MarkNotBeaten, MarkNotBeatenCanExecute, "Not beaten", "Mark selected item as not beaten");
 
-			MarkSelectedEmulatorPlatformPreferredCommand = new Command(MarkSelectedEmulatorPlatformPreferred, MarkSelectedEmulatorPlatformPreferredCanExecute, "Mark preferred", "Mark this  emulator as preferred for the selected platform. An emulator can be preferred for multiple platforms. If this emulator is preferred, it will be be used to play games on this platform by default");
+		MarkAsAdultCommand = new Command(MarkAsAdult, MarkAsAdultCanExecute, "Adult", "Mark selected item as adult.");
+		MarkNotAdultCommand = new Command(MarkNotAdult, MarkNotAdultCanExecute, "Not adult", "Mark selected item as not adult");
 
-			GetAllArtCommand = new Command(GetAllArt, GetAllArtCanExecute, "Get all art", "Download art for all displayed items.");
-			GetSelectedArtCommand = new Command(GetSelectedArt, GetSelectedArtCanExecute, "Get art for selected items", "Downloads art for items currently selected.");
+		MarkAsMessCommand = new Command(MarkAsMess, MarkAsMessCanExecute, "Mess", "Mark selected item as an MESS machine.");
+		MarkNotMessCommand = new Command(MarkNotMess, MarkNotMessCanExecute, "Not Mess", "Mark selected item as not an MESS machine.");
 
-			GetAllDataCommand = new Command(GetAllData, GetAllDataCanExecute, "Get all data", "Downloads metadata for all displayed items.");
+		MarkSelectedGameReleasePreferredCommand = new Command(MarkSelectedGameReleasePreferred, MarkSelectedGameReleasePreferredCanExecute, "Mark preferred", "Mark selected release as preferred. Only one item can be marked at a time. The preferred release will be launched by default");
 
-			RemoveFromCollectionCommand = new Command(RemoveFromCollection, RemoveFromCollectionCanExecute, "Remove from collection", "Removes the current item from the collection permanently.");
+		MarkSelectedPlatformEmulatorPreferredCommand = new Command(MarkSelectedPlatformEmulatorPreferred, MarkSelectedPlatformEmulatorPreferredCanExecute, "Mark preferred", "Mark selected emulator as preferred. Only one item can be marked at a time. The preferred emulator will be used to play games on this platform by default");
 
-			CancelTaskCommand = new Command(CancelTask, CancelTaskCanExecute, "Cancel", "Cancel the current task");
+		MarkSelectedEmulatorPlatformPreferredCommand = new Command(MarkSelectedEmulatorPlatformPreferred, MarkSelectedEmulatorPlatformPreferredCanExecute, "Mark preferred", "Mark this  emulator as preferred for the selected platform. An emulator can be preferred for multiple platforms. If this emulator is preferred, it will be be used to play games on this platform by default");
 
-			AuditRomsCommand = new Command(AuditRoms, "Audit Roms", "Verify ROM files are as expected.");
-		}
+		GetAllArtCommand = new Command(GetAllArt, GetAllArtCanExecute, "Get all art", "Download art for all displayed items.");
+		GetSelectedArtCommand = new Command(GetSelectedArt, GetSelectedArtCanExecute, "Get art for selected items", "Downloads art for items currently selected.");
+
+		GetAllDataCommand = new Command(GetAllData, GetAllDataCanExecute, "Get all data", "Downloads metadata for all displayed items.");
+
+		RemoveFromCollectionCommand = new Command(RemoveFromCollection, RemoveFromCollectionCanExecute, "Remove from collection", "Removes the current item from the collection permanently.");
+
+		CancelTaskCommand = new Command(CancelTask, CancelTaskCanExecute, "Cancel", "Cancel the current task");
+
+		AuditRomsCommand = new Command(AuditRoms, "Audit Roms", "Verify ROM files are as expected.");
 	}
 }

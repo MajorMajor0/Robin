@@ -22,141 +22,138 @@ using System.Linq;
 using System.Threading;
 
 
-namespace Robin
+namespace Robin;
+
+public partial class MainWindowViewModel
 {
-	public partial class MainWindowViewModel
+	public ObservableCollection<object> MainBigList { get; }
+
+	AutoFilterGames gameCollection;
+	public AutoFilterGames GameCollection
 	{
-		public ObservableCollection<object> MainBigList { get; }
-
-		AutoFilterGames gameCollection;
-		public AutoFilterGames GameCollection
+		get { return gameCollection; }
+		set
 		{
-			get { return gameCollection; }
-			set
+			if (value != gameCollection)
 			{
-				if (value != gameCollection)
-				{
-					gameCollection = value;
-					OnPropertyChanged("GameCollection");
-				}
+				gameCollection = value;
+				OnPropertyChanged("GameCollection");
 			}
 		}
+	}
 
-		public AutoFilterReleases releaseCollection;
-		public AutoFilterReleases ReleaseCollection
+	public AutoFilterReleases releaseCollection;
+	public AutoFilterReleases ReleaseCollection
+	{
+		get { return releaseCollection; }
+		set
 		{
-			get { return releaseCollection; }
-			set
+			if (value != releaseCollection)
 			{
-				if (value != releaseCollection)
-				{
-					releaseCollection = value;
-					OnPropertyChanged("ReleaseCollection");
-				}
+				releaseCollection = value;
+				OnPropertyChanged("ReleaseCollection");
 			}
 		}
+	}
 
-		AutoFilterPlatforms platformCollection;
-		public AutoFilterPlatforms PlatformCollection
+	AutoFilterPlatforms platformCollection;
+	public AutoFilterPlatforms PlatformCollection
+	{
+		get { return platformCollection; }
+		set
 		{
-			get { return platformCollection; }
-			set
+			if (value != platformCollection)
 			{
-				if (value != platformCollection)
-				{
-					platformCollection = value;
-					OnPropertyChanged("PlatformCollection");
-				}
+				platformCollection = value;
+				OnPropertyChanged("PlatformCollection");
 			}
 		}
+	}
 
-		AutoFilterEmulators emulatorCollection;
-		public AutoFilterEmulators EmulatorCollection
+	AutoFilterEmulators emulatorCollection;
+	public AutoFilterEmulators EmulatorCollection
+	{
+		get { return emulatorCollection; }
+		set
 		{
-			get { return emulatorCollection; }
-			set
+			if (value != emulatorCollection)
 			{
-				if (value != emulatorCollection)
-				{
-					emulatorCollection = value;
-					OnPropertyChanged("EmulatorCollection");
-				}
+				emulatorCollection = value;
+				OnPropertyChanged("EmulatorCollection");
 			}
 		}
+	}
 
-		public CollectionList CollectionList { get; set; }
+	public CollectionList CollectionList { get; set; }
 
-		IList selectedDBs;
-		public IList SelectedDBs
+	IList selectedDBs;
+	public IList SelectedDBs
+	{
+		get { return selectedDBs; }
+		set
 		{
-			get { return selectedDBs; }
-			set
+			if (value != selectedDBs)
 			{
-				if (value != selectedDBs)
-				{
-					selectedDBs = value;
-					OnPropertyChanged("SelectedDBs");
-				}
+				selectedDBs = value;
+				OnPropertyChanged("SelectedDBs");
 			}
 		}
+	}
 
-		IDbObject selectedDB;
-		public IDbObject SelectedDB
+	IDbObject selectedDB;
+	public IDbObject SelectedDB
+	{
+		get { return selectedDB; }
+		set
 		{
-			get { return selectedDB; }
-			set
+			if (value != selectedDB)
 			{
-				if (value != selectedDB)
-				{
-					selectedDB = value;
-					OnPropertyChanged("SelectedDB");
-				}
+				selectedDB = value;
+				OnPropertyChanged("SelectedDB");
 			}
 		}
+	}
 
-		CancellationTokenSource tokenSource;
+	CancellationTokenSource tokenSource;
 
-		bool taskInProgress;
-		public bool TaskInProgress
+	bool taskInProgress;
+	public bool TaskInProgress
+	{
+		get
 		{
-			get
+			return taskInProgress;
+		}
+		set
+		{
+			if (value != taskInProgress)
 			{
-				return taskInProgress;
-			}
-			set
-			{
-				if (value != taskInProgress)
-				{
-					taskInProgress = value;
-					OnPropertyChanged("TaskInProgress");
-				}
+				taskInProgress = value;
+				OnPropertyChanged("TaskInProgress");
 			}
 		}
+	}
 
-		public object MainBigSelection { get; set; }
+	public object MainBigSelection { get; set; }
 
-		public Release SelectedGameRelease { get; set; }
+	public Release SelectedGameRelease { get; set; }
 
-		public Emulator SelectedPlatformEmulator { get; set; }
+	public Emulator SelectedPlatformEmulator { get; set; }
 
-		public Platform SelectedEmulatorPlatform { get; set; }
+	public Platform SelectedEmulatorPlatform { get; set; }
 
-		public bool DisplayNonGames => Properties.Settings.Default.DisplayNonGames;
+	public bool DisplayNonGames => Properties.Settings.Default.DisplayNonGames;
 
-		public bool DisplayAdult => Properties.Settings.Default.DisplayAdult;
+	public bool DisplayAdult => Properties.Settings.Default.DisplayAdult;
 
-		public bool DisplayCrap => Properties.Settings.Default.DisplayCrap;
+	public bool DisplayCrap => Properties.Settings.Default.DisplayCrap;
 
-		public bool DisplayNotIncluded => Properties.Settings.Default.DisplayNotIncluded;
+	public bool DisplayNotIncluded => Properties.Settings.Default.DisplayNotIncluded;
 
-		public MainWindowViewModel()
-		{
-			Stopwatch watch = Stopwatch.StartNew();
-			R.Trash = true;
-			Reporter.Report($"Trash: {watch.Elapsed.TotalSeconds:f1}");
-			watch.Restart();
+	public MainWindowViewModel()
+	{
+		Stopwatch watch = Stopwatch.StartNew();
 
-			MainBigList = new ObservableCollection<object>
+		MainBigList = new ObservableCollection<object>
 			{
 				(releaseCollection = new AutoFilterReleases(R.Data.Releases.Local, "Releases")),
 				(gameCollection = new AutoFilterGames(R.Data.Games.Local, "Games")),
@@ -164,58 +161,57 @@ namespace Robin
 				(emulatorCollection = new AutoFilterEmulators(R.Data.Emulators.Local, "Emulators")),
 				(CollectionList = new CollectionList("Collections"))
 			};
-			Reporter.Report($"Filters created: {watch.Elapsed.TotalSeconds:f1}");
+		Reporter.Report($"Filters created: {watch.Elapsed.TotalSeconds:f1}");
 
-			InitializeCommands();
-		}
-
-		public void SaveSettings()
-		{
-			foreach (AutoFilterCollection AFC in MainBigList.Where(x => x is AutoFilterCollection))
-			{
-				AFC.SaveSettings();
-			}
-
-			RecentFileList.Save();
-			Properties.Settings.Default.Save();
-		}
-
-		void OptionsWindowClosed(object sender, EventArgs e)
-		{
-			releaseCollection = new AutoFilterReleases(R.Data.Releases.ToList(), "Releases");
-			MainBigList[0] = releaseCollection;
-			gameCollection = new AutoFilterGames(R.Data.Games.ToList(), "Games");
-			MainBigList[1] = gameCollection;
-		}
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		protected void OnPropertyChanged(string prop)
-		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-		}
+		InitializeCommands();
 	}
 
-	public class CollectionList
+	public void SaveSettings()
 	{
-		public string Title { get; set; }
-
-		public Collection popular => new(R.Data.Games.Local.Where(x => x.PlayCount > 0).OrderByDescending(x => x.PlayCount)) { Title = "Popular" };
-
-		public IEnumerable<Collection> List => R.Data.Collections.Local.Concat(new[] { popular });
-
-		public CollectionList(string title)
+		foreach (AutoFilterCollection AFC in MainBigList.Where(x => x is AutoFilterCollection))
 		{
-			Title = title;
+			AFC.SaveSettings();
 		}
 
-		public void Add(Collection collection)
-		{
-			R.Data.Collections.Add(collection);
-		}
-		public void Remove(Collection collection)
-		{
-			R.Data.Collections.Remove(collection);
-		}
+		RecentFileList.Save();
+		Properties.Settings.Default.Save();
+	}
+
+	void OptionsWindowClosed(object sender, EventArgs e)
+	{
+		releaseCollection = new AutoFilterReleases(R.Data.Releases.ToList(), "Releases");
+		MainBigList[0] = releaseCollection;
+		gameCollection = new AutoFilterGames(R.Data.Games.ToList(), "Games");
+		MainBigList[1] = gameCollection;
+	}
+
+	public event PropertyChangedEventHandler PropertyChanged;
+
+	protected void OnPropertyChanged(string prop)
+	{
+		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+	}
+}
+
+public class CollectionList
+{
+	public string Title { get; set; }
+
+	public Collection popular => new(R.Data.Games.Local.Where(x => x.PlayCount > 0).OrderByDescending(x => x.PlayCount)) { Title = "Popular" };
+
+	public IEnumerable<Collection> List => R.Data.Collections.Local.Concat(new[] { popular });
+
+	public CollectionList(string title)
+	{
+		Title = title;
+	}
+
+	public void Add(Collection collection)
+	{
+		R.Data.Collections.Add(collection);
+	}
+	public void Remove(Collection collection)
+	{
+		R.Data.Collections.Remove(collection);
 	}
 }

@@ -1,42 +1,42 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace Robin
+namespace Robin;
+
+public partial class GDBRelease : IDbRelease
 {
-	public partial class Gdbrelease : IDbRelease
+	public GDBRelease()
 	{
-		public Gdbrelease()
-		{
-			Releases = new HashSet<Release>();
-		}
+		Releases = new HashSet<Release>();
+	}
 
-		public long ID { get; set; }
-		public string Title { get; set; }
-		public long GDBPlatformId { get; set; }
-		public string Developer { get; set; }
-		public string Publisher { get; set; }
-		public string Players { get; set; }
-		public string Overview { get; set; }
-		public double? Rating { get; set; }
-		public string Genre { get; set; }
-		public DateTime? Date { get; set; }
+	public long ID { get; set; }
+	public string Title { get; set; }
+	public long GDBPlatform_ID { get; set; }
+	public string Developer { get; set; }
+	public string Publisher { get; set; }
+	public string Players { get; set; }
+	public string Overview { get; set; }
+	public double? Rating { get; set; }
+	public string Genre { get; set; }
+	public DateTime? Date { get; set; }
 
-		public string BoxFrontUrl { get; set; }
-		public string BoxBackUrl { get; set; }
-		public string BannerUrl { get; set; }
-		public string ScreenUrl { get; set; }
-		public string LogoUrl { get; set; }
-		public bool? Coop { get; set; }
+	public string BoxFrontUrl { get; set; }
+	public string BoxBackUrl { get; set; }
+	public string BannerUrl { get; set; }
+	public string ScreenUrl { get; set; }
+	public string LogoUrl { get; set; }
+	public bool? Coop { get; set; }
 
-		public virtual GDBPlatform GDBPlatform { get; set; }
-		public virtual ICollection<Release> Releases { get; set; }
+	public virtual GDBPlatform GDBPlatform { get; set; }
+	public virtual ICollection<Release> Releases { get; set; }
 
-		public event PropertyChangedEventHandler PropertyChanged;
+	public event PropertyChangedEventHandler PropertyChanged;
 
-		protected void OnPropertyChanged(string name = null)
-		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-		}
+	protected void OnPropertyChanged(string name = null)
+	{
+		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 	}
 }

@@ -102,7 +102,7 @@ namespace Robin;
 //							Id = element.GetProperty("game_id").GetInt32(),
 //							Title = element.GetProperty("title").GetString(),
 //							Overview = element.GetProperty("description").GetString(),
-//							MBPlatformId = platformId,
+//							MBPlatform_ID = platformId,
 //						};
 
 //						R.Data.MBGames.Add(MBGame);
@@ -266,7 +266,7 @@ namespace Robin;
 //							Id = element.GetProperty("game_id").GetInt32(),
 //							Title = element.GetProperty("title").GetString(),
 //							Overview = element.GetProperty("description").GetString(),
-//							MBPlatformId = platformId,
+//							MBPlatform_ID = platformId,
 //						};
 
 //						R.Data.MBGames.Add(MBGame);

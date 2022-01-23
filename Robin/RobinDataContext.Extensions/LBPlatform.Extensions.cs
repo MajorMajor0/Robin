@@ -17,45 +17,44 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
-namespace Robin
+namespace Robin;
+
+public partial class LBPlatform : IDbPlatform
 {
-	public partial class LBPlatform : IDbPlatform
+	[NotMapped]
+	public IList Releases => LBReleases.ToList<LBRelease>();
+
+	[NotMapped]
+	public IList Games => LBGames.ToList();
+
+	[NotMapped]
+	public Platform RPlatform => R.Data.Platforms.FirstOrDefault(x => x.ID_LB == ID);
+
+	[NotMapped]
+	public IEnumerable<LBRelease> LBReleases => LBGames.SelectMany(x => x.LBReleases);
+
+
+	public int MatchedReleaseCount
 	{
-		[NotMapped]
-		public IList Releases => LBReleases.ToList<LBRelease>();
-
-		[NotMapped]
-		public IList Games => LBGames.ToList();
-
-		[NotMapped]
-		public Platform RPlatform => R.Data.Platforms.FirstOrDefault(x => x.ID_LB == ID);
-
-		[NotMapped]
-		public IEnumerable<LBRelease> LBReleases => LBGames.SelectMany(x => x.LBReleases);
-
-
-		public int MatchedReleaseCount
+		get
 		{
-			get
+			if (RPlatform != null)
 			{
-				if (RPlatform != null)
-				{
-					return RPlatform.MatchedToLaunchBox;
-				}
-				return 0;
+				return RPlatform.MatchedToLaunchBox;
 			}
+			return 0;
 		}
+	}
 
-		public bool Preferred
+	public bool Preferred
+	{
+		get
 		{
-			get
+			if (RPlatform != null)
 			{
-				if (RPlatform != null)
-				{
-					return RPlatform.Preferred;
-				}
-				return false;
+				return RPlatform.Preferred;
 			}
+			return false;
 		}
 	}
 }

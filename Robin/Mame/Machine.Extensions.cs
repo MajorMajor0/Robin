@@ -102,7 +102,7 @@ namespace Robin.Mame
 		{
 			foreach (Region region in R.Data.Regions)
 			{
-				if (parenthesisText != null && (parenthesisText.Contains(region.Title) || parenthesisText.Contains(region.Datomatic ?? "XXX") || parenthesisText.Contains(region.Uncode ?? "XXX")))
+				if (parenthesisText != null && (parenthesisText.Contains(region.Title) || parenthesisText.Contains(region.Datomatic ?? "XXX") || parenthesisText.Contains(region.UNCode ?? "XXX")))
 				{
 					return region;
 				}

@@ -21,211 +21,209 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
-using Microsoft.EntityFrameworkCore;
+namespace Robin;
 
-namespace Robin
+class DebugStuff
 {
-	class DebugStuff
+	public async static Task MainWindowBonusAsync()
 	{
-		public async static Task MainWindowBonusAsync()
-		{
-			//MobyGames mbg = new();
-			//R.Data.MBPlatforms.Load();
+		//MobyGames mbg = new();
+		//R.Data.MBPlatforms.Load();
 
-			//Platform platform = R.Data.Platforms.FirstOrDefault(x => x.ID == 22);
+		//Platform platform = R.Data.Platforms.FirstOrDefault(x => x.ID == 22);
 
-			//mbg.CachePlatformGamesAsync(platform);
-		}
+		//mbg.CachePlatformGamesAsync(platform);
+	}
 
-		static void ForEachSpeedTest()
-		{
-			//Stopwatch watch = Stopwatch.StartNew();
-			//HashSet<Release> hs = new(R.Data.Releases);
-			//foreach (Release release in hs)
-			//{
-			//	string s = release.Title;
-			//	long i = release.ID;
-			//}
-			//Debug.WriteLine($"Straight from DbSet: {watch.ElapsedMilliseconds} elapsed.");
-
-		}
-
-
-		static void MetaTest()
-		{
-			List<Release> releases = R.Data.Releases.ToList();
-			Release release = releases.Find(x => x.ID == 1000);
-			release.Title = "xkcd";
-			Datomatic dat = new();
-			dat.ReportUpdates(true);
-		}
-
-		static void FindSpeedTest()
-		{
-			Stopwatch watch = Stopwatch.StartNew();
-			Dictionary<long, Release> releases = R.Data.Releases.ToDictionary(x => x.ID, x => x);
-			List<long> list = R.Data.Releases.Select(x => x.ID).ToList();
-			int yes = 0;
-			int no = 0;
-
-			foreach (long id in list)
-			{
-				if (releases.TryGetValue(id, out Release release))
-				{
-					yes++;
-				}
-				else
-				{
-					no++;
-				}
-			}
-			Debug.WriteLine($"{watch.ElapsedMilliseconds} elapsed. {yes} yes, {no} no.");
-		}
-
-
-		static void HashsetSpeedTest()
-		{
-			Platform NES = R.Data.Platforms.FirstOrDefault(x => x.ID == 22);
-
-			Stopwatch Watch1 = Stopwatch.StartNew();
-			List<Rom> roms = roms = R.Data.Roms.Where(x => x.PlatformId == NES.ID).ToList();
-			Debug.WriteLine($"List created: {Watch1.ElapsedMilliseconds}."); Watch1.Restart();
-
-			HashSet<string> stringDing = roms.Select(x => x.Crc32) as HashSet<string>;
-			Debug.WriteLine($"Hashset created: {Watch1.ElapsedMilliseconds}."); Watch1.Restart();
-
-
-		}
-
-		static void TestHash()
-		{
-			Platform NES = R.Data.Platforms.FirstOrDefault(x => x.ID == 22);
-			foreach (Rom rom in NES.Roms.Where(x => x.FileName != null))
-			{
-				string Crc32a = Audit.GetHash(rom.FilePath, HashOption.Crc32, (int)NES.HeaderLength);
-				string Sha1a = Audit.GetHash(rom.FilePath, HashOption.Sha1, (int)NES.HeaderLength);
-				string Md5a = Audit.GetHash(rom.FilePath, HashOption.Md5, (int)NES.HeaderLength);
-
-				string Crc32b = rom.Crc32;
-				string Sha1b = rom.Sha1;
-				string Md5b = rom.Md5;
-
-				if (Crc32a == Crc32b && Md5a == Md5b && Sha1a == Sha1b)
-				{
-					Debug.WriteLine($"OK - {rom.Title} - {rom.ID}");
-				}
-
-				else
-				{
-					Crc32a = Audit.GetHash(rom.FilePath, HashOption.Crc32, 0);
-					Sha1a = Audit.GetHash(rom.FilePath, HashOption.Sha1, 0);
-					Md5a = Audit.GetHash(rom.FilePath, HashOption.Md5, 0);
-				}
-
-				if (Crc32a == Crc32b && Md5a == Md5b && Sha1a == Sha1b)
-				{
-					Debug.WriteLine($"OK - {rom.Title} - {rom.ID}");
-				}
-
-				Debug.Assert(Crc32a == Crc32b || Crc32b == null, $"Crc32 failure on {rom.Title} - {rom.ID}");
-				Debug.Assert(Sha1a == Sha1b || Sha1b == null, $"Sha1 failure on {rom.Title} - {rom.ID}");
-				Debug.Assert(Md5a == Md5b || Md5b == null, $"Md5 failure on {rom.Title} - {rom.ID}");
-			}
-		}
-
-		//static void SetMessMachines()
+	static void ForEachSpeedTest()
+	{
+		//Stopwatch watch = Stopwatch.StartNew();
+		//HashSet<Release> hs = new(R.Data.Releases);
+		//foreach (Release release in hs)
 		//{
-		//	int i = 0;
-		//	foreach (string messMachine in messMachines)
-		//	{
-		//		Release release = R.Data.Releases.FirstOrDefault(x => x.Rom.FileName != null && x.Rom.FileName.Split('.')[0] == messMachine);
-
-		//		if (release != null)
-		//		{
-		//			release.Game.IsMess = true;
-		//			Debug.WriteLine(i++);
-		//		}
-		//	}
+		//	string s = release.Title;
+		//	long i = release.ID;
 		//}
+		//Debug.WriteLine($"Straight from DbSet: {watch.ElapsedMilliseconds} elapsed.");
 
-		public async static Task DatabaseWindowBonusAsync()
-		{
-			Reporter.Report("BONUS!");
-			await Task.Run(() => { });
-		}
+	}
 
-		public static void SetFactoryDatabase()
+
+	static void MetaTest()
+	{
+		List<Release> releases = R.Data.Releases.ToList();
+		Release release = releases.Find(x => x.ID == 1000);
+		release.Title = "xkcd";
+		Datomatic dat = new();
+		dat.ReportUpdates(true);
+	}
+
+	static void FindSpeedTest()
+	{
+		Stopwatch watch = Stopwatch.StartNew();
+		Dictionary<long, Release> releases = R.Data.Releases.ToDictionary(x => x.ID, x => x);
+		List<long> list = R.Data.Releases.Select(x => x.ID).ToList();
+		int yes = 0;
+		int no = 0;
+
+		foreach (long id in list)
 		{
-			foreach (Release release in R.Data.Releases)
+			if (releases.TryGetValue(id, out Release release))
 			{
-				release.IsBeaten = false;
-				release.Rating = null;
-				release.PlayCount = 0;
+				yes++;
+			}
+			else
+			{
+				no++;
+			}
+		}
+		Debug.WriteLine($"{watch.ElapsedMilliseconds} elapsed. {yes} yes, {no} no.");
+	}
+
+
+	static void HashsetSpeedTest()
+	{
+		Platform NES = R.Data.Platforms.FirstOrDefault(x => x.ID == 22);
+
+		Stopwatch Watch1 = Stopwatch.StartNew();
+		List<Rom> roms = roms = R.Data.Roms.Where(x => x.Platform_ID == NES.ID).ToList();
+		Debug.WriteLine($"List created: {Watch1.ElapsedMilliseconds}."); Watch1.Restart();
+
+		HashSet<string> stringDing = roms.Select(x => x.CRC32) as HashSet<string>;
+		Debug.WriteLine($"Hashset created: {Watch1.ElapsedMilliseconds}."); Watch1.Restart();
+
+
+	}
+
+	static void TestHash()
+	{
+		Platform NES = R.Data.Platforms.FirstOrDefault(x => x.ID == 22);
+		foreach (Rom rom in NES.Roms.Where(x => x.FileName != null))
+		{
+			string CRC32a = Audit.GetHash(rom.FilePath, HashOption.CRC32, (int)NES.HeaderLength);
+			string SHA1a = Audit.GetHash(rom.FilePath, HashOption.SHA1, (int)NES.HeaderLength);
+			string MD5a = Audit.GetHash(rom.FilePath, HashOption.MD5, (int)NES.HeaderLength);
+
+			string CRC32b = rom.CRC32;
+			string SHA1b = rom.SHA1;
+			string MD5b = rom.MD5;
+
+			if (CRC32a == CRC32b && MD5a == MD5b && SHA1a == SHA1b)
+			{
+				Debug.WriteLine($"OK - {rom.Title} - {rom.ID}");
 			}
 
-			foreach (Collection collection in R.Data.Collections)
+			else
 			{
-				collection.Releases.Clear();
-				collection.Games.Clear();
+				CRC32a = Audit.GetHash(rom.FilePath, HashOption.CRC32, 0);
+				SHA1a = Audit.GetHash(rom.FilePath, HashOption.SHA1, 0);
+				MD5a = Audit.GetHash(rom.FilePath, HashOption.MD5, 0);
 			}
+
+			if (CRC32a == CRC32b && MD5a == MD5b && SHA1a == SHA1b)
+			{
+				Debug.WriteLine($"OK - {rom.Title} - {rom.ID}");
+			}
+
+			Debug.Assert(CRC32a == CRC32b || CRC32b == null, $"CRC32 failure on {rom.Title} - {rom.ID}");
+			Debug.Assert(SHA1a == SHA1b || SHA1b == null, $"SHA1 failure on {rom.Title} - {rom.ID}");
+			Debug.Assert(MD5a == MD5b || MD5b == null, $"MD5 failure on {rom.Title} - {rom.ID}");
+		}
+	}
+
+	//static void SetMessMachines()
+	//{
+	//	int i = 0;
+	//	foreach (string messMachine in messMachines)
+	//	{
+	//		Release release = R.Data.Releases.FirstOrDefault(x => x.Rom.FileName != null && x.Rom.FileName.Split('.')[0] == messMachine);
+
+	//		if (release != null)
+	//		{
+	//			release.Game.IsMess = true;
+	//			Debug.WriteLine(i++);
+	//		}
+	//	}
+	//}
+
+	public async static Task DatabaseWindowBonusAsync()
+	{
+		Reporter.Report("BONUS!");
+		await Task.Run(() => { });
+	}
+
+	public static void SetFactoryDatabase()
+	{
+		foreach (Release release in R.Data.Releases)
+		{
+			release.IsBeaten = false;
+			release.Rating = null;
+			release.PlayCount = 0;
 		}
 
-		static void GetMameStatusesAsync()
+		foreach (Collection collection in R.Data.Collections)
 		{
-			Platform arcadePlatform = R.Data.Platforms.FirstOrDefault(x => x.ID == CONSTANTS.PlatformId.Arcade);
+			collection.Releases.Clear();
+			collection.Games.Clear();
+		}
+	}
 
-			Stopwatch Watch = Stopwatch.StartNew();
-			Stopwatch Watch1 = Stopwatch.StartNew();
+	static void GetMameStatusesAsync()
+	{
+		Platform arcadePlatform = R.Data.Platforms.FirstOrDefault(x => x.ID == CONSTANTS.Platform_ID.Arcade);
 
-			XmlReaderSettings settings = new();
+		Stopwatch Watch = Stopwatch.StartNew();
+		Stopwatch Watch1 = Stopwatch.StartNew();
 
-			List<string> driverStatuses = new();
-			List<string> emulationStatuses = new();
-			settings.DtdProcessing = DtdProcessing.Parse;
+		XmlReaderSettings settings = new();
 
-			arcadePlatform = R.Data.Platforms.FirstOrDefault(x => x.Title.Contains("Arcade"));
+		List<string> driverStatuses = new();
+		List<string> emulationStatuses = new();
+		settings.DtdProcessing = DtdProcessing.Parse;
 
-			Watch1.Restart();
-			Reporter.Report("Getting xml file from MAME...");
+		arcadePlatform = R.Data.Platforms.FirstOrDefault(x => x.Title.Contains("Arcade"));
 
-			// Scan through xml file from MAME and pick out working games
+		Watch1.Restart();
+		Reporter.Report("Getting xml file from MAME...");
 
-			using (Process process = Mame.Database.MAMEexe(@"-lx"))
-			using (XmlReader reader = XmlReader.Create(process.StandardOutput, settings))
+		// Scan through xml file from MAME and pick out working games
+
+		using (Process process = Mame.Database.MAMEexe(@"-lx"))
+		using (XmlReader reader = XmlReader.Create(process.StandardOutput, settings))
+		{
+			while (reader.Read())
 			{
-				while (reader.Read())
+				if (reader.Name == "machine")
 				{
-					if (reader.Name == "machine")
-					{
-						XElement machineElement = XNode.ReadFrom(reader) as XElement;
-						driverStatuses.Add(machineElement.SafeGetA(element1: "driver", attribute: "status"));
-						emulationStatuses.Add(machineElement.SafeGetA(element1: "driver", attribute: "emulation"));
-					}
+					XElement machineElement = XNode.ReadFrom(reader) as XElement;
+					driverStatuses.Add(machineElement.SafeGetA(element1: "driver", attribute: "status"));
+					emulationStatuses.Add(machineElement.SafeGetA(element1: "driver", attribute: "emulation"));
 				}
 			}
-
-			List<List<string>> uniqueDriverStatuses;
-			List<List<string>> uniqueEmulationStatuses;
-
-			uniqueDriverStatuses = driverStatuses.Distinct().Select(x => new List<string>(new string[] { x, driverStatuses.Count(y => y == x).ToString() })).ToList();
-			uniqueEmulationStatuses = emulationStatuses.Distinct().Select(x => new List<string>(new string[] { x, emulationStatuses.Count(y => y == x).ToString() })).ToList();
-
-			Reporter.Report("Finished: " + Watch.Elapsed.ToString(@"m\:ss"));
 		}
 
-		static void SetAdult()
+		List<List<string>> uniqueDriverStatuses;
+		List<List<string>> uniqueEmulationStatuses;
+
+		uniqueDriverStatuses = driverStatuses.Distinct().Select(x => new List<string>(new string[] { x, driverStatuses.Count(y => y == x).ToString() })).ToList();
+		uniqueEmulationStatuses = emulationStatuses.Distinct().Select(x => new List<string>(new string[] { x, emulationStatuses.Count(y => y == x).ToString() })).ToList();
+
+		Reporter.Report("Finished: " + Watch.Elapsed.ToString(@"m\:ss"));
+	}
+
+	static void SetAdult()
+	{
+		foreach (Release release in R.Data.Releases)
 		{
-			foreach (Release release in R.Data.Releases)
+			if (adults.Contains(release.Rom.FileName))
 			{
-				if (adults.Contains(release.Rom.FileName))
-				{
-					release.IsAdult = true;
-				}
+				release.IsAdult = true;
 			}
-
 		}
 
-		static readonly string[] adults = {"3kokushi.zip",
+	}
+
+	static readonly string[] adults = {"3kokushi.zip",
 		"47pie2.zip",
 		"47pie2o.zip",
 		"7jigen.zip",
@@ -501,8 +499,8 @@ namespace Robin
 		"zerozone.zip" };
 
 
-		static readonly string[] messMachines = new string[]
-			{
+	static readonly string[] messMachines = new string[]
+		{
 				"1292apvs",
 "1392apvs",
 "ie15",
@@ -2679,8 +2677,7 @@ namespace Robin
 "zx80",
 "zx81",
 "zx97"
-			};
+		};
 
-	}
 }
 #endif

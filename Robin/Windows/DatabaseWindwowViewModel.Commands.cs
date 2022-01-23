@@ -15,223 +15,220 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Robin
+namespace Robin;
+
+partial class DatabaseWindowViewModel
 {
-	partial class DatabaseWindowViewModel
+	public Command CompareCommand { get; set; }
+
+	async void CompareAsync()
 	{
-
-		public Command CompareCommand { get; set; }
-
-		async void CompareAsync()
+		if (SelectedPlatforms != null && SelectedPlatforms.Count > 0)
 		{
-			if (SelectedPlatforms != null && SelectedPlatforms.Count > 0)
+			List<IDbPlatform> list = new();
+			foreach (IDbPlatform platform in SelectedPlatforms)
 			{
-				List<IDbPlatform> list = new();
-				foreach (IDbPlatform platform in SelectedPlatforms)
-				{
-					list.Add(platform);
-				}
+				list.Add(platform);
+			}
 
-				if (SelectedIDB.DB == LocalDB.OpenVGDB)
+			if (SelectedIDB.DB == LocalDB.OpenVGDB)
+			{
+				foreach (IDbPlatform platform in list)
 				{
-					foreach (IDbPlatform platform in list)
+					Reporter.Report("Comparing " + platform.Releases.Count + " Robin " + platform.Title + " games to OVG.");
+
+					await Task.Run(() => { CompareToOVGDB(platform); });
+				}
+			}
+
+			else
+			{
+				foreach (IDbPlatform idbPlatform in list)
+				{
+					Compares comparator = new(SelectedIDB.DB, idbPlatform);
+					comparator.Title += "-" + ComparisonResults.Count;
+
+					Reporter.Report("Comparing " + idbPlatform.Releases.Count + " Robin " + idbPlatform.Title + " games to " + Enum.GetName(typeof(LocalDB), SelectedIDB.DB) + ".");
+
+					await Task.Run(() =>
 					{
-						Reporter.Report("Comparing " + platform.Releases.Count + " Robin " + platform.Title + " games to OVG.");
+						comparator.CompareToDB(Threshold, (SelectedIDB.HasRegions));
+					});
 
-						await Task.Run(() => { CompareToOVGDB(platform); });
-					}
+					ComparisonResults.Add(comparator);
 				}
+				Reporter.Report("Finished");
+			}
+		}
+	}
 
-				else
-				{
-					foreach (IDbPlatform idbPlatform in list)
+	bool CompareCanExecute()
+	{
+		return SelectedIDB != null && (SelectedIDB is not Datomatic) && SelectedPlatform != null;
+	}
+
+	void CompareToOVGDB(IDbPlatform idbPlatform)
+	{
+		// There are no results in OVGDB for arcade, so skip it
+		if (idbPlatform.Title.Contains("Arcade"))
+		{
+			Reporter.Report("Skiping platform \"Arcade\"");
+			return;
+		}
+
+		Platform RPlatform = R.Data.Platforms.FirstOrDefault(x => x.ID == idbPlatform.ID);
+
+		OVGRelease OVGRelease;
+		foreach (Release release in RPlatform.Releases)
+		{
+			OVGRelease = R.Data.OVGReleases.FirstOrDefault(x => x.SHA1 == release.Rom.SHA1 && x.Region_ID == release.Region_ID && (x.BoxFrontUrl != null || x.BoxBackUrl != null));
+			if (OVGRelease != null)
+			{
+				release.ID_OVG = OVGRelease.ID;
+			}
+		}
+	}
+
+
+	public Command AcceptCommand { get; set; }
+
+	public void Accept()
+	{
+		Compares Comparator = SelectedComparisonResult;
+		int N_comp = Comparator.List.Count;
+		int i_r;
+		int i_db;
+
+		for (int i_comp = N_comp - 1; i_comp >= 0; i_comp--)
+		{
+			i_r = Comparator.List[i_comp].RIndex;
+
+			switch (Comparator.Database)
+			{
+				case LocalDB.GamesDB:
+					if (Comparator.List[i_comp].AcceptMatch)
 					{
-						Compares comparator = new(SelectedIDB.DB, idbPlatform);
-						comparator.Title += "-" + ComparisonResults.Count;
+						// Get the index of the game stored in the current compare
+						i_db = Comparator.List[i_comp].DBIndex;
 
-						Reporter.Report("Comparing " + idbPlatform.Releases.Count + " Robin " + idbPlatform.Title + " games to " + Enum.GetName(typeof(LocalDB), SelectedIDB.DB) + ".");
-
-						await Task.Run(() =>
-						{
-							comparator.CompareToDB(Threshold, (SelectedIDB.HasRegions));
-						});
-
-						ComparisonResults.Add(comparator);
+						// Assign the rom in the current compare to the game in the current compare
+						Comparator.RReleases[i_r].ID_GDB = Comparator.DBreleases[i_db].ID;
+						Comparator.List.RemoveAt(i_comp);
 					}
-					Reporter.Report("Finished");
-				}
+					break;
+				case LocalDB.GiantBomb:
+					if (Comparator.List[i_comp].AcceptMatch)
+					{
+						// Get the index of the game stored in the current compare
+						i_db = Comparator.List[i_comp].DBIndex;
+
+						// Assign the rom in the current compare to the game in the current compare
+						Comparator.RReleases[i_r].ID_GB = Comparator.DBreleases[i_db].ID;
+						Comparator.List.RemoveAt(i_comp);
+					}
+					break;
+				case LocalDB.LaunchBox:
+					if (Comparator.List[i_comp].AcceptMatch)
+					{
+						// Get the index of the game stored in the current compare
+						i_db = Comparator.List[i_comp].DBIndex;
+
+						// Assign the rom in the current compare to the game in the current compare
+						Comparator.RReleases[i_r].ID_LB = Comparator.DBreleases[i_db].ID;
+						Comparator.List.RemoveAt(i_comp);
+					}
+					break;
 			}
 		}
+	}
 
-		bool CompareCanExecute()
+	bool AcceptCanExecute()
+	{
+		return SelectedComparisonResult != null;
+	}
+
+
+	public Command ArtWindowCommand { get; set; }
+
+	void ArtWindow()
+	{
+		_ = new ArtWindow(SelectedRelease as Release);
+	}
+
+	bool ArtWindowCanExecute()
+	{
+		return SelectedIDB is Datomatic && SelectedRelease != null;
+	}
+
+
+	public Command MatchWindowCommand { get; set; }
+
+	void MatchWindow()
+	{
+		_ = new MatchWindow(SelectedRelease as Release);
+	}
+
+	bool MatchWindowCanExecute()
+	{
+		return SelectedIDB is Datomatic && SelectedRelease != null;
+	}
+
+
+	public Command CacheReleasesCommand { get; set; }
+
+	async void CacheReleases()
+	{
+		// Cache platforms to cache in case selection changes during operation
+		List<IDbPlatform> IDBPlatforms = new();
+
+		foreach (IDbPlatform idbPlatform in SelectedPlatforms)
 		{
-			return SelectedIDB != null && (SelectedIDB is not Datomatic) && SelectedPlatform != null;
+			IDBPlatforms.Add(idbPlatform);
 		}
 
-		void CompareToOVGDB(IDbPlatform idbPlatform)
+		Reporter.Report("Caching " + IDBPlatforms.Count + " " + SelectedIDB.Title + " platforms.");
+
+		await Task.Run(() =>
 		{
-			// There are no results in OVGDB for arcade, so skip it
-			if (idbPlatform.Title.Contains("Arcade"))
+			foreach (IDbPlatform idbPlatform in IDBPlatforms)
 			{
-				Reporter.Report("Skiping platform \"Arcade\"");
-				return;
+				SelectedIDB.CachePlatformData(idbPlatform.RPlatform);
+				SelectedIDB.CachePlatformReleases(idbPlatform.RPlatform);
+				idbPlatform.CacheDate = DateTime.Now;
+				SelectedIDB.ReportUpdates(true);
+				R.Save(true);
 			}
+		});
 
-			Platform RPlatform = R.Data.Platforms.FirstOrDefault(x => x.ID == idbPlatform.ID);
+		//if (SelectedIDB != IDBs[0])
+		//{
+		//	IDBs[0].ReportUpdates(false);
+		//}
+	}
 
-			OVGRelease OVGRelease;
-			foreach (Release release in RPlatform.Releases)
-			{
-				OVGRelease = R.Data.OVGReleases.FirstOrDefault(x => x.Sha1 == release.Rom.Sha1 && x.RegionId == release.RegionId && (x.BoxFrontUrl != null || x.BoxBackUrl != null));
-				if (OVGRelease != null)
-				{
-					release.ID_OVG = OVGRelease.ID;
-				}
-			}
-		}
-
-
-		public Command AcceptCommand { get; set; }
-
-		public void Accept()
-		{
-			Compares Comparator = SelectedComparisonResult;
-			int N_comp = Comparator.List.Count;
-			int i_r;
-			int i_db;
-
-			for (int i_comp = N_comp - 1; i_comp >= 0; i_comp--)
-			{
-				i_r = Comparator.List[i_comp].RIndex;
-
-				switch (Comparator.Database)
-				{
-					case LocalDB.GamesDB:
-						if (Comparator.List[i_comp].AcceptMatch)
-						{
-							// Get the index of the game stored in the current compare
-							i_db = Comparator.List[i_comp].DBIndex;
-
-							// Assign the rom in the current compare to the game in the current compare
-							Comparator.RReleases[i_r].ID_GDB = Comparator.DBreleases[i_db].ID;
-							Comparator.List.RemoveAt(i_comp);
-						}
-						break;
-					case LocalDB.GiantBomb:
-						if (Comparator.List[i_comp].AcceptMatch)
-						{
-							// Get the index of the game stored in the current compare
-							i_db = Comparator.List[i_comp].DBIndex;
-
-							// Assign the rom in the current compare to the game in the current compare
-							Comparator.RReleases[i_r].ID_GB = Comparator.DBreleases[i_db].ID;
-							Comparator.List.RemoveAt(i_comp);
-						}
-						break;
-					case LocalDB.LaunchBox:
-						if (Comparator.List[i_comp].AcceptMatch)
-						{
-							// Get the index of the game stored in the current compare
-							i_db = Comparator.List[i_comp].DBIndex;
-
-							// Assign the rom in the current compare to the game in the current compare
-							Comparator.RReleases[i_r].ID_LB = Comparator.DBreleases[i_db].ID;
-							Comparator.List.RemoveAt(i_comp);
-						}
-						break;
-				}
-			}
-		}
-
-		bool AcceptCanExecute()
-		{
-			return SelectedComparisonResult != null;
-		}
+	bool CacheReleasesCanExecute()
+	{
+		return SelectedPlatform != null;
+	}
 
 
-		public Command ArtWindowCommand { get; set; }
+	public Command WriteDBCommand { get; set; }
 
-		void ArtWindow()
-		{
-			_ = new ArtWindow(SelectedRelease as Release);
-		}
-
-		bool ArtWindowCanExecute()
-		{
-			return SelectedIDB is Datomatic && SelectedRelease != null;
-		}
+	void WriteDB()
+	{
+		R.Save(true);
+	}
 
 
-		public Command MatchWindowCommand { get; set; }
-
-		void MatchWindow()
-		{
-			_= new MatchWindow(SelectedRelease as Release);
-		}
-
-		bool MatchWindowCanExecute()
-		{
-			return SelectedIDB is Datomatic && SelectedRelease != null;
-		}
-
-
-		public Command CacheReleasesCommand { get; set; }
-
-		async void CacheReleases()
-		{
-			// Cache platforms to cache in case selection changes during operation
-			List<IDbPlatform> IDBPlatforms = new();
-
-			foreach (IDbPlatform idbPlatform in SelectedPlatforms)
-			{
-				IDBPlatforms.Add(idbPlatform);
-			}
-
-			Reporter.Report("Caching " + IDBPlatforms.Count + " " + SelectedIDB.Title + " platforms.");
-
-			await Task.Run(() =>
-			{
-				foreach (IDbPlatform idbPlatform in IDBPlatforms)
-				{
-					SelectedIDB.CachePlatformData(idbPlatform.RPlatform);
-					SelectedIDB.CachePlatformReleases(idbPlatform.RPlatform);			
-					idbPlatform.CacheDate = DateTime.Now;
-					SelectedIDB.ReportUpdates(true);
-					R.Save(true);
-				}
-			});
-
-			//if (SelectedIDB != IDBs[0])
-			//{
-			//	IDBs[0].ReportUpdates(false);
-			//}
-		}
-
-		bool CacheReleasesCanExecute()
-		{
-			return SelectedPlatform != null;
-		}
-
-
-		public Command WriteDBCommand { get; set; }
-
-		void WriteDB()
-		{
-			R.Save(true);
-		}
-
-
-		void IntializeCommands()
-		{
-			CompareCommand = new Command(CompareAsync, CompareCanExecute, "Compare", "Compare title of releases in selected platforms to Robin database.");
-			AcceptCommand = new Command(Accept, AcceptCanExecute, "Accept Changes", "Push all matches to the database");
-			ArtWindowCommand = new Command(ArtWindow, ArtWindowCanExecute, "Art Window", "Open a window to choose artwork");
-			MatchWindowCommand = new Command(MatchWindow, MatchWindowCanExecute, "Match Window", "Open a window to match release to databases");
-			CacheReleasesCommand = new Command(CacheReleases, CacheReleasesCanExecute, "Cache Releases", "Cache releases from Datomatic or MAME for selected platforms.");
-			WriteDBCommand = new Command(WriteDB, "Write Database", "Write all database changes to disk");
-		}
+	void IntializeCommands()
+	{
+		CompareCommand = new Command(CompareAsync, CompareCanExecute, "Compare", "Compare title of releases in selected platforms to Robin database.");
+		AcceptCommand = new Command(Accept, AcceptCanExecute, "Accept Changes", "Push all matches to the database");
+		ArtWindowCommand = new Command(ArtWindow, ArtWindowCanExecute, "Art Window", "Open a window to choose artwork");
+		MatchWindowCommand = new Command(MatchWindow, MatchWindowCanExecute, "Match Window", "Open a window to match release to databases");
+		CacheReleasesCommand = new Command(CacheReleases, CacheReleasesCanExecute, "Cache Releases", "Cache releases from Datomatic or MAME for selected platforms.");
+		WriteDBCommand = new Command(WriteDB, "Write Database", "Write all database changes to disk");
 	}
 }

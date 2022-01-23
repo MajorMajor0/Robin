@@ -19,105 +19,104 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Robin
+namespace Robin;
+
+partial class DatabaseWindowViewModel : INotifyPropertyChanged
 {
-	partial class DatabaseWindowViewModel : INotifyPropertyChanged
+	public int Threshold { get; set; }
+
+	public ObservableCollection<IDB> IDBs { get; set; }
+
+	IDB selectedIDB;
+
+	public IDB SelectedIDB
 	{
-		public int Threshold { get; set; }
-
-		public ObservableCollection<IDB> IDBs { get; set; }
-
-		IDB selectedIDB;
-
-		public IDB SelectedIDB
+		get => selectedIDB;
+		set
 		{
-			get => selectedIDB;
-			set
+			if (value != selectedIDB)
 			{
-				if (value != selectedIDB)
-				{
-					selectedIDB = value;
-					OnPropertyChanged("SelectedIDB");
-				}
+				selectedIDB = value;
+				OnPropertyChanged("SelectedIDB");
 			}
 		}
+	}
 
-		public IEnumerable PlatformList => SelectedIDB?.Platforms;
+	public IEnumerable PlatformList => SelectedIDB?.Platforms;
 
-		public IList SelectedPlatforms { get; set; }
+	public IList SelectedPlatforms { get; set; }
 
-		public IDbPlatform SelectedPlatform { get; set; }
-		public IDbRelease SelectedRelease { get; set; }
-
-
-		public ObservableCollection<Compares> ComparisonResults { get; set; }
-
-		public Compares SelectedComparisonResult { get; set; }
+	public IDbPlatform SelectedPlatform { get; set; }
+	public IDbRelease SelectedRelease { get; set; }
 
 
-		public DatabaseWindowViewModel()
+	public ObservableCollection<Compares> ComparisonResults { get; set; }
+
+	public Compares SelectedComparisonResult { get; set; }
+
+
+	public DatabaseWindowViewModel()
+	{
+		Threshold = 0;
+
+		IDBs = new ObservableCollection<IDB>();
+
+		InitializeDBs();
+		IntializeCommands();
+
+		ComparisonResults = new TitledCollection<Compares>("Comparison Results");
+	}
+
+
+	async void InitializeDBs()
+	{
+		if (DesignerProperties.GetIsInDesignMode(new DependencyObject()))
 		{
-			Threshold = 0;
-
-			IDBs = new ObservableCollection<IDB>();
-
-			InitializeDBs();
-			IntializeCommands();
-
-			ComparisonResults = new TitledCollection<Compares>("Comparison Results");
+			//TODO: put some dummy components here for design time
 		}
 
-
-		async void InitializeDBs()
+		// Trying to load this stuff at design time will throw an exception and crash the designer
+		else
 		{
-			if (DesignerProperties.GetIsInDesignMode(new DependencyObject()))
-			{
-				//TODO: put some dummy components here for design time
-			}
+			Datomatic datomatic = null;
+			await Task.Run(() => { datomatic = new(); }).ConfigureAwait(true);
+			IDBs.Add(datomatic);
 
-			// Trying to load this stuff at design time will throw an exception and crash the designer
-			else
-			{
-				Datomatic datomatic = null;
-				await Task.Run(() => { datomatic = new(); }).ConfigureAwait(true);
-				IDBs.Add(datomatic);
+			GamesDB gamesDB = null;
+			await Task.Run(() => { gamesDB = new(); }).ConfigureAwait(true);
+			IDBs.Add(gamesDB);
 
-				GamesDB gamesDB = null;
-				await Task.Run(() => { gamesDB = new(); }).ConfigureAwait(true);
-				IDBs.Add(gamesDB);
+			GiantBomb giantBomb = null;
+			await Task.Run(() => { giantBomb = new(); }).ConfigureAwait(true);
+			IDBs.Add(giantBomb);
 
-				GiantBomb giantBomb = null;
-				await Task.Run(() => { giantBomb = new(); }).ConfigureAwait(true);
-				IDBs.Add(giantBomb);
+			OpenVGDB openVGDB = null;
+			await Task.Run(() => { openVGDB = new(); }).ConfigureAwait(true);
+			IDBs.Add(openVGDB);
 
-				OpenVGDB openVGDB = null;
-				await Task.Run(() => { openVGDB = new(); }).ConfigureAwait(true);
-				IDBs.Add(openVGDB);
-
-				Launchbox launchBox = null;
-				await Task.Run(() => { launchBox = new(); }).ConfigureAwait(true);
-				IDBs.Add(launchBox);
-			}
+			Launchbox launchBox = null;
+			await Task.Run(() => { launchBox = new(); }).ConfigureAwait(true);
+			IDBs.Add(launchBox);
 		}
+	}
 
-		public void CopyData()
+	public void CopyData()
+	{
+		// TODO: Does this function even work? Is it even hooked-up to a button?
+		Reporter.Report("Getting data...");
+		foreach (Release release in R.Data.Releases)
 		{
-			// TODO: Does this function even work? Is it even hooked-up to a button?
-			Reporter.Report("Getting data...");
-			foreach (Release release in R.Data.Releases)
-			{
-				release.CopyData();
-			}
-			Reporter.ReportInline("finished.");
+			release.CopyData();
 		}
+		Reporter.ReportInline("finished.");
+	}
 
 
-		public event PropertyChangedEventHandler PropertyChanged;
+	public event PropertyChangedEventHandler PropertyChanged;
 
-		protected void OnPropertyChanged(string name)
-		{
-			Debug.WriteLine(name);
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-		}
+	protected void OnPropertyChanged(string name)
+	{
+		Debug.WriteLine(name);
+		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 	}
 }

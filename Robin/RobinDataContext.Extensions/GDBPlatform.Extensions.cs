@@ -16,40 +16,39 @@ using System.Collections;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
-namespace Robin
+namespace Robin;
+
+public partial class GDBPlatform : IDbPlatform
 {
-	public partial class GDBPlatform : IDbPlatform
+	[NotMapped]
+	public IList Releases => GDBReleases.ToList();
+
+	[NotMapped]
+	public Platform RPlatform => R.Data.Platforms.FirstOrDefault(x => x.ID_GDB == ID);
+
+	[NotMapped]
+	public int MatchedReleaseCount
 	{
-		[NotMapped]
-		public IList Releases => Gdbreleases.ToList();
-
-		[NotMapped]
-		public Platform RPlatform => R.Data.Platforms.FirstOrDefault(x => x.ID_GDB == ID);
-
-		[NotMapped]
-		public int MatchedReleaseCount
+		get
 		{
-			get
+			if (RPlatform != null)
 			{
-				if (RPlatform != null)
-				{
-					return RPlatform.MatchedToGamesDB;
-				}
-				return 0;
+				return RPlatform.MatchedToGamesDB;
 			}
+			return 0;
 		}
+	}
 
-		[NotMapped]
-		public bool Preferred
+	[NotMapped]
+	public bool Preferred
+	{
+		get
 		{
-			get
+			if (RPlatform != null)
 			{
-				if (RPlatform != null)
-				{
-					return RPlatform.Preferred;
-				}
-				return false;
+				return RPlatform.Preferred;
 			}
+			return false;
 		}
 	}
 }

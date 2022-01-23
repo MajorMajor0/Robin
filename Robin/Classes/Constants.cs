@@ -26,21 +26,21 @@ namespace Robin
 
 		public const string HEADER_ACCEPT_LANGUAGE = "en-US,en;q=0.5";
 
-		public struct PlatformId
+		public struct Platform_ID
 		{
 			public const long Arcade = 1;
 			public const long Lynx = 8;
 			public const long ChannelF = 15;
 		}
 
-		public struct EmulatorId
+		public struct Emulator_ID
 		{
 			public const long Mame = 5;
 			public const long Retroarch = 18;
 			public const long Higan = 4;
 		}
 
-		public struct RegionId
+		public struct Region_ID
 		{
 			public const long World = 22;
 			public const long Unk = 0;

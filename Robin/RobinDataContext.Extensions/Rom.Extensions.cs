@@ -27,14 +27,14 @@ namespace Robin
 		public string FilePath => Platform.RomDirectory + FileName;
 
 		[NotMapped]
-		public decimal PlatformId => Releases[0].PlatformId;
+		public decimal Platform_ID => Releases[0].Platform_ID;
 
 		[NotMapped]
 		public Platform Platform => Releases[0].Platform;
 
 		public void StoreFileName(string extension)
 		{
-			if (PlatformId != CONSTANTS.PlatformId.Arcade)
+			if (Platform_ID != CONSTANTS.Platform_ID.Arcade)
 			{
 				string washed = Regex.Replace(Title, @"\A(A |The |La |El )", "");
 
